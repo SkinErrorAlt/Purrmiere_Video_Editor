@@ -1,0 +1,15 @@
+{
+ "id": "log_convert",
+ "label": "Camera Log to Rec.709",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Turns flat camera log footage into normal looking Rec.709. The log curve is decoded with the maker's published formula, the camera gamut is converted to Rec.709 primaries, then exposure, saturation and a highlight roll off are applied.",
+ "params": [
+  {"key": "source", "label": "Camera log", "type": "enum", "choices": ["Sony S-Log3, S-Gamut3.Cine", "Sony S-Log3, S-Gamut3", "ARRI LogC3, Wide Gamut 3", "ARRI LogC4, Wide Gamut 4", "Panasonic V-Log, V-Gamut", "Fujifilm F-Log, F-Gamut", "Fujifilm F-Log2, F-Gamut", "Nikon N-Log, N-Gamut", "Apple Log", "Blackmagic Film Gen 5, Wide Gamut"], "default": 0},
+  {"key": "exposure", "label": "Exposure", "type": "float", "min": -4.0, "max": 4.0, "step": 0.05, "default": 0.0, "unit": " stops"},
+  {"key": "tone", "label": "Highlights", "type": "enum", "choices": ["Clip", "Soft roll off", "Filmic"], "default": 1},
+  {"key": "saturation", "label": "Saturation", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 1.0},
+  {"key": "full_range", "label": "Full range file", "type": "bool", "default": false}
+ ],
+ "passes": "single"
+}

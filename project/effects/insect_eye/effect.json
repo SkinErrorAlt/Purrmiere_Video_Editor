@@ -1,0 +1,15 @@
+{
+ "id": "insect_eye",
+ "label": "Insect Eye",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Looks through the compound eye of a fly: a honeycomb of little lenses, each showing the whole picture or its own part enlarged, with dark rims.",
+ "params": [
+  {"key": "cell", "label": "Lens size", "type": "float", "min": 8, "max": 400, "step": 0.5, "default": 60, "unit": " px"},
+  {"key": "facet", "label": "Each lens shows", "type": "enum", "choices": ["The whole picture", "Its own part, enlarged"], "default": 0},
+  {"key": "magnify", "label": "Enlarge", "type": "float", "min": 0.2, "max": 4, "step": 0.01, "default": 1.5},
+  {"key": "rim", "label": "Rim", "type": "float", "min": 0, "max": 0.5, "step": 0.005, "default": 0.12}
+ ],
+ "passes": "single"
+}

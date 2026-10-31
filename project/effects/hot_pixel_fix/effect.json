@@ -1,0 +1,16 @@
+{
+ "id": "hot_pixel_fix",
+ "label": "Hot Pixel Fix",
+ "category": "Noise & Grain",
+ "tags": ["repair"],
+ "version": 1,
+ "blurb": "Removes stuck bright (hot) and dead dark pixels from a camera sensor, and single dust specks, by checking each colour of each pixel against every pixel round it: only a pixel that stands out from all its neighbours is replaced, so lines, stars and text stay. Up to 2 by 2 also catches small clusters. Show what is fixed marks each one.",
+ "params": [
+  {"key": "threshold", "label": "Stands out by more than", "type": "float", "min": 0.02, "max": 0.6, "step": 0.005, "default": 0.15},
+  {"key": "bright", "label": "Bright specks", "type": "bool", "default": true},
+  {"key": "dark", "label": "Dark specks", "type": "bool", "default": true},
+  {"key": "size", "label": "Speck size", "type": "enum", "choices": ["Single pixels", "Up to 2 by 2"], "default": 0},
+  {"key": "show", "label": "Show what is fixed", "type": "bool", "default": false}
+ ],
+ "passes": "single"
+}

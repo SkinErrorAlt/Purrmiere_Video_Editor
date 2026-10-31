@@ -1,0 +1,17 @@
+{
+ "id": "vhs_tracking",
+ "label": "Tracking Error",
+ "category": "VHS & Analogue",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "A band that rips across the picture and drags it sideways, the way a tape does when the tracking is out.",
+ "params": [
+  {"key": "position", "label": "Where it is", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "height", "label": "How tall", "type": "float", "min": 0.0, "max": 0.5, "step": 0.005, "default": 0.06},
+  {"key": "offset", "label": "How far it drags", "type": "float", "min": 0.0, "max": 200.0, "step": 0.5, "default": 40.0},
+  {"key": "noise", "label": "Noise in the band", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "drift", "label": "Drifts up the picture", "type": "float", "min": -4.0, "max": 4.0, "step": 0.01, "default": 0.25},
+  {"key": "tear", "label": "Ragged edges", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5}
+ ],
+ "passes": "single"
+}

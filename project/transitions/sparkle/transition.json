@@ -1,0 +1,17 @@
+{
+ "id": "sparkle",
+ "label": "Sparkle",
+ "group": "Particles",
+ "space": "2D",
+ "from": ["Keynote Sparkle"],
+ "blurb": "A glowing wave of twinkling stars sweeps across the frame and wipes the outgoing picture away as it passes, leaving the incoming one behind it. The stars fall differently on every cut.",
+ "default_duration": 1.5,
+ "params": [
+  {"key": "direction", "label": "Direction", "type": "enum", "choices": ["Left to right", "Right to left", "Top down", "Bottom up"], "default": 0},
+  {"key": "star_size", "label": "Star size", "type": "float", "min": 4, "max": 80, "step": 1, "default": 20, "unit": " px"},
+  {"key": "density", "label": "Density", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.55},
+  {"key": "band", "label": "Wave width", "type": "float", "min": 0.03, "max": 0.4, "step": 0.01, "default": 0.12},
+  {"key": "ragged", "label": "Ragged edge", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "colour", "label": "Colour", "type": "color", "default": [1, 0.95, 0.82, 1]}
+ ]
+}

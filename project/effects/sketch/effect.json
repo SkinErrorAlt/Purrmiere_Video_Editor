@@ -1,0 +1,16 @@
+{
+ "id": "sketch",
+ "label": "Pencil Sketch",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Turns the picture into pencil lines on paper by holding the edges and dropping the rest.",
+ "params": [
+  {"key": "strength", "label": "Line strength", "type": "float", "min": 0.0, "max": 8.0, "step": 0.05, "default": 2.0},
+  {"key": "line_width", "label": "Line width", "type": "float", "min": 0.5, "max": 8.0, "step": 0.1, "default": 1.0},
+  {"key": "shading", "label": "Shading left in", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.25},
+  {"key": "ink", "label": "Pencil", "type": "color", "default": [0.1, 0.1, 0.12, 1.0]},
+  {"key": "paper", "label": "Paper", "type": "color", "default": [0.98, 0.97, 0.94, 1.0]}
+ ],
+ "passes": "single"
+}

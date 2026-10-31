@@ -1,0 +1,25 @@
+{
+ "id": "tone_equaliser",
+ "label": "Tone Equaliser",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Exposure by zones, like a graphic equaliser for brightness: seven sliders in stops, from the blacks to the whites, each a stop of light apart. The zones are read from a smoothed, edge aware copy of the picture, so whole areas brighten or darken together and the fine contrast inside them stays. By default it opens the shadows and holds the highlights back.",
+ "params": [
+  {"key": "z_blacks", "label": "Blacks (-6 EV)", "type": "float", "min": -2.0, "max": 2.0, "step": 0.01, "default": 0.35, "unit": " stops"},
+  {"key": "z_deep", "label": "Deep shadows (-5 EV)", "type": "float", "min": -2.0, "max": 2.0, "step": 0.01, "default": 0.5, "unit": " stops"},
+  {"key": "z_shadows", "label": "Shadows (-4 EV)", "type": "float", "min": -2.0, "max": 2.0, "step": 0.01, "default": 0.45, "unit": " stops"},
+  {"key": "z_darks", "label": "Darks (-3 EV)", "type": "float", "min": -2.0, "max": 2.0, "step": 0.01, "default": 0.25, "unit": " stops"},
+  {"key": "z_mids", "label": "Mid tones (-2 EV)", "type": "float", "min": -2.0, "max": 2.0, "step": 0.01, "default": 0.0, "unit": " stops"},
+  {"key": "z_lights", "label": "Lights (-1 EV)", "type": "float", "min": -2.0, "max": 2.0, "step": 0.01, "default": -0.15, "unit": " stops"},
+  {"key": "z_whites", "label": "Whites (0 EV)", "type": "float", "min": -2.0, "max": 2.0, "step": 0.01, "default": -0.3, "unit": " stops"},
+  {"key": "smoothing", "label": "Zone smoothing", "type": "float", "min": 0.0, "max": 100.0, "step": 0.5, "default": 24.0, "unit": " px"},
+  {"key": "edges", "label": "Keep edges clean", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "show_zones", "label": "Show the zones", "type": "bool", "default": false}
+ ],
+ "passes": [
+  {"shader": "ev.gdshader", "scale": 0.5},
+  {"shader": "smooth.gdshader", "scale": 1.0, "set": {"direction": [1.0, 0.0]}},
+  {"shader": "smooth.gdshader", "scale": 1.0, "set": {"direction": [0.0, 1.0]}},
+  {"shader": "apply.gdshader", "scale": 2.0}
+ ]
+}

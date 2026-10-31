@@ -1,0 +1,26 @@
+{
+ "id": "vortex",
+ "label": "Vortex",
+ "group": "Particles",
+ "space": "2D",
+ "from": ["PowerPoint Vortex"],
+ "blurb": "The picture breaks into small tiles that lift off and are sucked into a whirlpool, circling its centre and tumbling in depth as they spiral down, larger on its near side and smaller on its far side. While the last ones drain away, the incoming picture's tiles spiral out of a whirlpool on the other side and settle into place over a dimmed glimpse of it, or the incoming picture is simply uncovered underneath.",
+ "default_duration": 3.0,
+ "params": [
+  {"key": "incoming", "label": "Incoming", "type": "enum", "choices": ["Comes out of the vortex", "Revealed underneath", "Comes back out of the same vortex"], "default": 0},
+  {"key": "centre", "label": "Vortex centre", "type": "vec2", "default": [0.25, 0.5]},
+  {"key": "turns", "label": "Swirl turns", "type": "float", "min": 0, "max": 3, "step": 0.01, "default": 1},
+  {"key": "direction", "label": "Swirls", "type": "enum", "choices": ["Clockwise", "Anticlockwise"], "default": 0},
+  {"key": "pause", "label": "Pause between", "type": "float", "min": -0.6, "max": 0.5, "step": 0.01, "default": -0.5},
+  {"key": "tile_size", "label": "Tile size", "type": "float", "min": 6, "max": 120, "step": 1, "default": 28, "unit": " px"},
+  {"key": "stagger", "label": "Stagger", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.8},
+  {"key": "depth", "label": "Whirlpool depth", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "tumble", "label": "Tumble", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 1},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 10, "max": 90, "step": 1, "default": 45, "unit": " deg"},
+  {"key": "backdrop", "label": "Behind the tiles", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.45},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ],
+ "handles": [
+  {"kind": "point", "key": "centre"}
+ ]
+}

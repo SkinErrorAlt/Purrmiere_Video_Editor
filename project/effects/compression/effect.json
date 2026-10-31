@@ -1,0 +1,32 @@
+{
+ "id": "compression",
+ "label": "Compression (YouTube look)",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Fakes a starved codec: fewer lines, coarser colour, block crush in flat areas, banding and ringing. The frame rate limit and the audio band limit degrade sound and motion with it. Choosing a tier writes its values into the other params so they stay editable.",
+ "params": [
+  {"key": "tier", "label": "Tier", "type": "enum", "choices": ["Custom", "1080p", "720p", "480p", "360p", "240p", "144p", "40p"], "default": 0,
+   "writes": {
+    "1": {"target_lines": 1080, "chroma_ratio": 2.0, "block_strength": 0.18, "levels": 255, "ringing": 0.10, "fps_limit": 0, "audio_lowpass_hz": 19000, "audio_highpass_hz": 0, "audio_crush": 0.0},
+    "2": {"target_lines": 720, "chroma_ratio": 2.0, "block_strength": 0.28, "levels": 128, "ringing": 0.16, "fps_limit": 0, "audio_lowpass_hz": 16000, "audio_highpass_hz": 0, "audio_crush": 0.05},
+    "3": {"target_lines": 480, "chroma_ratio": 2.5, "block_strength": 0.40, "levels": 64, "ringing": 0.22, "fps_limit": 30, "audio_lowpass_hz": 12000, "audio_highpass_hz": 0, "audio_crush": 0.12},
+    "4": {"target_lines": 360, "chroma_ratio": 3.0, "block_strength": 0.50, "levels": 48, "ringing": 0.26, "fps_limit": 24, "audio_lowpass_hz": 9000, "audio_highpass_hz": 0, "audio_crush": 0.20},
+    "5": {"target_lines": 240, "chroma_ratio": 3.5, "block_strength": 0.62, "levels": 32, "ringing": 0.30, "fps_limit": 15, "audio_lowpass_hz": 6000, "audio_highpass_hz": 120, "audio_crush": 0.32},
+    "6": {"target_lines": 144, "chroma_ratio": 4.0, "block_strength": 0.72, "levels": 20, "ringing": 0.34, "fps_limit": 12, "audio_lowpass_hz": 4000, "audio_highpass_hz": 200, "audio_crush": 0.45},
+    "7": {"target_lines": 40, "chroma_ratio": 4.0, "block_strength": 0.85, "levels": 10, "ringing": 0.30, "fps_limit": 8, "audio_lowpass_hz": 2000, "audio_highpass_hz": 400, "audio_crush": 0.62}
+   }},
+  {"key": "target_lines", "label": "Picture Lines", "type": "float", "min": 0, "max": 2160, "step": 1, "default": 0},
+  {"key": "chroma_ratio", "label": "Chroma Coarseness", "type": "float", "min": 1, "max": 8, "step": 0.1, "default": 2},
+  {"key": "block_strength", "label": "Block Crush", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "levels", "label": "Colour Levels", "type": "float", "min": 4, "max": 255, "step": 1, "default": 255},
+  {"key": "ringing", "label": "Ringing", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.25},
+  {"key": "fps_limit", "label": "Frame Rate Limit", "type": "float", "min": 0, "max": 240, "step": 0.5, "default": 0},
+  {"key": "audio_lowpass_hz", "label": "Audio Low Pass", "type": "float", "min": 1000, "max": 20500, "step": 10, "default": 20500, "unit": "Hz"},
+  {"key": "audio_highpass_hz", "label": "Audio High Pass", "type": "float", "min": 0, "max": 1000, "step": 5, "default": 0, "unit": "Hz"},
+  {"key": "audio_crush", "label": "Audio Crush", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0},
+  {"key": "smooth_upscale", "label": "Smooth Upscale", "type": "bool", "default": true},
+  {"key": "grid_from_sequence", "label": "Grid From Sequence Size", "type": "bool", "default": false}
+ ],
+ "passes": "single"
+}

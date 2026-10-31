@@ -1,0 +1,17 @@
+{
+ "id": "legal_range",
+ "label": "Broadcast Safe",
+ "category": "Utility",
+ "tags": ["measure"],
+ "version": 1,
+ "blurb": "Keeps brightness and colour inside broadcast limits, where 0 to 100 IRE is video levels 16 to 235 in the exported file. Show illegal paints the pixels that break the limits instead.",
+ "params": [
+  {"key": "mode", "label": "How to fix", "type": "enum", "choices": ["Clamp to video levels 16 to 235", "Soft clip lightness", "Reduce saturation over the limit"], "default": 0},
+  {"key": "max_ire", "label": "Highest level", "type": "float", "min": 90.0, "max": 110.0, "step": 0.5, "default": 100.0, "unit": " IRE"},
+  {"key": "min_ire", "label": "Lowest level", "type": "float", "min": -10.0, "max": 10.0, "step": 0.5, "default": 0.0, "unit": " IRE"},
+  {"key": "chroma_limit", "label": "Colour limit", "type": "float", "min": 0.1, "max": 1.0, "step": 0.01, "default": 0.85},
+  {"key": "show_illegal", "label": "Show illegal", "type": "bool", "default": false},
+  {"key": "illegal_colour", "label": "Illegal colour", "type": "color", "default": [1.0, 0.0, 0.8, 1.0]}
+ ],
+ "passes": "single"
+}

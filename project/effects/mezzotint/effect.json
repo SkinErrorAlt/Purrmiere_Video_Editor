@@ -1,0 +1,18 @@
+{
+ "id": "mezzotint",
+ "label": "Mezzotint",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Prints the picture as a random scatter of dots, lines or strokes in pure ink and paper. In colour each channel is printed on its own, which gives the fully saturated look of an old engraving plate.",
+ "params": [
+  {"key": "dot_type", "label": "Type", "type": "enum", "choices": ["Fine dots", "Medium dots", "Grainy dots", "Coarse dots", "Short lines", "Medium lines", "Long lines", "Short strokes", "Medium strokes", "Long strokes"], "default": 0},
+  {"key": "colour_mode", "label": "Print", "type": "enum", "choices": ["Each colour channel", "Ink on paper"], "default": 0},
+  {"key": "ink", "label": "Ink", "type": "color", "default": [0.0, 0.0, 0.0, 1.0]},
+  {"key": "paper", "label": "Paper", "type": "color", "default": [1.0, 1.0, 1.0, 1.0]},
+  {"key": "grain_size", "label": "Grain size", "type": "float", "min": 1.0, "max": 8.0, "step": 0.1, "default": 1.0, "unit": " px"},
+  {"key": "moving", "label": "New grain every frame", "type": "bool", "default": false},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

@@ -1,0 +1,19 @@
+{
+ "id": "camera_shake",
+ "label": "Shake",
+ "group": "Zoom and Camera",
+ "space": "2D",
+ "from": ["CapCut Shake", "Resolve Camera Shake", "Film Impact Earthquake"],
+ "blurb": "A camera shake that builds to a peak in the middle, where the cut happens, and dies away, with motion blur on the fast jolts. Channel split pulls the red and blue apart along the motion while the frame moves fast and lines them up again as it slows. Quake swaps the shake for big, slow, mostly up and down heaves with a low rumble, like an earthquake. Change the seed for a different shake.",
+ "default_duration": 0.6,
+ "params": [
+  {"key": "style", "label": "Style", "type": "enum", "choices": ["Shake", "Quake"], "default": 0},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0, "max": 0.25, "step": 0.005, "default": 0.05},
+  {"key": "rotation", "label": "Rotation", "type": "float", "min": 0, "max": 15, "step": 0.1, "default": 3, "unit": " deg"},
+  {"key": "speed", "label": "Speed", "type": "float", "min": 2, "max": 40, "step": 0.5, "default": 14},
+  {"key": "zoom", "label": "Zoom", "type": "float", "min": 0, "max": 0.5, "step": 0.01, "default": 0.08},
+  {"key": "blur", "label": "Motion blur", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "channel_split", "label": "Channel split", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "blend", "label": "Blend", "type": "float", "min": 0.02, "max": 0.5, "step": 0.01, "default": 0.12}
+ ]
+}

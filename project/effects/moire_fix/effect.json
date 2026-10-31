@@ -1,0 +1,20 @@
+{
+ "id": "moire_fix",
+ "label": "Colour Moire Fix",
+ "category": "Image Control",
+ "tags": ["repair"],
+ "version": 1,
+ "blurb": "Takes out the rainbow shimmer of false colour on fine patterns: a filmed monitor, a striped shirt, a brick wall or a mesh far away. Where the brightness has fine detail, the colour is replaced with a smoothed copy, which melts the bands and speckles of false colour, while the brightness, and so the detail, stays exactly as it was. Only on grey patterns keeps real coloured stripes.",
+ "params": [
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.9},
+  {"key": "radius", "label": "Colour smoothing", "type": "float", "min": 1.0, "max": 16.0, "step": 0.1, "default": 6.0, "unit": " px"},
+  {"key": "fine", "label": "Pattern contrast", "type": "float", "min": 0.01, "max": 0.3, "step": 0.005, "default": 0.05},
+  {"key": "grey_only", "label": "Only on grey patterns", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "show", "label": "Show where", "type": "bool", "default": false}
+ ],
+ "passes": [
+  {"shader": "res://effects/smart_sharpen/blur.gdshader", "set": {"direction": [1.0, 0.0]}},
+  {"shader": "res://effects/smart_sharpen/blur.gdshader", "set": {"direction": [0.0, 1.0]}},
+  {"shader": "moire.gdshader"}
+ ]
+}

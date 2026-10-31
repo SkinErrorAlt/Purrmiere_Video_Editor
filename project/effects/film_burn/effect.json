@@ -1,0 +1,21 @@
+{
+ "id": "film_burn",
+ "label": "Film Burn",
+ "category": "Transition",
+ "version": 1,
+ "blurb": "The film catches fire at a cut: a hot orange burn with a ragged, flickering edge blooms out from a spot and blows the picture out to white right on the cut. Put it on both clips and the first burns out at its end while the next burns in at its start. Use Progress to key it by hand instead.",
+ "params": [
+  {"key": "when", "label": "When", "type": "enum", "choices": ["In at the start and out at the end", "In at the start", "Out at the end", "By Progress"], "default": 0},
+  {"key": "duration", "label": "Burn length", "type": "float", "min": 0.05, "max": 3.0, "step": 0.01, "default": 0.6, "unit": " s"},
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0.0, "max": 1.0, "step": 0.005, "default": 0.0},
+  {"key": "centre", "label": "Burns from", "type": "vec2", "default": [0.28, 0.62]},
+  {"key": "burn_colour", "label": "Burn colour", "type": "color", "default": [1.0, 0.34, 0.05, 1.0]},
+  {"key": "core_colour", "label": "Hot colour", "type": "color", "default": [1.0, 0.72, 0.32, 1.0]},
+  {"key": "ragged", "label": "Ragged edge", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "flicker", "label": "Flicker", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "white_out", "label": "White on the cut", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}],
+ "passes": "single"
+}

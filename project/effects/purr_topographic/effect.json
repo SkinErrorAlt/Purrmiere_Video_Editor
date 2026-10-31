@@ -1,0 +1,17 @@
+{
+ "id": "purr_topographic",
+ "label": "Topographic",
+ "category": "Purrmiere",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Reads the picture's brightness as height and draws it as a topographic map: contour lines at every step with a heavier index line every fifth, over hypsometric map tints, the picture itself or plain paper.",
+ "params": [
+  {"key": "levels", "label": "Contour steps", "type": "int", "min": 3, "max": 60, "step": 1, "default": 16},
+  {"key": "smooth_px", "label": "Smoothing", "type": "float", "min": 0.0, "max": 20.0, "step": 0.1, "default": 4.0, "unit": " px"},
+  {"key": "line_width", "label": "Line width", "type": "float", "min": 0.3, "max": 6.0, "step": 0.1, "default": 1.2, "unit": " px"},
+  {"key": "line_colour", "label": "Line colour", "type": "color", "default": [0.35, 0.22, 0.12, 1.0]},
+  {"key": "fill", "label": "Fill", "type": "enum", "default": 0, "choices": ["Map tints", "The picture", "Paper"]},
+  {"key": "paper", "label": "Paper", "type": "color", "default": [0.96, 0.94, 0.88, 1.0]}
+ ],
+ "passes": "single"
+}

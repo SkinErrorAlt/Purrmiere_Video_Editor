@@ -1,0 +1,15 @@
+{
+ "id": "chroma_restore",
+ "label": "Colour Edge Restore",
+ "category": "Image Control",
+ "tags": ["repair"],
+ "version": 1,
+ "blurb": "Sharpens soft, blocky or bleeding colour back onto the brightness edges it belongs to. Most video keeps colour at half the size of the picture (4:2:0), so red text, game HUDs and bright logos get blurry, stepped colour edges; tape and old captures smear colour sideways. It rebuilds the colour of each pixel from how colour follows brightness nearby (a guided filter), and can move the colour back into line when it sits off to one side.",
+ "params": [
+  {"key": "source", "label": "The colour was", "type": "enum", "choices": ["Half size (4:2:0, most video)", "Half width (4:2:2)", "Quarter width (4:1:1, DV)", "Smeared by tape"], "default": 0},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "shift_x", "label": "Move colour across", "type": "float", "min": -8.0, "max": 8.0, "step": 0.05, "default": 0.0, "unit": " px"},
+  {"key": "shift_y", "label": "Move colour down", "type": "float", "min": -8.0, "max": 8.0, "step": 0.05, "default": 0.0, "unit": " px"}
+ ],
+ "passes": "single"
+}

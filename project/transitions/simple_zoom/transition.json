@@ -1,0 +1,13 @@
+{
+ "id": "simple_zoom",
+ "label": "Simple Zoom",
+ "group": "Zoom and Camera",
+ "space": "2D",
+ "from": ["gl SimpleZoom"],
+ "blurb": "The camera zooms straight into the outgoing picture and the incoming one fades in over the end of the zoom.",
+ "default_duration": 0.8,
+ "params": [
+  {"key": "quickness", "label": "Zoom speed", "type": "float", "min": 0.2, "max": 1, "step": 0.01, "default": 0.8},
+  {"key": "centre", "label": "Centre", "type": "vec2", "min": 0, "max": 1, "step": 0.01, "default": [0.5, 0.5]}
+ ]
+}

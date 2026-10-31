@@ -1,0 +1,15 @@
+{
+ "id": "turbulent_displace",
+ "label": "Turbulent Displace",
+ "category": "Distort",
+ "version": 1,
+ "blurb": "Pushes the picture about with a cloud of noise, for heat haze, water or a melting look.",
+ "params": [
+  {"key": "amount", "label": "Amount", "type": "float", "min": 0.0, "max": 400.0, "step": 0.5, "default": 30.0},
+  {"key": "scale_n", "label": "Noise size", "type": "float", "min": 0.1, "max": 40.0, "step": 0.1, "default": 4.0},
+  {"key": "octaves", "label": "Detail", "type": "int", "min": 1, "max": 8, "step": 1, "default": 4},
+  {"key": "speed", "label": "Speed", "type": "float", "min": -8.0, "max": 8.0, "step": 0.01, "default": 0.5},
+  {"key": "vertical_only", "label": "Up and down only", "type": "bool", "default": false}
+ ],
+ "passes": "single"
+}

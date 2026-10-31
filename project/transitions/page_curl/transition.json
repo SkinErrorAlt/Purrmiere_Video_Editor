@@ -1,0 +1,21 @@
+{
+ "id": "page_curl",
+ "label": "Page Curl",
+ "group": "3D",
+ "space": "3D",
+ "from": ["PowerPoint Page Curl", "Premiere Page Peel"],
+ "blurb": "The outgoing picture curls up from a corner like a page being turned, its back showing pale through the roll, and folds away across the frame to reveal the incoming picture. As a two page spread the frame is an open book and the right page turns over the spine.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "corner", "label": "Starts at", "type": "enum", "choices": ["Bottom right", "Bottom left", "Top right", "Top left", "Right edge", "Left edge"], "default": 0},
+  {"key": "spread", "label": "Two page spread", "type": "bool", "default": false},
+  {"key": "spine", "label": "Spine shadow", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.45},
+  {"key": "radius", "label": "Curl size", "type": "float", "min": 0.02, "max": 0.5, "step": 0.01, "default": 0.15},
+  {"key": "back_fade", "label": "Back of page", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "paper", "label": "Paper colour", "type": "color", "default": [0.95, 0.94, 0.9, 1]},
+  {"key": "shadow", "label": "Shadow", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 10, "max": 90, "step": 1, "default": 40, "unit": " deg"},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

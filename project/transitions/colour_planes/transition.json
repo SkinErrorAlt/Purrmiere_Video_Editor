@@ -1,0 +1,17 @@
+{
+ "id": "colour_planes",
+ "label": "Colour Planes",
+ "group": "3D",
+ "space": "3D",
+ "from": ["Keynote Color Planes"],
+ "blurb": "The outgoing picture splits into its red, green and blue layers, which spread apart in depth and turn; the incoming picture's layers swing back together to finish whole.",
+ "default_duration": 1.4,
+ "params": [
+  {"key": "direction", "label": "Spreads towards", "type": "enum", "choices": ["Right", "Left"], "default": 0},
+  {"key": "spread", "label": "Spread", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.35},
+  {"key": "depth", "label": "Depth", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 0.6},
+  {"key": "turn", "label": "Turn", "type": "float", "min": 0, "max": 60, "step": 1, "default": 18, "unit": " deg"},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 10, "max": 90, "step": 1, "default": 40, "unit": " deg"},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

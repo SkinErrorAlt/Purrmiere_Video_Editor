@@ -1,0 +1,17 @@
+{
+ "id": "skin_protect",
+ "label": "Protect Skin Tones",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Put it after your grade (a look, a LUT, strong colour wheels): it finds the skin in the clip's own picture and gives it back its natural colour, while everything else keeps the grade. By default the skin keeps the grade's brightness and only gets its own colour back. Effects that move or reshape the picture before it will misplace the skin.",
+ "params": [
+  {"key": "amount", "label": "Amount", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "keep", "label": "What the skin gets back", "type": "enum", "choices": ["Its colour, with the grade's brightness", "Its hue only", "Everything"], "default": 0},
+  {"key": "skin_range", "label": "Skin range", "type": "float", "min": 10.0, "max": 90.0, "step": 1.0, "default": 40.0, "unit": " deg"},
+  {"key": "softness", "label": "Softness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "light_low", "label": "Leave out darker than", "type": "float", "min": 0.0, "max": 0.5, "step": 0.01, "default": 0.08},
+  {"key": "light_high", "label": "Leave out brighter than", "type": "float", "min": 0.5, "max": 1.0, "step": 0.01, "default": 0.97},
+  {"key": "show_mask", "label": "Show mask", "type": "bool", "default": false}
+ ],
+ "passes": "single"
+}

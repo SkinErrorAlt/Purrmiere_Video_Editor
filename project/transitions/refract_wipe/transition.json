@@ -1,0 +1,25 @@
+{
+ "id": "refract_wipe",
+ "label": "Glass",
+ "group": "Distort",
+ "space": "2D",
+ "from": ["After Effects CC Glass Wipe", "Sapphire Wipe Bubble", "Film Impact Glass", "fluted glass looks", "Purrmiere Glass Wipe effect"],
+ "blurb": "A thick piece of glass passes over the frame and bends what is behind it: a glass rod sweeping across, a glass ring growing from a point, or a pane of fluted ribs sliding over. Ahead of the glass is the outgoing picture and behind it the incoming one, with a bright line along each glass edge.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "shape", "label": "Glass", "type": "enum", "choices": ["Rod", "Bubble", "Fluted ribs"], "default": 0},
+  {"key": "width", "label": "Glass width", "type": "float", "min": 0.05, "max": 0.8, "step": 0.01, "default": 0.3},
+  {"key": "ribs", "label": "Ribs", "type": "int", "min": 2, "max": 40, "step": 1, "default": 10},
+  {"key": "refraction", "label": "Refraction", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "dispersion", "label": "Colour fringe", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.25},
+  {"key": "frost", "label": "Frost", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0},
+  {"key": "highlight", "label": "Highlight", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "angle", "label": "Moves towards", "type": "float", "min": -180, "max": 180, "step": 1, "default": 0, "unit": " deg"},
+  {"key": "centre", "label": "Bubble centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 1}
+ ],
+ "handles": [
+  {"kind": "point", "key": "centre"},
+  {"kind": "angle", "key": "angle"}
+ ]
+}

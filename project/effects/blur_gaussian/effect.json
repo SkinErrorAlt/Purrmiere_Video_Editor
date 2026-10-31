@@ -1,0 +1,23 @@
+{
+ "id": "blur_gaussian",
+ "label": "Gaussian Blur",
+ "category": "Blur & Sharpen",
+ "version": 1,
+ "blurb": "A separable gaussian blur. Sigma is a third of the radius. Large radii blur a downsampled copy so cost stays flat.",
+ "params": [
+  {"key": "radius", "label": "Blurriness", "type": "float", "min": 0, "max": 200, "step": 0.1, "default": 8},
+  {"key": "dims", "label": "Blur Dimensions", "type": "enum", "choices": ["Both", "Horizontal", "Vertical"], "default": 0},
+  {"key": "edge", "label": "Repeat Edge Pixels", "type": "bool", "default": true},
+  {"key": "kernel", "label": "Kernel", "type": "enum", "choices": ["Smooth", "Flat", "Soft"], "default": 0}
+ ],
+ "passes": [
+  {"shader": "down.gdshader", "scale": 0.5, "when": {"param": "radius", "gt": 62}},
+  {"shader": "down.gdshader", "scale": 0.5, "when": {"param": "radius", "gt": 124}},
+  {"shader": "down.gdshader", "scale": 0.5, "when": {"param": "radius", "gt": 186}},
+  {"shader": "gauss.gdshader", "scale": 1.0, "set": {"direction": [1.0, 0.0]}},
+  {"shader": "gauss.gdshader", "scale": 1.0, "set": {"direction": [0.0, 1.0]}},
+  {"shader": "up.gdshader", "scale": 2.0, "when": {"param": "radius", "gt": 186}},
+  {"shader": "up.gdshader", "scale": 2.0, "when": {"param": "radius", "gt": 124}},
+  {"shader": "up.gdshader", "scale": 2.0, "when": {"param": "radius", "gt": 62}}
+ ]
+}

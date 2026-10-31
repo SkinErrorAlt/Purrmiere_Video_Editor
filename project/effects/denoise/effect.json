@@ -1,0 +1,16 @@
+{
+ "id": "denoise",
+ "label": "Denoise",
+ "category": "Blur & Sharpen",
+ "tags": ["repair"],
+ "version": 1,
+ "blurb": "Cleans lightness noise and colour noise separately: an edge keeping blur on the lightness and a wider blur on the colour. Detail puts some of the fine texture back.",
+ "params": [
+  {"key": "luma_strength", "label": "Lightness noise", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "chroma_strength", "label": "Colour noise", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "detail", "label": "Detail", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.2}
+ ],
+ "passes": [
+  {"shader": "denoise.gdshader"}
+ ]
+}

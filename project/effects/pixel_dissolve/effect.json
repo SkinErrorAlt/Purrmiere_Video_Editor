@@ -1,0 +1,15 @@
+{
+ "id": "pixel_dissolve",
+ "label": "Block Dissolve",
+ "category": "Transition",
+ "version": 1,
+ "blurb": "The picture breaks into random blocks that vanish one by one. A block size of 1 dissolves it pixel by pixel.",
+ "params": [
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "block_size", "label": "Block size", "type": "float", "min": 1.0, "max": 400.0, "step": 1.0, "default": 16.0, "unit": " px"},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0},
+  {"key": "feather", "label": "Softness", "type": "float", "min": 0.0, "max": 0.5, "step": 0.005, "default": 0.02},
+  {"key": "invert", "label": "The other way", "type": "bool", "default": false}
+ ],
+ "passes": "single"
+}

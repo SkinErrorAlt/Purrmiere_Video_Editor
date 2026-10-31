@@ -1,0 +1,12 @@
+{
+ "id": "grade_split",
+ "label": "Brightness or Colour Only",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Put it after a grade to keep only part of what the grade did. Brightness only keeps the grade's light and contrast but gives back the clip's own colours, so a contrast curve stops pushing the saturation. Colour only keeps the grade's colours on the clip's own brightness, so a look or LUT cannot crush the shadows. Fade lowers the whole grade above it at once. With nothing before it, the clip passes through.",
+ "params": [
+  {"key": "mode", "label": "Keep", "type": "enum", "choices": ["Only the brightness changes", "Only the colour changes", "A faded grade"], "default": 0},
+  {"key": "amount", "label": "Amount", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0}
+ ],
+ "passes": "single"
+}

@@ -1,0 +1,10 @@
+{
+ "id": "corners_only",
+ "label": "Corners only",
+ "blurb": "Only the corners are marked, so the picture stays clear.",
+ "order": 6,
+ "reach": 1.5,
+ "params": [
+  {"key": "arm", "label": "Corner length", "type": "float", "min": 2, "max": 80, "step": 1, "default": 16, "unit": "px"}
+ ]
+}

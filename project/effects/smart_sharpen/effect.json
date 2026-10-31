@@ -1,0 +1,20 @@
+{
+ "id": "smart_sharpen",
+ "label": "Smart Sharpen",
+ "category": "Blur & Sharpen",
+ "version": 1,
+ "blurb": "Sharpening that keeps its manners: it works on brightness only so colours never fringe, it stops at the brightest and darkest pixel nearby so edges get no bright or dark halos, it leaves fine noise alone below a threshold, and it can hold back in the shadows and highlights where sharpening shows grain. Unlike Unsharp Mask, it can be pushed hard without looking sharpened.",
+ "params": [
+  {"key": "amount", "label": "Amount", "type": "float", "min": 0.0, "max": 5.0, "step": 0.01, "default": 1.2},
+  {"key": "radius", "label": "Radius", "type": "float", "min": 0.3, "max": 10.0, "step": 0.05, "default": 1.0, "unit": " px"},
+  {"key": "halos", "label": "Allow halos", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.1},
+  {"key": "noise", "label": "Leave noise below", "type": "float", "min": 0.0, "max": 0.2, "step": 0.001, "default": 0.01},
+  {"key": "shadow_fade", "label": "Less in the shadows", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "highlight_fade", "label": "Less in the highlights", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.2}
+ ],
+ "passes": [
+  {"shader": "blur.gdshader", "set": {"direction": [1.0, 0.0]}},
+  {"shader": "blur.gdshader", "set": {"direction": [0.0, 1.0]}},
+  {"shader": "apply.gdshader"}
+ ]
+}

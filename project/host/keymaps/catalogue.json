@@ -1,0 +1,1435 @@
+{
+ "version": 1,
+ "commands": {
+  "tool.select": {
+   "label": "Selection tool",
+   "category": "Tools",
+   "scope": "global"
+  },
+  "tool.track_fwd": {
+   "label": "Track select forward tool",
+   "category": "Tools",
+   "scope": "global"
+  },
+  "tool.track_back": {
+   "label": "Track select backward tool",
+   "category": "Tools",
+   "scope": "global"
+  },
+  "tool.ripple": {
+   "label": "Ripple edit tool",
+   "category": "Tools",
+   "scope": "global"
+  },
+  "tool.roll": {
+   "label": "Rolling edit tool",
+   "category": "Tools",
+   "scope": "global"
+  },
+  "tool.rate": {
+   "label": "Rate stretch tool",
+   "category": "Tools",
+   "scope": "global"
+  },
+  "tool.razor": {
+   "label": "Razor tool",
+   "category": "Tools",
+   "scope": "global"
+  },
+  "tool.slip": {
+   "label": "Slip tool",
+   "category": "Tools",
+   "scope": "global"
+  },
+  "tool.slide": {
+   "label": "Slide tool",
+   "category": "Tools",
+   "scope": "global"
+  },
+  "tool.realign": {
+   "label": "Realign tool",
+   "category": "Tools",
+   "scope": "global"
+  },
+  "tool.pen": {
+   "label": "Pen tool",
+   "category": "Tools",
+   "scope": "global"
+  },
+  "tool.hand": {
+   "label": "Hand tool",
+   "category": "Tools",
+   "scope": "global"
+  },
+  "tool.zoom": {
+   "label": "Zoom tool",
+   "category": "Tools",
+   "scope": "global"
+  },
+  "tool.type": {
+   "label": "Type tool",
+   "category": "Tools",
+   "scope": "global"
+  },
+  "tool.censor": {
+   "label": "Censor tool",
+   "category": "Tools",
+   "scope": "global"
+  },
+  "play.toggle": {
+   "label": "Play or stop",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "play.shuttle_left": {
+   "label": "Shuttle left",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "play.shuttle_stop": {
+   "label": "Shuttle stop",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "play.shuttle_right": {
+   "label": "Shuttle right",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "play.shuttle_slow_left": {
+   "label": "Shuttle slow left",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "play.shuttle_slow_right": {
+   "label": "Shuttle slow right",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "play.around": {
+   "label": "Play around",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "play.in_to_out": {
+   "label": "Play in to out",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "play.in_to_out_roll": {
+   "label": "Play in to out with preroll and postroll",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "play.to_out": {
+   "label": "Play from playhead to out",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "nav.step_back": {
+   "label": "Step back 1 frame",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "nav.step_fwd": {
+   "label": "Step forward 1 frame",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "nav.step_back_5": {
+   "label": "Step back 5 frames",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "nav.step_fwd_5": {
+   "label": "Step forward 5 frames",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "nav.start": {
+   "label": "Go to start",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "nav.end": {
+   "label": "Go to end",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "nav.clip_start": {
+   "label": "Go to selected clip start",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "nav.clip_end": {
+   "label": "Go to selected clip end",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "nav.prev_edit": {
+   "label": "Go to previous edit point",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "nav.next_edit": {
+   "label": "Go to next edit point",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "nav.prev_edit_any": {
+   "label": "Go to previous edit point on any track",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "nav.next_edit_any": {
+   "label": "Go to next edit point on any track",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "select.prev_clip": {
+   "label": "Select previous clip",
+   "category": "Edit",
+   "scope": "global"
+  },
+  "select.next_clip": {
+   "label": "Select next clip",
+   "category": "Edit",
+   "scope": "global"
+  },
+  "select.at_playhead": {
+   "label": "Select clip at playhead",
+   "category": "Edit",
+   "scope": "global"
+  },
+  "nav.to_in": {
+   "label": "Go to in",
+   "category": "Markers",
+   "scope": "global"
+  },
+  "nav.to_out": {
+   "label": "Go to out",
+   "category": "Markers",
+   "scope": "global"
+  },
+  "nav.next_marker": {
+   "label": "Go to next marker",
+   "category": "Markers",
+   "scope": "global"
+  },
+  "nav.prev_marker": {
+   "label": "Go to previous marker",
+   "category": "Markers",
+   "scope": "global"
+  },
+  "nav.next_warning": {
+   "label": "Go to next warning",
+   "category": "Markers",
+   "scope": "global"
+  },
+  "nav.prev_warning": {
+   "label": "Go to previous warning",
+   "category": "Markers",
+   "scope": "global"
+  },
+  "nav.next_key": {
+   "label": "Go to next keyframe of the selected clip",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "nav.prev_key": {
+   "label": "Go to previous keyframe of the selected clip",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "keys.record": {
+   "label": "Record keys",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "play.loop": {
+   "label": "Loop playback",
+   "category": "Sequence",
+   "scope": "program"
+  },
+  "play.full_quality": {
+   "label": "Full quality playback",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "play.scrub_audio": {
+   "label": "Audio while scrubbing",
+   "category": "Audio",
+   "scope": "global"
+  },
+  "view.fullscreen": {
+   "label": "Toggle full screen",
+   "category": "View",
+   "scope": "global"
+  },
+  "view.program_fullscreen": {
+   "label": "Program fullscreen",
+   "category": "View",
+   "scope": "global"
+  },
+  "view.program_popout": {
+   "label": "Pop out the Program",
+   "category": "View",
+   "scope": "global"
+  },
+  "view.program_outline": {
+   "label": "Show the transform outline",
+   "category": "View",
+   "scope": "global"
+  },
+  "view.program_snap": {
+   "label": "Snap in the Program monitor",
+   "category": "View",
+   "scope": "global"
+  },
+  "window.maximize_under_cursor": {
+   "label": "Maximise or restore frame under cursor",
+   "category": "Window",
+   "scope": "global"
+  },
+  "window.maximize_active": {
+   "label": "Maximise or restore active frame",
+   "category": "Window",
+   "scope": "global"
+  },
+  "window.next_panel": {
+   "label": "Select next panel",
+   "category": "Window",
+   "scope": "global"
+  },
+  "window.prev_panel": {
+   "label": "Select previous panel",
+   "category": "Window",
+   "scope": "global"
+  },
+  "mark.in": {
+   "label": "Mark in",
+   "category": "Markers",
+   "scope": "global"
+  },
+  "mark.out": {
+   "label": "Mark out",
+   "category": "Markers",
+   "scope": "global"
+  },
+  "mark.clip": {
+   "label": "Mark clip",
+   "category": "Markers",
+   "scope": "global"
+  },
+  "mark.selection": {
+   "label": "Mark selection",
+   "category": "Markers",
+   "scope": "global"
+  },
+  "mark.clear_in": {
+   "label": "Clear in",
+   "category": "Markers",
+   "scope": "global"
+  },
+  "mark.clear_out": {
+   "label": "Clear out",
+   "category": "Markers",
+   "scope": "global"
+  },
+  "mark.clear_both": {
+   "label": "Clear in and out",
+   "category": "Markers",
+   "scope": "global"
+  },
+  "mark.work_in": {
+   "label": "Set work area in",
+   "category": "Markers",
+   "scope": "global"
+  },
+  "mark.work_out": {
+   "label": "Set work area out",
+   "category": "Markers",
+   "scope": "global"
+  },
+  "marker.add": {
+   "label": "Add marker",
+   "category": "Markers",
+   "scope": "global"
+  },
+  "marker.add_clip": {
+   "label": "Add clip marker",
+   "category": "Markers",
+   "scope": "global"
+  },
+  "marker.clear_current": {
+   "label": "Clear current marker",
+   "category": "Markers",
+   "scope": "global"
+  },
+  "marker.clear_all": {
+   "label": "Clear all markers",
+   "category": "Markers",
+   "scope": "global"
+  },
+  "marker.edit": {
+   "label": "Edit marker",
+   "category": "Markers",
+   "scope": "global"
+  },
+  "nav.next_gap": {
+   "label": "Go to next gap",
+   "category": "Markers",
+   "scope": "global"
+  },
+  "nav.prev_gap": {
+   "label": "Go to previous gap",
+   "category": "Markers",
+   "scope": "global"
+  },
+  "edit.ripple_trim_prev": {
+   "label": "Ripple trim previous edit to playhead",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "edit.ripple_trim_next": {
+   "label": "Ripple trim next edit to playhead",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "edit.extend_prev": {
+   "label": "Extend previous edit to playhead",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "edit.extend_next": {
+   "label": "Extend next edit to playhead",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "edit.extend_selected": {
+   "label": "Extend selected edit to playhead",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "edit.trim_prev": {
+   "label": "Trim previous edit to playhead",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "edit.trim_next": {
+   "label": "Trim next edit to playhead",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "edit.trim_back": {
+   "label": "Trim backward 1 frame",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "edit.trim_fwd": {
+   "label": "Trim forward 1 frame",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "edit.trim_back_many": {
+   "label": "Trim backward many frames",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "edit.trim_fwd_many": {
+   "label": "Trim forward many frames",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "edit.trim_type": {
+   "label": "Toggle trim type",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "edit.add_edit": {
+   "label": "Add edit",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "edit.add_edit_all": {
+   "label": "Add edit to all tracks",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "edit.lift": {
+   "label": "Lift",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "edit.extract": {
+   "label": "Extract",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "edit.insert": {
+   "label": "Insert",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "edit.overwrite": {
+   "label": "Overwrite",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "edit.delete": {
+   "label": "Delete",
+   "category": "Edit",
+   "scope": "global"
+  },
+  "edit.ripple_delete": {
+   "label": "Ripple delete",
+   "category": "Edit",
+   "scope": "global"
+  },
+  "edit.clear_selection": {
+   "label": "Clear selection",
+   "category": "Edit",
+   "scope": "global"
+  },
+  "edit.cut": {
+   "label": "Cut",
+   "category": "Edit",
+   "scope": "global"
+  },
+  "edit.copy": {
+   "label": "Copy",
+   "category": "Edit",
+   "scope": "global"
+  },
+  "edit.paste": {
+   "label": "Paste",
+   "category": "Edit",
+   "scope": "global"
+  },
+  "edit.paste_insert": {
+   "label": "Paste insert",
+   "category": "Edit",
+   "scope": "global"
+  },
+  "edit.paste_overlap": {
+   "label": "Paste overlapping",
+   "category": "Edit",
+   "scope": "global"
+  },
+  "edit.paste_attributes": {
+   "label": "Paste attributes",
+   "category": "Edit",
+   "scope": "global"
+  },
+  "edit.duplicate": {
+   "label": "Duplicate",
+   "category": "Edit",
+   "scope": "global"
+  },
+  "edit.select_all": {
+   "label": "Select all",
+   "category": "Edit",
+   "scope": "global"
+  },
+  "edit.deselect_all": {
+   "label": "Deselect all",
+   "category": "Edit",
+   "scope": "global"
+  },
+  "edit.nudge_left": {
+   "label": "Nudge selection left 1 frame",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "edit.nudge_right": {
+   "label": "Nudge selection right 1 frame",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "edit.nudge_left_5": {
+   "label": "Nudge selection left 5 frames",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "edit.nudge_right_5": {
+   "label": "Nudge selection right 5 frames",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "edit.slip_left": {
+   "label": "Slip selection left 1 frame",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "edit.slip_right": {
+   "label": "Slip selection right 1 frame",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "edit.slip_left_5": {
+   "label": "Slip selection left 5 frames",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "edit.slip_right_5": {
+   "label": "Slip selection right 5 frames",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "edit.slide_left": {
+   "label": "Slide selection left 1 frame",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "edit.slide_right": {
+   "label": "Slide selection right 1 frame",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "edit.slide_left_5": {
+   "label": "Slide selection left 5 frames",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "edit.slide_right_5": {
+   "label": "Slide selection right 5 frames",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "edit.move_up": {
+   "label": "Move selection up a track",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "edit.move_down": {
+   "label": "Move selection down a track",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "clip.group": {
+   "label": "Group",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "clip.ungroup": {
+   "label": "Ungroup",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "clip.link": {
+   "label": "Link or unlink",
+   "category": "Clip",
+   "scope": "timeline"
+  },
+  "clip.bring_to_front": {
+   "label": "Bring to front",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "clip.send_to_back": {
+   "label": "Send to back",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "clip.enable": {
+   "label": "Enable or disable clip",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "clip.speed": {
+   "label": "Speed and duration",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "clip.sync_regions": {
+   "label": "Sync Pair View regions",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "clip.view_cuts": {
+   "label": "Cut on view changes",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "clip.split_view_changes": {
+   "label": "Split at view changes",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "clip.offset_selected": {
+   "label": "Offset every selected Pair View clip",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "clip.views_panel": {
+   "label": "Views panel",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "clip.view_1": {
+   "label": "Switch to view 1",
+   "category": "Clip",
+   "scope": "program"
+  },
+  "clip.view_2": {
+   "label": "Switch to view 2",
+   "category": "Clip",
+   "scope": "program"
+  },
+  "clip.view_3": {
+   "label": "Switch to view 3",
+   "category": "Clip",
+   "scope": "program"
+  },
+  "clip.view_4": {
+   "label": "Switch to view 4",
+   "category": "Clip",
+   "scope": "program"
+  },
+  "clip.view_5": {
+   "label": "Switch to view 5",
+   "category": "Clip",
+   "scope": "program"
+  },
+  "clip.view_6": {
+   "label": "Switch to view 6",
+   "category": "Clip",
+   "scope": "program"
+  },
+  "clip.view_7": {
+   "label": "Switch to view 7",
+   "category": "Clip",
+   "scope": "program"
+  },
+  "clip.view_8": {
+   "label": "Switch to view 8",
+   "category": "Clip",
+   "scope": "program"
+  },
+  "clip.remove_all_effects": {
+   "label": "Remove all effects",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "clip.toggle_all_effects": {
+   "label": "Turn all effects off and on",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "clip.import_shader": {
+   "label": "Import a Godot shader...",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "clip.paste_shader": {
+   "label": "Paste Godot shader code...",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "clip.audio_gain": {
+   "label": "Audio gain",
+   "category": "Audio",
+   "scope": "global"
+  },
+  "clip.audio_channels": {
+   "label": "Audio channels",
+   "category": "Audio",
+   "scope": "global"
+  },
+  "clip.nest": {
+   "label": "Nest selection",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "clip.see_inside": {
+   "label": "See inside nest",
+   "category": "Clip",
+   "scope": "timeline"
+  },
+  "clip.reveal_nested": {
+   "label": "Reveal nested sequence",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "group.select": {
+   "label": "Select the whole group",
+   "category": "Clip",
+   "scope": "timeline"
+  },
+  "group.rename": {
+   "label": "Rename the group",
+   "category": "Clip",
+   "scope": "timeline"
+  },
+  "group.lock": {
+   "label": "Lock or unlock the group",
+   "category": "Clip",
+   "scope": "timeline"
+  },
+  "group.mute": {
+   "label": "Mute or unmute the group",
+   "category": "Clip",
+   "scope": "timeline"
+  },
+  "group.add_selection": {
+   "label": "Add the selection to its group",
+   "category": "Clip",
+   "scope": "timeline"
+  },
+  "group.remove_selection": {
+   "label": "Remove the selection from its group",
+   "category": "Clip",
+   "scope": "timeline"
+  },
+  "group.to_nest": {
+   "label": "Turn the group into a nest",
+   "category": "Clip",
+   "scope": "timeline"
+  },
+  "group.panel": {
+   "label": "Groups panel",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "nest.unnest_to_group": {
+   "label": "Unnest to a group",
+   "category": "Clip",
+   "scope": "timeline"
+  },
+  "nest.hear_audio": {
+   "label": "Hear the nest's audio",
+   "category": "Clip",
+   "scope": "timeline"
+  },
+  "nest.hear_outside": {
+   "label": "Inside a nest, hear the tracks around it",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "nest.show_whole": {
+   "label": "Inside a nest, show the whole sequence",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "clip.subclip": {
+   "label": "Make subclip",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "clip.subsequence": {
+   "label": "Make subsequence",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "clip.match_frame": {
+   "label": "Match frame",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "clip.reverse_match_frame": {
+   "label": "Reverse match frame",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "seq.default_video_transition": {
+   "label": "Apply default video transition",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "seq.default_audio_transition": {
+   "label": "Apply default audio transition",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "seq.default_transitions": {
+   "label": "Apply default transitions to selection",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "seq.snap": {
+   "label": "Snap",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "seq.linked_selection": {
+   "label": "Linked selection",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "seq.free_tracks": {
+   "label": "Free tracks",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "seq.overlap_clips": {
+   "label": "Clips may overlap on a track",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "clip.freeze_frame": {
+   "label": "Freeze frame",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "clip.hold_to_end": {
+   "label": "Hold this frame to the end",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "clip.replace_footage": {
+   "label": "Replace with the selected bin item",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "edit.close_all_gaps": {
+   "label": "Close all gaps",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "edit.cut_at_markers": {
+   "label": "Cut at markers",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "seq.settings": {
+   "label": "Sequence settings",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "seq.new_from_clip": {
+   "label": "New sequence from clip",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "seq.duplicate": {
+   "label": "Duplicate sequence",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "seq.pin_track": {
+   "label": "Pin or unpin selected track",
+   "category": "Sequence",
+   "scope": "timeline"
+  },
+  "seq.render_in_to_out": {
+   "label": "Render effects in to out",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "seq.render_regions": {
+   "label": "Render region settings",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "seq.censor_in_out": {
+   "label": "Censor in to out",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "edit.undo": {
+   "label": "Undo",
+   "category": "Edit",
+   "scope": "global"
+  },
+  "edit.redo": {
+   "label": "Redo",
+   "category": "Edit",
+   "scope": "global"
+  },
+  "view.zoom_in": {
+   "label": "Zoom in",
+   "category": "View",
+   "scope": "global"
+  },
+  "view.zoom_out": {
+   "label": "Zoom out",
+   "category": "View",
+   "scope": "global"
+  },
+  "view.zoom_sequence": {
+   "label": "Zoom to sequence",
+   "category": "View",
+   "scope": "global"
+  },
+  "view.zoom_selection": {
+   "label": "Zoom to selection",
+   "category": "View",
+   "scope": "global"
+  },
+  "view.expand_tracks": {
+   "label": "Expand all tracks",
+   "category": "View",
+   "scope": "global"
+  },
+  "view.minimise_tracks": {
+   "label": "Minimise all tracks",
+   "category": "View",
+   "scope": "global"
+  },
+  "view.video_track_taller": {
+   "label": "Increase video track height",
+   "category": "View",
+   "scope": "global"
+  },
+  "view.video_track_shorter": {
+   "label": "Decrease video track height",
+   "category": "View",
+   "scope": "global"
+  },
+  "view.audio_track_taller": {
+   "label": "Increase audio track height",
+   "category": "View",
+   "scope": "global"
+  },
+  "view.audio_track_shorter": {
+   "label": "Decrease audio track height",
+   "category": "View",
+   "scope": "global"
+  },
+  "view.next_screen": {
+   "label": "Show next screen",
+   "category": "View",
+   "scope": "global"
+  },
+  "view.prev_screen": {
+   "label": "Show previous screen",
+   "category": "View",
+   "scope": "global"
+  },
+  "seq.toggle_video_targets": {
+   "label": "Toggle all video targets",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "seq.toggle_audio_targets": {
+   "label": "Toggle all audio targets",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "seq.toggle_source_video": {
+   "label": "Toggle all source video",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "seq.toggle_source_audio": {
+   "label": "Toggle all source audio",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "clip.volume_up": {
+   "label": "Increase clip volume",
+   "category": "Audio",
+   "scope": "global"
+  },
+  "clip.volume_down": {
+   "label": "Decrease clip volume",
+   "category": "Audio",
+   "scope": "global"
+  },
+  "clip.volume_up_many": {
+   "label": "Increase clip volume many",
+   "category": "Audio",
+   "scope": "global"
+  },
+  "clip.volume_down_many": {
+   "label": "Decrease clip volume many",
+   "category": "Audio",
+   "scope": "global"
+  },
+  "file.new_project": {
+   "label": "New project",
+   "category": "File",
+   "scope": "global"
+  },
+  "file.new_sequence": {
+   "label": "New sequence",
+   "category": "File",
+   "scope": "global"
+  },
+  "file.new_bin": {
+   "label": "New bin",
+   "category": "File",
+   "scope": "global"
+  },
+  "file.new_title": {
+   "label": "New title",
+   "category": "Graphics",
+   "scope": "global"
+  },
+  "graphics.new_shape": {
+   "label": "New shape",
+   "category": "Graphics",
+   "scope": "global"
+  },
+  "graphics.new_adjustment": {
+   "label": "New adjustment layer",
+   "category": "Graphics",
+   "scope": "global"
+  },
+  "file.open": {
+   "label": "Open project",
+   "category": "File",
+   "scope": "global"
+  },
+  "file.close": {
+   "label": "Close project",
+   "category": "File",
+   "scope": "global"
+  },
+  "file.save": {
+   "label": "Save",
+   "category": "File",
+   "scope": "global"
+  },
+  "file.save_as": {
+   "label": "Save as",
+   "category": "File",
+   "scope": "global"
+  },
+  "file.save_copy": {
+   "label": "Save a copy",
+   "category": "File",
+   "scope": "global"
+  },
+  "file.import": {
+   "label": "Import",
+   "category": "File",
+   "scope": "global"
+  },
+  "file.import_folder": {
+   "label": "Import folder",
+   "category": "File",
+   "scope": "global"
+  },
+  "file.export": {
+   "label": "Export media",
+   "category": "File",
+   "scope": "global"
+  },
+  "file.export_frame": {
+   "label": "Export frame",
+   "category": "File",
+   "scope": "global"
+  },
+  "file.properties": {
+   "label": "Properties of selection",
+   "category": "File",
+   "scope": "global"
+  },
+  "file.edit_original": {
+   "label": "Edit original",
+   "category": "File",
+   "scope": "global"
+  },
+  "file.reveal": {
+   "label": "Reveal in Explorer",
+   "category": "File",
+   "scope": "global"
+  },
+  "file.relink": {
+   "label": "Relink missing media",
+   "category": "File",
+   "scope": "global"
+  },
+  "file.restore": {
+   "label": "Restore from a snapshot",
+   "category": "File",
+   "scope": "global"
+  },
+  "file.project_card": {
+   "label": "Project card",
+   "category": "File",
+   "scope": "global"
+  },
+  "file.remove_unused": {
+   "label": "Remove unused media",
+   "category": "File",
+   "scope": "global"
+  },
+  "edit.find": {
+   "label": "Find",
+   "category": "Edit",
+   "scope": "global"
+  },
+  "edit.keyboard_shortcuts": {
+   "label": "Keyboard shortcuts",
+   "category": "Edit",
+   "scope": "global"
+  },
+  "edit.preferences": {
+   "label": "Settings",
+   "category": "Edit",
+   "scope": "global"
+  },
+  "app.palette": {
+   "label": "Command palette",
+   "category": "Help",
+   "scope": "global"
+  },
+  "window.focus_bin": {
+   "label": "Focus Project",
+   "category": "Window",
+   "scope": "global"
+  },
+  "bin.view_list": {
+   "label": "Bin: List view",
+   "category": "Bin",
+   "scope": "bin"
+  },
+  "bin.view_grid": {
+   "label": "Bin: Grid view",
+   "category": "Bin",
+   "scope": "bin"
+  },
+  "bin.view_big": {
+   "label": "Bin: Big grid view",
+   "category": "Bin",
+   "scope": "bin"
+  },
+  "bin.view_board": {
+   "label": "Bin: Board view",
+   "category": "Bin",
+   "scope": "bin"
+  },
+  "bin.view_strips": {
+   "label": "Bin: Strips view",
+   "category": "Bin",
+   "scope": "bin"
+  },
+  "bin.view_colours": {
+   "label": "Bin: Colour wall view",
+   "category": "Bin",
+   "scope": "bin"
+  },
+  "bin.view_recorded": {
+   "label": "Bin: When recorded view",
+   "category": "Bin",
+   "scope": "bin"
+  },
+  "bin.view_used": {
+   "label": "Bin: Used parts view",
+   "category": "Bin",
+   "scope": "bin"
+  },
+  "bin.board_note": {
+   "label": "Board: add a note",
+   "category": "Bin",
+   "scope": "bin"
+  },
+  "bin.board_group": {
+   "label": "Board: add a colour group",
+   "category": "Bin",
+   "scope": "bin"
+  },
+  "bin.board_to_timeline": {
+   "label": "Board: send to the timeline in board order",
+   "category": "Bin",
+   "scope": "bin"
+  },
+  "window.focus_source": {
+   "label": "Focus Source",
+   "category": "Window",
+   "scope": "global"
+  },
+  "window.focus_timeline": {
+   "label": "Focus Timeline",
+   "category": "Window",
+   "scope": "global"
+  },
+  "window.focus_program": {
+   "label": "Focus Program",
+   "category": "Window",
+   "scope": "global"
+  },
+  "window.focus_effect_controls": {
+   "label": "Focus Effect Controls",
+   "category": "Window",
+   "scope": "global"
+  },
+  "window.focus_audio": {
+   "label": "Focus Audio Mixer",
+   "category": "Window",
+   "scope": "global"
+  },
+  "window.focus_effects": {
+   "label": "Focus Effects",
+   "category": "Window",
+   "scope": "global"
+  },
+  "window.focus_media_browser": {
+   "label": "Focus Media Browser",
+   "category": "Window",
+   "scope": "global"
+  },
+  "window.focus_audio_clip_mixer": {
+   "label": "Focus Audio Clip Mixer",
+   "category": "Window",
+   "scope": "global"
+  },
+  "window.workspace_1": {
+   "label": "Workspace: Editing",
+   "category": "Window",
+   "scope": "global"
+  },
+  "window.workspace_2": {
+   "label": "Workspace: Assembly",
+   "category": "Window",
+   "scope": "global"
+  },
+  "window.workspace_3": {
+   "label": "Workspace: Effects",
+   "category": "Window",
+   "scope": "global"
+  },
+  "window.workspace_4": {
+   "label": "Workspace: Audio",
+   "category": "Window",
+   "scope": "global"
+  },
+  "window.workspace_5": {
+   "label": "Workspace: Colour",
+   "category": "Window",
+   "scope": "global"
+  },
+  "window.workspace_6": {
+   "label": "Workspace: Animate",
+   "category": "Window",
+   "scope": "global"
+  },
+  "window.workspace_7": {
+   "label": "Workspace: Export",
+   "category": "Window",
+   "scope": "global"
+  },
+  "window.workspace_8": {
+   "label": "Workspace: Organize",
+   "category": "Window",
+   "scope": "global"
+  },
+  "window.workspace_reset": {
+   "label": "Reset workspace",
+   "category": "Window",
+   "scope": "global"
+  },
+  "window.layout_undo": {
+   "label": "Undo layout change",
+   "category": "Window",
+   "scope": "global"
+  },
+  "window.layout_redo": {
+   "label": "Redo layout change",
+   "category": "Window",
+   "scope": "global"
+  },
+  "window.layout_lock": {
+   "label": "Lock layout",
+   "category": "Window",
+   "scope": "global"
+  },
+  "window.reopen_last_panel": {
+   "label": "Reopen the last closed panel",
+   "category": "Window",
+   "scope": "global"
+  },
+  "window.workspace_reset_saved": {
+   "label": "Reset to saved layout",
+   "category": "Window",
+   "scope": "global"
+  },
+  "window.workspace_save_as": {
+   "label": "Save as new workspace",
+   "category": "Window",
+   "scope": "global"
+  },
+  "window.workspace_rename": {
+   "label": "Rename this workspace",
+   "category": "Window",
+   "scope": "global"
+  },
+  "window.workspace_delete": {
+   "label": "Delete this workspace",
+   "category": "Window",
+   "scope": "global"
+  },
+  "audio.mixer": {
+   "label": "Audio mixer",
+   "category": "Audio",
+   "scope": "global"
+  },
+  "audio.field": {
+   "label": "Audio field",
+   "category": "Audio",
+   "scope": "global"
+  },
+  "file.asset_packs": {
+   "label": "Asset packages",
+   "category": "File",
+   "scope": "global"
+  },
+  "audio.scatter_sounds": {
+   "label": "Scatter sounds",
+   "category": "Audio",
+   "scope": "global"
+  },
+  "help.catalogue": {
+   "label": "Help and feature catalogue",
+   "category": "Help",
+   "scope": "global"
+  },
+  "help.health": {
+   "label": "Health check",
+   "category": "Help",
+   "scope": "global"
+  },
+  "help.about": {
+   "label": "About Purrmiere",
+   "category": "Help",
+   "scope": "global"
+  },
+  "help.stats": {
+   "label": "Statistics",
+   "category": "Help",
+   "scope": "global"
+  },
+  "file.quit": {
+   "label": "Quit",
+   "category": "File",
+   "scope": "global"
+  },
+  "tool.track_area": {
+   "label": "Track area tool",
+   "category": "Tools",
+   "scope": "global"
+  },
+  "tracker.panel": {
+   "label": "Tracker panel",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "tracker.forward": {
+   "label": "Tracker: track forward to the end of the range",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "tracker.backward": {
+   "label": "Tracker: track backward to the start of the range",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "tracker.step_forward": {
+   "label": "Tracker: track forward one frame",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "tracker.step_backward": {
+   "label": "Tracker: track backward one frame",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "tracker.stop": {
+   "label": "Tracker: stop tracking",
+   "category": "Clip",
+   "scope": "global"
+  }
+ }
+}

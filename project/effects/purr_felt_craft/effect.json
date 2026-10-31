@@ -1,0 +1,18 @@
+{
+ "id": "purr_felt_craft",
+ "label": "Felt Craft",
+ "category": "Purrmiere",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Rebuilds the picture from pieces of felt: flat fuzzy colour patches with fibres poking over the edges, a soft fabric texture and running stitches in thread along the outlines.",
+ "params": [
+  {"key": "levels", "label": "Colour steps", "type": "int", "min": 2, "max": 8, "step": 1, "default": 4},
+  {"key": "fuzz", "label": "Fuzzy edge", "type": "float", "min": 0.0, "max": 12.0, "step": 0.1, "default": 3.0, "unit": " px"},
+  {"key": "fibre", "label": "Fabric texture", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "stitch", "label": "Stitches", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.8},
+  {"key": "stitch_len", "label": "Stitch length", "type": "float", "min": 2.0, "max": 30.0, "step": 0.1, "default": 7.0, "unit": " px"},
+  {"key": "thread", "label": "Thread", "type": "color", "default": [0.98, 0.95, 0.9, 1.0]},
+  {"key": "saturation", "label": "Colour", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 1.2}
+ ],
+ "passes": "single"
+}

@@ -1,0 +1,40 @@
+[configuration]
+
+entry_symbol = "purrcore_library_init"
+compatibility_minimum = "4.3"
+reloadable = false
+
+[libraries]
+
+windows.editor.x86_64 = "res://addons/purrcore/bin/purrcore.windows.template_debug.x86_64.dll"
+windows.template_debug.x86_64 = "res://addons/purrcore/bin/purrcore.windows.template_debug.x86_64.dll"
+windows.template_release.x86_64 = "res://addons/purrcore/bin/purrcore.windows.template_release.x86_64.dll"
+linux.editor.x86_64 = "res://addons/purrcore/bin/libpurrcore.linux.template_debug.x86_64.so"
+linux.template_debug.x86_64 = "res://addons/purrcore/bin/libpurrcore.linux.template_debug.x86_64.so"
+
+[dependencies]
+
+windows.editor.x86_64 = {
+	"res://addons/purrcore/bin/avcodec-63.dll": "",
+	"res://addons/purrcore/bin/avformat-63.dll": "",
+	"res://addons/purrcore/bin/avfilter-12.dll": "",
+	"res://addons/purrcore/bin/avutil-61.dll": "",
+	"res://addons/purrcore/bin/swscale-10.dll": "",
+	"res://addons/purrcore/bin/swresample-7.dll": ""
+}
+windows.template_debug.x86_64 = {
+	"res://addons/purrcore/bin/avcodec-63.dll": "",
+	"res://addons/purrcore/bin/avformat-63.dll": "",
+	"res://addons/purrcore/bin/avfilter-12.dll": "",
+	"res://addons/purrcore/bin/avutil-61.dll": "",
+	"res://addons/purrcore/bin/swscale-10.dll": "",
+	"res://addons/purrcore/bin/swresample-7.dll": ""
+}
+windows.template_release.x86_64 = {
+	"res://addons/purrcore/bin/avcodec-63.dll": "",
+	"res://addons/purrcore/bin/avformat-63.dll": "",
+	"res://addons/purrcore/bin/avfilter-12.dll": "",
+	"res://addons/purrcore/bin/avutil-61.dll": "",
+	"res://addons/purrcore/bin/swscale-10.dll": "",
+	"res://addons/purrcore/bin/swresample-7.dll": ""
+}

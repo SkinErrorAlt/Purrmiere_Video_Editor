@@ -1,0 +1,16 @@
+{
+ "id": "split_tone",
+ "label": "Split Tone",
+ "category": "Colour Correction",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Warms the bright parts one way and the dark parts another, the classic teal and orange grade.",
+ "params": [
+  {"key": "shadow_colour", "label": "Shadow colour", "type": "color", "default": [0.15, 0.35, 0.45, 1.0]},
+  {"key": "highlight_colour", "label": "Highlight colour", "type": "color", "default": [1.0, 0.72, 0.45, 1.0]},
+  {"key": "balance", "label": "Where they meet", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "keep_luma", "label": "Keep the brightness", "type": "bool", "default": true}
+ ],
+ "passes": "single"
+}

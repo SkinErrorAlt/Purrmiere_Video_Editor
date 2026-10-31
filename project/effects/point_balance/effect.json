@@ -1,0 +1,21 @@
+{
+ "id": "point_balance",
+ "label": "Balance by Points",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "The eyedroppers of a grading suite, placed on the picture: drag the grey point onto something that should be neutral (a wall, a grey card, a white shirt in shade) and the cast leaves the whole shot. The black and white points set what counts as black and white, per colour, like Levels by picking. Give the grey point a colour instead of grey to turn a known surface to that colour.",
+ "params": [
+  {"key": "grey_on", "label": "Use the grey point", "type": "bool", "default": true},
+  {"key": "grey_point", "label": "Grey point", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "grey_target", "label": "Grey point becomes", "type": "color", "default": [0.5, 0.5, 0.5, 1.0]},
+  {"key": "black_on", "label": "Use the black point", "type": "bool", "default": false},
+  {"key": "black_point", "label": "Black point", "type": "vec2", "default": [0.1, 0.9]},
+  {"key": "white_on", "label": "Use the white point", "type": "bool", "default": false},
+  {"key": "white_point", "label": "White point", "type": "vec2", "default": [0.9, 0.1]},
+  {"key": "sample_size", "label": "Sample size", "type": "float", "min": 1.0, "max": 40.0, "step": 0.5, "default": 8.0, "unit": " px"},
+  {"key": "amount", "label": "Amount", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "mark", "label": "Mark the points", "type": "bool", "default": false}
+ ],
+ "handles": [{"kind": "point", "key": "grey_point"}, {"kind": "point", "key": "black_point"}, {"kind": "point", "key": "white_point"}, {"kind": "ring", "key": "sample_size", "about": "grey_point", "unit": "px", "scale": 2.0, "shape": "box"}, {"kind": "ring", "key": "sample_size", "about": "black_point", "unit": "px", "scale": 2.0, "shape": "box"}, {"kind": "ring", "key": "sample_size", "about": "white_point", "unit": "px", "scale": 2.0, "shape": "box"}],
+ "passes": "single"
+}

@@ -1,0 +1,15 @@
+{
+ "id": "exposure_blowout",
+ "label": "Exposure",
+ "group": "Light and Film",
+ "space": "2D",
+ "from": ["CapCut Overexposure"],
+ "blurb": "The outgoing picture is overexposed stop by stop until the highlights bleach and the frame burns out to white, then the incoming picture's exposure comes back down to normal, a little slower than it went up.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "stops", "label": "Stops", "type": "float", "min": 0, "max": 8, "step": 0.1, "default": 4},
+  {"key": "whiteout", "label": "Burn out", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 1},
+  {"key": "colour", "label": "Colour", "type": "color", "default": [1, 0.98, 0.94, 1]},
+  {"key": "bloom", "label": "Lift", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5}
+ ]
+}

@@ -1,0 +1,19 @@
+{
+ "id": "frame_check",
+ "label": "Frame Check",
+ "category": "Utility",
+ "tags": ["measure"],
+ "version": 1,
+ "blurb": "A test strip for finding dropped or doubled frames in playback and in exported files: the frame number in big digits, a row of ten lamps for the ones and ten for the tens, a light that steps one place along the bottom every frame, and a square that flashes on each whole second. Play it or scrub the export frame by frame: a skipped or repeated step is a dropped or doubled frame. Uses the sequence frame rate unless you pick another.",
+ "params": [
+  {"key": "count", "label": "Count", "type": "enum", "choices": ["Sequence frames", "Clip frames"], "default": 0},
+  {"key": "rate", "label": "Frame rate", "type": "enum", "choices": ["The sequence rate", "23.976", "24", "25", "29.97", "30", "50", "59.94", "60", "120"], "default": 0},
+  {"key": "place", "label": "Where", "type": "enum", "choices": ["Along the bottom", "Along the top"], "default": 0},
+  {"key": "size", "label": "Size", "type": "float", "min": 0.5, "max": 2.0, "step": 0.01, "default": 1.0},
+  {"key": "backdrop", "label": "Backdrop", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.9},
+  {"key": "lamp_colour", "label": "Lamp colour", "type": "color", "default": [0.3, 1.0, 0.45, 1.0]}
+ ],
+ "passes": [
+  {"shader": "check.gdshader"}
+ ]
+}

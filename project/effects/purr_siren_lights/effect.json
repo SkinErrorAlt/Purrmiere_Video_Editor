@@ -1,0 +1,17 @@
+{
+ "id": "purr_siren_lights",
+ "label": "Siren Lights",
+ "category": "Purrmiere",
+ "tags": ["light"],
+ "version": 1,
+ "blurb": "Flashing emergency lights wash over the scene: red and blue alternating from each side with a double strobe, filling the whole frame, or sweeping round like a rotating beacon.",
+ "params": [
+  {"key": "colour_a", "label": "First light", "type": "color", "default": [1.0, 0.08, 0.12, 1.0]},
+  {"key": "colour_b", "label": "Second light", "type": "color", "default": [0.1, 0.3, 1.0, 1.0]},
+  {"key": "mode", "label": "Pattern", "type": "enum", "default": 0, "choices": ["Alternate sides", "Whole frame", "Rotating beacon"]},
+  {"key": "rate", "label": "Flashes per second", "type": "float", "min": 0.1, "max": 8.0, "step": 0.01, "default": 1.5},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.9},
+  {"key": "darken", "label": "Darken the scene", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3}
+ ],
+ "passes": "single"
+}

@@ -1,0 +1,69 @@
+{
+ "id": "audio_spin",
+ "label": "Spin",
+ "category": "Audio Reactive",
+ "tags": [
+  "audio",
+  "music",
+  "beat",
+  "reactive",
+  "visualiser"
+ ],
+ "version": 1,
+ "blurb": "The picture turns with the sound, by up to Turn at the loudest point. Drop a clip from the timeline, or a file from the bin or the Source monitor, on its Sound well.",
+ "params": [
+  {
+   "key": "degrees",
+   "label": "Turn",
+   "type": "float",
+   "min": -360,
+   "max": 360,
+   "step": 0.1,
+   "default": 12,
+   "unit": " deg"
+  },
+  {
+   "key": "anchor",
+   "label": "Centre",
+   "type": "vec2",
+   "default": [
+    0.5,
+    0.5
+   ]
+  },
+  {
+   "key": "edges",
+   "label": "Edges",
+   "type": "enum",
+   "choices": [
+    "Transparent",
+    "Mirror",
+    "Repeat",
+    "Stretch"
+   ],
+   "default": 1
+  }
+ ],
+ "passes": [
+  {
+   "shader": "res://effects/audio_pulse_scale/motion.gdshader"
+  }
+ ],
+ "reactive": {
+  "defaults": {
+   "snd_band": 1
+  },
+  "drive": {
+   "angle": {
+    "rest": 0,
+    "peak": "degrees"
+   }
+  }
+ },
+ "handles": [
+  {
+   "kind": "point",
+   "key": "anchor"
+  }
+ ]
+}

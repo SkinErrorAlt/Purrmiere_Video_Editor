@@ -1,0 +1,23 @@
+{
+ "id": "purr_marker_circle",
+ "label": "Marker Circle",
+ "category": "Purrmiere",
+ "tags": ["graphic"],
+ "version": 1,
+ "blurb": "A hand drawn marker loop circles something in the shot, drawing itself round with a slight overshoot and a wobbly hand, the way creators circle things in tutorials and reactions.",
+ "params": [
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "size_x", "label": "Width", "type": "float", "min": 0.02, "max": 1.0, "step": 0.001, "default": 0.16},
+  {"key": "size_y", "label": "Height", "type": "float", "min": 0.02, "max": 1.0, "step": 0.001, "default": 0.12},
+  {"key": "draw", "label": "Draw", "type": "float", "min": 0.0, "max": 1.0, "step": 0.001, "default": 1.0},
+  {"key": "timing", "label": "Timing", "type": "enum", "default": 1, "choices": ["Follow Draw", "Draw at the clip start"]},
+  {"key": "auto_len", "label": "Draw time", "type": "float", "min": 0.1, "max": 5.0, "step": 0.01, "default": 0.6, "unit": " s"},
+  {"key": "colour", "label": "Marker colour", "type": "color", "default": [0.95, 0.15, 0.22, 1.0]},
+  {"key": "width", "label": "Marker width", "type": "float", "min": 1.0, "max": 40.0, "step": 0.1, "default": 8.0, "unit": " px"},
+  {"key": "overshoot", "label": "Overshoot", "type": "float", "min": 0.0, "max": 0.5, "step": 0.001, "default": 0.15},
+  {"key": "wobble", "label": "Wobble", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 999, "step": 1, "default": 0}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}, {"kind": "ring", "key": "size_x", "key_y": "size_y", "about": "centre", "unit": "uv"}],
+ "passes": "single"
+}

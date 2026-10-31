@@ -1,0 +1,14 @@
+{
+ "id": "linear_blur",
+ "label": "Linear Blur",
+ "group": "Zoom and Camera",
+ "space": "2D",
+ "from": ["gl LinearBlur"],
+ "blurb": "Both pictures blur out towards the middle of the transition while they swap, then come back sharp.",
+ "default_duration": 0.8,
+ "params": [
+  {"key": "intensity", "label": "Blur", "type": "float", "min": 0, "max": 0.4, "step": 0.005, "default": 0.1},
+  {"key": "shape", "label": "Blur shape", "type": "enum", "choices": ["Box", "Sideways", "Up and down"], "default": 0},
+  {"key": "timing", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 0}
+ ]
+}

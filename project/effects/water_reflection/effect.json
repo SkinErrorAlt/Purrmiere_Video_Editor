@@ -1,0 +1,23 @@
+{
+ "id": "water_reflection",
+ "label": "Water Reflection",
+ "category": "Light & Shadow",
+ "version": 1,
+ "blurb": "The picture is reflected below a horizon line as on a lake. The reflection is a little darker and tinted towards the water colour, broken by ripples that squeeze together towards the horizon and widen towards the viewer, so upright edges wobble sideways. Wave speed sets the water moving. By default the water replaces the lower part of the frame; Keep the picture under it lays the water over the picture instead.",
+ "params": [
+  {"key": "horizon", "label": "Horizon height", "type": "float", "min": 0.05, "max": 0.95, "step": 0.001, "default": 0.55},
+  {"key": "ripple_size", "label": "Ripple size", "type": "float", "min": 0.01, "max": 0.5, "step": 0.001, "default": 0.08},
+  {"key": "strength", "label": "Ripple strength", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.35},
+  {"key": "perspective", "label": "Perspective", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.75},
+  {"key": "speed", "label": "Wave speed", "type": "float", "min": 0, "max": 3, "step": 0.01, "default": 0.5},
+  {"key": "water_colour", "label": "Water colour", "type": "color", "default": [0.07, 0.2, 0.27, 1.0]},
+  {"key": "water_amount", "label": "Water amount", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.3},
+  {"key": "brightness", "label": "Reflection brightness", "type": "float", "min": 0, "max": 1.5, "step": 0.01, "default": 0.82},
+  {"key": "blur", "label": "Blur", "type": "float", "min": 0, "max": 40, "step": 0.1, "default": 3, "unit": " px"},
+  {"key": "keep_under", "label": "Keep the picture under it", "type": "bool", "default": false}
+ ],
+ "handles": [{"kind": "band", "key": "horizon"}],
+ "passes": [
+  {"shader": "water.gdshader"}
+ ]
+}

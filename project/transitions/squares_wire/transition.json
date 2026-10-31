@@ -1,0 +1,15 @@
+{
+ "id": "squares_wire",
+ "label": "Squares Wire",
+ "group": "Wipe",
+ "space": "2D",
+ "from": ["gl-transitions squareswire"],
+ "blurb": "A grid of squares of the incoming picture grows from their centres, sweeping across the frame at an angle.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "columns", "label": "Columns", "type": "int", "min": 2, "max": 60, "step": 1, "default": 10},
+  {"key": "rows", "label": "Rows", "type": "int", "min": 2, "max": 60, "step": 1, "default": 10},
+  {"key": "angle", "label": "Direction", "type": "float", "min": -180, "max": 180, "step": 1, "default": 27, "unit": " deg"},
+  {"key": "smoothness", "label": "Spread", "type": "float", "min": 0, "max": 3, "step": 0.05, "default": 1.6}
+ ]
+}

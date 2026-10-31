@@ -1,0 +1,16 @@
+{
+ "id": "anamorphic_desqueeze",
+ "label": "Anamorphic Desqueeze",
+ "category": "Transform",
+ "tags": ["repair"],
+ "version": 1,
+ "blurb": "Unsqueezes footage shot through an anamorphic lens or adapter, which squashes a wide view sideways onto the sensor, so round things are round again. Pick the lens's squeeze, then fit the wide picture inside the frame with bars above and below, or fill the frame and choose which part of the width to keep.",
+ "params": [
+  {"key": "squeeze", "label": "Squeeze", "type": "enum", "choices": ["1.25x", "1.33x", "1.5x", "1.55x", "1.6x", "1.8x", "2x", "Your own"], "default": 1},
+  {"key": "own_squeeze", "label": "Your own squeeze", "type": "float", "min": 1.0, "max": 3.0, "step": 0.01, "default": 1.33, "unit": "x"},
+  {"key": "fit", "label": "Fit", "type": "enum", "choices": ["Fit inside, bars above and below", "Fill the frame, crop the sides"], "default": 0},
+  {"key": "pan", "label": "Part to keep", "type": "float", "min": -1.0, "max": 1.0, "step": 0.01, "default": 0.0},
+  {"key": "bars", "label": "Bar colour", "type": "color", "default": [0.0, 0.0, 0.0, 1.0]}
+ ],
+ "passes": "single"
+}

@@ -1,0 +1,15 @@
+{
+ "id": "gamut_compress",
+ "label": "Gamut Compress",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Brings the most saturated colours in smoothly instead of letting them clip into flat blobs: neon signs, LED lights, lasers and game effects keep their detail and shading. Colours below the start point are not touched. If the clip was recorded in Rec.2020 or Display P3, say so and those colours are converted and then brought in the same way (the ACES gamut compression method).",
+ "params": [
+  {"key": "source", "label": "Colours are in", "type": "enum", "choices": ["Rec.709", "Rec.2020", "Display P3"], "default": 0},
+  {"key": "threshold", "label": "Start compressing at", "type": "float", "min": 0.5, "max": 0.99, "step": 0.01, "default": 0.8},
+  {"key": "limit", "label": "Bring in colours out to", "type": "float", "min": 1.0, "max": 2.0, "step": 0.01, "default": 1.25},
+  {"key": "power", "label": "Curve", "type": "float", "min": 1.0, "max": 3.0, "step": 0.01, "default": 1.2},
+  {"key": "show", "label": "Show what moves", "type": "bool", "default": false}
+ ],
+ "passes": "single"
+}

@@ -1,0 +1,19 @@
+{
+ "id": "page_flip",
+ "label": "Page Flip",
+ "group": "3D",
+ "space": "3D",
+ "from": ["Keynote Page Flip"],
+ "blurb": "The outgoing picture turns over like a book page: its edge curls up and rolls across, showing the back of the page, until the incoming picture beneath is uncovered.",
+ "default_duration": 1.4,
+ "params": [
+  {"key": "direction", "label": "Turns towards", "type": "enum", "choices": ["Left", "Right"], "default": 0},
+  {"key": "radius", "label": "Curl size", "type": "float", "min": 0.03, "max": 0.5, "step": 0.01, "default": 0.16},
+  {"key": "tilt", "label": "Tilt", "type": "float", "min": -30, "max": 30, "step": 1, "default": 6, "unit": " deg"},
+  {"key": "back_face", "label": "Back of the page", "type": "enum", "choices": ["Picture", "Plain paper"], "default": 0},
+  {"key": "paper", "label": "Paper colour", "type": "color", "default": [0.96, 0.95, 0.92, 1]},
+  {"key": "shadow", "label": "Shadow", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

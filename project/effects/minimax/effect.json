@@ -1,0 +1,16 @@
+{
+ "id": "minimax",
+ "label": "Minimax",
+ "category": "Channel",
+ "version": 1,
+ "blurb": "Gives each pixel the darkest or brightest value within a radius: shrinks or grows bright areas, thickens lines, or chokes and spreads an alpha.",
+ "params": [
+  {"key": "operation", "label": "Operation", "type": "enum", "choices": ["Minimum", "Maximum"], "default": 1},
+  {"key": "radius", "label": "Radius", "type": "float", "min": 0, "max": 40, "step": 0.1, "default": 3, "unit": " px"},
+  {"key": "channels", "label": "Channels", "type": "enum", "choices": ["Colour", "Alpha", "Colour and alpha"], "default": 0}
+ ],
+ "passes": [
+  {"shader": "minimax.gdshader", "set": {"direction": [1.0, 0.0]}},
+  {"shader": "minimax.gdshader", "set": {"direction": [0.0, 1.0]}}
+ ]
+}

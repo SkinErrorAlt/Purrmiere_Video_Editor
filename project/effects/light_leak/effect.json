@@ -1,0 +1,17 @@
+{
+ "id": "light_leak",
+ "label": "Light Leak",
+ "category": "Light & Shadow",
+ "tags": ["light"],
+ "version": 1,
+ "blurb": "A soft wash of colour bleeding in from one edge, the way light does when it gets into the back of a camera.",
+ "params": [
+  {"key": "colour", "label": "Colour", "type": "color", "default": [1.0, 0.55, 0.25, 1.0]},
+  {"key": "edge", "label": "Which edge", "type": "enum", "default": 1, "choices": ["Left", "Right", "Top", "Bottom"]},
+  {"key": "reach", "label": "How far in", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.7},
+  {"key": "softness", "label": "Softness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "flicker", "label": "Flicker", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.0}
+ ],
+ "passes": "single"
+}

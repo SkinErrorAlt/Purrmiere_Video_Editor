@@ -1,0 +1,18 @@
+{
+ "id": "blink",
+ "label": "Blink",
+ "group": "Shape",
+ "space": "2D",
+ "from": ["CapCut Blink", "Resolve Eye Iris", "point of view blink edits"],
+ "blurb": "A point of view blink: two soft curved eyelids close quickly from top and bottom while the picture goes out of focus, stay shut for a moment, then open more slowly on the incoming picture as it comes back into focus. Two blinks gives the waking up double blink.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "blinks", "label": "Blinks", "type": "int", "min": 1, "max": 2, "step": 1, "default": 1},
+  {"key": "hold", "label": "Eyes shut", "type": "float", "min": 0, "max": 0.5, "step": 0.01, "default": 0.12},
+  {"key": "lid_curve", "label": "Lid curve", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "softness", "label": "Softness", "type": "float", "min": 0.02, "max": 0.4, "step": 0.01, "default": 0.16},
+  {"key": "blur", "label": "Defocus", "type": "float", "min": 0, "max": 80, "step": 1, "default": 28, "unit": " px"},
+  {"key": "colour", "label": "Lid colour", "type": "color", "default": [0.03, 0.012, 0.01, 1]},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Natural", "Even"], "default": 0}
+ ]
+}

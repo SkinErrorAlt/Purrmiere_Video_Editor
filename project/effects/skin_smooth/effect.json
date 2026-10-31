@@ -1,0 +1,20 @@
+{
+ "id": "skin_smooth",
+ "label": "Skin Smoothing",
+ "category": "Blur & Sharpen",
+ "version": 1,
+ "blurb": "An edge keeping blur that only touches colours close to skin tones, so faces soften while eyes, hair and the background stay sharp.",
+ "params": [
+  {"key": "amount", "label": "Amount", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.7},
+  {"key": "radius", "label": "Radius", "type": "float", "min": 1, "max": 30, "step": 0.1, "default": 8, "unit": " px"},
+  {"key": "detail", "label": "Detail", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.3},
+  {"key": "skin_hue", "label": "Skin hue", "type": "float", "min": 0, "max": 360, "step": 1, "default": 22, "unit": " deg"},
+  {"key": "skin_width", "label": "Skin range", "type": "float", "min": 5, "max": 120, "step": 1, "default": 40, "unit": " deg"},
+  {"key": "show_mask", "label": "Show mask", "type": "bool", "default": false}
+ ],
+ "passes": [
+  {"shader": "bilateral.gdshader", "set": {"axis": [1.0, 0.0]}},
+  {"shader": "bilateral.gdshader", "set": {"axis": [0.0, 1.0]}},
+  {"shader": "compose.gdshader"}
+ ]
+}

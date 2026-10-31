@@ -1,0 +1,18 @@
+{
+ "id": "reticulation",
+ "label": "Reticulation",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Prints the picture in two colours as if the film emulsion shrank and cracked in the developer: clumped grain in the shadows, light grain in the highlights.",
+ "params": [
+  {"key": "density", "label": "Density", "type": "float", "min": 0.0, "max": 50.0, "step": 0.1, "default": 12.0},
+  {"key": "foreground_level", "label": "Ink level", "type": "float", "min": 0.0, "max": 50.0, "step": 0.1, "default": 40.0},
+  {"key": "background_level", "label": "Paper level", "type": "float", "min": 0.0, "max": 50.0, "step": 0.1, "default": 5.0},
+  {"key": "ink", "label": "Ink", "type": "color", "default": [0.0, 0.0, 0.0, 1.0]},
+  {"key": "paper", "label": "Paper", "type": "color", "default": [1.0, 1.0, 1.0, 1.0]},
+  {"key": "moving", "label": "New grain every frame", "type": "bool", "default": false},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

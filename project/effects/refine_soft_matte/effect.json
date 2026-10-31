@@ -1,0 +1,18 @@
+{
+ "id": "refine_soft_matte",
+ "label": "Refine Soft Matte",
+ "category": "Keying",
+ "version": 1,
+ "blurb": "Rebuilds the soft edge of a key from the original picture with a guided filter, so a hard, jagged key edge turns into the real soft edge of hair, fur and motion blur. Put it straight after the keyer, before anything that moves the picture, because it reads the clip as it came in. Detail sets how closely the new edge follows the picture; the colour of new edge pixels is taken from just inside the subject with the screen colour taken off, so no green or blue comes back.",
+ "params": [
+  {"key": "guide_from", "label": "Follow", "type": "enum", "choices": ["Green screen", "Blue screen", "Brightness"], "default": 0},
+  {"key": "size", "label": "Edge reach", "type": "float", "min": 1.0, "max": 30.0, "step": 0.1, "default": 8.0, "unit": " px"},
+  {"key": "detail", "label": "Detail", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.8},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "show_matte", "label": "Show the matte", "type": "bool", "default": false}
+ ],
+ "passes": [
+  {"shader": "stats.gdshader"},
+  {"shader": "apply.gdshader"}
+ ]
+}

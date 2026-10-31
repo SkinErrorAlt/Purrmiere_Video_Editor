@@ -1,0 +1,19 @@
+{
+ "id": "purr_stage_curtains",
+ "label": "Stage Curtains",
+ "category": "Purrmiere",
+ "tags": ["graphic"],
+ "version": 1,
+ "blurb": "Heavy red theatre curtains sweep across from both sides with deep folds and a gold trim. Set Timing to reveal at the clip start and the curtains open on your shot like the start of a show.",
+ "params": [
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0.0, "max": 1.0, "step": 0.001, "default": 0.5},
+  {"key": "timing", "label": "Timing", "type": "enum", "choices": ["Follow Progress", "Reveal at the clip start", "Hide at the clip end"], "default": 0},
+  {"key": "auto_len", "label": "Automatic length", "type": "float", "min": 0.05, "max": 10.0, "step": 0.01, "default": 1.0, "unit": " s"},
+  {"key": "fabric", "label": "Curtain colour", "type": "color", "default": [0.62, 0.04, 0.08, 1.0]},
+  {"key": "trim", "label": "Trim colour", "type": "color", "default": [0.95, 0.75, 0.3, 1.0]},
+  {"key": "folds", "label": "Folds", "type": "int", "min": 3, "max": 30, "step": 1, "default": 10},
+  {"key": "sway", "label": "Sway", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "valance", "label": "Top drape", "type": "bool", "default": false}
+ ],
+ "passes": "single"
+}

@@ -1,0 +1,16 @@
+{
+ "id": "edge_repair",
+ "label": "Edge Repair",
+ "category": "Image Control",
+ "tags": ["repair"],
+ "version": 1,
+ "blurb": "Covers damaged lines along the edges of the picture without cropping or zooming: the torn noise strip at the bottom of a tape capture, black or garbage lines a capture card leaves at the sides, a half line at the top of old broadcast video. Each edge takes a number of lines, filled by repeating the last good line, mirroring the picture, or repeating it more softly further out. Head Switching adds the torn strip; this hides it.",
+ "params": [
+  {"key": "left", "label": "Left", "type": "float", "min": 0.0, "max": 64.0, "step": 0.5, "default": 0.0, "unit": " px"},
+  {"key": "top", "label": "Top", "type": "float", "min": 0.0, "max": 64.0, "step": 0.5, "default": 0.0, "unit": " px"},
+  {"key": "right", "label": "Right", "type": "float", "min": 0.0, "max": 64.0, "step": 0.5, "default": 0.0, "unit": " px"},
+  {"key": "bottom", "label": "Bottom", "type": "float", "min": 0.0, "max": 64.0, "step": 0.5, "default": 8.0, "unit": " px"},
+  {"key": "fill", "label": "Fill with", "type": "enum", "choices": ["Soft repeat", "Repeat the last good line", "Mirror", "Black"], "default": 0}
+ ],
+ "passes": "single"
+}

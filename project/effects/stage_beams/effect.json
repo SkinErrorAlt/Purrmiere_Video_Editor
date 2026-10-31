@@ -1,0 +1,25 @@
+{
+ "id": "stage_beams",
+ "label": "Stage Beams",
+ "category": "Light & Shadow",
+ "tags": ["light"],
+ "version": 1,
+ "blurb": "Visible cones of light from moving stage lights above (or below) the frame, cutting through drifting haze, sweeping and crossing in time. Each beam is brightest at its lamp and fades with distance, with soft edges, and where beams cross they add up. Darken the scene sinks the picture so the beams carry it, like a concert or a club.",
+ "params": [
+  {"key": "count", "label": "Beam count", "type": "int", "min": 1, "max": 12, "step": 1, "default": 6},
+  {"key": "palette", "label": "Colours", "type": "enum", "choices": ["Rainbow", "Two colours", "One colour"], "default": 0},
+  {"key": "colour_a", "label": "Colour", "type": "color", "default": [0.25, 0.55, 1.0, 1.0]},
+  {"key": "colour_b", "label": "Second colour", "type": "color", "default": [1.0, 0.25, 0.75, 1.0]},
+  {"key": "width", "label": "Beam width", "type": "float", "min": 1, "max": 30, "step": 0.1, "default": 8, "unit": " deg"},
+  {"key": "speed", "label": "Sweep speed", "type": "float", "min": 0, "max": 3, "step": 0.01, "default": 0.45},
+  {"key": "range", "label": "Sweep range", "type": "float", "min": 0, "max": 80, "step": 0.5, "default": 32, "unit": " deg"},
+  {"key": "haze", "label": "Haze", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "sources", "label": "Sources at", "type": "enum", "choices": ["Top", "Bottom"], "default": 0},
+  {"key": "intensity", "label": "Intensity", "type": "float", "min": 0, "max": 3, "step": 0.01, "default": 1.0},
+  {"key": "darken", "label": "Darken the scene", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.35},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 3}
+ ],
+ "passes": [
+  {"shader": "beams.gdshader"}
+ ]
+}

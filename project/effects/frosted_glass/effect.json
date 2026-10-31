@@ -1,0 +1,18 @@
+{
+ "id": "frosted_glass",
+ "label": "Frosted Glass",
+ "category": "Distort",
+ "version": 1,
+ "blurb": "Looks through frosted glass: every pixel takes its colour from a random spot nearby, with optional bumps that bend the picture and a few taps to soften it.",
+ "params": [
+  {"key": "amount", "label": "Amount", "type": "float", "min": 0, "max": 100, "step": 0.5, "default": 8, "unit": " px"},
+  {"key": "bumps", "label": "Bumps", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.3},
+  {"key": "bump_size", "label": "Bump size", "type": "float", "min": 4, "max": 400, "step": 1, "default": 60, "unit": " px"},
+  {"key": "blur", "label": "Blur", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.4},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0},
+  {"key": "animate", "label": "Changes per second", "type": "float", "min": 0, "max": 30, "step": 0.1, "default": 0}
+ ],
+ "passes": [
+  {"shader": "frosted.gdshader"}
+ ]
+}

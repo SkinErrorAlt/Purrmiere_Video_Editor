@@ -1,0 +1,14 @@
+{
+ "id": "solid_composite",
+ "label": "Solid Composite",
+ "category": "Channel",
+ "version": 1,
+ "blurb": "Puts a flat colour behind or in front of the picture, blended the way you choose.",
+ "params": [
+  {"key": "colour", "label": "Colour", "type": "color", "default": [0.0, 0.0, 0.0, 1.0]},
+  {"key": "behind", "label": "Behind the picture", "type": "bool", "default": true},
+  {"key": "blend", "label": "Blend", "type": "enum", "default": 0, "choices": ["Normal", "Multiply", "Screen", "Overlay"]},
+  {"key": "opacity", "label": "Opacity", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0}
+ ],
+ "passes": "single"
+}

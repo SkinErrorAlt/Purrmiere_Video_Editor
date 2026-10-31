@@ -1,0 +1,15 @@
+{
+ "id": "cover",
+ "label": "Cover",
+ "group": "Slide and Push",
+ "space": "2D",
+ "from": ["PowerPoint Cover", "Keynote Move In"],
+ "blurb": "The incoming picture slides in over the outgoing one, which stays still underneath. A soft shadow can trail along its leading edge.",
+ "default_duration": 0.8,
+ "params": [
+  {"key": "direction", "label": "From", "type": "enum", "choices": ["Right", "Left", "Bottom", "Top", "Bottom right", "Bottom left", "Top right", "Top left"], "default": 0},
+  {"key": "timing", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth", "Strong", "Slow end", "Overshoot", "Bounce"], "default": 1},
+  {"key": "shadow", "label": "Shadow", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0},
+  {"key": "shadow_size", "label": "Shadow size", "type": "float", "min": 0, "max": 0.5, "step": 0.01, "default": 0.08}
+ ]
+}

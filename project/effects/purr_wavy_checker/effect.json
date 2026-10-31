@@ -1,0 +1,20 @@
+{
+ "id": "purr_wavy_checker",
+ "label": "Wavy Checker",
+ "category": "Purrmiere",
+ "tags": ["graphic"],
+ "version": 1,
+ "blurb": "A retro checkerboard that ripples and scrolls, flat or laid out as a floor running to the horizon. A fun backdrop for cut outs, intros and Y2K style edits.",
+ "params": [
+  {"key": "colour_a", "label": "First colour", "type": "color", "default": [1.0, 0.55, 0.75, 1.0]},
+  {"key": "colour_b", "label": "Second colour", "type": "color", "default": [1.0, 0.95, 0.85, 1.0]},
+  {"key": "size", "label": "Square size", "type": "float", "min": 10.0, "max": 400.0, "step": 0.5, "default": 80.0, "unit": " px"},
+  {"key": "wave", "label": "Ripple", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "speed", "label": "Scroll", "type": "float", "min": -3.0, "max": 3.0, "step": 0.01, "default": 0.4},
+  {"key": "angle", "label": "Turn", "type": "float", "min": -180.0, "max": 180.0, "step": 1.0, "default": 20.0, "unit": " deg"},
+  {"key": "floor", "label": "Floor perspective", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.0},
+  {"key": "placement", "label": "Placement", "type": "enum", "default": 2, "choices": ["Behind the clip", "Over the clip", "Replace the clip"]}
+ ],
+ "handles": [{"kind": "angle", "key": "angle", "zero": "right", "turn": "ccw"}],
+ "passes": "single"
+}

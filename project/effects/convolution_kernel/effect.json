@@ -1,0 +1,17 @@
+{
+ "id": "convolution_kernel",
+ "label": "Convolution Kernel",
+ "category": "Image Control",
+ "version": 1,
+ "blurb": "Runs a 3 by 3 matrix over the picture: sharpen, blur, emboss or edge kernels, scaled by a divisor and shifted by an offset.",
+ "params": [
+  {"key": "top", "label": "Top row", "type": "vec3", "min": -20, "max": 20, "step": 0.1, "default": [0.0, -1.0, 0.0]},
+  {"key": "middle", "label": "Middle row", "type": "vec3", "min": -20, "max": 20, "step": 0.1, "default": [-1.0, 5.0, -1.0]},
+  {"key": "bottom", "label": "Bottom row", "type": "vec3", "min": -20, "max": 20, "step": 0.1, "default": [0.0, -1.0, 0.0]},
+  {"key": "divisor", "label": "Divide by", "type": "float", "min": 0.01, "max": 100, "step": 0.01, "default": 1.0},
+  {"key": "offset", "label": "Offset", "type": "float", "min": -1, "max": 1, "step": 0.01, "default": 0.0},
+  {"key": "spread", "label": "Tap spacing", "type": "float", "min": 0.5, "max": 10, "step": 0.1, "default": 1.0, "unit": " px"},
+  {"key": "use_absolute", "label": "Absolute values", "type": "bool", "default": false}
+ ],
+ "passes": "single"
+}

@@ -1,0 +1,16 @@
+{
+ "id": "crystallize",
+ "label": "Crystallize",
+ "category": "Stylize",
+ "version": 1,
+ "blurb": "Splits the picture into uneven cells, each filled with one colour. Add lines between them for stained glass.",
+ "params": [
+  {"key": "size", "label": "Cell size", "type": "float", "min": 4.0, "max": 200.0, "step": 0.5, "default": 24.0, "unit": " px"},
+  {"key": "jitter", "label": "Irregularity", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.9},
+  {"key": "edge_width", "label": "Line width", "type": "float", "min": 0.0, "max": 10.0, "step": 0.1, "default": 0.0, "unit": " px"},
+  {"key": "edge_colour", "label": "Line colour", "type": "color", "default": [0.08, 0.08, 0.08, 1.0]},
+  {"key": "animate", "label": "Movement speed", "type": "float", "min": 0.0, "max": 5.0, "step": 0.01, "default": 0.0},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

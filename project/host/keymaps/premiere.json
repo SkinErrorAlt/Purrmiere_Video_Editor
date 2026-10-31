@@ -1,0 +1,723 @@
+{
+ "name": "Premiere",
+ "version": 1,
+ "keys": {
+  "tool.select": [
+   "V"
+  ],
+  "tool.track_fwd": [
+   "A"
+  ],
+  "tool.track_back": [
+   "Shift+A"
+  ],
+  "tool.ripple": [
+   "B"
+  ],
+  "tool.roll": [
+   "N"
+  ],
+  "tool.rate": [
+   "R"
+  ],
+  "tool.razor": [
+   "C"
+  ],
+  "tool.slip": [
+   "Y"
+  ],
+  "tool.slide": [
+   "U"
+  ],
+  "tool.realign": [
+   "Shift+Y"
+  ],
+  "tool.pen": [
+   "P"
+  ],
+  "tool.hand": [
+   "H"
+  ],
+  "tool.zoom": [
+   "Z"
+  ],
+  "tool.type": [
+   "T"
+  ],
+  "tool.censor": [
+   "Shift+C"
+  ],
+  "play.toggle": [
+   "Space"
+  ],
+  "play.shuttle_left": [
+   "J"
+  ],
+  "play.shuttle_stop": [
+   "K"
+  ],
+  "play.shuttle_right": [
+   "L"
+  ],
+  "play.shuttle_slow_left": [
+   "Shift+J"
+  ],
+  "play.shuttle_slow_right": [
+   "Shift+L"
+  ],
+  "play.around": [
+   "Shift+K"
+  ],
+  "play.in_to_out": [
+   "Ctrl+Shift+Space"
+  ],
+  "play.in_to_out_roll": [
+   "Shift+Space"
+  ],
+  "play.to_out": [
+   "Ctrl+Space"
+  ],
+  "nav.step_back": [
+   "Left"
+  ],
+  "nav.step_fwd": [
+   "Right"
+  ],
+  "nav.step_back_5": [
+   "Shift+Left"
+  ],
+  "nav.step_fwd_5": [
+   "Shift+Right"
+  ],
+  "nav.start": [
+   "Home"
+  ],
+  "nav.end": [
+   "End"
+  ],
+  "nav.clip_start": [
+   "Shift+Home"
+  ],
+  "nav.clip_end": [
+   "Shift+End"
+  ],
+  "nav.prev_edit": [
+   "Up"
+  ],
+  "nav.next_edit": [
+   "Down"
+  ],
+  "nav.prev_edit_any": [
+   "Shift+Up"
+  ],
+  "nav.next_edit_any": [
+   "Shift+Down"
+  ],
+  "select.prev_clip": [
+   "Ctrl+Up"
+  ],
+  "select.next_clip": [
+   "Ctrl+Down"
+  ],
+  "select.at_playhead": [
+   "D"
+  ],
+  "nav.to_in": [
+   "Shift+I"
+  ],
+  "nav.to_out": [
+   "Shift+O"
+  ],
+  "nav.next_marker": [
+   "Shift+M"
+  ],
+  "nav.prev_marker": [
+   "Ctrl+Shift+M"
+  ],
+  "nav.next_warning": [
+   "F8"
+  ],
+  "nav.prev_warning": [
+   "Shift+F8"
+  ],
+  "nav.next_key": [
+   "Shift+."
+  ],
+  "nav.prev_key": [
+   "Shift+,"
+  ],
+  "keys.record": [
+   "Alt+R"
+  ],
+  "clip.view_1": [
+   "1"
+  ],
+  "clip.view_2": [
+   "2"
+  ],
+  "clip.view_3": [
+   "3"
+  ],
+  "clip.view_4": [
+   "4"
+  ],
+  "clip.view_5": [
+   "5"
+  ],
+  "clip.view_6": [
+   "6"
+  ],
+  "clip.view_7": [
+   "7"
+  ],
+  "clip.view_8": [
+   "8"
+  ],
+  "play.loop": [
+   "Ctrl+L"
+  ],
+  "play.full_quality": [
+   "Ctrl+F11"
+  ],
+  "play.scrub_audio": [
+   "Shift+S"
+  ],
+  "view.fullscreen": [
+   "Ctrl+`"
+  ],
+  "view.program_fullscreen": [
+   "F11"
+  ],
+  "view.program_popout": [
+   "Shift+F11"
+  ],
+  "view.program_outline": [
+   "Ctrl+Alt+H"
+  ],
+  "view.program_snap": [
+   "Alt+S"
+  ],
+  "window.maximize_under_cursor": [
+   "`"
+  ],
+  "window.maximize_active": [
+   "Shift+`"
+  ],
+  "window.next_panel": [
+   "Ctrl+Shift+."
+  ],
+  "window.prev_panel": [
+   "Ctrl+Shift+,"
+  ],
+  "mark.in": [
+   "I"
+  ],
+  "mark.out": [
+   "O"
+  ],
+  "mark.clip": [
+   "X"
+  ],
+  "mark.selection": [
+   "/"
+  ],
+  "mark.clear_in": [
+   "Ctrl+Shift+I"
+  ],
+  "mark.clear_out": [
+   "Ctrl+Shift+O"
+  ],
+  "mark.clear_both": [
+   "Ctrl+Shift+X"
+  ],
+  "mark.work_in": [
+   "Alt+["
+  ],
+  "mark.work_out": [
+   "Alt+]"
+  ],
+  "marker.add": [
+   "M"
+  ],
+  "marker.add_clip": [
+   "Ctrl+1"
+  ],
+  "marker.clear_current": [
+   "Ctrl+Alt+M"
+  ],
+  "marker.clear_all": [
+   "Ctrl+Alt+Shift+M"
+  ],
+  "marker.edit": [],
+  "nav.next_gap": [
+   "Shift+;"
+  ],
+  "nav.prev_gap": [
+   "Ctrl+Shift+;"
+  ],
+  "edit.ripple_trim_prev": [
+   "Q"
+  ],
+  "edit.ripple_trim_next": [
+   "W"
+  ],
+  "edit.extend_prev": [
+   "Shift+Q"
+  ],
+  "edit.extend_next": [
+   "Shift+W"
+  ],
+  "edit.extend_selected": [
+   "E"
+  ],
+  "edit.trim_prev": [
+   "Ctrl+Alt+Q"
+  ],
+  "edit.trim_next": [
+   "Ctrl+Alt+W"
+  ],
+  "edit.trim_back": [
+   "Ctrl+Left"
+  ],
+  "edit.trim_fwd": [
+   "Ctrl+Right"
+  ],
+  "edit.trim_back_many": [
+   "Ctrl+Shift+Left"
+  ],
+  "edit.trim_fwd_many": [
+   "Ctrl+Shift+Right"
+  ],
+  "edit.trim_type": [
+   "Shift+T"
+  ],
+  "edit.add_edit": [
+   "Ctrl+K"
+  ],
+  "edit.add_edit_all": [
+   "Ctrl+Shift+K"
+  ],
+  "edit.lift": [
+   ";"
+  ],
+  "edit.extract": [
+   "'"
+  ],
+  "edit.insert": [
+   ","
+  ],
+  "edit.overwrite": [
+   "."
+  ],
+  "edit.delete": [
+   "Delete",
+   "Backspace"
+  ],
+  "edit.ripple_delete": [
+   "Shift+Delete",
+   "Alt+Backspace",
+   "Shift+Backspace"
+  ],
+  "edit.clear_selection": [],
+  "edit.cut": [
+   "Ctrl+X"
+  ],
+  "edit.copy": [
+   "Ctrl+C"
+  ],
+  "edit.paste": [
+   "Ctrl+V"
+  ],
+  "edit.paste_insert": [
+   "Ctrl+Shift+V"
+  ],
+  "edit.paste_overlap": [
+   "Ctrl+Alt+Shift+V"
+  ],
+  "edit.paste_attributes": [
+   "Ctrl+Alt+V"
+  ],
+  "edit.duplicate": [
+   "Ctrl+Shift+/"
+  ],
+  "edit.select_all": [
+   "Ctrl+A"
+  ],
+  "edit.deselect_all": [
+   "Ctrl+Shift+A"
+  ],
+  "edit.nudge_left": [
+   "Alt+Left"
+  ],
+  "edit.nudge_right": [
+   "Alt+Right"
+  ],
+  "edit.nudge_left_5": [
+   "Alt+Shift+Left"
+  ],
+  "edit.nudge_right_5": [
+   "Alt+Shift+Right"
+  ],
+  "edit.slip_left": [
+   "Ctrl+Alt+Left"
+  ],
+  "edit.slip_right": [
+   "Ctrl+Alt+Right"
+  ],
+  "edit.slip_left_5": [
+   "Ctrl+Alt+Shift+Left"
+  ],
+  "edit.slip_right_5": [
+   "Ctrl+Alt+Shift+Right"
+  ],
+  "edit.slide_left": [
+   "Alt+,"
+  ],
+  "edit.slide_right": [
+   "Alt+."
+  ],
+  "edit.slide_left_5": [
+   "Alt+Shift+,"
+  ],
+  "edit.slide_right_5": [
+   "Alt+Shift+."
+  ],
+  "edit.move_up": [
+   "Alt+Up"
+  ],
+  "edit.move_down": [
+   "Alt+Down"
+  ],
+  "clip.group": [
+   "Ctrl+G"
+  ],
+  "clip.ungroup": [
+   "Ctrl+Shift+G"
+  ],
+  "clip.link": [
+   "Ctrl+L"
+  ],
+  "clip.bring_to_front": [
+   "Ctrl+Alt+]"
+  ],
+  "clip.send_to_back": [
+   "Ctrl+Alt+["
+  ],
+  "clip.enable": [
+   "Shift+E"
+  ],
+  "clip.speed": [
+   "Ctrl+R"
+  ],
+  "clip.sync_regions": [
+   "Ctrl+Alt+Y"
+  ],
+  "clip.audio_gain": [
+   "G"
+  ],
+  "clip.audio_channels": [
+   "Shift+G"
+  ],
+  "clip.nest": [
+   "Ctrl+Shift+N"
+  ],
+  "clip.see_inside": [
+   "Alt+Shift+I"
+  ],
+  "clip.reveal_nested": [
+   "Ctrl+Shift+F"
+  ],
+  "clip.subclip": [
+   "Ctrl+U"
+  ],
+  "clip.subsequence": [
+   "Shift+U"
+  ],
+  "clip.match_frame": [
+   "F"
+  ],
+  "clip.reverse_match_frame": [
+   "Shift+R"
+  ],
+  "seq.default_video_transition": [
+   "Ctrl+D"
+  ],
+  "seq.default_audio_transition": [
+   "Ctrl+Shift+D"
+  ],
+  "seq.default_transitions": [
+   "Shift+D"
+  ],
+  "seq.snap": [
+   "S"
+  ],
+  "seq.linked_selection": [],
+  "seq.free_tracks": [],
+  "seq.overlap_clips": [],
+  "clip.freeze_frame": [
+   "Shift+H"
+  ],
+  "seq.pin_track": [
+   "Ctrl+Shift+P"
+  ],
+  "seq.render_in_to_out": [
+   "Enter"
+  ],
+  "seq.render_regions": [
+   "Ctrl+Enter"
+  ],
+  "seq.censor_in_out": [
+   "Ctrl+Shift+C"
+  ],
+  "edit.undo": [
+   "Ctrl+Z"
+  ],
+  "edit.redo": [
+   "Ctrl+Shift+Z",
+   "Ctrl+Y"
+  ],
+  "view.zoom_in": [
+   "="
+  ],
+  "view.zoom_out": [
+   "-"
+  ],
+  "view.zoom_sequence": [
+   "\\"
+  ],
+  "view.zoom_selection": [
+   "Shift+\\"
+  ],
+  "view.expand_tracks": [
+   "Shift+="
+  ],
+  "view.minimise_tracks": [
+   "Shift+-"
+  ],
+  "view.video_track_taller": [
+   "Ctrl+="
+  ],
+  "view.video_track_shorter": [
+   "Ctrl+-"
+  ],
+  "view.audio_track_taller": [
+   "Alt+="
+  ],
+  "view.audio_track_shorter": [
+   "Alt+-"
+  ],
+  "view.next_screen": [
+   "PageDown"
+  ],
+  "view.prev_screen": [
+   "PageUp"
+  ],
+  "seq.toggle_video_targets": [
+   "Ctrl+0"
+  ],
+  "seq.toggle_audio_targets": [
+   "Ctrl+9"
+  ],
+  "seq.toggle_source_video": [
+   "Ctrl+Alt+0"
+  ],
+  "seq.toggle_source_audio": [
+   "Ctrl+Alt+9"
+  ],
+  "clip.volume_up": [
+   "]"
+  ],
+  "clip.volume_down": [
+   "["
+  ],
+  "clip.volume_up_many": [
+   "Shift+]"
+  ],
+  "clip.volume_down_many": [
+   "Shift+["
+  ],
+  "file.new_project": [
+   "Ctrl+Alt+N"
+  ],
+  "file.new_sequence": [
+   "Ctrl+N"
+  ],
+  "file.new_bin": [
+   "Ctrl+B"
+  ],
+  "file.new_title": [
+   "Ctrl+T"
+  ],
+  "graphics.new_shape": [],
+  "graphics.new_adjustment": [],
+  "file.open": [
+   "Ctrl+O"
+  ],
+  "file.close": [
+   "Ctrl+Shift+W"
+  ],
+  "file.save": [
+   "Ctrl+S"
+  ],
+  "file.save_as": [
+   "Ctrl+Shift+S"
+  ],
+  "file.save_copy": [
+   "Ctrl+Alt+S"
+  ],
+  "file.import": [
+   "Ctrl+I"
+  ],
+  "file.export": [
+   "Ctrl+M"
+  ],
+  "file.export_frame": [
+   "Ctrl+Shift+E"
+  ],
+  "file.properties": [
+   "Ctrl+Shift+H"
+  ],
+  "file.edit_original": [
+   "Ctrl+E"
+  ],
+  "edit.find": [
+   "Ctrl+F"
+  ],
+  "edit.keyboard_shortcuts": [
+   "Ctrl+Alt+K"
+  ],
+  "edit.preferences": [],
+  "app.palette": [
+   "Ctrl+Alt+P"
+  ],
+  "window.focus_bin": [
+   "Shift+1"
+  ],
+  "bin.view_list": [
+   "Alt+1"
+  ],
+  "bin.view_grid": [
+   "Alt+2"
+  ],
+  "bin.view_big": [
+   "Alt+3"
+  ],
+  "bin.view_board": [
+   "Alt+4"
+  ],
+  "bin.view_strips": [
+   "Alt+5"
+  ],
+  "bin.view_colours": [
+   "Alt+6"
+  ],
+  "bin.view_recorded": [
+   "Alt+7"
+  ],
+  "bin.view_used": [
+   "Alt+8"
+  ],
+  "bin.board_note": [
+   "Alt+N"
+  ],
+  "bin.board_group": [
+   "Alt+G"
+  ],
+  "bin.board_to_timeline": [
+   "Ctrl+Shift+Enter"
+  ],
+  "window.focus_source": [
+   "Shift+2"
+  ],
+  "window.focus_timeline": [
+   "Shift+3"
+  ],
+  "window.focus_program": [
+   "Shift+4"
+  ],
+  "window.focus_effect_controls": [
+   "Shift+5"
+  ],
+  "window.focus_audio": [
+   "Shift+6"
+  ],
+  "window.focus_effects": [
+   "Shift+7"
+  ],
+  "window.focus_media_browser": [
+   "Shift+8"
+  ],
+  "window.focus_audio_clip_mixer": [
+   "Shift+9"
+  ],
+  "window.workspace_1": [
+   "Alt+Shift+1"
+  ],
+  "window.workspace_2": [
+   "Alt+Shift+2"
+  ],
+  "window.workspace_3": [
+   "Alt+Shift+3"
+  ],
+  "window.workspace_4": [
+   "Alt+Shift+4"
+  ],
+  "window.workspace_5": [
+   "Alt+Shift+5"
+  ],
+  "window.workspace_6": [
+   "Alt+Shift+6"
+  ],
+  "window.workspace_7": [
+   "Alt+Shift+7"
+  ],
+  "window.workspace_8": [
+   "Alt+Shift+8"
+  ],
+  "window.workspace_reset": [
+   "Alt+Shift+0"
+  ],
+  "window.layout_undo": [
+   "Ctrl+Alt+Z"
+  ],
+  "window.layout_redo": [
+   "Ctrl+Alt+Shift+Z"
+  ],
+  "window.layout_lock": [
+   "Ctrl+Alt+L"
+  ],
+  "window.reopen_last_panel": [
+   "Ctrl+Shift+T"
+  ],
+  "window.workspace_reset_saved": [],
+  "window.workspace_save_as": [],
+  "window.workspace_rename": [],
+  "window.workspace_delete": [],
+  "audio.mixer": [],
+  "audio.field": [],
+  "help.catalogue": [
+   "F1",
+   "Shift+/"
+  ],
+  "help.about": [],
+  "help.stats": [],
+  "file.quit": [
+   "Ctrl+Q"
+  ],
+  "tool.track_area": [],
+  "tracker.panel": [],
+  "tracker.forward": [
+   "Alt+Shift+PageDown"
+  ],
+  "tracker.backward": [
+   "Alt+Shift+PageUp"
+  ],
+  "tracker.step_forward": [
+   "Alt+PageDown"
+  ],
+  "tracker.step_backward": [
+   "Alt+PageUp"
+  ],
+  "tracker.stop": []
+ }
+}

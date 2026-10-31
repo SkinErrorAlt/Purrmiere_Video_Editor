@@ -1,0 +1,17 @@
+{
+ "id": "glass_blocks",
+ "label": "Glass Blocks",
+ "category": "Distort",
+ "version": 1,
+ "blurb": "Looks through a wall of glass tiles. Each tile bends the picture like a small lens, with light catching the bevelled edges.",
+ "params": [
+  {"key": "size", "label": "Tile size", "type": "float", "min": 8, "max": 600, "step": 1, "default": 80, "unit": " px"},
+  {"key": "refraction", "label": "Refraction", "type": "float", "min": -1, "max": 1, "step": 0.01, "default": 0.35},
+  {"key": "bevel", "label": "Bevel", "type": "float", "min": 0, "max": 0.5, "step": 0.01, "default": 0.15},
+  {"key": "shape", "label": "Shape", "type": "enum", "choices": ["Square", "Round", "Hexagon"], "default": 0},
+  {"key": "shine", "label": "Shine", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.4}
+ ],
+ "passes": [
+  {"shader": "blocks.gdshader"}
+ ]
+}

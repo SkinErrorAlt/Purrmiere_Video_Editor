@@ -1,0 +1,23 @@
+{
+ "id": "camera_kick",
+ "label": "Camera Kick",
+ "category": "Transform",
+ "version": 1,
+ "blurb": "One sharp knock to the camera that settles by itself: a gun's recoil kicking the view up, an impact jolt that shakes and dies away, or a drop that thuds down and bounces. Set a time between kicks and a count for a burst of fire. The same seed always gives the same shake.",
+ "params": [
+  {"key": "style", "label": "Kind", "type": "enum", "choices": ["Recoil (kicks up)", "Impact (jolts and settles)", "Drop (thuds down)"], "default": 0},
+  {"key": "at", "label": "First kick at", "type": "float", "min": 0.0, "max": 600.0, "step": 0.01, "default": 0.0, "unit": " s"},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 200.0, "step": 0.5, "default": 30.0, "unit": " px"},
+  {"key": "duration", "label": "Settles over", "type": "float", "min": 0.05, "max": 3.0, "step": 0.01, "default": 0.35, "unit": " s"},
+  {"key": "repeat", "label": "Time between kicks", "type": "float", "min": 0.0, "max": 10.0, "step": 0.01, "default": 0.0, "unit": " s"},
+  {"key": "count", "label": "Number of kicks", "type": "int", "min": 1, "max": 100, "step": 1, "default": 1},
+  {"key": "direction", "label": "Direction (0 is up)", "type": "float", "min": -180.0, "max": 180.0, "step": 1.0, "default": 0.0, "unit": " deg"},
+  {"key": "rotation", "label": "Roll", "type": "float", "min": 0.0, "max": 15.0, "step": 0.1, "default": 1.5, "unit": " deg"},
+  {"key": "zoom", "label": "Push in", "type": "float", "min": 0.0, "max": 20.0, "step": 0.1, "default": 2.0, "unit": " %"},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0},
+  {"key": "motion_blur", "label": "Motion blur", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "edges", "label": "Edges", "type": "enum", "choices": ["Mirror", "Repeat", "Transparent"], "default": 0}
+ ],
+ "handles": [{"kind": "angle", "key": "direction", "zero": "up", "turn": "cw", "length": "strength", "length_unit": "px"}],
+ "passes": "single"
+}

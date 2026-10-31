@@ -1,0 +1,16 @@
+{
+ "id": "inhale",
+ "label": "Inhale",
+ "group": "Zoom and Camera",
+ "space": "2D",
+ "from": ["CapCut Inhale"],
+ "blurb": "The outgoing picture is sucked into a point, pinching and swirling as it goes, and leaves the incoming one behind.",
+ "default_duration": 0.8,
+ "params": [
+  {"key": "centre", "label": "Centre", "type": "vec2", "min": 0, "max": 1, "step": 0.01, "default": [0.5, 0.5]},
+  {"key": "pinch", "label": "Pinch", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "twist", "label": "Twist", "type": "float", "min": -360, "max": 360, "step": 1, "default": 120, "unit": " deg"},
+  {"key": "timing", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth", "Speed up"], "default": 2},
+  {"key": "settle", "label": "Incoming settles", "type": "float", "min": 0, "max": 0.3, "step": 0.01, "default": 0.06}
+ ]
+}

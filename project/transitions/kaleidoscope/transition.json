@@ -1,0 +1,17 @@
+{
+ "id": "kaleidoscope",
+ "label": "Kaleidoscope",
+ "group": "Distort",
+ "space": "2D",
+ "from": ["gl kaleidoscope", "CapCut Kaleidoscope"],
+ "blurb": "The picture folds into mirrored slices round the centre like a turning kaleidoscope, and the pattern unfolds into the incoming picture.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "segments", "label": "Mirrors", "type": "int", "min": 2, "max": 16, "step": 1, "default": 6},
+  {"key": "spin", "label": "Turn", "type": "float", "min": -2, "max": 2, "step": 0.01, "default": 0.5},
+  {"key": "zoom", "label": "Zoom", "type": "float", "min": 0.25, "max": 4, "step": 0.01, "default": 1.4},
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "blend", "label": "Blend length", "type": "float", "min": 0.05, "max": 1, "step": 0.01, "default": 0.3},
+  {"key": "hold", "label": "Hold", "type": "float", "min": 0, "max": 0.8, "step": 0.01, "default": 0.2}
+ ]
+}

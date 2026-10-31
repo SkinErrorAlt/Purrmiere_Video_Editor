@@ -1,0 +1,18 @@
+{
+ "id": "fracture",
+ "label": "Fracture",
+ "group": "3D",
+ "space": "3D",
+ "from": ["PowerPoint Fracture"],
+ "blurb": "The outgoing picture cracks into jagged shards that spin and tumble away into the dark, while shards of the incoming picture fly in and lock together.",
+ "default_duration": 1.6,
+ "params": [
+  {"key": "pieces", "label": "Pieces across", "type": "int", "min": 3, "max": 9, "step": 1, "default": 6},
+  {"key": "spread", "label": "Spread", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 1.0},
+  {"key": "spin", "label": "Spin", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "assemble", "label": "Incoming assembles", "type": "bool", "default": true},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 10, "max": 90, "step": 1, "default": 40, "unit": " deg"},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

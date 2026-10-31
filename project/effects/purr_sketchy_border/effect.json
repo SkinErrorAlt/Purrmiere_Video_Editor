@@ -1,0 +1,18 @@
+{
+ "id": "purr_sketchy_border",
+ "label": "Sketchy Border",
+ "category": "Purrmiere",
+ "tags": ["graphic"],
+ "version": 1,
+ "blurb": "A hand drawn border of wobbly pen lines round the frame, overshooting at the corners and redrawn a few times a second so it boils like an animated doodle.",
+ "params": [
+  {"key": "ink", "label": "Ink", "type": "color", "default": [0.1, 0.08, 0.12, 1.0]},
+  {"key": "lines", "label": "Lines", "type": "int", "min": 1, "max": 4, "step": 1, "default": 2},
+  {"key": "inset", "label": "Inset", "type": "float", "min": 0.0, "max": 200.0, "step": 0.5, "default": 22.0, "unit": " px"},
+  {"key": "wobble", "label": "Wobble", "type": "float", "min": 0.0, "max": 20.0, "step": 0.1, "default": 4.0, "unit": " px"},
+  {"key": "overshoot", "label": "Corner overshoot", "type": "float", "min": 0.0, "max": 80.0, "step": 0.5, "default": 18.0, "unit": " px"},
+  {"key": "width", "label": "Line width", "type": "float", "min": 0.5, "max": 12.0, "step": 0.1, "default": 2.5, "unit": " px"},
+  {"key": "boil", "label": "Boil per second", "type": "float", "min": 0.0, "max": 24.0, "step": 0.5, "default": 8.0}
+ ],
+ "passes": "single"
+}

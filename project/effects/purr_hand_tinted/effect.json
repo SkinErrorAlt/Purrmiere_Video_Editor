@@ -1,0 +1,16 @@
+{
+ "id": "purr_hand_tinted",
+ "label": "Hand Tinted",
+ "category": "Purrmiere",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "An old black and white photograph coloured by hand: a warm monochrome print with soft translucent tints brushed over it in patches, the paint wandering a little outside the lines.",
+ "params": [
+  {"key": "strength", "label": "Tint strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "bleed", "label": "Paint wander", "type": "float", "min": 0.0, "max": 60.0, "step": 0.1, "default": 14.0, "unit": " px"},
+  {"key": "warmth", "label": "Warm print", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "patchy", "label": "Patchy paint", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "contrast", "label": "Contrast", "type": "float", "min": 0.2, "max": 3.0, "step": 0.01, "default": 1.15}
+ ],
+ "passes": "single"
+}

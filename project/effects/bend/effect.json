@@ -1,0 +1,15 @@
+{
+ "id": "bend",
+ "label": "Bend",
+ "category": "Distort",
+ "version": 1,
+ "blurb": "Bends the picture like a rubber strip held at one end. Everything before the start point stays put, the part between start and end curves round, and the rest carries on straight. Transparent outside the picture by default.",
+ "params": [
+  {"key": "start", "label": "Start", "type": "vec2", "default": [0.5, 0.95]},
+  {"key": "end", "label": "End", "type": "vec2", "default": [0.5, 0.15]},
+  {"key": "bend", "label": "Bend", "type": "float", "min": -360.0, "max": 360.0, "step": 0.5, "default": 40.0, "unit": " deg"},
+  {"key": "edges", "label": "Edges", "type": "enum", "choices": ["Stretch the edge", "Mirror", "Transparent"], "default": 2}
+ ],
+ "handles": [{"kind": "line", "keys": ["start", "end"]}],
+ "passes": "single"
+}

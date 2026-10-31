@@ -1,0 +1,17 @@
+{
+ "id": "fold",
+ "label": "Fold",
+ "group": "3D",
+ "space": "3D",
+ "from": ["CapCut Fold", "Canva Fold"],
+ "blurb": "The outgoing picture folds up like a paper fan towards one edge, its panels catching the light in turn, until it folds away to nothing over the incoming picture.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "panels", "label": "Panels", "type": "int", "min": 2, "max": 12, "step": 1, "default": 4},
+  {"key": "direction", "label": "Folds towards", "type": "enum", "choices": ["Left", "Right", "Top", "Bottom"], "default": 0},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 10, "max": 90, "step": 1, "default": 40, "unit": " deg"},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.7},
+  {"key": "shadow", "label": "Shadow", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.4},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

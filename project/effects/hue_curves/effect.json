@@ -1,0 +1,16 @@
+{
+ "id": "hue_curves",
+ "label": "Hue Curves",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Five curves that start flat in the middle, where nothing changes. Hue, saturation and lightness are read in HSL, and with Keep brightness on the Rec.709 brightness is put back after hue and saturation moves.",
+ "params": [
+  {"key": "hue_vs_hue", "label": "Hue vs hue", "type": "curve", "default": {"points": [[0, 0.5], [1, 0.5]]}},
+  {"key": "hue_vs_sat", "label": "Hue vs saturation", "type": "curve", "default": {"points": [[0, 0.5], [1, 0.5]]}},
+  {"key": "hue_vs_lum", "label": "Hue vs lightness", "type": "curve", "default": {"points": [[0, 0.5], [1, 0.5]]}},
+  {"key": "lum_vs_sat", "label": "Lightness vs saturation", "type": "curve", "default": {"points": [[0, 0.5], [1, 0.5]]}},
+  {"key": "sat_vs_sat", "label": "Saturation vs saturation", "type": "curve", "default": {"points": [[0, 0.5], [1, 0.5]]}},
+  {"key": "keep_brightness", "label": "Keep brightness", "type": "bool", "default": true}
+ ],
+ "passes": "single"
+}

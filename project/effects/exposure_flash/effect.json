@@ -1,0 +1,23 @@
+{
+ "id": "exposure_flash",
+ "label": "Exposure Flash",
+ "category": "Transition",
+ "version": 1,
+ "blurb": "A flash cut done the way a camera sees it: the picture over exposes, the highlights blow out and bloom first, and the whole frame burns to white (or your colour) right on the cut; the next clip comes back down out of the light. Unlike a dip to white the picture brightens by stops, so it looks like light, not a fade. Put it on both clips of a cut, or use Progress to key it by hand.",
+ "params": [
+  {"key": "when", "label": "When", "type": "enum", "choices": ["In at the start and out at the end", "In at the start", "Out at the end", "By Progress"], "default": 0},
+  {"key": "duration", "label": "Flash length", "type": "float", "min": 0.05, "max": 3.0, "step": 0.01, "default": 0.3, "unit": " s"},
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0.0, "max": 1.0, "step": 0.005, "default": 0.0},
+  {"key": "stops", "label": "Brightest", "type": "float", "min": 0.5, "max": 8.0, "step": 0.1, "default": 4.0, "unit": " stops"},
+  {"key": "colour", "label": "Flash colour", "type": "color", "default": [1.0, 1.0, 1.0, 1.0]},
+  {"key": "bloom", "label": "Bloom", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "solid", "label": "Solid on the cut", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0}
+ ],
+ "passes": [
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "flash.gdshader", "scale": 16.0, "inputs": {"level_2": 1, "level_3": 2}}
+ ]
+}

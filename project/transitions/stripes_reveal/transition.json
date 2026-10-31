@@ -1,0 +1,17 @@
+{
+ "id": "stripes_reveal",
+ "label": "Stripes",
+ "group": "Shape",
+ "space": "2D",
+ "from": ["Keynote Grid in 2D", "CapCut Stripes"],
+ "blurb": "The incoming picture opens in stripes that widen from their middle lines one after another until they meet.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "stripes", "label": "Stripes", "type": "int", "min": 2, "max": 40, "step": 1, "default": 8},
+  {"key": "orientation", "label": "Stripes run", "type": "enum", "choices": ["Up and down", "Across"], "default": 0},
+  {"key": "order", "label": "Order", "type": "enum", "choices": ["In turn", "In reverse", "From the middle", "From the edges", "Random"], "default": 0},
+  {"key": "stagger", "label": "Stagger", "type": "float", "min": 0, "max": 0.95, "step": 0.01, "default": 0.6},
+  {"key": "softness", "label": "Soft edge", "type": "float", "min": 0, "max": 60, "step": 0.5, "default": 1.5, "unit": " px"},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 1}
+ ]
+}

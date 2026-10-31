@@ -1,0 +1,18 @@
+{
+ "id": "depth_of_field",
+ "label": "Depth of Field",
+ "category": "Blur & Sharpen",
+ "version": 1,
+ "blurb": "Fakes a shallow focus: a depth map (a picture, a ramp or the distance from a point) decides what sits in the focus band, and the rest blurs into soft bokeh.",
+ "params": [
+  {"key": "depth_source", "label": "Depth from", "type": "enum", "choices": ["Picture (white is near)", "Ramp, near at the bottom", "Ramp, near at the top", "Distance from the focus point"], "default": 1},
+  {"key": "picture", "label": "Depth picture", "type": "texture", "default": ""},
+  {"key": "focus", "label": "Focus distance", "type": "float", "min": 0, "max": 1, "step": 0.005, "default": 0.5},
+  {"key": "focus_range", "label": "Sharp band", "type": "float", "min": 0, "max": 1, "step": 0.005, "default": 0.15},
+  {"key": "max_blur", "label": "Maximum blur", "type": "float", "min": 0, "max": 60, "step": 0.1, "default": 14, "unit": " px"},
+  {"key": "centre", "label": "Focus point", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "bokeh_boost", "label": "Bright bokeh", "type": "float", "min": 0, "max": 3, "step": 0.01, "default": 0.6}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}, {"kind": "ring", "key": "focus_range", "about": "centre", "unit": "h", "scale": 2.0}],
+ "passes": "single"
+}

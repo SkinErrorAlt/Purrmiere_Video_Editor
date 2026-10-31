@@ -1,0 +1,16 @@
+{
+ "id": "smudge_stick",
+ "label": "Smudge Stick",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Smudges the picture with short diagonal strokes that drag the dark parts out, while the bright parts soften and glow.",
+ "params": [
+  {"key": "stroke_length", "label": "Stroke length", "type": "float", "min": 1, "max": 40, "step": 0.5, "default": 18, "unit": " px"},
+  {"key": "highlight_area", "label": "Highlight area", "type": "float", "min": 0, "max": 20, "step": 0.1, "default": 4},
+  {"key": "intensity", "label": "Intensity", "type": "float", "min": 0, "max": 10, "step": 0.1, "default": 3},
+  {"key": "angle", "label": "Stroke angle", "type": "float", "min": -180, "max": 180, "step": 1, "default": 45, "unit": " deg"},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

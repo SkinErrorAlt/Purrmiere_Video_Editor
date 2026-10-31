@@ -1,0 +1,21 @@
+{
+ "id": "paper_tear",
+ "label": "Paper Tear",
+ "category": "Transition",
+ "version": 1,
+ "blurb": "The picture is a printed photo torn in two: a ragged rip runs through it with white torn paper along both edges, and the halves pull apart and slide away with a soft shadow, showing the track below; the next clip's halves come together the same way. Set the line of the tear on the Program monitor. Put it on both clips of a cut, or use Progress to key it by hand.",
+ "params": [
+  {"key": "when", "label": "When", "type": "enum", "choices": ["In at the start and out at the end", "In at the start", "Out at the end", "By Progress"], "default": 0},
+  {"key": "duration", "label": "Length", "type": "float", "min": 0.1, "max": 3.0, "step": 0.01, "default": 0.7, "unit": " s"},
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0.0, "max": 1.0, "step": 0.005, "default": 0.0},
+  {"key": "through", "label": "Tear through", "type": "vec2", "default": [0.52, 0.5]},
+  {"key": "angle", "label": "Tear runs", "type": "float", "min": -180.0, "max": 180.0, "step": 1.0, "default": 8.0, "unit": " deg"},
+  {"key": "rough", "label": "Ragged", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "edge", "label": "Torn edge", "type": "float", "min": 0.0, "max": 40.0, "step": 0.5, "default": 9.0, "unit": " px"},
+  {"key": "paper_colour", "label": "Paper colour", "type": "color", "default": [0.96, 0.95, 0.91, 1.0]},
+  {"key": "shadow", "label": "Shadow", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "handles": [{"kind": "point", "key": "through"}, {"kind": "angle", "key": "angle", "about": "through"}],
+ "passes": "single"
+}

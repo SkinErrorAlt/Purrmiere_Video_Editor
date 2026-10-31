@@ -1,0 +1,14 @@
+{
+ "id": "negative_converter",
+ "label": "Negative Converter",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Turns a scanned colour or black and white film negative into a positive: pick the film base colour to remove the orange mask, then set the density range.",
+ "params": [
+  {"key": "base", "label": "Film base colour", "type": "color", "default": [0.86, 0.55, 0.36, 1]},
+  {"key": "density_range", "label": "Density range", "type": "float", "min": 0.2, "max": 3, "step": 0.01, "default": 1.1},
+  {"key": "exposure", "label": "Exposure", "type": "float", "min": -3, "max": 3, "step": 0.01, "default": 0.0, "unit": " stops"},
+  {"key": "contrast", "label": "Contrast", "type": "float", "min": 0.2, "max": 3, "step": 0.01, "default": 1.0}
+ ],
+ "passes": "single"
+}

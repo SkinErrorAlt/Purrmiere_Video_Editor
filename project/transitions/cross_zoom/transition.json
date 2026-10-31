@@ -1,0 +1,14 @@
+{
+ "id": "cross_zoom",
+ "label": "Cross Zoom",
+ "group": "Zoom and Camera",
+ "space": "2D",
+ "from": ["gl CrossZoom", "Premiere Cross Zoom"],
+ "blurb": "Both pictures rush through a strong zoom blur that peaks in the middle while they swap, and the blur centre drifts across the frame as it goes.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.4},
+  {"key": "travel", "label": "Centre drifts", "type": "bool", "default": true},
+  {"key": "centre", "label": "Centre", "type": "vec2", "min": 0, "max": 1, "step": 0.01, "default": [0.5, 0.5]}
+ ]
+}

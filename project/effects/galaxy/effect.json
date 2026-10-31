@@ -1,0 +1,22 @@
+{
+ "id": "galaxy",
+ "label": "Galaxy",
+ "category": "Generate",
+ "version": 1,
+ "blurb": "A deep space backdrop: soft layers of coloured nebula threaded with bright filaments, dark dust lanes lying in front of the glowing gas, a Milky Way band thick with faint stars, dense small stars from orange to blue white and a few bright ones with diffraction spikes, all drifting slowly with depth. Dithered so the dark gradients never band. Put it behind a keyed or cut out clip, lay it over the picture as light, or let it replace the picture.",
+ "params": [
+  {"key": "palette", "label": "Palette", "type": "enum", "choices": ["Violet and teal", "Crimson and gold", "Blue and magenta", "Emerald and blue", "Orange and teal"], "default": 0},
+  {"key": "density", "label": "Nebula density", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "band", "label": "Milky Way band", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "band_angle", "label": "Band angle", "type": "float", "min": -180.0, "max": 180.0, "step": 0.5, "default": 28.0, "unit": " deg"},
+  {"key": "stars", "label": "Star density", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "bright", "label": "Bright stars", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "twinkle", "label": "Twinkle", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "drift", "label": "Drift speed", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.15},
+  {"key": "drift_angle", "label": "Drift direction", "type": "float", "min": -180.0, "max": 180.0, "step": 0.5, "default": 160.0, "unit": " deg"},
+  {"key": "placement", "label": "Placement", "type": "enum", "choices": ["Behind the clip", "Over the clip", "Replace the clip"], "default": 2},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "handles": [{"kind": "angle", "key": "band_angle", "zero": "right", "turn": "cw"}],
+ "passes": "single"
+}

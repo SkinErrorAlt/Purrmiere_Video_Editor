@@ -1,0 +1,13 @@
+{
+ "id": "scale_wipe",
+ "label": "Stretch Wipe",
+ "category": "Transition",
+ "version": 1,
+ "blurb": "The picture squeezes away towards one side while its edge smears out behind it in streaks.",
+ "params": [
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0, "max": 1, "step": 0.005, "default": 0.5},
+  {"key": "direction", "label": "Towards", "type": "enum", "choices": ["Right", "Left", "Down", "Up"], "default": 0},
+  {"key": "smear", "label": "Smear", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6}
+ ],
+ "passes": "single"
+}

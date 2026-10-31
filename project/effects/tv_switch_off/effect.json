@@ -1,0 +1,18 @@
+{
+ "id": "tv_switch_off",
+ "label": "TV Switch Off",
+ "category": "Transition",
+ "version": 1,
+ "blurb": "An old tube television switching off: the picture flattens into a bright line, the line shrinks to a glowing dot and the dot fades. At the start of a clip it switches on the same way in reverse. Put it on both clips of a cut, or use Progress to key it by hand.",
+ "params": [
+  {"key": "when", "label": "When", "type": "enum", "choices": ["In at the start and out at the end", "In at the start", "Out at the end", "By Progress"], "default": 0},
+  {"key": "duration", "label": "Length", "type": "float", "min": 0.05, "max": 3.0, "step": 0.01, "default": 0.45, "unit": " s"},
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0.0, "max": 1.0, "step": 0.005, "default": 0.0},
+  {"key": "centre", "label": "Shrinks to", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "around", "label": "Around the picture", "type": "enum", "choices": ["Black", "See through"], "default": 0},
+  {"key": "line_colour", "label": "Line colour", "type": "color", "default": [0.86, 0.93, 1.0, 1.0]},
+  {"key": "glow", "label": "Glow", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}],
+ "passes": "single"
+}

@@ -1,0 +1,18 @@
+{
+ "id": "purr_film_strip",
+ "label": "Film Strip",
+ "category": "Purrmiere",
+ "tags": ["graphic", "look"],
+ "version": 1,
+ "blurb": "Runs the picture through a strip of film: dark film edges with sprocket holes you can see through, thin frame lines, and an optional roll that slides the frames past like film running through a viewer.",
+ "params": [
+  {"key": "film", "label": "Film colour", "type": "color", "default": [0.07, 0.06, 0.05, 1.0]},
+  {"key": "band", "label": "Edge width", "type": "float", "min": 0.0, "max": 0.3, "step": 0.001, "default": 0.11},
+  {"key": "hole", "label": "Hole size", "type": "float", "min": 0.2, "max": 0.9, "step": 0.01, "default": 0.55},
+  {"key": "holes", "label": "Holes across", "type": "int", "min": 4, "max": 60, "step": 1, "default": 18},
+  {"key": "roll", "label": "Roll speed", "type": "float", "min": -3.0, "max": 3.0, "step": 0.01, "default": 0.0},
+  {"key": "frame_line", "label": "Frame line", "type": "float", "min": 0.0, "max": 0.05, "step": 0.0005, "default": 0.008},
+  {"key": "vertical", "label": "Run vertically", "type": "bool", "default": false}
+ ],
+ "passes": "single"
+}

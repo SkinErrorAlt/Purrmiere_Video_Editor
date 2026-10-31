@@ -1,0 +1,21 @@
+{
+ "id": "planet_warp",
+ "label": "Tiny Planet",
+ "group": "Distort",
+ "space": "2D",
+ "from": ["After Effects Polar Coordinates seamless transition", "Motion Array polar packs"],
+ "blurb": "The outgoing picture bends round into a tiny planet, its bottom edge drawn into the middle, while the camera pulls back and turns; the planet holds for a moment and the cut happens inside it and the incoming picture unrolls out of its own planet. The bend grows smoothly from flat, the place where the left and right edges meet is blended so no line shows, and motion blur follows the spin. Tunnel puts the top edge in the middle instead.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "amount", "label": "Curl", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 1},
+  {"key": "way", "label": "Way", "type": "enum", "choices": ["Planet, ground in the middle", "Tunnel, sky in the middle"], "default": 0},
+  {"key": "spin", "label": "Spin", "type": "float", "min": -360, "max": 360, "step": 1, "default": 35, "unit": " deg"},
+  {"key": "zoom", "label": "Planet size", "type": "float", "min": 0.2, "max": 1.5, "step": 0.01, "default": 0.5},
+  {"key": "blur", "label": "Motion blur", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 0.6},
+  {"key": "centre", "label": "Centre", "type": "vec2", "min": 0, "max": 1, "step": 0.01, "default": [0.5, 0.5]},
+  {"key": "curve", "label": "Speed", "type": "enum", "choices": ["Whip, fast at the cut", "Smooth", "Even"], "default": 1}
+ ],
+ "handles": [
+  {"kind": "point", "key": "centre"}
+ ]
+}

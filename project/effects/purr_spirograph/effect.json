@@ -1,0 +1,22 @@
+{
+ "id": "purr_spirograph",
+ "label": "Spirograph",
+ "category": "Purrmiere",
+ "tags": ["light", "graphic"],
+ "version": 1,
+ "blurb": "A glowing spirograph pattern draws itself over the shot, the pen tracing loop after loop of a geared curve in shifting rainbow or one colour, with a fading tail.",
+ "params": [
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "size", "label": "Size", "type": "float", "min": 0.05, "max": 1.0, "step": 0.001, "default": 0.35},
+  {"key": "ring", "label": "Inner gear", "type": "float", "min": 0.1, "max": 0.95, "step": 0.001, "default": 0.62},
+  {"key": "pen", "label": "Pen offset", "type": "float", "min": 0.0, "max": 1.5, "step": 0.001, "default": 0.8},
+  {"key": "speed", "label": "Draw speed", "type": "float", "min": 0.0, "max": 4.0, "step": 0.01, "default": 0.6},
+  {"key": "trail", "label": "Tail length", "type": "float", "min": 0.05, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "width", "label": "Line width", "type": "float", "min": 0.5, "max": 20.0, "step": 0.1, "default": 2.5, "unit": " px"},
+  {"key": "glow", "label": "Glow", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.8},
+  {"key": "colour_mode", "label": "Colour", "type": "enum", "default": 0, "choices": ["Rainbow", "One colour"]},
+  {"key": "colour", "label": "One colour", "type": "color", "default": [1.0, 0.6, 0.85, 1.0]}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}, {"kind": "ring", "key": "size", "about": "centre", "unit": "h"}],
+ "passes": "single"
+}

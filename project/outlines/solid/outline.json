@@ -1,0 +1,8 @@
+{
+ "id": "solid",
+ "label": "Solid",
+ "blurb": "A plain line in the outline colour.",
+ "order": 1,
+ "reach": 1.5,
+ "params": []
+}

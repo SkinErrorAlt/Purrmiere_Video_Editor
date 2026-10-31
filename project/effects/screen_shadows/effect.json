@@ -1,0 +1,16 @@
+{
+ "id": "screen_shadows",
+ "label": "Keep Screen Shadows",
+ "category": "Keying",
+ "version": 1,
+ "blurb": "Brings back the shadow the subject cast on the green or blue screen, which a keyer throws away, as a soft see through shadow over the new background, so feet and hands stay grounded. Put it after the keyer and pick the colour of the lit screen; parts of the screen darker than that become shadow. Ignore small dips stops uneven lighting on the screen from turning into grey smudges.",
+ "params": [
+  {"key": "screen_colour", "label": "Lit screen colour", "type": "color", "default": [0.12, 0.72, 0.28, 1.0]},
+  {"key": "strength", "label": "Shadow strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "ignore", "label": "Ignore small dips", "type": "float", "min": 0.0, "max": 0.5, "step": 0.01, "default": 0.1},
+  {"key": "hue_match", "label": "Colour tolerance", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "softness", "label": "Softness", "type": "float", "min": 0.0, "max": 20.0, "step": 0.1, "default": 3.0, "unit": " px"},
+  {"key": "colour", "label": "Shadow colour", "type": "color", "default": [0.0, 0.0, 0.0, 1.0]}
+ ],
+ "passes": "single"
+}

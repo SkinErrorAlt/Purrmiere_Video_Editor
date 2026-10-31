@@ -1,0 +1,17 @@
+{
+ "id": "spiral",
+ "label": "Spiral",
+ "group": "Wipe",
+ "space": "2D",
+ "from": ["Premiere Spiral Boxes", "GIMP Spiral"],
+ "blurb": "The incoming picture is laid down along a spiral path that winds round the frame from the edges into the middle, or out from the middle.",
+ "default_duration": 1.5,
+ "params": [
+  {"key": "turns", "label": "Turns", "type": "int", "min": 1, "max": 12, "step": 1, "default": 4},
+  {"key": "shape", "label": "Shape", "type": "enum", "choices": ["Box", "Round"], "default": 0},
+  {"key": "direction", "label": "Direction", "type": "enum", "choices": ["Inward", "Outward"], "default": 0},
+  {"key": "rotation", "label": "Winds", "type": "enum", "choices": ["Clockwise", "Counterclockwise"], "default": 0},
+  {"key": "softness", "label": "Soft edge", "type": "float", "min": 0, "max": 0.2, "step": 0.005, "default": 0.01},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 0}
+ ]
+}

@@ -1,0 +1,16 @@
+{
+ "id": "rgb_shift",
+ "label": "RGB Shift",
+ "category": "VHS & Analogue",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Pushes the red, green and blue apart by a fixed distance, the way a badly aligned signal looks.",
+ "params": [
+  {"key": "red", "label": "Red offset", "type": "vec2", "default": [-3.0, 0.0]},
+  {"key": "green", "label": "Green offset", "type": "vec2", "default": [0.0, 0.0]},
+  {"key": "blue", "label": "Blue offset", "type": "vec2", "default": [3.0, 0.0]},
+  {"key": "jitter", "label": "Jitter", "type": "float", "min": 0.0, "max": 20.0, "step": 0.1, "default": 0.0},
+  {"key": "speed", "label": "Jitter speed", "type": "float", "min": 0.0, "max": 60.0, "step": 0.5, "default": 24.0}
+ ],
+ "passes": "single"
+}

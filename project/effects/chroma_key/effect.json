@@ -1,0 +1,14 @@
+{
+ "id": "chroma_key",
+ "label": "Chroma Key",
+ "category": "Keying",
+ "version": 1,
+ "params": [
+  {"key": "key_colour", "label": "Key Colour", "type": "color", "default": [0.1, 0.85, 0.15, 1]},
+  {"key": "tolerance", "label": "Tolerance", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.35},
+  {"key": "softness", "label": "Softness", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.15},
+  {"key": "spill", "label": "Spill Suppression", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "show_matte", "label": "Show Matte", "type": "bool", "default": false}
+ ],
+ "passes": "single"
+}

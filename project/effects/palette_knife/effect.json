@@ -1,0 +1,15 @@
+{
+ "id": "palette_knife",
+ "label": "Palette Knife",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Spreads the colours in flat, angled slabs the way a painting knife lays paint, with a ridge where each slab ends and canvas showing through.",
+ "params": [
+  {"key": "stroke_size", "label": "Stroke size", "type": "float", "min": 4, "max": 80, "step": 0.5, "default": 26, "unit": " px"},
+  {"key": "stroke_detail", "label": "Stroke detail", "type": "float", "min": 1, "max": 3, "step": 0.05, "default": 3},
+  {"key": "softness", "label": "Softness", "type": "float", "min": 0, "max": 10, "step": 0.1, "default": 0},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

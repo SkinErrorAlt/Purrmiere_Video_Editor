@@ -1,0 +1,18 @@
+{
+ "id": "colour_warper",
+ "label": "Colour Warper",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Pins colours and drags them to new ones in the colour wheel: each pin moves every nearby hue and saturation with it, smoothly, without a key.",
+ "params": [
+  {"key": "from_1", "label": "Pin 1 from", "type": "color", "default": [0.35, 0.6, 0.25, 1]},
+  {"key": "to_1", "label": "Pin 1 to", "type": "color", "default": [0.25, 0.55, 0.45, 1]},
+  {"key": "from_2", "label": "Pin 2 from", "type": "color", "default": [0.85, 0.6, 0.45, 1]},
+  {"key": "to_2", "label": "Pin 2 to", "type": "color", "default": [0.85, 0.6, 0.45, 1]},
+  {"key": "from_3", "label": "Pin 3 from", "type": "color", "default": [0.3, 0.45, 0.8, 1]},
+  {"key": "to_3", "label": "Pin 3 to", "type": "color", "default": [0.3, 0.45, 0.8, 1]},
+  {"key": "range", "label": "Reach", "type": "float", "min": 0.01, "max": 1, "step": 0.01, "default": 0.2},
+  {"key": "keep_lightness", "label": "Keep lightness", "type": "bool", "default": true}
+ ],
+ "passes": "single"
+}

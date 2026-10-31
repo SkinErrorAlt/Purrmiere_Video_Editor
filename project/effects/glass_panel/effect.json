@@ -1,0 +1,31 @@
+{
+ "id": "glass_panel",
+ "label": "Frosted Panel",
+ "category": "Generate",
+ "tags": ["graphic"],
+ "version": 1,
+ "blurb": "A frosted glass panel with no text of its own: the picture behind a rounded box is blurred and tinted, with a light edge and a soft shadow, so captions, subtitles, a name or a score stay easy to read over a busy game. Drag it on the Program monitor, set its size and corners, and it fades or rises in at the start and out at the end. Put your text on the track above it.",
+ "params": [
+  {"key": "position", "label": "Panel at", "type": "vec2", "default": [0.5, 0.82]},
+  {"key": "width", "label": "Width", "type": "float", "min": 0.05, "max": 1.0, "step": 0.005, "default": 0.62},
+  {"key": "height", "label": "Height", "type": "float", "min": 0.03, "max": 1.0, "step": 0.005, "default": 0.16},
+  {"key": "roundness", "label": "Round corners", "type": "float", "min": 0.0, "max": 0.5, "step": 0.005, "default": 0.3},
+  {"key": "blur", "label": "Frost", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.75},
+  {"key": "tint", "label": "Tint", "type": "color", "default": [0.06, 0.06, 0.08, 1.0]},
+  {"key": "tint_amount", "label": "Tint strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "edge", "label": "Light edge", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "shadow", "label": "Shadow", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "animate", "label": "Comes in", "type": "enum", "choices": ["Fades in and out", "Rises in and out", "Already there"], "default": 0},
+  {"key": "anim_time", "label": "Coming in time", "type": "float", "min": 0.05, "max": 2.0, "step": 0.01, "default": 0.35, "unit": " s"}
+ ],
+ "handles": [{"kind": "point", "key": "position"}, {"kind": "ring", "key": "width", "key_y": "height", "about": "position", "unit": "uv", "scale": 2.0, "shape": "box"}],
+ "passes": [
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/blur_fill/wide9.gdshader", "scale": 1.0, "set": {"direction": [1.0, 0.0]}},
+  {"shader": "res://effects/blur_fill/wide9.gdshader", "scale": 1.0, "set": {"direction": [0.0, 1.0]}},
+  {"shader": "panel.gdshader", "scale": 16.0, "inputs": {"near_tex": 1, "mid_tex": 3, "far_tex": 5}}
+ ]
+}

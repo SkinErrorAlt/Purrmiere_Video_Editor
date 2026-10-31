@@ -1,0 +1,19 @@
+{
+ "id": "purr_toy_camera",
+ "label": "Toy Camera",
+ "category": "Purrmiere",
+ "tags": ["look", "light"],
+ "version": 1,
+ "blurb": "The look of a cheap plastic film camera: punchy saturated colour with a cross processed or warm cast, heavy dark corners, soft focus away from the middle and a light leak bleeding in from one edge.",
+ "params": [
+  {"key": "cast", "label": "Colour cast", "type": "enum", "default": 0, "choices": ["Cross processed", "Warm", "Cool"]},
+  {"key": "saturation", "label": "Saturation", "type": "float", "min": 0.0, "max": 2.5, "step": 0.01, "default": 1.4},
+  {"key": "contrast", "label": "Contrast", "type": "float", "min": 0.2, "max": 3.0, "step": 0.01, "default": 1.2},
+  {"key": "vignette", "label": "Dark corners", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "soft", "label": "Soft corners", "type": "float", "min": 0.0, "max": 20.0, "step": 0.1, "default": 4.0, "unit": " px"},
+  {"key": "leak", "label": "Light leak", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45},
+  {"key": "leak_colour", "label": "Leak colour", "type": "color", "default": [1.0, 0.4, 0.15, 1.0]},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

@@ -1,0 +1,18 @@
+{
+ "id": "old_film",
+ "label": "Old Film",
+ "group": "Light and Film",
+ "space": "2D",
+ "from": ["CapCut Old Film", "CapCut Film Frame"],
+ "blurb": "Both pictures turn to worn sepia film for the cut, with grain, scratches, dust, flicker and a wobble in the gate, and the reel rolls up to the next frame past a black frame line. Turn Roll off to dissolve instead. The dirt is different on every cut.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "sepia", "label": "Sepia", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.85},
+  {"key": "grain", "label": "Grain", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.35},
+  {"key": "scratches", "label": "Scratches and dust", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "flicker", "label": "Flicker", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "vignette", "label": "Vignette", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.45},
+  {"key": "roll", "label": "Roll to the next frame", "type": "bool", "default": true},
+  {"key": "film_rate", "label": "Film rate", "type": "float", "min": 6, "max": 30, "step": 1, "default": 18, "unit": " fps"}
+ ]
+}

@@ -1,0 +1,15 @@
+{
+ "id": "fly_through",
+ "label": "Fly Through",
+ "group": "3D",
+ "space": "3D",
+ "from": ["PowerPoint Fly Through"],
+ "blurb": "The camera flies through the pictures: the outgoing one rushes past and fades as the incoming one arrives from the distance, or the other way round, with an optional bounce as it lands.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "mode", "label": "Flies", "type": "enum", "choices": ["In", "In with bounce", "Out", "Out with bounce"], "default": 0},
+  {"key": "travel", "label": "Distance", "type": "float", "min": 0.5, "max": 6, "step": 0.01, "default": 3.0},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 10, "max": 90, "step": 1, "default": 40, "unit": " deg"},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

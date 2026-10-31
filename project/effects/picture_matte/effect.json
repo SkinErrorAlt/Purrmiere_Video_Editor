@@ -1,0 +1,20 @@
+{
+ "id": "picture_matte",
+ "label": "Picture Matte",
+ "category": "Keying",
+ "version": 1,
+ "blurb": "A track matte from a picture in the bin: the clip shows only where the picture is solid (or bright), such as video inside a logo, a word or a brush stroke PNG, or everywhere except there when inverted. Move, size and turn the matte on the monitor and feather its edge. With no picture chosen the clip passes through.",
+ "params": [
+  {"key": "picture", "label": "Matte picture", "type": "texture", "default": ""},
+  {"key": "matte_from", "label": "Take the matte from", "type": "enum", "choices": ["Its alpha", "Its alpha, inverted", "Its brightness", "Its brightness, inverted"], "default": 0},
+  {"key": "combine", "label": "With the clip's own alpha", "type": "enum", "choices": ["Keep both", "Replace it", "Add to it", "Cut it out of it"], "default": 0},
+  {"key": "fit", "label": "Fit", "type": "enum", "choices": ["Fill the frame", "Fit inside", "Stretch", "Tile"], "default": 1},
+  {"key": "scale", "label": "Size", "type": "float", "min": 0.05, "max": 10.0, "step": 0.01, "default": 1.0},
+  {"key": "position", "label": "Position", "type": "vec2", "min": -1.0, "max": 2.0, "default": [0.5, 0.5]},
+  {"key": "rotation", "label": "Rotation", "type": "float", "min": -360.0, "max": 360.0, "step": 0.1, "default": 0.0, "unit": "deg"},
+  {"key": "feather", "label": "Feather", "type": "float", "min": 0.0, "max": 50.0, "step": 0.1, "default": 0.0, "unit": " px"},
+  {"key": "show_matte", "label": "Show the matte", "type": "bool", "default": false}
+ ],
+ "handles": [{"kind": "point", "key": "position"}, {"kind": "angle", "key": "rotation", "about": "position"}],
+ "passes": "single"
+}

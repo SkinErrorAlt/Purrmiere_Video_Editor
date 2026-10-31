@@ -1,0 +1,17 @@
+{
+ "id": "purr_pastel_glitch",
+ "label": "Pastel Glitch",
+ "category": "Purrmiere",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "A cute glitch: blocks of the picture jump sideways a few times a second, colour channels slip apart in soft pastel tints and some blocks flash pink, mint or lilac with fine scanlines.",
+ "params": [
+  {"key": "amount", "label": "Amount", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "block", "label": "Block size", "type": "float", "min": 4.0, "max": 200.0, "step": 0.5, "default": 40.0, "unit": " px"},
+  {"key": "rate", "label": "Glitches per second", "type": "float", "min": 1.0, "max": 30.0, "step": 0.5, "default": 8.0},
+  {"key": "split", "label": "Channel slip", "type": "float", "min": 0.0, "max": 40.0, "step": 0.1, "default": 6.0, "unit": " px"},
+  {"key": "tint", "label": "Pastel flashes", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

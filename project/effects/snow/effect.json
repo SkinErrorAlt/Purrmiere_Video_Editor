@@ -1,0 +1,20 @@
+{
+ "id": "snow",
+ "label": "Snow",
+ "category": "Generate",
+ "version": 1,
+ "blurb": "Snow in four layers of flakes that fall, drift with the wind and sway, the far ones smaller and softer.",
+ "params": [
+  {"key": "amount", "label": "Amount", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "size", "label": "Flake size", "type": "float", "min": 0.5, "max": 30.0, "step": 0.1, "default": 4.0, "unit": " px"},
+  {"key": "speed", "label": "Speed", "type": "float", "min": 0.0, "max": 4.0, "step": 0.01, "default": 1.0},
+  {"key": "wind", "label": "Wind", "type": "float", "min": -2.0, "max": 2.0, "step": 0.01, "default": 0.3},
+  {"key": "sway", "label": "Sway", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "blur_far", "label": "Soften far flakes", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "colour", "label": "Colour", "type": "color", "default": [1.0, 1.0, 1.0, 1.0]},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0},
+  {"key": "blend", "label": "How it mixes", "type": "enum", "choices": ["Replace", "Multiply", "Screen", "Overlay", "Add", "Soft light", "Over"], "default": 6},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0}
+ ],
+ "passes": "single"
+}

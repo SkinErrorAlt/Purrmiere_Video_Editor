@@ -1,0 +1,19 @@
+{
+ "id": "yt_screen_bounce",
+ "label": "Screensaver Bounce",
+ "category": "YouTube",
+ "tags": ["youtube", "graphic"],
+ "version": 1,
+ "blurb": "Shrinks the clip and bounces it round the frame like an old screensaver, changing colour at every wall it hits. Everyone waits for it to hit the corner.",
+ "params": [
+  {"key": "size", "label": "Size", "type": "float", "min": 0.05, "max": 0.9, "step": 0.001, "default": 0.3},
+  {"key": "speed_x", "label": "Speed across", "type": "float", "min": 0.0, "max": 3.0, "step": 0.01, "default": 0.35},
+  {"key": "speed_y", "label": "Speed down", "type": "float", "min": 0.0, "max": 3.0, "step": 0.01, "default": 0.27},
+  {"key": "start", "label": "Starts from", "type": "vec2", "default": [0.1, 0.2]},
+  {"key": "tint_on_hit", "label": "Change colour on hits", "type": "bool", "default": true},
+  {"key": "tint_amount", "label": "Colour amount", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "background", "label": "Background", "type": "color", "default": [0.0, 0.0, 0.0, 1.0]}
+ ],
+ "handles": [{"kind": "point", "key": "start"}],
+ "passes": "single"
+}

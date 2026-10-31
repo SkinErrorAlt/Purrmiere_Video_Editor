@@ -1,0 +1,20 @@
+{
+ "id": "petals",
+ "label": "Petals",
+ "group": "Shape",
+ "space": "2D",
+ "from": ["CapCut Flower"],
+ "blurb": "A flower of round petals opens from the centre and turns as it grows, its petals spreading into a round bloom as the incoming picture fills the frame.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "direction", "label": "Direction", "type": "enum", "choices": ["Out", "In"], "default": 0},
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "petals", "label": "Petals", "type": "int", "min": 2, "max": 16, "step": 1, "default": 6},
+  {"key": "depth", "label": "Gap depth", "type": "float", "min": 0, "max": 0.9, "step": 0.01, "default": 0.45},
+  {"key": "turn", "label": "Turn", "type": "float", "min": -720, "max": 720, "step": 1, "default": 90, "unit": " deg"},
+  {"key": "softness", "label": "Soft edge", "type": "float", "min": 0, "max": 300, "step": 0.5, "default": 2, "unit": " px"},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 1},
+  {"key": "border", "label": "Border", "type": "float", "min": 0, "max": 60, "step": 0.5, "default": 0, "unit": " px"},
+  {"key": "border_colour", "label": "Border colour", "type": "color", "default": [1, 1, 1, 1]}
+ ]
+}

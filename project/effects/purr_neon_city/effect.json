@@ -1,0 +1,17 @@
+{
+ "id": "purr_neon_city",
+ "label": "Neon City",
+ "category": "Purrmiere",
+ "tags": ["look", "light"],
+ "version": 1,
+ "blurb": "A night city neon grade: shadows pushed into deep cyan blue, highlights into hot magenta pink, blacks crushed for contrast and a coloured bloom glowing off every bright light.",
+ "params": [
+  {"key": "cyan", "label": "Shadow neon", "type": "color", "default": [0.1, 0.8, 1.0, 1.0]},
+  {"key": "magenta", "label": "Highlight neon", "type": "color", "default": [1.0, 0.2, 0.75, 1.0]},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.8},
+  {"key": "crush", "label": "Crush blacks", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "bloom", "label": "Bloom", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.7},
+  {"key": "bloom_size", "label": "Bloom size", "type": "float", "min": 2.0, "max": 80.0, "step": 0.5, "default": 18.0, "unit": " px"}
+ ],
+ "passes": "single"
+}

@@ -1,0 +1,18 @@
+{
+ "id": "fresco",
+ "label": "Fresco",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Repaints the picture in short, stubby dabs of a coarse brush, with deep dark shadows and hard contrast, like paint laid fast on wet plaster.",
+ "params": [
+  {"key": "brush_size", "label": "Brush size", "type": "float", "min": 1.0, "max": 24.0, "step": 0.1, "default": 5.0, "unit": " px"},
+  {"key": "detail", "label": "Brush detail", "type": "float", "min": 0.0, "max": 10.0, "step": 0.1, "default": 8.0},
+  {"key": "texture_level", "label": "Texture", "type": "float", "min": 1.0, "max": 3.0, "step": 0.01, "default": 1.0},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": [
+  {"shader": "dab.gdshader"},
+  {"shader": "finish.gdshader"}
+ ]
+}

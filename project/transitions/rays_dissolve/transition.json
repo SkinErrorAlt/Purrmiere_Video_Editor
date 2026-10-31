@@ -1,0 +1,20 @@
+{
+ "id": "rays_dissolve",
+ "label": "Light Rays",
+ "group": "Light and Film",
+ "space": "2D",
+ "from": ["Film Impact Ray", "Sapphire Dissolve Rays", "BCC Rays Dissolve", "Premiere VR Light Rays"],
+ "blurb": "Shafts of light stream out of the bright parts of the picture, away from a point you place, which can sit outside the frame. They grow longer and brighter until light fills most of the frame on the cut, then shorten on the incoming picture. Dark shapes block the light, so the shafts have real gaps.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "centre", "label": "Light from", "type": "vec2", "default": [0.5, 0.35]},
+  {"key": "length", "label": "Length", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.7},
+  {"key": "threshold", "label": "Bright parts from", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "intensity", "label": "Intensity", "type": "float", "min": 0, "max": 4, "step": 0.01, "default": 1.6},
+  {"key": "tint", "label": "Light colour", "type": "color", "default": [1, 0.96, 0.88, 1]},
+  {"key": "decay", "label": "Fall off", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6}
+ ],
+ "handles": [
+  {"kind": "point", "key": "centre"}
+ ]
+}

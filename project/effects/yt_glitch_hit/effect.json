@@ -1,0 +1,21 @@
+{
+ "id": "yt_glitch_hit",
+ "label": "Glitch Hit",
+ "category": "YouTube",
+ "tags": ["youtube", "look"],
+ "version": 1,
+ "blurb": "A short digital glitch burst: rows tear sideways, blocks jump and flip colour and the channels split, then the picture comes back clean. It fires at the start of the clip unless you set a time, and can repeat.",
+ "params": [
+  {"key": "starts_at", "label": "Starts at", "type": "float", "min": 0.0, "max": 600.0, "step": 0.01, "default": 0.0, "unit": " s"},
+  {"key": "duration", "label": "Lasts", "type": "float", "min": 0.05, "max": 3.0, "step": 0.01, "default": 0.4, "unit": " s"},
+  {"key": "repeat_every", "label": "Repeat every", "type": "float", "min": 0.0, "max": 10.0, "step": 0.01, "default": 0.0, "unit": " s"},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.8},
+  {"key": "band", "label": "Band height", "type": "float", "min": 2.0, "max": 120.0, "step": 0.5, "default": 22.0, "unit": " px"},
+  {"key": "tear", "label": "Tear", "type": "float", "min": 0.0, "max": 400.0, "step": 1.0, "default": 90.0, "unit": " px"},
+  {"key": "split", "label": "Colour split", "type": "float", "min": 0.0, "max": 60.0, "step": 0.5, "default": 12.0, "unit": " px"},
+  {"key": "blocks", "label": "Blocks", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "rate", "label": "Changes per second", "type": "float", "min": 1.0, "max": 60.0, "step": 1.0, "default": 20.0},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

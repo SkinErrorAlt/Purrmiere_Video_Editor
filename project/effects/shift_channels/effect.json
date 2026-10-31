@@ -1,0 +1,14 @@
+{
+ "id": "shift_channels",
+ "label": "Shift Channels",
+ "category": "Channel",
+ "version": 1,
+ "blurb": "Takes each output channel from whichever input channel you pick, or from full or empty.",
+ "params": [
+  {"key": "take_r", "label": "Red takes", "type": "enum", "default": 0, "choices": ["Red", "Green", "Blue", "Alpha", "Luminance", "Full", "Empty"]},
+  {"key": "take_g", "label": "Green takes", "type": "enum", "default": 1, "choices": ["Red", "Green", "Blue", "Alpha", "Luminance", "Full", "Empty"]},
+  {"key": "take_b", "label": "Blue takes", "type": "enum", "default": 2, "choices": ["Red", "Green", "Blue", "Alpha", "Luminance", "Full", "Empty"]},
+  {"key": "take_a", "label": "Alpha takes", "type": "enum", "default": 3, "choices": ["Red", "Green", "Blue", "Alpha", "Luminance", "Full", "Empty"]}
+ ],
+ "passes": "single"
+}

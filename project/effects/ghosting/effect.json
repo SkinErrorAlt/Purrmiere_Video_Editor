@@ -1,0 +1,17 @@
+{
+ "id": "ghosting",
+ "label": "Ghosting",
+ "category": "VHS & Analogue",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Faint copies of the picture repeating sideways, the way a reflected aerial signal looks.",
+ "params": [
+  {"key": "copies", "label": "How many", "type": "int", "min": 1, "max": 8, "step": 1, "default": 3},
+  {"key": "spacing", "label": "How far apart", "type": "float", "min": 0.0, "max": 200.0, "step": 0.5, "default": 24.0},
+  {"key": "decay", "label": "How fast they fade", "type": "float", "min": 0.05, "max": 1.0, "step": 0.01, "default": 0.45},
+  {"key": "angle", "label": "Direction", "type": "float", "min": -180.0, "max": 180.0, "step": 1.0, "default": 0.0, "unit": " deg"},
+  {"key": "tint", "label": "Ghost tint", "type": "color", "default": [1.0, 1.0, 1.0, 1.0]}
+ ],
+ "handles": [{"kind": "angle", "key": "angle", "zero": "right", "turn": "cw", "length": "spacing", "length_unit": "px"}],
+ "passes": "single"
+}

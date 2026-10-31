@@ -1,0 +1,18 @@
+{
+ "id": "purr_vintage_cartoon",
+ "label": "Vintage Cartoon",
+ "category": "Purrmiere",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "The look of a 1930s cartoon reel: flat black, grey and white tones with an inky outline, a warm aged tint, flickering exposure, dust and grain, a little gate weave and a round dark vignette.",
+ "params": [
+  {"key": "levels", "label": "Tones", "type": "int", "min": 2, "max": 6, "step": 1, "default": 3},
+  {"key": "outline", "label": "Ink line", "type": "float", "min": 0.0, "max": 6.0, "step": 0.1, "default": 1.6, "unit": " px"},
+  {"key": "tint", "label": "Aged tint", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "flicker", "label": "Flicker", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "grain", "label": "Dust and grain", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "weave", "label": "Gate weave", "type": "float", "min": 0.0, "max": 10.0, "step": 0.1, "default": 1.5, "unit": " px"},
+  {"key": "vignette", "label": "Round vignette", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6}
+ ],
+ "passes": "single"
+}

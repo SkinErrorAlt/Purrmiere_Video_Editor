@@ -1,0 +1,23 @@
+{
+ "id": "lifted_shadow",
+ "label": "Lifted Shadow",
+ "category": "Light & Shadow",
+ "version": 1,
+ "blurb": "A shadow under the picture as if it were a printed photo lying on a surface. Page lift curls the corners up, so the shadow hugs the edges in the middle and spreads out, softer and darker, under the corners. Curved bows the photo, so the shadow swells under the middle of the long edges instead. The picture shrinks to make room and the margin round it is clear, so the shadow falls on the track below; it also follows the outline of a cut out.",
+ "params": [
+  {"key": "style", "label": "Style", "type": "enum", "choices": ["Page lift", "Curved"], "default": 0},
+  {"key": "depth", "label": "Depth", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "softness", "label": "Softness", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "darkness", "label": "Darkness", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.65},
+  {"key": "colour", "label": "Shadow colour", "type": "color", "default": [0.0, 0.0, 0.0, 1.0]},
+  {"key": "light_angle", "label": "Light from", "type": "float", "min": -180, "max": 180, "step": 0.5, "default": 90, "unit": " deg"},
+  {"key": "shrink", "label": "Shrink the picture", "type": "float", "min": 0, "max": 0.5, "step": 0.005, "default": 0.12}
+ ],
+ "handles": [{"kind": "angle", "key": "light_angle", "zero": "right", "turn": "ccw"}],
+ "passes": [
+  {"shader": "alpha.gdshader", "scale": 0.5},
+  {"shader": "res://effects/blur_gaussian/down.gdshader", "scale": 0.5},
+  {"shader": "shadow.gdshader"},
+  {"shader": "compose.gdshader", "scale": 4.0}
+ ]
+}

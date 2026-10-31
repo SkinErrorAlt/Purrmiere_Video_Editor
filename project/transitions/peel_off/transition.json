@@ -1,0 +1,20 @@
+{
+ "id": "peel_off",
+ "label": "Peel Off",
+ "group": "3D",
+ "space": "3D",
+ "from": ["PowerPoint Peel Off"],
+ "blurb": "The outgoing picture peels away from a bottom corner like a sticker, lifting towards you with its pale backing showing, until it comes away and leaves the incoming picture.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "corner", "label": "Starts at", "type": "enum", "choices": ["Bottom left", "Bottom right"], "default": 0},
+  {"key": "radius", "label": "Curl size", "type": "float", "min": 0.02, "max": 0.5, "step": 0.01, "default": 0.06},
+  {"key": "lift", "label": "Lift", "type": "float", "min": 90, "max": 170, "step": 1, "default": 140, "unit": " deg"},
+  {"key": "back_fade", "label": "Backing", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.85},
+  {"key": "paper", "label": "Backing colour", "type": "color", "default": [0.95, 0.94, 0.9, 1]},
+  {"key": "shadow", "label": "Shadow", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 10, "max": 90, "step": 1, "default": 40, "unit": " deg"},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

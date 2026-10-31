@@ -1,0 +1,20 @@
+{
+ "id": "low_health",
+ "label": "Low Health",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "The picture drains of colour while red, blurred edges throb on a heartbeat, the way a game warns you are nearly out of health.",
+ "params": [
+  {"key": "bpm", "label": "Heartbeat", "type": "float", "min": 30.0, "max": 200.0, "step": 1.0, "default": 72.0, "unit": " bpm"},
+  {"key": "pulse", "label": "Pulse", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "colour", "label": "Colour", "type": "color", "default": [0.7, 0.0, 0.0, 1.0]},
+  {"key": "reach", "label": "Reach", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45},
+  {"key": "redness", "label": "Red edges", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "desaturate", "label": "Drain colour", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.65},
+  {"key": "blur", "label": "Blurred edges", "type": "float", "min": 0.0, "max": 30.0, "step": 0.1, "default": 6.0, "unit": " px"},
+  {"key": "darken", "label": "Darken", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "thump", "label": "Thump", "type": "float", "min": 0.0, "max": 5.0, "step": 0.1, "default": 0.8, "unit": " %"}
+ ],
+ "passes": "single"
+}

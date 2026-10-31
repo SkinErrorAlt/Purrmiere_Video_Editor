@@ -1,0 +1,15 @@
+{
+ "id": "leave_colour",
+ "label": "Leave Colour",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Keeps one colour and turns everything else grey, like a red coat in a black and white film.",
+ "params": [
+  {"key": "keep", "label": "Colour to keep", "type": "color", "default": [0.85, 0.1, 0.1, 1.0]},
+  {"key": "tolerance", "label": "Tolerance", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.08},
+  {"key": "softness", "label": "Softness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.05},
+  {"key": "desaturate", "label": "Grey the rest", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "match", "label": "Match by", "type": "enum", "choices": ["Hue", "RGB"], "default": 0}
+ ],
+ "passes": "single"
+}

@@ -1,0 +1,15 @@
+{
+ "id": "hexagonalize",
+ "label": "Hexagons",
+ "group": "Glitch",
+ "space": "2D",
+ "from": ["gl hexagonalize"],
+ "blurb": "Like Pixelate but with honeycomb cells: the picture turns into flat coloured hexagons that grow, swap to the incoming picture and shrink away.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "size", "label": "Biggest cell", "type": "float", "min": 4, "max": 240, "step": 1, "default": 96, "unit": " px"},
+  {"key": "steps", "label": "Steps", "type": "int", "min": 0, "max": 60, "step": 1, "default": 0},
+  {"key": "blend", "label": "Blend length", "type": "float", "min": 0.05, "max": 1, "step": 0.01, "default": 0.35},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 0}
+ ]
+}

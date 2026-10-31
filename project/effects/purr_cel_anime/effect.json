@@ -1,0 +1,18 @@
+{
+ "id": "purr_cel_anime",
+ "label": "Cel Anime",
+ "category": "Purrmiere",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Flat cel shading like a hand painted animation frame: the light falls into a few flat bands, colours are lifted, the brightest parts catch a clean highlight and every edge gets an ink line.",
+ "params": [
+  {"key": "bands", "label": "Shade bands", "type": "int", "min": 2, "max": 8, "step": 1, "default": 3},
+  {"key": "softness", "label": "Band softness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.15},
+  {"key": "saturation", "label": "Colour", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 1.3},
+  {"key": "highlight", "label": "Highlight", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "outline", "label": "Ink line", "type": "float", "min": 0.0, "max": 6.0, "step": 0.1, "default": 1.5, "unit": " px"},
+  {"key": "threshold", "label": "Ink threshold", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "ink", "label": "Ink colour", "type": "color", "default": [0.08, 0.05, 0.12, 1.0]}
+ ],
+ "passes": "single"
+}

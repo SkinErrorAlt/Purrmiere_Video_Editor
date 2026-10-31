@@ -1,0 +1,17 @@
+{
+ "id": "spin",
+ "label": "Spin",
+ "group": "Zoom and Camera",
+ "space": "2D",
+ "from": ["CapCut Spin"],
+ "blurb": "The outgoing picture spins up to speed under a rotation blur and the incoming one spins down into place, so the cut hides inside the turn.",
+ "default_duration": 0.7,
+ "params": [
+  {"key": "turn", "label": "Turn each", "type": "float", "min": 30, "max": 720, "step": 1, "default": 180, "unit": " deg"},
+  {"key": "way", "label": "Way", "type": "enum", "choices": ["Clockwise", "Anticlockwise"], "default": 0},
+  {"key": "blur", "label": "Rotation blur", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.7},
+  {"key": "blend", "label": "Blend", "type": "float", "min": 0.01, "max": 0.3, "step": 0.01, "default": 0.06},
+  {"key": "edges", "label": "Corners", "type": "enum", "choices": ["Mirror", "Zoom to fill", "Background"], "default": 1},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

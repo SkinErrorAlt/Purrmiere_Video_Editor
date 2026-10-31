@@ -1,0 +1,18 @@
+{
+ "id": "light_wipe",
+ "label": "Light Wipe",
+ "category": "Transition",
+ "version": 1,
+ "blurb": "A wipe whose edge is a band of glowing light: straight across, as a growing circle, or opening from the middle like a door.",
+ "params": [
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0, "max": 1, "step": 0.005, "default": 0.5},
+  {"key": "shape", "label": "Shape", "type": "enum", "choices": ["Line", "Circle", "Door"], "default": 0},
+  {"key": "angle", "label": "Angle", "type": "float", "min": -180, "max": 180, "step": 1, "default": 0, "unit": " deg"},
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "width", "label": "Light width", "type": "float", "min": 0.005, "max": 0.5, "step": 0.005, "default": 0.06},
+  {"key": "intensity", "label": "Intensity", "type": "float", "min": 0, "max": 4, "step": 0.01, "default": 1.5},
+  {"key": "colour", "label": "Light colour", "type": "color", "default": [1, 0.9, 0.7, 1]}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}, {"kind": "angle", "key": "angle", "about": "centre", "zero": "right", "turn": "ccw"}],
+ "passes": "single"
+}

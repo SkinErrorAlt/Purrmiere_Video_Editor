@@ -1,0 +1,20 @@
+{
+ "id": "multi_colour_key",
+ "label": "Multi Colour Key",
+ "category": "Keying",
+ "version": 1,
+ "blurb": "Keys out up to three colours at once, for a screen that is lit unevenly (pick the bright part and the shadowed part) or a set with two screen colours. Each colour is matched in brightness and colour separately, so a darker patch of the same green still goes. Where Colour Range Key takes one colour, this takes several.",
+ "params": [
+  {"key": "colour_1", "label": "Screen colour", "type": "color", "default": [0.12, 0.72, 0.28, 1.0]},
+  {"key": "colour_2", "label": "Second colour", "type": "color", "default": [0.05, 0.4, 0.14, 1.0]},
+  {"key": "use_2", "label": "Use the second colour", "type": "bool", "default": true},
+  {"key": "colour_3", "label": "Third colour", "type": "color", "default": [0.15, 0.3, 0.85, 1.0]},
+  {"key": "use_3", "label": "Use the third colour", "type": "bool", "default": false},
+  {"key": "chroma_tolerance", "label": "Colour tolerance", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45},
+  {"key": "luma_tolerance", "label": "Brightness tolerance", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "softness", "label": "Softness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.15},
+  {"key": "despill", "label": "Spill removal", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "show_matte", "label": "Show the matte", "type": "bool", "default": false}
+ ],
+ "passes": "single"
+}

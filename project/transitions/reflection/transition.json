@@ -1,0 +1,18 @@
+{
+ "id": "reflection",
+ "label": "Reflection",
+ "group": "3D",
+ "space": "3D",
+ "from": ["Keynote Reflection"],
+ "blurb": "The outgoing picture backs away onto a glossy floor that shows its reflection, slides off to the side as the incoming picture slides in beside it, and the incoming picture comes forward to fill the frame.",
+ "default_duration": 1.8,
+ "params": [
+  {"key": "direction", "label": "Moves towards", "type": "enum", "choices": ["Left", "Right"], "default": 0},
+  {"key": "depth", "label": "Depth", "type": "float", "min": 0.3, "max": 3, "step": 0.01, "default": 1.2},
+  {"key": "gap", "label": "Gap", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.25},
+  {"key": "reflectivity", "label": "Reflection", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.4},
+  {"key": "falloff", "label": "Reflection fade", "type": "float", "min": 0.05, "max": 1, "step": 0.01, "default": 0.45},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 10, "max": 90, "step": 1, "default": 40, "unit": " deg"},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

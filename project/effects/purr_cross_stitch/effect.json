@@ -1,0 +1,16 @@
+{
+ "id": "purr_cross_stitch",
+ "label": "Cross Stitch",
+ "category": "Purrmiere",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Embroiders the picture in cross stitch on cream aida cloth: one coloured X of thread per square with the twist of the strands showing, the cloth's weave and holes between, and the palest areas left as bare cloth.",
+ "params": [
+  {"key": "cell", "label": "Stitch size", "type": "float", "min": 3.0, "max": 40.0, "step": 0.5, "default": 8.0, "unit": " px"},
+  {"key": "levels", "label": "Thread colours", "type": "int", "min": 2, "max": 12, "step": 1, "default": 6},
+  {"key": "thickness", "label": "Thread width", "type": "float", "min": 0.05, "max": 0.5, "step": 0.001, "default": 0.34},
+  {"key": "bare", "label": "Leave bare above", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.92},
+  {"key": "cloth", "label": "Cloth", "type": "color", "default": [0.95, 0.93, 0.86, 1.0]}
+ ],
+ "passes": "single"
+}

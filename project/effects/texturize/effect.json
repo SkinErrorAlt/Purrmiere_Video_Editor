@@ -1,0 +1,17 @@
+{
+ "id": "texturize",
+ "label": "Texturize",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Presses a picture from the bin into the clip as relief, lit from one side, for canvas, brick, paper or fabric surfaces.",
+ "params": [
+  {"key": "picture", "label": "Texture picture", "type": "texture", "default": ""},
+  {"key": "contrast", "label": "Relief", "type": "float", "min": 0, "max": 3, "step": 0.01, "default": 1.0},
+  {"key": "light_angle", "label": "Light direction", "type": "float", "min": -180, "max": 180, "step": 1, "default": 135, "unit": " deg"},
+  {"key": "placement", "label": "Placement", "type": "enum", "choices": ["Tile", "Stretch"], "default": 0},
+  {"key": "tile_scale", "label": "Tile scale", "type": "float", "min": 0.05, "max": 8, "step": 0.01, "default": 1.0}
+ ],
+ "handles": [{"kind": "angle", "key": "light_angle", "zero": "right", "turn": "ccw"}],
+ "passes": "single"
+}

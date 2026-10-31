@@ -1,0 +1,17 @@
+{
+ "id": "average_colour",
+ "label": "Average Colour",
+ "category": "Image Control",
+ "version": 1,
+ "blurb": "Fills the picture with its own average colour, measured fresh on every frame. Useful as a backdrop that matches the shot, or to read what colour a shot leans to. Light mixing averages the light itself, the way a heavy blur would, which comes out a little brighter than the plain average of the pixel values.",
+ "params": [
+  {"key": "measure", "label": "Average", "type": "enum", "choices": ["Pixel values", "Light mixing"], "default": 0},
+  {"key": "keep_alpha", "label": "Keep see through parts", "type": "bool", "default": true}
+ ],
+ "passes": [
+  {"shader": "res://effects/auto_colour/stats.gdshader", "scale": 0.0625, "set": {"stage": 0, "stat": 0}},
+  {"shader": "res://effects/auto_colour/stats.gdshader", "scale": 1.0, "set": {"stage": 1, "stat": 0}},
+  {"shader": "fill.gdshader", "scale": 1.0, "set": {"stage": 0}},
+  {"shader": "fill.gdshader", "scale": 16.0, "set": {"stage": 1}}
+ ]
+}

@@ -1,0 +1,16 @@
+{
+ "id": "zoom_circles",
+ "label": "Zoom In Circles",
+ "group": "Shape",
+ "space": "2D",
+ "from": ["gl ZoomInCircles"],
+ "blurb": "The outgoing picture is cut into rings round the centre that magnify at different rates and spread outward, then the rings rush outward as the incoming picture fades in from the middle.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "rings", "label": "Rings", "type": "int", "min": 1, "max": 8, "step": 1, "default": 3},
+  {"key": "ring_size", "label": "Ring size", "type": "float", "min": 0.2, "max": 2, "step": 0.01, "default": 1},
+  {"key": "zoom", "label": "Zoom", "type": "float", "min": 0, "max": 0.6, "step": 0.01, "default": 0.25},
+  {"key": "switch_at", "label": "Switch at", "type": "float", "min": 0.3, "max": 0.95, "step": 0.01, "default": 0.8}
+ ]
+}

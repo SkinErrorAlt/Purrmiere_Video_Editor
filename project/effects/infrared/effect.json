@@ -1,0 +1,16 @@
+{
+ "id": "infrared",
+ "label": "Infrared",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "The look of infrared film: leaves turn white or pink, blue sky goes dark, and bright parts get a soft glow.",
+ "params": [
+  {"key": "mode", "label": "Look", "type": "enum", "choices": ["Black and white IR", "Aerochrome style colour"], "default": 1},
+  {"key": "amount", "label": "Amount", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.85},
+  {"key": "glow", "label": "Glow", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "glow_size", "label": "Glow size", "type": "float", "min": 1.0, "max": 60.0, "step": 0.5, "default": 12.0, "unit": " px"},
+  {"key": "contrast", "label": "Contrast", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 1.15}
+ ],
+ "passes": "single"
+}

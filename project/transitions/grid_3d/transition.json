@@ -1,0 +1,20 @@
+{
+ "id": "grid_3d",
+ "label": "Grid",
+ "group": "3D",
+ "space": "3D",
+ "from": ["Keynote Grid"],
+ "blurb": "The outgoing picture breaks into a grid of tiles that turn and sink away into the dark in a wave, while the incoming picture's tiles rise out of the depth and lock back together.",
+ "default_duration": 1.8,
+ "params": [
+  {"key": "columns", "label": "Columns", "type": "int", "min": 2, "max": 24, "step": 1, "default": 8},
+  {"key": "pattern", "label": "Order", "type": "enum", "choices": ["Diagonal", "Random", "Left to right", "From the centre"], "default": 0},
+  {"key": "depth", "label": "Depth", "type": "float", "min": 0.2, "max": 4, "step": 0.01, "default": 1.6},
+  {"key": "turn", "label": "Turn", "type": "float", "min": 0, "max": 90, "step": 1, "default": 30, "unit": " deg"},
+  {"key": "gap", "label": "Gap", "type": "float", "min": 0, "max": 0.4, "step": 0.01, "default": 0.12},
+  {"key": "jitter", "label": "Jitter", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.3},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 10, "max": 90, "step": 1, "default": 40, "unit": " deg"},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

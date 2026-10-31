@@ -1,0 +1,24 @@
+{
+ "id": "underpainting",
+ "label": "Underpainting",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Paints a soft, blurred version of the picture onto a textured surface first and then paints over it, so the weave of the canvas or the grain of the stone shows through.",
+ "params": [
+  {"key": "brush_size", "label": "Brush size", "type": "float", "min": 0.0, "max": 40.0, "step": 0.1, "default": 6.0, "unit": " px"},
+  {"key": "texture_coverage", "label": "Texture coverage", "type": "float", "min": 0.0, "max": 40.0, "step": 0.1, "default": 16.0},
+  {"key": "surface", "label": "Texture", "type": "enum", "choices": ["Brick", "Burlap", "Canvas", "Sandstone"], "default": 2},
+  {"key": "scaling", "label": "Scaling", "type": "float", "min": 50.0, "max": 200.0, "step": 1.0, "default": 100.0, "unit": " %"},
+  {"key": "relief", "label": "Relief", "type": "float", "min": 0.0, "max": 50.0, "step": 0.1, "default": 4.0},
+  {"key": "light", "label": "Light", "type": "enum", "choices": ["Bottom", "Bottom left", "Left", "Top left", "Top", "Top right", "Right", "Bottom right"], "default": 4},
+  {"key": "invert", "label": "Invert", "type": "bool", "default": false},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": [
+  {"shader": "down.gdshader", "scale": 0.5},
+  {"shader": "blur.gdshader", "set": {"direction": [1.0, 0.0]}, "map": {"radius": "brush_size"}},
+  {"shader": "blur.gdshader", "set": {"direction": [0.0, 1.0]}, "map": {"radius": "brush_size"}},
+  {"shader": "paint.gdshader", "scale": 2.0}
+ ]
+}

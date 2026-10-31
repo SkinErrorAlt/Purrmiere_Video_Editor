@@ -1,0 +1,17 @@
+{
+ "id": "purr_dreamy_pastel",
+ "label": "Dreamy Pastel",
+ "category": "Purrmiere",
+ "tags": ["look", "light"],
+ "version": 1,
+ "blurb": "A soft pastel dream grade: blacks lifted to lavender, colours washed towards pink, lilac and mint, a gentle bloom spilling from the highlights and a touch of haze. Instantly cosy.",
+ "params": [
+  {"key": "pastel", "label": "Pastel", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "shadow_tint", "label": "Shadow tint", "type": "color", "default": [0.72, 0.68, 0.95, 1.0]},
+  {"key": "high_tint", "label": "Highlight tint", "type": "color", "default": [1.0, 0.86, 0.9, 1.0]},
+  {"key": "bloom", "label": "Bloom", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.45},
+  {"key": "bloom_size", "label": "Bloom size", "type": "float", "min": 2.0, "max": 80.0, "step": 0.5, "default": 22.0, "unit": " px"},
+  {"key": "haze", "label": "Haze", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.12}
+ ],
+ "passes": "single"
+}

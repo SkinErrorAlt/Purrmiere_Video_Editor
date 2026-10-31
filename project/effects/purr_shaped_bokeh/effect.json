@@ -1,0 +1,19 @@
+{
+ "id": "purr_shaped_bokeh",
+ "label": "Shaped Bokeh",
+ "category": "Purrmiere",
+ "tags": ["light"],
+ "version": 1,
+ "blurb": "Out of focus lights drifting over the picture in the shape of hearts, stars, paw prints, hexagons or circles, coloured from the picture underneath, in pink and gold or in rainbow colours.",
+ "params": [
+  {"key": "shape", "label": "Shape", "type": "enum", "default": 0, "choices": ["Hearts", "Stars", "Paw prints", "Hexagons", "Circles"]},
+  {"key": "density", "label": "Density", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "size", "label": "Size", "type": "float", "min": 6.0, "max": 300.0, "step": 0.5, "default": 50.0, "unit": " px"},
+  {"key": "softness", "label": "Softness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "brightness", "label": "Brightness", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.8},
+  {"key": "colour_mode", "label": "Colour", "type": "enum", "default": 0, "choices": ["From the picture", "Pink and gold", "Rainbow"]},
+  {"key": "speed", "label": "Drift", "type": "float", "min": 0.0, "max": 3.0, "step": 0.01, "default": 0.25},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

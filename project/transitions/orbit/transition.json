@@ -1,0 +1,17 @@
+{
+ "id": "orbit",
+ "label": "Orbit",
+ "group": "3D",
+ "space": "3D",
+ "from": ["PowerPoint Orbit"],
+ "blurb": "The pictures sit on a wide ring that turns round a point behind the screen: the outgoing picture is carried off to the side and away while the incoming one swings in from the other side.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "direction", "label": "Comes from", "type": "enum", "choices": ["Right", "Left", "Top", "Bottom"], "default": 0},
+  {"key": "radius", "label": "Ring size", "type": "float", "min": 0.6, "max": 3, "step": 0.01, "default": 1.2},
+  {"key": "pull_back", "label": "Pull back", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 0.5},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 10, "max": 90, "step": 1, "default": 40, "unit": " deg"},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

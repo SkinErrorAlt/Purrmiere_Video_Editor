@@ -1,0 +1,14 @@
+{
+ "id": "posterize_gradient",
+ "label": "Quantize",
+ "category": "Stylize",
+ "version": 1,
+ "blurb": "Rounds the picture to a fixed number of steps, in colour or in brightness, with optional dithering.",
+ "params": [
+  {"key": "levels", "label": "Steps", "type": "int", "min": 2, "max": 64, "step": 1, "default": 6},
+  {"key": "luma_only", "label": "Brightness only", "type": "bool", "default": false},
+  {"key": "dither", "label": "Dither", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.0},
+  {"key": "gamma_v", "label": "Weighting", "type": "float", "min": 0.2, "max": 4.0, "step": 0.01, "default": 1.0}
+ ],
+ "passes": "single"
+}

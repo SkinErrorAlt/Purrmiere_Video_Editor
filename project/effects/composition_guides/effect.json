@@ -1,0 +1,18 @@
+{
+ "id": "composition_guides",
+ "label": "Composition Guides",
+ "category": "Utility",
+ "tags": ["measure"],
+ "version": 1,
+ "blurb": "Draws the classic composition guides over the picture for lining up a shot, a thumbnail or a title: the golden ratio grid, the golden spiral with its rectangles, the diagonals, golden triangles, or the dynamic symmetry armature. Turn the spiral and triangles to any corner. The Program monitor's thirds grid does not cover these.",
+ "params": [
+  {"key": "guide", "label": "Guide", "type": "enum", "choices": ["Golden ratio grid", "Golden spiral", "Diagonals", "Golden triangles", "Dynamic symmetry"], "default": 1},
+  {"key": "turn", "label": "Towards", "type": "enum", "choices": ["Top left", "Top right", "Bottom right", "Bottom left"], "default": 2},
+  {"key": "colour", "label": "Colour", "type": "color", "default": [1.0, 0.85, 0.25, 0.9]},
+  {"key": "width", "label": "Line width", "type": "float", "min": 0.5, "max": 8.0, "step": 0.1, "default": 1.5, "unit": " px"},
+  {"key": "extra", "label": "Faint helper lines", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45}
+ ],
+ "passes": [
+  {"shader": "compose.gdshader"}
+ ]
+}

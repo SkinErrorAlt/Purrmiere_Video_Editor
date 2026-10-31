@@ -1,0 +1,18 @@
+{
+ "id": "purr_spray_stencil",
+ "label": "Spray Stencil",
+ "category": "Purrmiere",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "A street art stencil sprayed in one colour: the picture cut to a hard two tone stencil, soft overspray speckling round every edge and paint drips running down from the heavy parts, on a concrete wall or over the picture.",
+ "params": [
+  {"key": "ink", "label": "Paint", "type": "color", "default": [0.1, 0.08, 0.14, 1.0]},
+  {"key": "wall", "label": "Wall", "type": "color", "default": [0.82, 0.8, 0.76, 1.0]},
+  {"key": "background", "label": "Background", "type": "enum", "default": 0, "choices": ["Concrete wall", "The picture", "See through"]},
+  {"key": "threshold", "label": "Stencil cut", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45},
+  {"key": "overspray", "label": "Overspray", "type": "float", "min": 0.0, "max": 40.0, "step": 0.1, "default": 8.0, "unit": " px"},
+  {"key": "drips", "label": "Drips", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "drip_len", "label": "Drip length", "type": "float", "min": 0.0, "max": 300.0, "step": 0.5, "default": 60.0, "unit": " px"}
+ ],
+ "passes": "single"
+}

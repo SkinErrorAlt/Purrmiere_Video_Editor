@@ -1,0 +1,19 @@
+{
+ "id": "glare_dissolve",
+ "label": "Glare",
+ "group": "Light and Film",
+ "space": "2D",
+ "from": ["Sapphire Dissolve Glare", "Sapphire Dissolve Glint", "CapCut Glare"],
+ "blurb": "The bright points in both pictures grow star streaks, like a star filter on the lens. The streaks lengthen and brighten up to the cut while the pictures dissolve underneath, then shrink away. Pick 4, 6 or 8 rays, let the star turn slowly, and give the tips a faint rainbow fringe.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "rays", "label": "Rays", "type": "enum", "choices": ["4", "6", "8"], "default": 0},
+  {"key": "length", "label": "Length", "type": "float", "min": 10, "max": 1000, "step": 1, "default": 420, "unit": " px"},
+  {"key": "threshold", "label": "Streaks from", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.85},
+  {"key": "angle", "label": "Angle", "type": "float", "min": -180, "max": 180, "step": 1, "default": 30, "unit": " deg"},
+  {"key": "turn", "label": "Turn", "type": "float", "min": -180, "max": 180, "step": 1, "default": 20, "unit": " deg"},
+  {"key": "dispersion", "label": "Rainbow fringe", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.25},
+  {"key": "intensity", "label": "Intensity", "type": "float", "min": 0, "max": 4, "step": 0.01, "default": 1.5},
+  {"key": "glints", "label": "Glints", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.35}
+ ]
+}

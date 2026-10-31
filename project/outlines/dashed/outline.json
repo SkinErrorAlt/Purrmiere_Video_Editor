@@ -1,0 +1,11 @@
+{
+ "id": "dashed",
+ "label": "Dashed",
+ "blurb": "Dashes round the clip, standing still.",
+ "order": 2,
+ "reach": 1.5,
+ "params": [
+  {"key": "dash", "label": "Dash length", "type": "float", "min": 1, "max": 60, "step": 0.5, "default": 8, "unit": "px"},
+  {"key": "gap", "label": "Gap length", "type": "float", "min": 1, "max": 60, "step": 0.5, "default": 6, "unit": "px"}
+ ]
+}

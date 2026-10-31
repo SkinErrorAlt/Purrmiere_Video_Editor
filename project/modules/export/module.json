@@ -1,0 +1,12 @@
+{
+ "id": "export",
+ "label": "Export",
+ "kind": "code",
+ "version": "0.1.0",
+ "author": "Purrmiere",
+ "blurb": "The export panel, the frame exporter through purrcore, clip cut without re-encode, and the compositor for the open sequence.",
+ "api": {"IPanel": 1, "IExporter": 1},
+ "provides": ["IPanel", "IExporter"],
+ "requires": [],
+ "core": true
+}

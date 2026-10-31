@@ -1,0 +1,17 @@
+{
+ "id": "unsharp_mask",
+ "label": "Unsharp Mask",
+ "category": "Blur & Sharpen",
+ "version": 1,
+ "blurb": "Sharpen with a radius and a threshold that keeps flat areas untouched.",
+ "params": [
+  {"key": "amount", "label": "Amount", "type": "float", "min": 0, "max": 5, "step": 0.01, "default": 1},
+  {"key": "radius", "label": "Radius", "type": "float", "min": 0.5, "max": 60, "step": 0.1, "default": 2},
+  {"key": "threshold", "label": "Threshold", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.05}
+ ],
+ "passes": [
+  {"shader": "res://effects/blur_gaussian/gauss.gdshader", "set": {"direction": [1.0, 0.0], "kernel": 0, "dims": 0, "edge": true}},
+  {"shader": "res://effects/blur_gaussian/gauss.gdshader", "set": {"direction": [0.0, 1.0], "kernel": 0, "dims": 0, "edge": true}},
+  {"shader": "res://effects/sharpen/sharpen_mix.gdshader", "set": {"luma_only": false}}
+ ]
+}

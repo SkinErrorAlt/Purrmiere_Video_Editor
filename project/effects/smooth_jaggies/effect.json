@@ -1,0 +1,15 @@
+{
+ "id": "smooth_jaggies",
+ "label": "Smooth Jaggies",
+ "category": "Blur & Sharpen",
+ "tags": ["repair"],
+ "version": 1,
+ "blurb": "Smooths the stair steps along edges in game footage recorded without anti aliasing, and in pictures that were blown up pixel by pixel. It finds the direction of each edge and blends only along it, so the edge stays sharp across while its steps melt into a clean line; flat areas and texture without a clear direction are left alone. Pixel size 2 or more is for pixel art and clips enlarged by whole pixels.",
+ "params": [
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.85},
+  {"key": "reach", "label": "Reach along the edge", "type": "float", "min": 1.0, "max": 12.0, "step": 0.1, "default": 3.0, "unit": " px"},
+  {"key": "pixel_size", "label": "Pixel size", "type": "float", "min": 1.0, "max": 8.0, "step": 0.1, "default": 1.0, "unit": " px"},
+  {"key": "edge", "label": "Edge contrast", "type": "float", "min": 0.02, "max": 0.5, "step": 0.005, "default": 0.06}
+ ],
+ "passes": "single"
+}

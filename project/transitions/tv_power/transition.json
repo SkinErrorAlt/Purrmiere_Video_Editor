@@ -1,0 +1,17 @@
+{
+ "id": "tv_power",
+ "label": "TV Power",
+ "group": "Glitch",
+ "space": "2D",
+ "from": ["Film Impact TV Power", "Purrmiere TV Switch Off effect"],
+ "blurb": "An old tube television switching off and on again: the picture squashes into a bright glowing line, the line shrinks to a dot that lingers and fades, then the incoming picture switches on from a dot with a little overshoot and bloom.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "off_share", "label": "Switch off share", "type": "float", "min": 0.2, "max": 0.8, "step": 0.01, "default": 0.45},
+  {"key": "glow", "label": "Glow", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.7},
+  {"key": "dot_hold", "label": "Dot lingers", "type": "float", "min": 0, "max": 0.6, "step": 0.01, "default": 0.2},
+  {"key": "tint", "label": "Line colour", "type": "color", "default": [0.86, 0.93, 1, 1]},
+  {"key": "curvature", "label": "Screen bulge", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.35},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

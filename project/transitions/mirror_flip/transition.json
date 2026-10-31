@@ -1,0 +1,19 @@
+{
+ "id": "mirror_flip",
+ "label": "Mirror Flip",
+ "group": "3D",
+ "space": "3D",
+ "from": ["CapCut Mirror Flip"],
+ "blurb": "The picture turns over like a hand mirror on its centre line, a glint of light sliding across its glassy face, and shows the incoming picture the right way round on the other side.",
+ "default_duration": 0.9,
+ "params": [
+  {"key": "axis", "label": "Turns about", "type": "enum", "choices": ["Upright line", "Level line"], "default": 0},
+  {"key": "spin_way", "label": "Turns towards", "type": "enum", "choices": ["Left", "Right"], "default": 0},
+  {"key": "gloss", "label": "Gloss", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "sharpness", "label": "Glint size", "type": "float", "min": 4, "max": 200, "step": 1, "default": 30},
+  {"key": "depth", "label": "Pull back", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 0.25},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 10, "max": 90, "step": 1, "default": 45, "unit": " deg"},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.4},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

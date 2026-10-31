@@ -1,0 +1,16 @@
+{
+ "id": "zoom_in",
+ "label": "Zoom In",
+ "group": "Zoom and Camera",
+ "space": "2D",
+ "from": ["PowerPoint Zoom", "Keynote Scale", "CapCut Zoom In"],
+ "blurb": "The incoming picture grows out of the middle of the frame and fades up, while the outgoing one swells towards you and fades away.",
+ "default_duration": 0.8,
+ "params": [
+  {"key": "start_size", "label": "Starting size", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.3},
+  {"key": "grow", "label": "Outgoing grows", "type": "float", "min": 0, "max": 3, "step": 0.01, "default": 0.6},
+  {"key": "timing", "label": "Timing", "type": "enum", "choices": ["Even", "Slow end", "Smooth", "Overshoot"], "default": 1},
+  {"key": "centre", "label": "Centre", "type": "vec2", "min": 0, "max": 1, "step": 0.01, "default": [0.5, 0.5]},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

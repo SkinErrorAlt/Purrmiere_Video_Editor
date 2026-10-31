@@ -1,0 +1,19 @@
+{
+ "id": "blur_channel",
+ "label": "Channel Blur",
+ "category": "Blur & Sharpen",
+ "version": 1,
+ "blurb": "The gaussian blur on chosen channels only.",
+ "params": [
+  {"key": "radius", "label": "Blurriness", "type": "float", "min": 0, "max": 200, "step": 0.1, "default": 8},
+  {"key": "ch_r", "label": "Red", "type": "bool", "default": true},
+  {"key": "ch_g", "label": "Green", "type": "bool", "default": false},
+  {"key": "ch_b", "label": "Blue", "type": "bool", "default": true},
+  {"key": "ch_a", "label": "Alpha", "type": "bool", "default": false},
+  {"key": "edge", "label": "Repeat Edge Pixels", "type": "bool", "default": true}
+ ],
+ "passes": [
+  {"shader": "res://effects/blur_gaussian/gauss.gdshader", "set": {"direction": [1.0, 0.0], "kernel": 0, "dims": 0}},
+  {"shader": "res://effects/blur_gaussian/gauss.gdshader", "set": {"direction": [0.0, 1.0], "kernel": 0, "dims": 0}}
+ ]
+}

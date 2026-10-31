@@ -1,0 +1,17 @@
+{
+ "id": "purr_tile_mosaic",
+ "label": "Tile Mosaic",
+ "category": "Purrmiere",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Lays the picture in hand cut stone tiles like an ancient floor mosaic: little square tesserae each set at its own slight angle, every row shifted, with light grout between them and a gentle polish on each tile.",
+ "params": [
+  {"key": "tile", "label": "Tile size", "type": "float", "min": 4.0, "max": 60.0, "step": 0.5, "default": 14.0, "unit": " px"},
+  {"key": "grout", "label": "Grout", "type": "float", "min": 0.0, "max": 0.4, "step": 0.001, "default": 0.12},
+  {"key": "grout_colour", "label": "Grout colour", "type": "color", "default": [0.86, 0.82, 0.74, 1.0]},
+  {"key": "jitter", "label": "Hand set", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "levels", "label": "Colour steps", "type": "int", "min": 3, "max": 24, "step": 1, "default": 10},
+  {"key": "polish", "label": "Polish", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4}
+ ],
+ "passes": "single"
+}

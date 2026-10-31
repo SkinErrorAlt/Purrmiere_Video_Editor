@@ -1,0 +1,65 @@
+{
+ "version": 1,
+ "name": "Animate",
+ "tree": {
+  "t": "s",
+  "dir": "v",
+  "ratio": 0.5,
+  "a": {
+   "t": "s",
+   "dir": "h",
+   "ratio": 0.4,
+   "a": {
+    "t": "g",
+    "tabs": [
+     "effect_controls",
+     "effects",
+     "presets"
+    ],
+    "active": "effect_controls"
+   },
+   "b": {
+    "t": "g",
+    "tabs": [
+     "program"
+    ],
+    "active": "program"
+   }
+  },
+  "b": {
+   "t": "s",
+   "dir": "h",
+   "ratio": 0.2,
+   "a": {
+    "t": "g",
+    "tabs": [
+     "bin",
+     "markers"
+    ],
+    "active": "bin"
+   },
+   "b": {
+    "t": "s",
+    "dir": "h",
+    "ratio": 0.6,
+    "a": {
+     "t": "g",
+     "tabs": [
+      "keyframes"
+     ],
+     "active": "keyframes"
+    },
+    "b": {
+     "t": "g",
+     "tabs": [
+      "timeline",
+      "audio"
+     ],
+     "active": "timeline"
+    }
+   }
+  }
+ },
+ "floats": [],
+ "state": {}
+}

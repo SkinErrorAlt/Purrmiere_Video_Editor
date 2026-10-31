@@ -1,0 +1,20 @@
+{
+ "id": "wave_wipe",
+ "label": "Wave",
+ "group": "Wipe",
+ "space": "2D",
+ "from": ["CapCut Wave"],
+ "blurb": "The incoming picture wipes across behind a wavy edge whose crests roll up or down along it as it moves. Constant speed rolls them at a steady rate however long the transition is, so the motion loops evenly.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "direction", "label": "Direction", "type": "enum", "choices": ["From Left", "From Right", "From Top", "From Bottom"], "default": 0},
+  {"key": "waves", "label": "Waves", "type": "float", "min": 0.5, "max": 10, "step": 0.1, "default": 2},
+  {"key": "amplitude", "label": "Wave height", "type": "float", "min": 0, "max": 0.4, "step": 0.01, "default": 0.08},
+  {"key": "travel", "label": "Wave travel", "type": "float", "min": 0, "max": 6, "step": 0.05, "default": 1, "unit": " waves"},
+  {"key": "travel_direction", "label": "Crests move", "type": "enum", "choices": ["Down or right", "Up or left"], "default": 0},
+  {"key": "constant_speed", "label": "Constant speed", "type": "bool", "default": false},
+  {"key": "speed", "label": "Speed", "type": "float", "min": 0, "max": 6, "step": 0.05, "default": 1, "unit": " per sec"},
+  {"key": "softness", "label": "Soft edge", "type": "float", "min": 0, "max": 0.2, "step": 0.005, "default": 0.01},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 1}
+ ]
+}

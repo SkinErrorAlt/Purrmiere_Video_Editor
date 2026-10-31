@@ -1,0 +1,15 @@
+{
+ "id": "trace_contour",
+ "label": "Trace Contour",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Draws thin lines on white wherever the picture crosses one brightness level, like the contour lines on a map.",
+ "params": [
+  {"key": "level", "label": "Level", "type": "float", "min": 0, "max": 255, "step": 1, "default": 128},
+  {"key": "edge", "label": "Edge", "type": "enum", "choices": ["Lower", "Upper"], "default": 0},
+  {"key": "lines_from", "label": "Lines from", "type": "enum", "choices": ["Each colour", "Brightness"], "default": 0},
+  {"key": "line_width", "label": "Line width", "type": "float", "min": 0.5, "max": 8, "step": 0.1, "default": 1.5, "unit": " px"}
+ ],
+ "passes": "single"
+}

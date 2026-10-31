@@ -1,0 +1,16 @@
+{
+ "id": "diagonal_squares",
+ "label": "Diagonal Squares",
+ "group": "Wipe",
+ "space": "2D",
+ "from": ["Impress Diagonal Squares"],
+ "blurb": "Squares of the incoming picture fill in along diagonals, starting from one corner of the frame.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "corner", "label": "Starts at", "type": "enum", "choices": ["Top Left", "Top Right", "Bottom Left", "Bottom Right"], "default": 0},
+  {"key": "columns", "label": "Squares across", "type": "int", "min": 2, "max": 64, "step": 1, "default": 16},
+  {"key": "style", "label": "Squares", "type": "enum", "choices": ["Fade in", "Grow"], "default": 0},
+  {"key": "square_time", "label": "Square time", "type": "float", "min": 0.01, "max": 1, "step": 0.01, "default": 0.1},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 0}
+ ]
+}

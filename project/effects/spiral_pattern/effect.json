@@ -1,0 +1,23 @@
+{
+ "id": "spiral_pattern",
+ "label": "Spiral",
+ "category": "Generate",
+ "version": 1,
+ "blurb": "A two colour spiral winding out from a centre point. Linear keeps the arms evenly spaced, one radius apart per turn; Logarithmic widens them by the base every turn, like a shell. Balance gives more of one colour than the other, Rotation turns the spiral, which keys into a spin, and Softness blurs the edges between the arms.",
+ "params": [
+  {"key": "type", "label": "Type", "type": "enum", "choices": ["Linear", "Logarithmic"], "default": 0},
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "radius", "label": "Radius", "type": "float", "min": 2.0, "max": 2000.0, "step": 0.5, "default": 60.0, "unit": " px"},
+  {"key": "base", "label": "Base", "type": "float", "min": 1.1, "max": 20.0, "step": 0.01, "default": 2.0},
+  {"key": "balance", "label": "Balance", "type": "float", "min": -1.0, "max": 1.0, "step": 0.01, "default": 0.0},
+  {"key": "rotation", "label": "Rotation", "type": "float", "min": -360.0, "max": 360.0, "step": 0.5, "default": 0.0, "unit": " deg"},
+  {"key": "direction", "label": "Direction", "type": "enum", "choices": ["Clockwise", "Anticlockwise"], "default": 0},
+  {"key": "colour_a", "label": "First colour", "type": "color", "default": [0.0, 0.0, 0.0, 1.0]},
+  {"key": "colour_b", "label": "Second colour", "type": "color", "default": [1.0, 1.0, 1.0, 1.0]},
+  {"key": "softness", "label": "Softness", "type": "float", "min": 0.0, "max": 50.0, "step": 0.1, "default": 1.0, "unit": " px"},
+  {"key": "blend", "label": "How it mixes", "type": "enum", "choices": ["Replace", "Multiply", "Screen", "Overlay", "Add", "Soft light", "Over"], "default": 0},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}, {"kind": "angle", "key": "rotation", "about": "centre", "zero": "right", "turn": "cw"}],
+ "passes": "single"
+}

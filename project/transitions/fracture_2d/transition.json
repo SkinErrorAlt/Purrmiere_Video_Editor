@@ -1,0 +1,24 @@
+{
+ "id": "fracture_2d",
+ "label": "Shatter",
+ "group": "Particles",
+ "space": "2D",
+ "from": ["PowerPoint Fracture", "CapCut Shatter"],
+ "blurb": "Bright cracks race out from a point across the picture like breaking glass, and as they pass, the pane falls apart into clear glass shards that tumble away in depth with green tinted bevelled edges that catch the light and bend what is behind them, uncovering the incoming picture.",
+ "default_duration": 1.6,
+ "params": [
+  {"key": "pieces", "label": "Shards across", "type": "int", "min": 3, "max": 12, "step": 1, "default": 7},
+  {"key": "impact", "label": "Breaks at", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "crack_time", "label": "Crack time", "type": "float", "min": 0, "max": 0.5, "step": 0.01, "default": 0.3},
+  {"key": "fall", "label": "Shards", "type": "enum", "choices": ["Fall away", "Fly at you", "Burst apart"], "default": 0},
+  {"key": "spin", "label": "Tumble", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 0.7},
+  {"key": "stagger", "label": "Stagger", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "edge_light", "label": "Edge shine", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "thickness", "label": "Glass thickness", "type": "float", "min": 0, "max": 60, "step": 1, "default": 9, "unit": " px"},
+  {"key": "refraction", "label": "Refraction", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 10, "max": 90, "step": 1, "default": 40, "unit": " deg"}
+ ],
+ "handles": [
+  {"kind": "point", "key": "impact"}
+ ]
+}

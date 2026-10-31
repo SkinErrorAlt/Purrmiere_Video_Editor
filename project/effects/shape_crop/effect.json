@@ -1,0 +1,23 @@
+{
+ "id": "shape_crop",
+ "label": "Shape Crop",
+ "category": "Transform",
+ "version": 1,
+ "blurb": "Crops the clip to a shape with smooth edges and an optional border, for face cams and picture in picture. Invert keeps the outside instead.",
+ "params": [
+  {"key": "shape", "label": "Shape", "type": "enum", "choices": ["Circle", "Ellipse", "Rounded rectangle", "Hexagon", "Star", "Heart", "Diamond"], "default": 0},
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "size", "label": "Size", "type": "float", "min": 0.02, "max": 1, "step": 0.005, "default": 0.8},
+  {"key": "aspect", "label": "Aspect", "type": "float", "min": 0.2, "max": 5, "step": 0.01, "default": 1.4},
+  {"key": "rotation", "label": "Rotation", "type": "float", "min": -180, "max": 180, "step": 0.5, "default": 0, "unit": " deg"},
+  {"key": "roundness", "label": "Roundness", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.2},
+  {"key": "feather", "label": "Feather", "type": "float", "min": 0, "max": 200, "step": 0.5, "default": 0, "unit": " px"},
+  {"key": "border", "label": "Border", "type": "float", "min": 0, "max": 200, "step": 0.5, "default": 0, "unit": " px"},
+  {"key": "border_colour", "label": "Border colour", "type": "color", "default": [1.0, 1.0, 1.0, 1.0]},
+  {"key": "invert", "label": "Invert", "type": "bool", "default": false}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}, {"kind": "angle", "key": "rotation", "about": "centre"}, {"kind": "ring", "key": "size", "about": "centre", "unit": "h", "scale": 2.0, "stretch": "aspect", "rotate": "rotation", "corner": true, "shape_from": "shape", "shapes": [{"shape": "circle", "stretch": false}, {"shape": "circle"}, {"shape": "box"}, {"shape": "box", "fit": [-1.1547, -1.0, 1.1547, 1.0]}, {"shape": "box", "fit": [-0.9511, -0.9, 0.9511, 0.909]}, {"shape": "box", "fit": [-1.0975, -1.0065, 1.0975, 1.0]}, {"shape": "box"}]}],
+ "passes": [
+  {"shader": "shape.gdshader"}
+ ]
+}

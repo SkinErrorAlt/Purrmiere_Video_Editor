@@ -1,0 +1,16 @@
+{
+ "id": "glitch_memories",
+ "label": "Glitch Memories",
+ "group": "Glitch",
+ "space": "2D",
+ "from": ["gl GlitchMemories"],
+ "blurb": "Small square blocks of the picture jitter out of place with the red, green and blue drifting apart, settling down as the incoming picture fades in.",
+ "default_duration": 1.0,
+ "steps": true,
+ "params": [
+  {"key": "block", "label": "Block size", "type": "float", "min": 4, "max": 96, "step": 1, "default": 16, "unit": " px"},
+  {"key": "strength", "label": "Jitter", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.3},
+  {"key": "rate", "label": "Jumps", "type": "float", "min": 4, "max": 120, "step": 1, "default": 60},
+  {"key": "separation", "label": "Colour separation", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5}
+ ]
+}

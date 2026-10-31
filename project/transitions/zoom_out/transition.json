@@ -1,0 +1,16 @@
+{
+ "id": "zoom_out",
+ "label": "Zoom Out",
+ "group": "Zoom and Camera",
+ "space": "2D",
+ "from": ["CapCut Zoom Out"],
+ "blurb": "The outgoing picture shrinks away into the distance and fades, uncovering the incoming one, which settles back from a little too close.",
+ "default_duration": 0.8,
+ "params": [
+  {"key": "end_size", "label": "End size", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.3},
+  {"key": "grow", "label": "Incoming starts at", "type": "float", "min": 0, "max": 3, "step": 0.01, "default": 0.6},
+  {"key": "timing", "label": "Timing", "type": "enum", "choices": ["Even", "Slow end", "Smooth", "Overshoot"], "default": 1},
+  {"key": "centre", "label": "Centre", "type": "vec2", "min": 0, "max": 1, "step": 0.01, "default": [0.5, 0.5]},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

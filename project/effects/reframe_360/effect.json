@@ -1,0 +1,15 @@
+{
+ "id": "reframe_360",
+ "label": "Reframe 360",
+ "category": "Immersive Video",
+ "version": 1,
+ "blurb": "Points a virtual camera into 360 degree footage and shows a normal flat view, with pan, tilt, roll and field of view, all keyable.",
+ "params": [
+  {"key": "yaw", "label": "Pan (yaw)", "type": "float", "min": -180, "max": 180, "step": 0.1, "default": 0.0, "unit": " deg"},
+  {"key": "pitch", "label": "Tilt (pitch)", "type": "float", "min": -90, "max": 90, "step": 0.1, "default": 0.0, "unit": " deg"},
+  {"key": "roll", "label": "Roll", "type": "float", "min": -180, "max": 180, "step": 0.1, "default": 0.0, "unit": " deg"},
+  {"key": "fov", "label": "Field of view", "type": "float", "min": 10, "max": 170, "step": 0.5, "default": 90.0, "unit": " deg"},
+  {"key": "lens", "label": "Lens", "type": "enum", "choices": ["Flat (rectilinear)", "Fisheye"], "default": 0}
+ ],
+ "passes": "single"
+}

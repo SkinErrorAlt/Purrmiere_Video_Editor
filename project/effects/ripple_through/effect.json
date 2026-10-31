@@ -1,0 +1,21 @@
+{
+ "id": "ripple_through",
+ "label": "Ripple Through",
+ "category": "Transition",
+ "version": 1,
+ "blurb": "The picture turns to water: rings spread out from a point as if a drop fell in, growing into big ripples on the cut, and the next clip calms out of them. Dream wave is the old flashback look instead, soft glowing waves rolling across the frame. Put it on both clips of a cut, or use Progress to key it by hand.",
+ "params": [
+  {"key": "when", "label": "When", "type": "enum", "choices": ["In at the start and out at the end", "In at the start", "Out at the end", "By Progress"], "default": 0},
+  {"key": "duration", "label": "Length", "type": "float", "min": 0.1, "max": 3.0, "step": 0.01, "default": 0.8, "unit": " s"},
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0.0, "max": 1.0, "step": 0.005, "default": 0.0},
+  {"key": "style", "label": "Kind", "type": "enum", "choices": ["Water drop", "Dream wave"], "default": 0},
+  {"key": "centre", "label": "Drop lands at", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "amount", "label": "Ripple size", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "rings", "label": "Waves", "type": "float", "min": 2.0, "max": 40.0, "step": 0.5, "default": 12.0},
+  {"key": "speed", "label": "Speed", "type": "float", "min": 0.0, "max": 4.0, "step": 0.05, "default": 1.5},
+  {"key": "shine", "label": "Shine", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "glow", "label": "Glow", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.25}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}],
+ "passes": "single"
+}

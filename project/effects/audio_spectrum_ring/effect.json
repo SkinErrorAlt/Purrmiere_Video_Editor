@@ -1,0 +1,139 @@
+{
+ "id": "audio_spectrum_ring",
+ "label": "Spectrum Ring",
+ "category": "Audio Reactive",
+ "tags": [
+  "audio",
+  "music",
+  "beat",
+  "reactive",
+  "visualiser"
+ ],
+ "version": 1,
+ "blurb": "The spectrum drawn as bars round a circle that swells with the level. Drop a clip from the timeline, or a file from the bin or the Source monitor, on its Sound well.",
+ "params": [
+  {
+   "key": "centre",
+   "label": "Centre",
+   "type": "vec2",
+   "default": [
+    0.5,
+    0.5
+   ]
+  },
+  {
+   "key": "radius",
+   "label": "Radius",
+   "type": "float",
+   "min": 0.02,
+   "max": 0.6,
+   "step": 0.005,
+   "default": 0.18
+  },
+  {
+   "key": "reach",
+   "label": "Bar length",
+   "type": "float",
+   "min": 0.01,
+   "max": 0.6,
+   "step": 0.005,
+   "default": 0.16
+  },
+  {
+   "key": "count",
+   "label": "Bars",
+   "type": "float",
+   "min": 8,
+   "max": 256,
+   "step": 1,
+   "default": 72
+  },
+  {
+   "key": "gap",
+   "label": "Gap",
+   "type": "float",
+   "min": 0,
+   "max": 0.9,
+   "step": 0.01,
+   "default": 0.35
+  },
+  {
+   "key": "ring",
+   "label": "Ring width",
+   "type": "float",
+   "min": 0,
+   "max": 0.05,
+   "step": 0.001,
+   "default": 0.006
+  },
+  {
+   "key": "spin",
+   "label": "Spin",
+   "type": "float",
+   "min": -2,
+   "max": 2,
+   "step": 0.01,
+   "default": 0.05,
+   "unit": " turns/s"
+  },
+  {
+   "key": "pulse",
+   "label": "Swell",
+   "type": "float",
+   "min": 0,
+   "max": 1,
+   "step": 0.01,
+   "default": 0.15
+  },
+  {
+   "key": "colour",
+   "label": "Colour",
+   "type": "color",
+   "default": [
+    1.0,
+    0.45,
+    0.75,
+    1
+   ]
+  },
+  {
+   "key": "opacity",
+   "label": "Opacity",
+   "type": "float",
+   "min": 0,
+   "max": 1,
+   "step": 0.01,
+   "default": 1
+  }
+ ],
+ "passes": [
+  {
+   "shader": "effect.gdshader"
+  }
+ ],
+ "reactive": {
+  "defaults": {
+   "snd_attack": 5,
+   "snd_release": 150,
+   "snd_threshold": 2
+  },
+  "spectrum": {
+   "uniform": "spec_tex"
+  },
+  "level": "level",
+  "look": true
+ },
+ "handles": [
+  {
+   "kind": "point",
+   "key": "centre"
+  },
+  {
+   "kind": "ring",
+   "key": "radius",
+   "about": "centre",
+   "unit": "h",
+   "feather": "reach"
+  }
+ ]
+}

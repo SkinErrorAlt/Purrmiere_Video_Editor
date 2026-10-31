@@ -1,0 +1,20 @@
+{
+ "id": "camera_shake",
+ "label": "Camera Shake",
+ "category": "Distort",
+ "version": 1,
+ "blurb": "Hand held wobble made from smooth noise: the picture drifts, turns and zooms a little, with motion blur along the movement. It counts from the start of the clip.",
+ "params": [
+  {"key": "amplitude", "label": "Amplitude", "type": "float", "min": 0, "max": 200, "step": 0.5, "default": 12, "unit": " px"},
+  {"key": "rotation", "label": "Rotation", "type": "float", "min": 0, "max": 30, "step": 0.1, "default": 1, "unit": " deg"},
+  {"key": "zoom", "label": "Zoom", "type": "float", "min": 0, "max": 50, "step": 0.1, "default": 2, "unit": " %"},
+  {"key": "frequency", "label": "Frequency", "type": "float", "min": 0.1, "max": 30, "step": 0.1, "default": 2, "unit": " Hz"},
+  {"key": "octaves", "label": "Roughness", "type": "int", "min": 1, "max": 4, "step": 1, "default": 2},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0},
+  {"key": "edges", "label": "Edges", "type": "enum", "choices": ["Mirror", "Repeat", "Zoom in to hide", "Transparent"], "default": 2},
+  {"key": "motion_blur", "label": "Motion blur", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5}
+ ],
+ "passes": [
+  {"shader": "shake.gdshader"}
+ ]
+}

@@ -1,0 +1,17 @@
+{
+ "id": "glitch",
+ "label": "Digital Glitch",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Slices the picture into blocks and shoves them sideways with the colour torn apart, in bursts.",
+ "params": [
+  {"key": "amount", "label": "Amount", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "block_height", "label": "Slice height", "type": "float", "min": 1.0, "max": 200.0, "step": 1.0, "default": 24.0},
+  {"key": "shift", "label": "How far", "type": "float", "min": 0.0, "max": 300.0, "step": 1.0, "default": 60.0},
+  {"key": "colour_split", "label": "Colour split", "type": "float", "min": 0.0, "max": 60.0, "step": 0.5, "default": 10.0},
+  {"key": "burst", "label": "Burst rate", "type": "float", "min": 0.0, "max": 30.0, "step": 0.1, "default": 6.0},
+  {"key": "block_noise", "label": "Blocks of noise", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.2}
+ ],
+ "passes": "single"
+}

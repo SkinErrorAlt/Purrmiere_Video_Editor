@@ -1,0 +1,24 @@
+{
+ "id": "body_camera",
+ "label": "Body Camera",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Chest camera footage: a wide lens that bends the picture, hard contrast, crisp edges, a little noise, and a date, time and unit stamp in the top right.",
+ "params": [
+  {"key": "show_text", "label": "Date, time and unit", "type": "bool", "default": true},
+  {"key": "unit", "label": "Unit number", "type": "int", "min": 1, "max": 99, "step": 1, "default": 7},
+  {"key": "day", "label": "Day", "type": "int", "min": 1, "max": 31, "step": 1, "default": 25},
+  {"key": "month", "label": "Month", "type": "int", "min": 1, "max": 12, "step": 1, "default": 9},
+  {"key": "year", "label": "Year", "type": "int", "min": 2000, "max": 2099, "step": 1, "default": 2026},
+  {"key": "start_hour", "label": "Clock starts at hour", "type": "int", "min": 0, "max": 23, "step": 1, "default": 21},
+  {"key": "start_minute", "label": "Clock starts at minute", "type": "int", "min": 0, "max": 59, "step": 1, "default": 14},
+  {"key": "text_size", "label": "Text size", "type": "float", "min": 0.5, "max": 2.0, "step": 0.01, "default": 1.0},
+  {"key": "wide_lens", "label": "Wide lens", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "contrast", "label": "Contrast", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "saturation", "label": "Saturation", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.8},
+  {"key": "sharpen", "label": "Sharpen", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "noise", "label": "Noise", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.2}
+ ],
+ "passes": "single"
+}

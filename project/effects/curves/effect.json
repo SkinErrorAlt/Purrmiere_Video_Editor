@@ -1,0 +1,15 @@
+{
+ "id": "curves",
+ "label": "Curves",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Master and per channel curves. Each curve is a list of points, turned into a 256 entry lookup by the engine.",
+ "params": [
+  {"key": "master", "label": "Master", "type": "curve", "default": {"points": [[0, 0], [1, 1]]}},
+  {"key": "red", "label": "Red", "type": "curve", "default": {"points": [[0, 0], [1, 1]]}},
+  {"key": "green", "label": "Green", "type": "curve", "default": {"points": [[0, 0], [1, 1]]}},
+  {"key": "blue", "label": "Blue", "type": "curve", "default": {"points": [[0, 0], [1, 1]]}},
+  {"key": "amount", "label": "Amount", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 1}
+ ],
+ "passes": "single"
+}

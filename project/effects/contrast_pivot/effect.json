@@ -1,0 +1,15 @@
+{
+ "id": "contrast_pivot",
+ "label": "Contrast and Pivot",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Contrast the way a colourist sets it: choose the pivot, the level that stays put while darker tones go down and brighter tones go up, so a dark shot can gain contrast without its shadows sinking. Soft clip then rolls the ends into black and white gently instead of cutting them flat. Brightness only keeps the saturation where it was.",
+ "params": [
+  {"key": "contrast", "label": "Contrast", "type": "float", "min": 0.0, "max": 3.0, "step": 0.01, "default": 1.2},
+  {"key": "pivot", "label": "Pivot", "type": "float", "min": 0.05, "max": 0.95, "step": 0.005, "default": 0.43},
+  {"key": "soft_low", "label": "Soft clip, blacks", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.25},
+  {"key": "soft_high", "label": "Soft clip, whites", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "apply_to", "label": "Apply to", "type": "enum", "choices": ["Each colour channel", "Brightness only"], "default": 0}
+ ],
+ "passes": "single"
+}

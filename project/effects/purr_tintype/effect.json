@@ -1,0 +1,17 @@
+{
+ "id": "purr_tintype",
+ "label": "Tintype",
+ "category": "Purrmiere",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "A wet plate tintype portrait: silvery monochrome on a dark metal plate with a mirror like sheen, oxidised irregular edges, fine scratches and the soft swirling blur of an old portrait lens towards the corners.",
+ "params": [
+  {"key": "tint", "label": "Plate tone", "type": "color", "default": [0.62, 0.57, 0.48, 1.0]},
+  {"key": "contrast", "label": "Contrast", "type": "float", "min": 0.2, "max": 3.0, "step": 0.01, "default": 1.35},
+  {"key": "sheen", "label": "Sheen", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "edges", "label": "Oxidised edges", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "scratches", "label": "Scratches", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "swirl", "label": "Corner swirl", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5}
+ ],
+ "passes": "single"
+}

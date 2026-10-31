@@ -1,0 +1,16 @@
+{
+ "id": "polka_dots",
+ "label": "Polka Dots",
+ "group": "Shape",
+ "space": "2D",
+ "from": ["gl PolkaDotsCurtain"],
+ "blurb": "A grid of dots of the incoming picture swells into place, the dots nearest the start corner growing first, until they merge and cover the frame.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "dots", "label": "Dots across", "type": "int", "min": 2, "max": 80, "step": 1, "default": 20},
+  {"key": "origin", "label": "Starts from", "type": "vec2", "default": [0.0, 1.0]},
+  {"key": "spread", "label": "Spread", "type": "float", "min": 0, "max": 0.95, "step": 0.01, "default": 0.6},
+  {"key": "softness", "label": "Soft edge", "type": "float", "min": 0, "max": 60, "step": 0.5, "default": 1.5, "unit": " px"},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 0}
+ ]
+}

@@ -1,0 +1,15 @@
+{
+ "id": "eyedropper_fill",
+ "label": "Eyedropper Fill",
+ "category": "Generate",
+ "version": 1,
+ "blurb": "Fills the picture with the colour found under a point, averaged over a small area, and blends it back with the original.",
+ "params": [
+  {"key": "point", "label": "Sample point", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "sample_radius", "label": "Sample radius", "type": "float", "min": 0, "max": 50, "step": 0.1, "default": 4.0, "unit": " px"},
+  {"key": "blend", "label": "Blend with original", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.0},
+  {"key": "keep_alpha", "label": "Keep transparency", "type": "bool", "default": true}
+ ],
+ "handles": [{"kind": "point", "key": "point"}, {"kind": "ring", "key": "sample_radius", "about": "point", "unit": "px"}],
+ "passes": "single"
+}

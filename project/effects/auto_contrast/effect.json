@@ -1,0 +1,20 @@
+{
+ "id": "auto_contrast",
+ "label": "Auto Contrast",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Measures the darkest and brightest parts of every frame and stretches them out to black and white. Levels per channel also takes out a colour cast.",
+ "params": [
+  {"key": "mode", "label": "Mode", "type": "enum", "choices": ["Keep colour", "Levels per channel"], "default": 0},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "black_bias", "label": "Stop short of black", "type": "float", "min": 0.0, "max": 0.4, "step": 0.005, "default": 0.0},
+  {"key": "white_bias", "label": "Stop short of white", "type": "float", "min": 0.0, "max": 0.4, "step": 0.005, "default": 0.0}
+ ],
+ "passes": [
+  {"shader": "reduce.gdshader", "scale": 0.25, "set": {"use_max": false, "from_effect": true}},
+  {"shader": "reduce.gdshader", "scale": 0.25, "set": {"use_max": false, "from_effect": false}},
+  {"shader": "reduce.gdshader", "scale": 4.0, "set": {"use_max": true, "from_effect": true}},
+  {"shader": "reduce.gdshader", "scale": 0.25, "set": {"use_max": true, "from_effect": false}},
+  {"shader": "apply.gdshader", "scale": 16.0, "inputs": {"min_tex": 1}}
+ ]
+}

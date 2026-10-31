@@ -1,0 +1,14 @@
+{
+ "id": "poster_edges",
+ "label": "Poster Edges",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Cuts the colours down to a few flat steps and inks the edges and fine detail in black, like a printed poster.",
+ "params": [
+  {"key": "edge_thickness", "label": "Edge thickness", "type": "float", "min": 0, "max": 10, "step": 0.1, "default": 2, "unit": " px"},
+  {"key": "edge_intensity", "label": "Edge intensity", "type": "float", "min": 0, "max": 10, "step": 0.1, "default": 1},
+  {"key": "posterization", "label": "Posterization", "type": "int", "min": 0, "max": 6, "step": 1, "default": 2}
+ ],
+ "passes": "single"
+}

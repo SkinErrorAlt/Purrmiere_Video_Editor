@@ -1,0 +1,25 @@
+{
+ "id": "fractal",
+ "label": "Fractal",
+ "category": "Generate",
+ "version": 1,
+ "blurb": "Draws the Mandelbrot set or a Julia set, or either one turned inside out, with smooth colour bands that cycle as you key them. Centre and Magnification move round the set and zoom into it, each step of magnification doubling the zoom. Escape limit is how many steps are tried before a point counts as inside; raise it when zoomed far in.",
+ "params": [
+  {"key": "set_type", "label": "Set", "type": "enum", "choices": ["Mandelbrot", "Mandelbrot inverse", "Julia", "Julia inverse"], "default": 0},
+  {"key": "centre_x", "label": "Centre X", "type": "float", "min": -3.0, "max": 3.0, "step": 0.0001, "default": -0.65},
+  {"key": "centre_y", "label": "Centre Y", "type": "float", "min": -3.0, "max": 3.0, "step": 0.0001, "default": 0.0},
+  {"key": "zoom", "label": "Magnification", "type": "float", "min": -2.0, "max": 16.0, "step": 0.01, "default": 0.0},
+  {"key": "julia_x", "label": "Julia X", "type": "float", "min": -2.0, "max": 2.0, "step": 0.0001, "default": -0.8},
+  {"key": "julia_y", "label": "Julia Y", "type": "float", "min": -2.0, "max": 2.0, "step": 0.0001, "default": 0.156},
+  {"key": "iterations", "label": "Escape limit", "type": "int", "min": 8, "max": 500, "step": 1, "default": 128},
+  {"key": "palette", "label": "Colours", "type": "enum", "choices": ["Lightness", "Hue", "Rainbow", "Fire"], "default": 2},
+  {"key": "colour", "label": "Lightness colour", "type": "color", "default": [0.3, 0.6, 1.0, 1.0]},
+  {"key": "cycle", "label": "Cycle steps", "type": "float", "min": 1.0, "max": 200.0, "step": 0.5, "default": 10.0},
+  {"key": "cycle_offset", "label": "Cycle offset", "type": "float", "min": 0.0, "max": 360.0, "step": 1.0, "default": 0.0, "unit": " deg"},
+  {"key": "inside", "label": "Inside colour", "type": "color", "default": [0.0, 0.0, 0.0, 1.0]},
+  {"key": "smooth_edges", "label": "Smooth edges", "type": "bool", "default": true},
+  {"key": "blend", "label": "How it mixes", "type": "enum", "choices": ["Replace", "Multiply", "Screen", "Overlay", "Add", "Soft light", "Over"], "default": 0},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0}
+ ],
+ "passes": "single"
+}

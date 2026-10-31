@@ -1,0 +1,19 @@
+{
+ "id": "flip",
+ "label": "Flip",
+ "group": "3D",
+ "space": "3D",
+ "from": ["PowerPoint Flip", "Keynote Flip", "Google Slides Flip", "CapCut Flip"],
+ "blurb": "The picture is a card that steps back, flips over and comes forward again, with the incoming picture printed on its back.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "direction", "label": "Flips towards", "type": "enum", "choices": ["Right", "Left", "Up", "Down"], "default": 0},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 10, "max": 90, "step": 1, "default": 40, "unit": " deg"},
+  {"key": "pull_back", "label": "Pull back", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.7},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 1},
+  {"key": "motion_blur", "label": "Motion blur", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 1.0},
+  {"key": "shutter", "label": "Shutter", "type": "float", "min": 0, "max": 360, "step": 1, "default": 180, "unit": " deg"},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

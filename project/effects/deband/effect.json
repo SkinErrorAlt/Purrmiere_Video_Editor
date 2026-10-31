@@ -1,0 +1,15 @@
+{
+ "id": "deband",
+ "label": "Deband",
+ "category": "Image Control",
+ "tags": ["repair"],
+ "version": 1,
+ "blurb": "Breaks up the flat steps you get in a gradient after heavy compression, by dithering them apart.",
+ "params": [
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "radius", "label": "How far it looks", "type": "float", "min": 1.0, "max": 32.0, "step": 0.5, "default": 8.0},
+  {"key": "dither", "label": "Dither", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "threshold", "label": "Only on flat areas", "type": "float", "min": 0.0, "max": 0.2, "step": 0.001, "default": 0.03}
+ ],
+ "passes": "single"
+}

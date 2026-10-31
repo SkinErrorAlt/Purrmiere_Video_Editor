@@ -1,0 +1,18 @@
+{
+ "id": "purr_watercolour",
+ "label": "Watercolour Wash",
+ "category": "Purrmiere",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Paints the picture as a watercolour: washes that bleed past their lines, pigment pooling dark at the edges of each wash, granulation in the flat areas and the texture of cold pressed paper underneath. Wet lets the wash creep slowly over time.",
+ "params": [
+  {"key": "bleed", "label": "Bleed", "type": "float", "min": 0.0, "max": 40.0, "step": 0.1, "default": 9.0, "unit": " px"},
+  {"key": "levels", "label": "Wash layers", "type": "int", "min": 3, "max": 16, "step": 1, "default": 7},
+  {"key": "edge_dark", "label": "Pooled edges", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "granulation", "label": "Granulation", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "paper_tex", "label": "Paper texture", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "paper", "label": "Paper colour", "type": "color", "default": [0.98, 0.96, 0.92, 1.0]},
+  {"key": "wet", "label": "Wet", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.0}
+ ],
+ "passes": "single"
+}

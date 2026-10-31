@@ -1,0 +1,16 @@
+{
+ "id": "head_switching",
+ "label": "Head Switching",
+ "category": "VHS & Analogue",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "The torn strip of noise along the very bottom of the frame, where the tape head changes over.",
+ "params": [
+  {"key": "strip", "label": "How tall", "type": "float", "min": 0.0, "max": 0.3, "step": 0.002, "default": 0.03},
+  {"key": "shift", "label": "How far it tears", "type": "float", "min": 0.0, "max": 300.0, "step": 0.5, "default": 80.0},
+  {"key": "noise", "label": "Noise", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "at_top", "label": "At the top instead", "type": "bool", "default": false},
+  {"key": "speed", "label": "Speed", "type": "float", "min": 0.0, "max": 60.0, "step": 0.5, "default": 24.0}
+ ],
+ "passes": "single"
+}

@@ -1,0 +1,19 @@
+{
+ "id": "rain_ripples",
+ "label": "Rain Ripples",
+ "category": "Distort",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Raindrops landing on a water surface. Each drop starts a few rings at a random place and time that spread, overlap and fade, bending the picture like a puddle, with light caught on the crests. Perspective lays the water down flat so rings far away are smaller and squashed.",
+ "params": [
+  {"key": "drops", "label": "Drops per second", "type": "float", "min": 0.5, "max": 60.0, "step": 0.1, "default": 24.0, "unit": " per s"},
+  {"key": "ring_size", "label": "Ring size", "type": "float", "min": 10.0, "max": 600.0, "step": 1.0, "default": 150.0, "unit": " px"},
+  {"key": "ring_speed", "label": "Ring speed", "type": "float", "min": 10.0, "max": 1000.0, "step": 1.0, "default": 150.0, "unit": " px/s"},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 40.0, "step": 0.1, "default": 9.0, "unit": " px"},
+  {"key": "rings", "label": "Rings per drop", "type": "int", "min": 1, "max": 6, "step": 1, "default": 3},
+  {"key": "crest", "label": "Crest highlight", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45},
+  {"key": "perspective", "label": "Perspective", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

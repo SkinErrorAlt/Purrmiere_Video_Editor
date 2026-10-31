@@ -1,0 +1,20 @@
+{
+ "id": "conveyor",
+ "label": "Conveyor",
+ "group": "3D",
+ "space": "3D",
+ "from": ["PowerPoint Conveyor"],
+ "blurb": "The pictures ride a curved conveyor belt over a shiny floor: the outgoing one is carried off round the bend, turning away, while the incoming one comes round from the other side and straightens up.",
+ "default_duration": 1.4,
+ "params": [
+  {"key": "direction", "label": "Comes from", "type": "enum", "choices": ["Right", "Left"], "default": 0},
+  {"key": "angle", "label": "Turn", "type": "float", "min": 0, "max": 80, "step": 1, "default": 40, "unit": " deg"},
+  {"key": "bend", "label": "Bend", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 0.6},
+  {"key": "pull_back", "label": "Pull back", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 0.7},
+  {"key": "gap", "label": "Gap", "type": "float", "min": 0, "max": 0.5, "step": 0.01, "default": 0.15},
+  {"key": "reflection", "label": "Reflection", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.3},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 10, "max": 90, "step": 1, "default": 40, "unit": " deg"},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.4},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

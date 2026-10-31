@@ -1,0 +1,17 @@
+{
+ "id": "line_wipe",
+ "label": "Line Wipe",
+ "group": "Wipe",
+ "space": "2D",
+ "from": ["Canva Line Wipe"],
+ "blurb": "A crisp slanted edge with a thin line along it sweeps across the frame, leaving the incoming picture behind it.",
+ "default_duration": 0.8,
+ "params": [
+  {"key": "direction", "label": "Direction", "type": "enum", "choices": ["From Left", "From Right", "From Top", "From Bottom"], "default": 0},
+  {"key": "angle", "label": "Slant", "type": "float", "min": -60, "max": 60, "step": 1, "default": 15, "unit": " deg"},
+  {"key": "line_width", "label": "Line width", "type": "float", "min": 0, "max": 60, "step": 1, "default": 6, "unit": " px"},
+  {"key": "line_colour", "label": "Line colour", "type": "color", "default": [1, 1, 1, 1]},
+  {"key": "softness", "label": "Soft edge", "type": "float", "min": 0, "max": 200, "step": 1, "default": 0, "unit": " px"},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 1}
+ ]
+}

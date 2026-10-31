@@ -1,0 +1,19 @@
+{
+ "id": "doorway",
+ "label": "Doorway",
+ "group": "3D",
+ "space": "3D",
+ "from": ["Keynote Doorway", "gl doorway"],
+ "blurb": "The outgoing picture opens like double doors swinging towards you, and the incoming picture glides forward out of the dark behind them, lit up as it arrives.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "split", "label": "Split", "type": "enum", "choices": ["Vertical", "Horizontal"], "default": 0},
+  {"key": "swing", "label": "Swings", "type": "enum", "choices": ["Away", "Towards you"], "default": 1},
+  {"key": "open", "label": "Opens to", "type": "float", "min": 60, "max": 150, "step": 1, "default": 100, "unit": " deg"},
+  {"key": "depth", "label": "Depth", "type": "float", "min": 0, "max": 4, "step": 0.01, "default": 1.0},
+  {"key": "reflection", "label": "Reflection", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.25},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 10, "max": 90, "step": 1, "default": 40, "unit": " deg"},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

@@ -1,0 +1,13 @@
+{
+ "id": "time_fps_limit",
+ "label": "Frame Rate Limit",
+ "category": "Time",
+ "version": 1,
+ "blurb": "Shows fewer distinct frames per second. Source anchored holds the source clock so trims and speed ramps keep the same frames; timeline anchored holds the sequence clock. When the rate is keyed, Smooth rate changes (on by default) keeps the frame on screen and makes it last longer or shorter as the rate moves, so frames never step back. Not a shader: the compositor applies it when it chooses the source time.",
+ "params": [
+  {"key": "fps", "label": "Frames Per Second", "type": "float", "min": 1, "max": 240, "step": 0.5, "default": 12},
+  {"key": "mode", "label": "Anchor", "type": "enum", "choices": ["Source", "Timeline"], "default": 0},
+  {"key": "smooth", "label": "Smooth rate changes", "type": "bool", "default": true, "keyable": false}
+ ],
+ "passes": []
+}

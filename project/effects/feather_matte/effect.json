@@ -1,0 +1,18 @@
+{
+ "id": "feather_matte",
+ "label": "Feather Matte",
+ "category": "Keying",
+ "version": 1,
+ "blurb": "Softens the edge of the alpha by its true distance from the edge, inside it, centred on it or outside it, so corners stay where they are and nothing leaks the way a blur does. Move the edge shrinks or grows the shape first. Unlike Matte Choker's softness, Inside keeps the whole feather within the original outline.",
+ "params": [
+  {"key": "feather", "label": "Feather", "type": "float", "min": 0.0, "max": 100.0, "step": 0.1, "default": 8.0, "unit": " px"},
+  {"key": "position", "label": "Where", "type": "enum", "choices": ["Inside the edge", "Centred on the edge", "Outside the edge"], "default": 0},
+  {"key": "shift", "label": "Move the edge", "type": "float", "min": -50.0, "max": 50.0, "step": 0.1, "default": 0.0, "unit": " px"},
+  {"key": "show_matte", "label": "Show the matte", "type": "bool", "default": false}
+ ],
+ "passes": [
+  {"shader": "dist_across.gdshader", "map": {"reach_a": "feather", "reach_b": "shift"}},
+  {"shader": "dist_down.gdshader", "map": {"reach_a": "feather", "reach_b": "shift"}},
+  {"shader": "combine.gdshader"}
+ ]
+}

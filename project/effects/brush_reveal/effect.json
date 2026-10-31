@@ -1,0 +1,20 @@
+{
+ "id": "brush_reveal",
+ "label": "Brush Reveal",
+ "category": "Transition",
+ "version": 1,
+ "blurb": "Broad paint strokes zigzag across the frame with rough, bristly edges: at the start of a clip the picture is painted on, at the end it is painted away and the track below shows. For a reveal straight from one clip to the next, put the next clip on the track above, overlapping. Use Progress to key it by hand.",
+ "params": [
+  {"key": "when", "label": "When", "type": "enum", "choices": ["In at the start and out at the end", "In at the start", "Out at the end", "By Progress"], "default": 0},
+  {"key": "duration", "label": "Length", "type": "float", "min": 0.05, "max": 3.0, "step": 0.01, "default": 0.9, "unit": " s"},
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0.0, "max": 1.0, "step": 0.005, "default": 0.0},
+  {"key": "strokes", "label": "Strokes", "type": "int", "min": 2, "max": 8, "step": 1, "default": 4},
+  {"key": "angle", "label": "Direction", "type": "float", "min": -180.0, "max": 180.0, "step": 1.0, "default": 90.0, "unit": " deg"},
+  {"key": "rough", "label": "Rough edges", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "paint", "label": "Paint at the tip", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.0},
+  {"key": "paint_colour", "label": "Paint colour", "type": "color", "default": [1.0, 1.0, 1.0, 1.0]},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "handles": [{"kind": "angle", "key": "angle"}],
+ "passes": "single"
+}

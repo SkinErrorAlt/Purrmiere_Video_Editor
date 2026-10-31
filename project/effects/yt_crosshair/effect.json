@@ -1,0 +1,19 @@
+{
+ "id": "yt_crosshair",
+ "label": "Crosshair",
+ "category": "YouTube",
+ "tags": ["youtube", "graphic"],
+ "version": 1,
+ "blurb": "A game style aiming reticle drawn over the picture: a cross with a gap, a dot, a circle with a dot, a chevron or a T. Keyframe Spread to make it open up when firing.",
+ "params": [
+  {"key": "position", "label": "Position", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "style", "label": "Style", "type": "enum", "choices": ["Cross", "Dot", "Circle and dot", "Chevron", "T shape"], "default": 0},
+  {"key": "size", "label": "Size", "type": "float", "min": 0.005, "max": 0.4, "step": 0.001, "default": 0.03},
+  {"key": "thickness", "label": "Thickness", "type": "float", "min": 0.5, "max": 20.0, "step": 0.5, "default": 2.5, "unit": " px"},
+  {"key": "spread", "label": "Spread", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.25},
+  {"key": "colour", "label": "Colour", "type": "color", "default": [0.25, 1.0, 0.45, 1.0]},
+  {"key": "outline", "label": "Dark edge", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6}
+ ],
+ "handles": [{"kind": "point", "key": "position"}],
+ "passes": "single"
+}

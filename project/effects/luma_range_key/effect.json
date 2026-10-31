@@ -1,0 +1,19 @@
+{
+ "id": "luma_range_key",
+ "label": "Luma Range Key",
+ "category": "Keying",
+ "version": 1,
+ "blurb": "Keeps a band of brightness and makes the rest see through, with its own soft roll off at each end, so you can key out the dark parts, the bright parts, or everything but the mid tones. Unlike Luma Key it has two ends, a choice of how brightness is measured, a blur that stops noise from fizzing at the edge, and a gamma on the matte.",
+ "params": [
+  {"key": "measure", "label": "Measure", "type": "enum", "choices": ["Brightness", "Brightest channel", "Average of the channels"], "default": 0},
+  {"key": "low", "label": "Keep from", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.15},
+  {"key": "low_softness", "label": "Softness below", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.1},
+  {"key": "high", "label": "Keep up to", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "high_softness", "label": "Softness above", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.0},
+  {"key": "key_range", "label": "Key out the band instead", "type": "bool", "default": false},
+  {"key": "pre_blur", "label": "Blur before keying", "type": "float", "min": 0.0, "max": 10.0, "step": 0.1, "default": 0.0, "unit": " px"},
+  {"key": "matte_gamma", "label": "Matte gamma", "type": "float", "min": 0.2, "max": 5.0, "step": 0.01, "default": 1.0},
+  {"key": "show_matte", "label": "Show the matte", "type": "bool", "default": false}
+ ],
+ "passes": "single"
+}

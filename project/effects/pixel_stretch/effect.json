@@ -1,0 +1,17 @@
+{
+ "id": "pixel_stretch",
+ "label": "Pixel Stretch",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Takes one row or column of the picture and smears it across part of the frame, the classic glitch look.",
+ "params": [
+  {"key": "direction", "label": "Direction", "type": "enum", "choices": ["Down", "Up", "Right", "Left"], "default": 0},
+  {"key": "position", "label": "Row or column to stretch", "type": "float", "min": 0.0, "max": 1.0, "step": 0.001, "default": 0.5},
+  {"key": "start", "label": "Stretch starts at", "type": "float", "min": 0.0, "max": 1.0, "step": 0.001, "default": 0.5},
+  {"key": "jitter", "label": "Wobble", "type": "float", "min": 0.0, "max": 50.0, "step": 0.1, "default": 0.0, "unit": " px"},
+  {"key": "jitter_speed", "label": "Wobble speed", "type": "float", "min": 0.0, "max": 30.0, "step": 0.1, "default": 8.0},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

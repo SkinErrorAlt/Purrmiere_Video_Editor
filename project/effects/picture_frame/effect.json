@@ -1,0 +1,19 @@
+{
+ "id": "picture_frame",
+ "label": "Picture Frame",
+ "category": "Stylize",
+ "tags": ["graphic"],
+ "version": 1,
+ "blurb": "Puts the clip in a frame drawn round its edge: a gallery frame with a white mat and a bevelled cut, a wooden frame, a gold frame, an instant photo with its wide bottom edge, a strip of film with sprocket holes, or a plain border. The picture shrinks to fit inside, is cropped to fill the inside, or sits under the frame. For photos, slideshows, memories and throwbacks; add Pan and Zoom before it for a moving photo.",
+ "params": [
+  {"key": "style", "label": "Frame", "type": "enum", "choices": ["Gallery mat", "Wooden frame", "Gold frame", "Instant photo", "Film strip", "Plain border"], "default": 0},
+  {"key": "width", "label": "Frame width", "type": "float", "min": 0.02, "max": 0.3, "step": 0.001, "default": 0.08},
+  {"key": "frame_colour", "label": "Frame colour", "type": "color", "default": [0.12, 0.1, 0.09, 1.0]},
+  {"key": "mat_colour", "label": "Mat and paper colour", "type": "color", "default": [0.95, 0.94, 0.9, 1.0]},
+  {"key": "picture", "label": "Picture", "type": "enum", "choices": ["Crop to fill inside", "Shrink to fit inside", "Frame over the edges"], "default": 0},
+  {"key": "shadow", "label": "Shadow on the picture", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5}
+ ],
+ "passes": [
+  {"shader": "frame.gdshader"}
+ ]
+}

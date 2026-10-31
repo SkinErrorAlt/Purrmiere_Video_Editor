@@ -1,0 +1,21 @@
+{
+ "id": "purr_sound_ring",
+ "label": "Sound Ring",
+ "category": "Purrmiere",
+ "tags": ["light", "graphic"],
+ "version": 1,
+ "blurb": "A circular audio visualiser: a ring of bars round a point that jump with Level, so drive Level from the music in the Driven layer. Rainbow or one colour, slowly turning, with a soft glow.",
+ "params": [
+  {"key": "level", "label": "Level", "type": "float", "min": 0.0, "max": 1.0, "step": 0.001, "default": 0.6},
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "radius", "label": "Ring size", "type": "float", "min": 0.02, "max": 0.6, "step": 0.001, "default": 0.17},
+  {"key": "bars", "label": "Bars", "type": "int", "min": 8, "max": 160, "step": 1, "default": 64},
+  {"key": "reach", "label": "Bar length", "type": "float", "min": 0.01, "max": 0.5, "step": 0.001, "default": 0.12},
+  {"key": "colour_mode", "label": "Colour", "type": "enum", "default": 0, "choices": ["Rainbow", "One colour"]},
+  {"key": "colour", "label": "One colour", "type": "color", "default": [1.0, 0.45, 0.75, 1.0]},
+  {"key": "spin", "label": "Turn", "type": "float", "min": -2.0, "max": 2.0, "step": 0.01, "default": 0.1},
+  {"key": "glow", "label": "Glow", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.6}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}, {"kind": "ring", "key": "radius", "about": "centre", "unit": "h", "feather": "reach"}],
+ "passes": "single"
+}

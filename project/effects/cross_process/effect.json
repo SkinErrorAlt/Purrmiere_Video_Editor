@@ -1,0 +1,15 @@
+{
+ "id": "cross_process",
+ "label": "Cross Process",
+ "category": "Colour Correction",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "The look of slide film developed in negative chemistry: punchy reds and greens, flat blues with lifted shadows, and yellow highlights.",
+ "params": [
+  {"key": "amount", "label": "Amount", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "contrast", "label": "Contrast", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "tint_shadows", "label": "Shadow tint", "type": "color", "default": [0.1, 0.45, 0.55, 1.0]},
+  {"key": "tint_highlights", "label": "Highlight tint", "type": "color", "default": [1.0, 0.92, 0.55, 1.0]}
+ ],
+ "passes": "single"
+}

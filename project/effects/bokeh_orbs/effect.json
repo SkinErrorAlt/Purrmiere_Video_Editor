@@ -1,0 +1,22 @@
+{
+ "id": "bokeh_orbs",
+ "label": "Bokeh Orbs",
+ "category": "Generate",
+ "tags": ["light"],
+ "version": 1,
+ "blurb": "Soft out of focus discs of light that drift and pulse over the picture.",
+ "params": [
+  {"key": "count", "label": "How many", "type": "int", "min": 1, "max": 64, "step": 1, "default": 18},
+  {"key": "size", "label": "Size", "type": "float", "min": 4.0, "max": 600.0, "step": 1.0, "default": 70.0, "unit": " px"},
+  {"key": "size_spread", "label": "Size variety", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "softness", "label": "Softness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "speed", "label": "Speed", "type": "float", "min": 0.0, "max": 4.0, "step": 0.01, "default": 0.4},
+  {"key": "pulse", "label": "Pulse", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "colour_a", "label": "Colour one", "type": "color", "default": [1.0, 0.72, 0.35, 1.0]},
+  {"key": "colour_b", "label": "Colour two", "type": "color", "default": [0.45, 0.7, 1.0, 1.0]},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0},
+  {"key": "blend", "label": "How it mixes", "type": "enum", "choices": ["Replace", "Multiply", "Screen", "Overlay", "Add", "Soft light", "Over"], "default": 2},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0}
+ ],
+ "passes": "single"
+}

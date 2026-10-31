@@ -1,0 +1,20 @@
+{
+ "id": "brush_wipe",
+ "label": "Brush",
+ "group": "Wipe",
+ "space": "2D",
+ "from": ["CapCut Brush"],
+ "blurb": "Broad brush strokes paint the incoming picture on one after another, the way a painter lays them: each stroke sweeps across the frame with a ragged, dry bristled head, and the next begins as it nears the far side, coming back the other way.",
+ "default_duration": 1.5,
+ "params": [
+  {"key": "strokes", "label": "Strokes", "type": "int", "min": 1, "max": 8, "step": 1, "default": 3},
+  {"key": "order", "label": "Stroke order", "type": "enum", "choices": ["Top down", "Bottom up", "Alternate"], "default": 0},
+  {"key": "orientation", "label": "Strokes run", "type": "enum", "choices": ["Across", "Up and down"], "default": 0},
+  {"key": "overlap", "label": "Overlap", "type": "float", "min": 0, "max": 0.6, "step": 0.01, "default": 0.15},
+  {"key": "roughness", "label": "Roughness", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "dryness", "label": "Dry brush", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "wobble", "label": "Wobble", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.35},
+  {"key": "softness", "label": "Soft edge", "type": "float", "min": 0, "max": 0.1, "step": 0.001, "default": 0.003},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 0}
+ ]
+}

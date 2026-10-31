@@ -1,0 +1,24 @@
+{
+ "id": "lightning",
+ "label": "Lightning",
+ "category": "Generate",
+ "version": 1,
+ "blurb": "Jagged electric bolts crackling between two points, with forks and a glow, redrawn several times a second. Each new strike can flash the picture.",
+ "params": [
+  {"key": "start_point", "label": "From", "type": "vec2", "default": [0.15, 0.2]},
+  {"key": "end_point", "label": "To", "type": "vec2", "default": [0.8, 0.75]},
+  {"key": "bolts", "label": "Bolts", "type": "int", "min": 1, "max": 4, "step": 1, "default": 2},
+  {"key": "jaggedness", "label": "Jaggedness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "forks", "label": "Forks", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "width", "label": "Width", "type": "float", "min": 0.5, "max": 12.0, "step": 0.1, "default": 2.2, "unit": " px"},
+  {"key": "glow", "label": "Glow", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "colour", "label": "Colour", "type": "color", "default": [0.62, 0.72, 1.0, 1.0]},
+  {"key": "rate", "label": "Strikes per second", "type": "float", "min": 0.0, "max": 30.0, "step": 0.5, "default": 10.0},
+  {"key": "flash", "label": "Flash", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.15},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0},
+  {"key": "blend", "label": "How it mixes", "type": "enum", "choices": ["Replace", "Multiply", "Screen", "Overlay", "Add", "Soft light", "Over"], "default": 4},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0}
+ ],
+ "handles": [{"kind": "line", "keys": ["start_point", "end_point"]}],
+ "passes": "single"
+}

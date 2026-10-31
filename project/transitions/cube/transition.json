@@ -1,0 +1,18 @@
+{
+ "id": "cube",
+ "label": "Cube",
+ "group": "3D",
+ "space": "3D",
+ "from": ["PowerPoint Cube", "Keynote Cube", "Google Slides Cube", "CapCut 3D Cube"],
+ "blurb": "Both pictures are sides of one cube that turns, so the outgoing side rolls away as the incoming side rolls in. Motion blur can smear the faces at full speed.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "direction", "label": "Turns towards", "type": "enum", "choices": ["Right", "Left", "Down", "Up"], "default": 0},
+  {"key": "depth", "label": "Lens", "type": "float", "min": 10, "max": 90, "step": 1, "default": 40, "unit": " deg"},
+  {"key": "pull_back", "label": "Pull back", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.35},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "motion_blur", "label": "Motion blur", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 0.0},
+  {"key": "shutter", "label": "Shutter", "type": "float", "min": 0, "max": 360, "step": 1, "default": 180, "unit": " deg"},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

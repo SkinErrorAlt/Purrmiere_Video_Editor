@@ -1,0 +1,14 @@
+{
+ "id": "colour_neutralizer",
+ "label": "Colour Neutralizer",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Takes a colour cast out of the shadows, the midtones and the highlights separately. Set each colour to what should have been neutral grey in that range, for example a grey wall that came out warm, and that colour becomes grey of the same brightness while the tones between follow smoothly. Pin black and white keeps pure black and pure white untouched.",
+ "params": [
+  {"key": "shadows", "label": "Shadow cast", "type": "color", "default": [0.2, 0.2, 0.24, 1.0]},
+  {"key": "midtones", "label": "Midtone cast", "type": "color", "default": [0.55, 0.5, 0.42, 1.0]},
+  {"key": "highlights", "label": "Highlight cast", "type": "color", "default": [0.85, 0.85, 0.85, 1.0]},
+  {"key": "pin", "label": "Pin black and white", "type": "bool", "default": true}
+ ],
+ "passes": "single"
+}

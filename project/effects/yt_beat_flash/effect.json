@@ -1,0 +1,19 @@
+{
+ "id": "yt_beat_flash",
+ "label": "Beat Flash",
+ "category": "YouTube",
+ "tags": ["youtube", "light"],
+ "version": 1,
+ "blurb": "Washes the picture with a colour on every beat, fading out before the next one, for music edits and montages. Turn on Cycle colours to step round the colour wheel beat by beat.",
+ "params": [
+  {"key": "bpm", "label": "Tempo", "type": "float", "min": 30.0, "max": 300.0, "step": 0.1, "default": 120.0, "unit": " bpm"},
+  {"key": "offset", "label": "Offset", "type": "float", "min": -10.0, "max": 10.0, "step": 0.001, "default": 0.0, "unit": " s"},
+  {"key": "every", "label": "Flash on", "type": "enum", "choices": ["Every beat", "Every other beat", "Every bar of four", "Twice a beat"], "default": 0},
+  {"key": "mode", "label": "Mode", "type": "enum", "choices": ["Colour wash", "Add light", "Invert"], "default": 1},
+  {"key": "colour", "label": "Colour", "type": "color", "default": [1.0, 0.25, 0.6, 1.0]},
+  {"key": "cycle", "label": "Cycle colours", "type": "bool", "default": false},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "decay", "label": "Snap", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5}
+ ],
+ "passes": "single"
+}

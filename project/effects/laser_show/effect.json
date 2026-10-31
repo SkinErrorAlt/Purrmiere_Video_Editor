@@ -1,0 +1,24 @@
+{
+ "id": "laser_show",
+ "label": "Laser Show",
+ "category": "Light & Shadow",
+ "tags": ["light"],
+ "version": 1,
+ "blurb": "Club lasers: razor thin, pure coloured lines fan out from emitters at the top or bottom of the frame, sweep, open and close their fans and blink, with a thin glow round each line and sparkle where the beams pass through the haze.",
+ "params": [
+  {"key": "emitters", "label": "Emitters", "type": "int", "min": 1, "max": 4, "step": 1, "default": 2},
+  {"key": "placement", "label": "Emitters at", "type": "enum", "choices": ["Top", "Bottom", "Top and bottom"], "default": 0},
+  {"key": "beams", "label": "Beams per fan", "type": "int", "min": 1, "max": 16, "step": 1, "default": 8},
+  {"key": "palette", "label": "Colour", "type": "enum", "choices": ["Green", "Red", "Blue", "Rainbow"], "default": 0},
+  {"key": "fan", "label": "Fan angle", "type": "float", "min": 2, "max": 140, "step": 0.5, "default": 55, "unit": " deg"},
+  {"key": "speed", "label": "Sweep speed", "type": "float", "min": 0, "max": 3, "step": 0.01, "default": 0.6},
+  {"key": "blink", "label": "Blink rate", "type": "float", "min": 0, "max": 8, "step": 0.1, "default": 1.5, "unit": " /s"},
+  {"key": "thickness", "label": "Thickness", "type": "float", "min": 0.5, "max": 6, "step": 0.1, "default": 1.6, "unit": " px"},
+  {"key": "glow", "label": "Glow", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "haze", "label": "Haze", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 11}
+ ],
+ "passes": [
+  {"shader": "laser.gdshader"}
+ ]
+}

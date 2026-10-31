@@ -1,0 +1,17 @@
+{
+ "id": "purr_travel_poster",
+ "label": "Travel Poster",
+ "category": "Purrmiere",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Turns the shot into a vintage travel poster: tones flattened into a ramp of six screen printed colours chosen for seaside, desert, alpine or night city moods, with print grain and a cream border.",
+ "params": [
+  {"key": "preset", "label": "Palette", "type": "enum", "default": 0, "choices": ["Seaside", "Desert", "Alpine", "Night city"]},
+  {"key": "contrast", "label": "Contrast", "type": "float", "min": 0.2, "max": 3.0, "step": 0.01, "default": 1.15},
+  {"key": "grain", "label": "Print grain", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "border", "label": "Border", "type": "float", "min": 0.0, "max": 120.0, "step": 0.5, "default": 24.0, "unit": " px"},
+  {"key": "border_colour", "label": "Border colour", "type": "color", "default": [0.95, 0.91, 0.8, 1.0]},
+  {"key": "hue_keep", "label": "Keep original colour", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3}
+ ],
+ "passes": "single"
+}

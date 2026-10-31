@@ -1,0 +1,14 @@
+{
+ "id": "purr_colour_infrared",
+ "label": "Colour Infrared",
+ "category": "Purrmiere",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "The false colour infrared film look: green leaves and grass turn hot pink and red, blue skies go deep and inky, skin turns pale and the highlights glow softly.",
+ "params": [
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "foliage", "label": "Foliage glow", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 1.2},
+  {"key": "halation", "label": "Glow", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35}
+ ],
+ "passes": "single"
+}

@@ -1,0 +1,15 @@
+{
+ "id": "dent",
+ "label": "Dent",
+ "category": "Distort",
+ "version": 1,
+ "blurb": "Presses a round dent into the picture at a point. Sine adds rings and Kaleida bends it into petals. A negative strength pushes it out instead.",
+ "params": [
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "size", "label": "Size", "type": "float", "min": 0.02, "max": 2.0, "step": 0.01, "default": 0.4},
+  {"key": "strength", "label": "Strength", "type": "float", "min": -1.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "kind", "label": "Type", "type": "enum", "choices": ["Dent", "Soft dent", "Sine", "Kaleida"], "default": 0}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}, {"kind": "ring", "key": "size", "about": "centre", "unit": "h"}],
+ "passes": "single"
+}

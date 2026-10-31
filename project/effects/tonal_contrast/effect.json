@@ -1,0 +1,26 @@
+{
+ "id": "tonal_contrast",
+ "label": "Tonal Contrast",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "The detail tool from Snapseed and Nik Color Efex: local contrast raised separately in the bright tones, the middle tones and the dark tones, so texture comes up in one range without touching the others, for example structure in clouds while the shadows stay as they were. The contrast is measured round an edge aware average, so strong edges get no halo. Protect shadows and Protect highlights stop near black parts from being pushed into black and near white parts into white. Radius sets the size of texture that is raised.",
+ "params": [
+  {"key": "high", "label": "High tones", "type": "float", "min": 0.0, "max": 100.0, "step": 1.0, "default": 40.0, "unit": " %"},
+  {"key": "mid", "label": "Mid tones", "type": "float", "min": 0.0, "max": 100.0, "step": 1.0, "default": 50.0, "unit": " %"},
+  {"key": "low", "label": "Low tones", "type": "float", "min": 0.0, "max": 100.0, "step": 1.0, "default": 35.0, "unit": " %"},
+  {"key": "protect_shadows", "label": "Protect shadows", "type": "float", "min": 0.0, "max": 100.0, "step": 1.0, "default": 50.0, "unit": " %"},
+  {"key": "protect_highlights", "label": "Protect highlights", "type": "float", "min": 0.0, "max": 100.0, "step": 1.0, "default": 50.0, "unit": " %"},
+  {"key": "radius", "label": "Radius", "type": "float", "min": 2.0, "max": 100.0, "step": 0.5, "default": 14.0, "unit": " px"}
+ ],
+ "passes": [
+  {"shader": "gf_prep.gdshader"},
+  {"shader": "gf_down.gdshader", "scale": 0.5},
+  {"shader": "gf_down.gdshader", "scale": 0.5},
+  {"shader": "gf_gauss.gdshader", "set": {"direction": [1.0, 0.0]}},
+  {"shader": "gf_gauss.gdshader", "set": {"direction": [0.0, 1.0]}},
+  {"shader": "gf_ab.gdshader", "set": {"gf_eps": 0.0025}},
+  {"shader": "gf_gauss.gdshader", "set": {"direction": [1.0, 0.0]}},
+  {"shader": "gf_gauss.gdshader", "set": {"direction": [0.0, 1.0]}},
+  {"shader": "tonal_mix.gdshader", "scale": 4.0}
+ ]
+}

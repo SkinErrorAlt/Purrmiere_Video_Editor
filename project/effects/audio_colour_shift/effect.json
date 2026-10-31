@@ -1,0 +1,39 @@
+{
+ "id": "audio_colour_shift",
+ "label": "Colour Shift",
+ "category": "Audio Reactive",
+ "tags": [
+  "audio",
+  "music",
+  "beat",
+  "reactive",
+  "visualiser"
+ ],
+ "version": 1,
+ "blurb": "The colours turn round the colour wheel as the sound gets louder, by up to Turn at the loudest point. Drop a clip from the timeline, or a file from the bin or the Source monitor, on its Sound well.",
+ "params": [
+  {
+   "key": "degrees",
+   "label": "Turn",
+   "type": "float",
+   "min": -180,
+   "max": 180,
+   "step": 0.1,
+   "default": 120,
+   "unit": " deg"
+  }
+ ],
+ "passes": [
+  {
+   "shader": "res://effects/hue_saturation/effect.gdshader"
+  }
+ ],
+ "reactive": {
+  "drive": {
+   "hue": {
+    "rest": 0,
+    "peak": "degrees"
+   }
+  }
+ }
+}

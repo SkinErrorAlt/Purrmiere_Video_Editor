@@ -1,0 +1,52 @@
+{
+ "version": 1,
+ "name": "Colour",
+ "tree": {
+  "t": "s",
+  "dir": "v",
+  "ratio": 0.6,
+  "a": {
+   "t": "s",
+   "dir": "h",
+   "ratio": 0.35,
+   "a": {
+    "t": "g",
+    "tabs": [
+     "effect_controls",
+     "presets",
+     "bin"
+    ],
+    "active": "effect_controls"
+   },
+   "b": {
+    "t": "g",
+    "tabs": [
+     "program"
+    ],
+    "active": "program"
+   }
+  },
+  "b": {
+   "t": "s",
+   "dir": "h",
+   "ratio": 0.8,
+   "a": {
+    "t": "g",
+    "tabs": [
+     "timeline"
+    ],
+    "active": "timeline"
+   },
+   "b": {
+    "t": "g",
+    "tabs": [
+     "audio",
+     "info"
+    ],
+    "active": "audio"
+   }
+  }
+ },
+ "floats": [],
+ "state": {}
+}

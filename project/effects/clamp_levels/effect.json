@@ -1,0 +1,14 @@
+{
+ "id": "clamp_levels",
+ "label": "Clamp",
+ "category": "Image Control",
+ "version": 1,
+ "blurb": "Holds every value inside a floor and a ceiling, for keeping a grade legal for broadcast.",
+ "params": [
+  {"key": "floor_v", "label": "Floor", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.0},
+  {"key": "ceiling_v", "label": "Ceiling", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "soft", "label": "Roll off rather than cut", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.0},
+  {"key": "per_channel", "label": "Per channel", "type": "bool", "default": true}
+ ],
+ "passes": "single"
+}

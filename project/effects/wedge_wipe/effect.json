@@ -1,0 +1,15 @@
+{
+ "id": "wedge_wipe",
+ "label": "Wedge Wipe",
+ "category": "Transition",
+ "version": 1,
+ "blurb": "A wedge opens from a centre like a fan, both sides at once, and cuts the picture away.",
+ "params": [
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0, "max": 1, "step": 0.005, "default": 0.5},
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "angle", "label": "Opens towards", "type": "float", "min": -180, "max": 180, "step": 1, "default": 90, "unit": " deg"},
+  {"key": "feather", "label": "Softness", "type": "float", "min": 0, "max": 0.5, "step": 0.005, "default": 0.02}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}, {"kind": "angle", "key": "angle", "about": "centre", "zero": "right", "turn": "ccw"}],
+ "passes": "single"
+}

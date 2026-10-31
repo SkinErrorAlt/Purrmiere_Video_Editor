@@ -1,0 +1,13 @@
+{
+ "id": "spill_suppress",
+ "label": "Spill Suppression",
+ "category": "Keying",
+ "version": 1,
+ "blurb": "Takes the green or blue bounce off the edges of a key without touching the rest.",
+ "params": [
+  {"key": "screen", "label": "Screen", "type": "enum", "default": 0, "choices": ["Green", "Blue", "Red"]},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.8},
+  {"key": "keep_luma", "label": "Keep the brightness", "type": "bool", "default": true}
+ ],
+ "passes": "single"
+}

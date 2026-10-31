@@ -1,0 +1,15 @@
+{
+ "id": "venetian_slide",
+ "label": "Strips",
+ "group": "Wipe",
+ "space": "2D",
+ "from": ["PowerPoint Strips"],
+ "blurb": "The incoming picture runs in diagonally from a corner as a staircase of narrow strips, each strip filling a moment after its neighbour.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "direction", "label": "Direction", "type": "enum", "choices": ["Left Down", "Left Up", "Right Down", "Right Up"], "default": 0},
+  {"key": "strips", "label": "Strips", "type": "int", "min": 2, "max": 200, "step": 1, "default": 24},
+  {"key": "softness", "label": "Soft edge", "type": "float", "min": 0, "max": 0.5, "step": 0.01, "default": 0.04},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 0}
+ ]
+}

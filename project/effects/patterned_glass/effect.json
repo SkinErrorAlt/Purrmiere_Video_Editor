@@ -1,0 +1,24 @@
+{
+ "id": "patterned_glass",
+ "label": "Patterned Glass",
+ "category": "Distort",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Looks at the picture through textured glass. Reeded glass has straight ribs that each show a narrowed, flipped strip of what lies behind, fluted ribs are rounder, hammered glass has dimples of every size, pebbled glass has small round bumps and rain glass has long wavy streaks. Light catches the glass in soft highlights and bright rib edges.",
+ "params": [
+  {"key": "pattern", "label": "Pattern", "type": "enum", "choices": ["Reeded", "Fluted", "Hammered", "Pebbled", "Rain"], "default": 0},
+  {"key": "size", "label": "Size", "type": "float", "min": 4.0, "max": 400.0, "step": 0.5, "default": 36.0, "unit": " px"},
+  {"key": "refraction", "label": "Refraction", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 1.0},
+  {"key": "angle", "label": "Angle", "type": "float", "min": -180.0, "max": 180.0, "step": 0.1, "default": 0.0, "unit": " deg"},
+  {"key": "blur", "label": "Blur behind the glass", "type": "float", "min": 0.0, "max": 30.0, "step": 0.1, "default": 1.5, "unit": " px"},
+  {"key": "highlight", "label": "Highlight", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "tint", "label": "Tint", "type": "color", "default": [0.96, 0.99, 1.0, 1.0]},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "handles": [{"kind": "angle", "key": "angle"}],
+ "passes": [
+  {"shader": "res://effects/blur_gaussian/gauss.gdshader", "set": {"direction": [1.0, 0.0]}, "map": {"radius": "blur"}},
+  {"shader": "res://effects/blur_gaussian/gauss.gdshader", "set": {"direction": [0.0, 1.0]}, "map": {"radius": "blur"}},
+  {"shader": "glass.gdshader"}
+ ]
+}

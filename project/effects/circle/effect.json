@@ -1,0 +1,20 @@
+{
+ "id": "circle",
+ "label": "Circle",
+ "category": "Generate",
+ "tags": ["graphic"],
+ "version": 1,
+ "blurb": "Draws a filled circle, or a ring when Thickness is above 0, that stays round on any frame shape.",
+ "params": [
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "radius", "label": "Radius", "type": "float", "min": 0.0, "max": 4000.0, "step": 0.5, "default": 200.0, "unit": " px"},
+  {"key": "thickness", "label": "Thickness (0 is filled)", "type": "float", "min": 0.0, "max": 2000.0, "step": 0.5, "default": 0.0, "unit": " px"},
+  {"key": "feather", "label": "Softness", "type": "float", "min": 0.0, "max": 500.0, "step": 0.5, "default": 0.0, "unit": " px"},
+  {"key": "colour", "label": "Colour", "type": "color", "default": [1.0, 1.0, 1.0, 1.0]},
+  {"key": "invert", "label": "Fill the outside instead", "type": "bool", "default": false},
+  {"key": "blend", "label": "How it mixes", "type": "enum", "choices": ["Replace", "Multiply", "Screen", "Overlay", "Add", "Soft light", "Over"], "default": 6},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}, {"kind": "ring", "key": "radius", "about": "centre", "unit": "px", "feather": "feather", "feather_scale": 0.5}],
+ "passes": "single"
+}

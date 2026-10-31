@@ -1,0 +1,14 @@
+{
+ "id": "window_blinds",
+ "label": "Window Blinds",
+ "group": "Wipe",
+ "space": "2D",
+ "from": ["gl-transitions windowblinds"],
+ "blurb": "Fine lines across the frame dissolve at two speeds, every other line running ahead, like light coming through half open blinds.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "lines", "label": "Lines", "type": "int", "min": 4, "max": 240, "step": 1, "default": 50},
+  {"key": "orientation", "label": "Lines", "type": "enum", "choices": ["Horizontal", "Vertical"], "default": 0},
+  {"key": "lead", "label": "Lead", "type": "float", "min": 1, "max": 3, "step": 0.05, "default": 1.5}
+ ]
+}

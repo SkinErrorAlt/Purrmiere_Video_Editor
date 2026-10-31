@@ -1,0 +1,15 @@
+{
+ "id": "noise_dissolve",
+ "label": "Noise",
+ "group": "Dissolve",
+ "space": "2D",
+ "from": ["gl perlin"],
+ "blurb": "The incoming picture appears in soft cloudy patches that grow and join up, like a dissolve through a noise pattern.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "scale", "label": "Cells across", "type": "float", "min": 1, "max": 60, "step": 0.5, "default": 4},
+  {"key": "softness", "label": "Edge softness", "type": "float", "min": 0, "max": 0.5, "step": 0.005, "default": 0.01},
+  {"key": "detail", "label": "Detail", "type": "int", "min": 1, "max": 5, "step": 1, "default": 1},
+  {"key": "invert", "label": "Reverse order", "type": "bool", "default": false}
+ ]
+}

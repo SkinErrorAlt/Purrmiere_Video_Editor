@@ -1,0 +1,22 @@
+{
+ "id": "rounded_corners",
+ "label": "Rounded Corners",
+ "category": "Transform",
+ "version": 1,
+ "blurb": "Rounds off the corners of the clip with smooth edges, with an optional border and a soft darkening just inside the edge. Each corner can be switched off.",
+ "params": [
+  {"key": "radius", "label": "Radius", "type": "float", "min": 0, "max": 1000, "step": 0.5, "default": 40, "unit": " px"},
+  {"key": "feather", "label": "Feather", "type": "float", "min": 0, "max": 100, "step": 0.5, "default": 0, "unit": " px"},
+  {"key": "border", "label": "Border", "type": "float", "min": 0, "max": 200, "step": 0.5, "default": 0, "unit": " px"},
+  {"key": "border_colour", "label": "Border colour", "type": "color", "default": [1.0, 1.0, 1.0, 1.0]},
+  {"key": "shadow", "label": "Inner shadow", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0},
+  {"key": "shadow_size", "label": "Inner shadow size", "type": "float", "min": 1, "max": 300, "step": 0.5, "default": 30, "unit": " px"},
+  {"key": "top_left", "label": "Top left", "type": "bool", "default": true},
+  {"key": "top_right", "label": "Top right", "type": "bool", "default": true},
+  {"key": "bottom_right", "label": "Bottom right", "type": "bool", "default": true},
+  {"key": "bottom_left", "label": "Bottom left", "type": "bool", "default": true}
+ ],
+ "passes": [
+  {"shader": "corners.gdshader"}
+ ]
+}

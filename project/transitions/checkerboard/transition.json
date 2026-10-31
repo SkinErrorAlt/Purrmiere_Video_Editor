@@ -1,0 +1,15 @@
+{
+ "id": "checkerboard",
+ "label": "Checkerboard",
+ "group": "Wipe",
+ "space": "2D",
+ "from": ["PowerPoint Checkerboard", "Impress Checkerboard"],
+ "blurb": "The incoming picture wipes into a board of squares, the dark squares of the board first and the light ones half a beat later, sweeping across from one side.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "direction", "label": "Direction", "type": "enum", "choices": ["From Left", "From Right", "From Top", "From Bottom"], "default": 0},
+  {"key": "columns", "label": "Squares across", "type": "int", "min": 2, "max": 40, "step": 1, "default": 8},
+  {"key": "sweep", "label": "Sweep", "type": "float", "min": 0, "max": 4, "step": 0.05, "default": 1.5},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 0}
+ ]
+}

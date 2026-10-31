@@ -1,0 +1,13 @@
+{
+ "id": "additive_dissolve",
+ "label": "Additive Dissolve",
+ "group": "Dissolve",
+ "space": "2D",
+ "from": ["Premiere Additive Dissolve"],
+ "blurb": "The two pictures are added together as they swap, so the middle of the dissolve flares brighter, the way light adds when two shots overlap. Brightening at 0 gives a plain fade.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "brightening", "label": "Brightening", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 1},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 0}
+ ]
+}

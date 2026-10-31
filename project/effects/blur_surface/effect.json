@@ -1,0 +1,15 @@
+{
+ "id": "blur_surface",
+ "label": "Surface Blur",
+ "category": "Blur & Sharpen",
+ "version": 1,
+ "blurb": "A bilateral blur that smooths flat areas and keeps edges.",
+ "params": [
+  {"key": "radius", "label": "Radius", "type": "float", "min": 0, "max": 24, "step": 0.5, "default": 6},
+  {"key": "threshold", "label": "Edge Keep", "type": "float", "min": 0.01, "max": 1, "step": 0.01, "default": 0.18}
+ ],
+ "passes": [
+  {"shader": "surface.gdshader", "set": {"direction": [1.0, 0.0]}},
+  {"shader": "surface.gdshader", "set": {"direction": [0.0, 1.0]}}
+ ]
+}

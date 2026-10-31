@@ -1,0 +1,23 @@
+{
+ "id": "smoke_wipe",
+ "label": "Smoke",
+ "group": "Particles",
+ "space": "2D",
+ "from": ["Envato and Motion Array smoke packs", "CapCut Overlay smoke"],
+ "blurb": "Billows of smoke roll in from a side or burst out from a point, lit from one side with darker cores. The pictures swap inside the thickest smoke, then it thins and drifts off the incoming picture.",
+ "default_duration": 1.6,
+ "params": [
+  {"key": "direction", "label": "Comes from", "type": "enum", "choices": ["Left", "Right", "Top", "Bottom", "Burst from a point"], "default": 0},
+  {"key": "centre", "label": "Burst point", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "density", "label": "Thickness", "type": "float", "min": 0.2, "max": 1, "step": 0.01, "default": 0.85},
+  {"key": "scale", "label": "Billow size", "type": "float", "min": 0.3, "max": 3, "step": 0.01, "default": 1},
+  {"key": "colour", "label": "Smoke colour", "type": "color", "default": [0.93, 0.93, 0.94, 1]},
+  {"key": "light_angle", "label": "Light from", "type": "float", "min": -180, "max": 180, "step": 1, "default": 120, "unit": " deg"},
+  {"key": "turbulence", "label": "Turbulence", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth", "Fast in, slow out"], "default": 1}
+ ],
+ "handles": [
+  {"kind": "point", "key": "centre"},
+  {"kind": "angle", "key": "light_angle", "about": "centre"}
+ ]
+}

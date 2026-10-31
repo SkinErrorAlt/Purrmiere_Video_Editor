@@ -1,0 +1,25 @@
+{
+ "id": "retro_grid",
+ "label": "Retro Grid",
+ "category": "Generate",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "The eighties synthwave scene: a glowing neon grid floor rushing towards you, a striped sun sinking into the horizon and a starry purple sky. Replaces the picture by default for an intro or a background; choose Behind the picture to put it behind a cut out, or Screen to lay the neon over footage.",
+ "params": [
+  {"key": "horizon", "label": "Horizon", "type": "float", "min": 0.2, "max": 0.9, "step": 0.005, "default": 0.56},
+  {"key": "speed", "label": "Speed", "type": "float", "min": 0.0, "max": 4.0, "step": 0.01, "default": 0.8},
+  {"key": "grid_colour", "label": "Grid colour", "type": "color", "default": [1.0, 0.2, 0.85, 1.0]},
+  {"key": "line_width", "label": "Line width", "type": "float", "min": 0.5, "max": 6.0, "step": 0.1, "default": 1.6, "unit": " px"},
+  {"key": "glow", "label": "Glow", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "sun_size", "label": "Sun size", "type": "float", "min": 0.0, "max": 0.5, "step": 0.005, "default": 0.22},
+  {"key": "sun_top", "label": "Sun top", "type": "color", "default": [1.0, 0.88, 0.25, 1.0]},
+  {"key": "sun_bottom", "label": "Sun bottom", "type": "color", "default": [1.0, 0.18, 0.55, 1.0]},
+  {"key": "sky_top", "label": "Sky top", "type": "color", "default": [0.04, 0.0, 0.1, 1.0]},
+  {"key": "sky_bottom", "label": "Sky at the horizon", "type": "color", "default": [0.42, 0.05, 0.36, 1.0]},
+  {"key": "floor_colour", "label": "Floor colour", "type": "color", "default": [0.03, 0.0, 0.07, 1.0]},
+  {"key": "stars", "label": "Stars", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "blend", "label": "How it mixes", "type": "enum", "choices": ["Replace", "Multiply", "Screen", "Overlay", "Add", "Soft light", "Over", "Behind the picture"], "default": 0},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0}
+ ],
+ "passes": "single"
+}

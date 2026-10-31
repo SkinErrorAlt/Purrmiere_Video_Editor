@@ -1,0 +1,12 @@
+{
+ "id": "fade",
+ "label": "Fade",
+ "group": "Dissolve",
+ "space": "2D",
+ "from": ["PowerPoint Fade", "Keynote Dissolve", "Google Slides Fade", "CapCut Mix"],
+ "blurb": "The outgoing picture fades into the incoming one.",
+ "default_duration": 0.8,
+ "params": [
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 0}
+ ]
+}

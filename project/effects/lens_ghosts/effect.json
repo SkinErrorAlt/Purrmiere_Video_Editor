@@ -1,0 +1,30 @@
+{
+ "id": "lens_ghosts",
+ "label": "Lens Ghosts",
+ "category": "Light & Shadow",
+ "tags": ["light"],
+ "version": 1,
+ "blurb": "Every bright part of the picture throws a chain of soft, tinted copies of itself along the line from it through the frame centre and out the other side, the way light bounces between the glass elements of a lens. Each ghost is an aperture shaped disc or ring with a faint red to blue edge, and the chain follows the highlights with no keyframes. Ghosts only gives the ghosts alone on clear, to lay over another track.",
+ "params": [
+  {"key": "threshold", "label": "Brightness needed", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.85},
+  {"key": "ghosts", "label": "Ghosts", "type": "int", "min": 1, "max": 8, "step": 1, "default": 6},
+  {"key": "spread", "label": "Spread along the line", "type": "float", "min": 0.2, "max": 2, "step": 0.01, "default": 1},
+  {"key": "size", "label": "Ghost size", "type": "float", "min": 0.01, "max": 0.25, "step": 0.001, "default": 0.06},
+  {"key": "blades", "label": "Aperture blades", "type": "int", "min": 0, "max": 9, "step": 1, "default": 6},
+  {"key": "blade_turn", "label": "Blade turn", "type": "float", "min": -180, "max": 180, "step": 0.5, "default": 15, "unit": " deg"},
+  {"key": "style", "label": "Ghost shape", "type": "enum", "choices": ["Filled discs", "Rings"], "default": 0},
+  {"key": "rainbow", "label": "Rainbow edge", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "tint", "label": "Tint", "type": "color", "default": [1.0, 1.0, 1.0, 1.0]},
+  {"key": "intensity", "label": "Intensity", "type": "float", "min": 0, "max": 4, "step": 0.01, "default": 1.2},
+  {"key": "ghosts_only", "label": "Ghosts only", "type": "bool", "default": false}
+ ],
+ "passes": [
+  {"shader": "bright.gdshader", "scale": 0.5},
+  {"shader": "res://effects/blur_gaussian/down.gdshader", "scale": 0.5},
+  {"shader": "res://effects/blur_gaussian/down.gdshader", "scale": 0.5},
+  {"shader": "res://effects/blur_gaussian/down.gdshader", "scale": 0.5},
+  {"shader": "ghosts.gdshader", "scale": 4.0},
+  {"shader": "res://effects/blur_gaussian/up.gdshader", "scale": 2.0},
+  {"shader": "compose.gdshader", "scale": 2.0}
+ ]
+}

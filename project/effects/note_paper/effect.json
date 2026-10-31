@@ -1,0 +1,20 @@
+{
+ "id": "note_paper",
+ "label": "Note Paper",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Makes the picture out of two sheets of handmade paper: the dark shapes are cut from one sheet and pressed onto the other, with a raised edge and the grain of the paper showing.",
+ "params": [
+  {"key": "image_balance", "label": "Image balance", "type": "float", "min": 0.0, "max": 50.0, "step": 0.1, "default": 25.0},
+  {"key": "graininess", "label": "Graininess", "type": "float", "min": 0.0, "max": 20.0, "step": 0.1, "default": 10.0},
+  {"key": "relief", "label": "Relief", "type": "float", "min": 0.0, "max": 25.0, "step": 0.1, "default": 11.0},
+  {"key": "ink", "label": "Top sheet", "type": "color", "default": [0.42, 0.42, 0.43, 1.0]},
+  {"key": "paper", "label": "Bottom sheet", "type": "color", "default": [0.94, 0.93, 0.9, 1.0]},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": [
+  {"shader": "soft.gdshader", "scale": 0.5},
+  {"shader": "paper.gdshader", "scale": 2.0}
+ ]
+}

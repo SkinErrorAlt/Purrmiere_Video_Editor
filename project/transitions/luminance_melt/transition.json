@@ -1,0 +1,16 @@
+{
+ "id": "luminance_melt",
+ "label": "Luminance Melt",
+ "group": "Distort",
+ "space": "2D",
+ "from": ["gl luminance_melt"],
+ "blurb": "The picture melts and drips off the frame in ragged runs, the darker parts first and then the brighter ones, or the other way round, uncovering the incoming picture.",
+ "default_duration": 1.6,
+ "params": [
+  {"key": "direction", "label": "Drips", "type": "enum", "choices": ["Down", "Up", "Left", "Right"], "default": 0},
+  {"key": "threshold", "label": "Brightness split", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.8},
+  {"key": "first", "label": "Melts first", "type": "enum", "choices": ["Darker parts", "Brighter parts"], "default": 0},
+  {"key": "drips", "label": "Drips across", "type": "float", "min": 2, "max": 80, "step": 0.5, "default": 18},
+  {"key": "raggedness", "label": "Raggedness", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6}
+ ]
+}

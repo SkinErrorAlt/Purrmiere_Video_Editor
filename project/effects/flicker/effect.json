@@ -1,0 +1,15 @@
+{
+ "id": "flicker",
+ "label": "Flicker",
+ "category": "Stylize",
+ "version": 1,
+ "blurb": "The brightness jumps about like a failing light or an old film print, with the odd deeper dip.",
+ "params": [
+  {"key": "amount", "label": "Amount", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "speed", "label": "Speed", "type": "float", "min": 0.1, "max": 60.0, "step": 0.1, "default": 12.0, "unit": " per s"},
+  {"key": "smoothness", "label": "Smoothness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "colour_flicker", "label": "Colour flicker", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.1},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

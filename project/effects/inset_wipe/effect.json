@@ -1,0 +1,15 @@
+{
+ "id": "inset_wipe",
+ "label": "Inset",
+ "category": "Transition",
+ "version": 1,
+ "blurb": "A box grows from a corner or the centre and cuts the picture away, with an optional coloured border on its edge.",
+ "params": [
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0, "max": 1, "step": 0.005, "default": 0.5},
+  {"key": "corner", "label": "Grow from", "type": "enum", "choices": ["Top left", "Top right", "Bottom right", "Bottom left", "Centre"], "default": 0},
+  {"key": "feather", "label": "Softness", "type": "float", "min": 0, "max": 0.2, "step": 0.001, "default": 0.002},
+  {"key": "border", "label": "Border width", "type": "float", "min": 0, "max": 40, "step": 0.1, "default": 0.0, "unit": " px"},
+  {"key": "border_colour", "label": "Border colour", "type": "color", "default": [1, 1, 1, 1]}
+ ],
+ "passes": "single"
+}

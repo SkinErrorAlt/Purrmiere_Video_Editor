@@ -1,0 +1,22 @@
+{
+ "id": "advanced_keyer",
+ "label": "Advanced Keyer",
+ "category": "Keying",
+ "version": 1,
+ "blurb": "A colour difference keyer for green and blue screens: builds the matte from how far the key channel stands above the other two, cleans and softens it, then takes the screen colour off the edges and the spill.",
+ "params": [
+  {"key": "key_colour", "label": "Key Colour", "type": "color", "default": [0.2, 0.7, 0.3, 1.0]},
+  {"key": "tolerance", "label": "Tolerance", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "pedestal", "label": "Pedestal", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.1},
+  {"key": "transparency", "label": "Transparency", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "highlight", "label": "Protect highlights", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.1},
+  {"key": "shadow", "label": "Protect shadows", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "choke", "label": "Choke", "type": "float", "min": -10.0, "max": 10.0, "step": 0.1, "default": 0.0, "unit": " px"},
+  {"key": "soften", "label": "Soften", "type": "float", "min": 0.0, "max": 20.0, "step": 0.1, "default": 0.0, "unit": " px"},
+  {"key": "contrast", "label": "Matte contrast", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.0},
+  {"key": "mid_point", "label": "Mid point", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "spill", "label": "Spill", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "output_mode", "label": "Output", "type": "enum", "choices": ["Composite", "Alpha channel", "Colour channel"], "default": 0}
+ ],
+ "passes": "single"
+}

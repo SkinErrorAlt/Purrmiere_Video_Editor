@@ -1,0 +1,21 @@
+{
+ "id": "dehaze",
+ "label": "Dehaze",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Clears haze and fog with the dark channel prior: it guesses how much haze sits in front of each area and takes it back out. Below zero it adds haze instead.",
+ "params": [
+  {"key": "amount", "label": "Amount", "type": "float", "min": -1.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "radius", "label": "Area size", "type": "float", "min": 1.0, "max": 40.0, "step": 0.5, "default": 10.0, "unit": " px"},
+  {"key": "smoothing", "label": "Smoothing", "type": "float", "min": 0.0, "max": 60.0, "step": 0.5, "default": 20.0, "unit": " px"},
+  {"key": "haze_colour", "label": "Haze colour", "type": "color", "default": [0.85, 0.87, 0.9, 1.0]},
+  {"key": "sky_protect", "label": "Protect sky", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5}
+ ],
+ "passes": [
+  {"shader": "min_pass.gdshader", "set": {"direction": [1.0, 0.0], "from_picture": true}},
+  {"shader": "min_pass.gdshader", "set": {"direction": [0.0, 1.0], "from_picture": false}},
+  {"shader": "res://effects/blur_gaussian/gauss.gdshader", "set": {"direction": [1.0, 0.0], "kernel": 0, "dims": 0, "edge": true}, "map": {"radius": "smoothing"}},
+  {"shader": "res://effects/blur_gaussian/gauss.gdshader", "set": {"direction": [0.0, 1.0], "kernel": 0, "dims": 0, "edge": true}, "map": {"radius": "smoothing"}},
+  {"shader": "recover.gdshader"}
+ ]
+}

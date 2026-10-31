@@ -1,0 +1,19 @@
+{
+ "id": "chroma_burn",
+ "label": "Chroma Burn",
+ "group": "Light and Film",
+ "space": "2D",
+ "from": ["Film Impact Burn Chroma"],
+ "blurb": "The incoming picture burns through following the brightness of the picture, so bright sky goes first and silhouettes last, or the other way round. The burning front glows hot with a colour split edge, warm ahead and cool behind, and a dark scorched rim runs just ahead of it. A little noise breaks up flat areas so they never flip all at once.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "map", "label": "Follows", "type": "enum", "choices": ["Outgoing picture", "Incoming picture", "Both pictures"], "default": 0},
+  {"key": "order", "label": "Order", "type": "enum", "choices": ["Brights first", "Darks first"], "default": 0},
+  {"key": "width", "label": "Front width", "type": "float", "min": 0.02, "max": 0.5, "step": 0.01, "default": 0.12},
+  {"key": "glow", "label": "Glow", "type": "float", "min": 0, "max": 3, "step": 0.01, "default": 0.9},
+  {"key": "fringe", "label": "Colour split", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "char", "label": "Scorch", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "softness", "label": "Softness", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.3},
+  {"key": "noise", "label": "Break up", "type": "float", "min": 0, "max": 0.5, "step": 0.01, "default": 0.15}
+ ]
+}

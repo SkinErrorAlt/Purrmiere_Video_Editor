@@ -1,0 +1,19 @@
+{
+ "id": "block_glitch",
+ "label": "Block Glitch",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Breaks square blocks of the picture the way a damaged video stream does: blocks copied from somewhere else, squashed to one colour, stretched down from their top row or with their colours swapped, in bursts along the rows.",
+ "params": [
+  {"key": "amount", "label": "Amount", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "block_size", "label": "Block size", "type": "float", "min": 4.0, "max": 200.0, "step": 1.0, "default": 40.0, "unit": " px"},
+  {"key": "displace", "label": "How far blocks move", "type": "float", "min": 0.0, "max": 400.0, "step": 1.0, "default": 96.0, "unit": " px"},
+  {"key": "flatten", "label": "Squashed blocks", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "stretch", "label": "Stretched blocks", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "colour_swap", "label": "Swapped colours", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.25},
+  {"key": "rate", "label": "Changes per second", "type": "float", "min": 0.0, "max": 30.0, "step": 0.1, "default": 8.0},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

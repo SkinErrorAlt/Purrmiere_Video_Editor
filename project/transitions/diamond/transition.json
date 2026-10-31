@@ -1,0 +1,18 @@
+{
+ "id": "diamond",
+ "label": "Diamond",
+ "group": "Shape",
+ "space": "2D",
+ "from": ["PowerPoint Shape Diamond", "Impress Diamond"],
+ "blurb": "A diamond grows from the centre and shows the incoming picture inside it, or closes in on the outgoing one. Frame proportions reach all four corners together.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "direction", "label": "Direction", "type": "enum", "choices": ["Out", "In"], "default": 0},
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "aspect", "label": "Proportions", "type": "enum", "choices": ["Frame", "Square"], "default": 0},
+  {"key": "softness", "label": "Soft edge", "type": "float", "min": 0, "max": 300, "step": 0.5, "default": 2, "unit": " px"},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 1},
+  {"key": "border", "label": "Border", "type": "float", "min": 0, "max": 60, "step": 0.5, "default": 0, "unit": " px"},
+  {"key": "border_colour", "label": "Border colour", "type": "color", "default": [1, 1, 1, 1]}
+ ]
+}

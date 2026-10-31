@@ -1,0 +1,20 @@
+{
+ "id": "cloud_pass",
+ "label": "Cloud Pass",
+ "group": "Particles",
+ "space": "2D",
+ "from": ["Filmora Travel", "CapCut travel clouds", "Motion Array cloud packs"],
+ "blurb": "The camera flies forward through layers of cloud that rush past the lens, thicken to a soft white out at the cut and thin away to show the incoming picture, which arrives with a small push in.",
+ "default_duration": 1.6,
+ "params": [
+  {"key": "layers", "label": "Cloud banks", "type": "int", "min": 2, "max": 6, "step": 1, "default": 4},
+  {"key": "density", "label": "Thickness", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.75},
+  {"key": "colour", "label": "Cloud colour", "type": "color", "default": [0.97, 0.97, 1, 1]},
+  {"key": "sun_angle", "label": "Sun from", "type": "float", "min": -180, "max": 180, "step": 1, "default": 70, "unit": " deg"},
+  {"key": "speed", "label": "Flight speed", "type": "float", "min": 0.5, "max": 2, "step": 0.01, "default": 1},
+  {"key": "push", "label": "Push in", "type": "float", "min": 0, "max": 0.5, "step": 0.01, "default": 0.15}
+ ],
+ "handles": [
+  {"kind": "angle", "key": "sun_angle"}
+ ]
+}

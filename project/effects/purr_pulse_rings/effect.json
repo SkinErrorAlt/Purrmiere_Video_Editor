@@ -1,0 +1,19 @@
+{
+ "id": "purr_pulse_rings",
+ "label": "Pulse Rings",
+ "category": "Purrmiere",
+ "tags": ["light"],
+ "version": 1,
+ "blurb": "Rings of light pulse out from a point and gently push the picture as they pass. Level sets how strong they are, so drive Level from the music in the Driven layer and the rings beat with the sound.",
+ "params": [
+  {"key": "level", "label": "Level", "type": "float", "min": 0.0, "max": 1.0, "step": 0.001, "default": 0.6},
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "colour", "label": "Colour", "type": "color", "default": [0.55, 0.9, 1.0, 1.0]},
+  {"key": "rings", "label": "Rings", "type": "int", "min": 1, "max": 8, "step": 1, "default": 3},
+  {"key": "speed", "label": "Speed", "type": "float", "min": 0.0, "max": 4.0, "step": 0.01, "default": 0.6},
+  {"key": "width", "label": "Ring width", "type": "float", "min": 1.0, "max": 60.0, "step": 0.1, "default": 6.0, "unit": " px"},
+  {"key": "push", "label": "Push the picture", "type": "float", "min": 0.0, "max": 30.0, "step": 0.1, "default": 6.0, "unit": " px"}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}],
+ "passes": "single"
+}

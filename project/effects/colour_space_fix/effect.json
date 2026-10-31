@@ -1,0 +1,13 @@
+{
+ "id": "colour_space_fix",
+ "label": "Colour Space Fix",
+ "category": "Colour Correction",
+ "tags": ["repair"],
+ "version": 1,
+ "blurb": "Undoes the common mix ups in screen and game recordings: washed out grey blacks from limited range read as full, crushed blacks from the opposite, reds and greens that are slightly off from the wrong Rec.601, 709 or 2020 matrix, and flat colours from wide gamut footage shown as Rec.709. Pick what went wrong.",
+ "params": [
+  {"key": "problem", "label": "What went wrong", "type": "enum", "choices": ["Recorded Rec.601, read as Rec.709", "Recorded Rec.709, read as Rec.601", "Recorded Rec.2020, read as Rec.709", "Washed out: limited range read as full", "Crushed: full range read as limited", "Rec.2020 colours shown as Rec.709", "Display P3 colours shown as Rec.709"], "default": 3},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0}
+ ],
+ "passes": "single"
+}

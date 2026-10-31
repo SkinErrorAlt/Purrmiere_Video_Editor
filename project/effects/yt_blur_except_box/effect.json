@@ -1,0 +1,22 @@
+{
+ "id": "yt_blur_except_box",
+ "label": "Blur Around Box",
+ "category": "YouTube",
+ "tags": ["youtube"],
+ "version": 1,
+ "blurb": "Blurs and darkens everything except a rounded box, so the eye goes straight to a menu, a stat, a chat line or a face. Drag the four edges on the Program monitor and keyframe them to follow something.",
+ "params": [
+  {"key": "left", "label": "Left", "type": "float", "min": 0.0, "max": 1.0, "step": 0.001, "default": 0.3},
+  {"key": "top", "label": "Top", "type": "float", "min": 0.0, "max": 1.0, "step": 0.001, "default": 0.3},
+  {"key": "right", "label": "Right", "type": "float", "min": 0.0, "max": 1.0, "step": 0.001, "default": 0.3},
+  {"key": "bottom", "label": "Bottom", "type": "float", "min": 0.0, "max": 1.0, "step": 0.001, "default": 0.3},
+  {"key": "roundness", "label": "Roundness", "type": "float", "min": 0.0, "max": 0.2, "step": 0.001, "default": 0.03},
+  {"key": "blur", "label": "Blur", "type": "float", "min": 0.0, "max": 60.0, "step": 0.5, "default": 14.0, "unit": " px"},
+  {"key": "darken", "label": "Darken", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "feather", "label": "Soft edge", "type": "float", "min": 0.0, "max": 0.2, "step": 0.001, "default": 0.01},
+  {"key": "border", "label": "Border", "type": "float", "min": 0.0, "max": 20.0, "step": 0.5, "default": 3.0, "unit": " px"},
+  {"key": "border_colour", "label": "Border colour", "type": "color", "default": [1.0, 1.0, 1.0, 0.9]}
+ ],
+ "handles": [{"kind": "edges", "left": "left", "top": "top", "right": "right", "bottom": "bottom"}],
+ "passes": "single"
+}

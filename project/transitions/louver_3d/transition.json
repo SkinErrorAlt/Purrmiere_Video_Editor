@@ -1,0 +1,19 @@
+{
+ "id": "louver_3d",
+ "label": "Louver",
+ "group": "3D",
+ "space": "3D",
+ "from": ["Film Impact Louver", "corporate 3D block packs"],
+ "blurb": "The frame splits into bars that are square blocks, with the outgoing picture on one side and the incoming one on the next. The blocks turn a quarter turn one after another across the frame under one camera, so blocks near the edge of the frame show more of their side, lit from one side so the two faces shade differently as they turn. Each block draws in a little while it turns so it never cuts into its neighbours, and no gap ever opens between blocks unless Gap asks for one.",
+ "default_duration": 1.5,
+ "params": [
+  {"key": "bars", "label": "Bars", "type": "int", "min": 2, "max": 30, "step": 1, "default": 8},
+  {"key": "orientation", "label": "Bars run", "type": "enum", "choices": ["Across", "Up and down"], "default": 0},
+  {"key": "order", "label": "Order", "type": "enum", "choices": ["From the top or left", "From the bottom or right", "From the centre out", "Random"], "default": 0},
+  {"key": "stagger", "label": "Stagger", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "gap", "label": "Gap while turning", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 10, "max": 90, "step": 1, "default": 40, "unit": " deg"},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

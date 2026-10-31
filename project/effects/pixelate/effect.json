@@ -1,0 +1,10 @@
+{
+ "id": "pixelate",
+ "label": "Pixelate",
+ "category": "Stylize",
+ "version": 1,
+ "params": [
+  {"key": "block", "label": "Block Size", "type": "float", "min": 1, "max": 200, "step": 1, "default": 8}
+ ],
+ "passes": "single"
+}

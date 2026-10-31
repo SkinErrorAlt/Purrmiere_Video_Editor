@@ -1,0 +1,15 @@
+{
+ "id": "water_paper",
+ "label": "Water Paper",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Dabs the picture onto damp, fibrous paper so the colours run along the fibres and blend into soft blotches.",
+ "params": [
+  {"key": "fibre_length", "label": "Fibre length", "type": "float", "min": 3.0, "max": 50.0, "step": 0.1, "default": 15.0, "unit": " px"},
+  {"key": "brightness", "label": "Brightness", "type": "float", "min": 0.0, "max": 100.0, "step": 0.1, "default": 60.0},
+  {"key": "contrast", "label": "Contrast", "type": "float", "min": 0.0, "max": 100.0, "step": 0.1, "default": 80.0},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

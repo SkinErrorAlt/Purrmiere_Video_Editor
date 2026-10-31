@@ -1,0 +1,14 @@
+{
+ "id": "bevel_edges",
+ "label": "Bevel Edges",
+ "category": "Light & Shadow",
+ "version": 1,
+ "blurb": "Cuts a lit bevel into the edge of the frame, so the picture sits like a tile.",
+ "params": [
+  {"key": "thickness", "label": "Thickness", "type": "float", "min": 0.0, "max": 0.5, "step": 0.005, "default": 0.05},
+  {"key": "light_angle", "label": "Light from", "type": "float", "min": -180.0, "max": 180.0, "step": 1.0, "default": 135.0, "unit": " deg"},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.6}
+ ],
+ "handles": [{"kind": "edges", "left": "thickness", "top": "thickness", "right": "thickness", "bottom": "thickness"}, {"kind": "angle", "key": "light_angle", "zero": "right", "turn": "cw"}],
+ "passes": "single"
+}

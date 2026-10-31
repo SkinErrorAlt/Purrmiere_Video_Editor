@@ -1,0 +1,18 @@
+{
+ "id": "median",
+ "label": "Median",
+ "category": "Blur & Sharpen",
+ "tags": ["repair"],
+ "version": 1,
+ "blurb": "Gives each pixel the middle value of its neighbours, which clears specks and noise while edges stay sharp. The 5 by 5 window takes the median of the row medians.",
+ "params": [
+  {"key": "size", "label": "Window", "type": "enum", "choices": ["3 by 3", "5 by 5"], "default": 0},
+  {"key": "channels", "label": "Channels", "type": "enum", "choices": ["All", "Lightness only"], "default": 0},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 1},
+  {"key": "spread", "label": "Spacing", "type": "float", "min": 1, "max": 4, "step": 0.1, "default": 1, "unit": " px"},
+  {"key": "iterations", "label": "Times over", "type": "int", "min": 1, "max": 4, "step": 1, "default": 1}
+ ],
+ "passes": [
+  {"shader": "median.gdshader", "repeat": {"param": "iterations", "max": 4}}
+ ]
+}

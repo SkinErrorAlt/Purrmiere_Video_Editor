@@ -1,0 +1,22 @@
+{
+ "id": "tile_scramble",
+ "label": "Tile Scramble",
+ "category": "Distort",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Cuts the frame into tiles and shifts the picture inside each tile, by a random amount or a set one, with the choice to shuffle the tiles round and turn them, for a mirror wall or broken mosaic look. Tile edges stay crisp, and with Changes per second at 0 the arrangement holds still.",
+ "params": [
+  {"key": "tiles_x", "label": "Tiles across", "type": "int", "min": 1, "max": 64, "step": 1, "default": 8},
+  {"key": "tiles_y", "label": "Tiles down", "type": "int", "min": 1, "max": 64, "step": 1, "default": 5},
+  {"key": "shift", "label": "Shift amount", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "shift_mode", "label": "Shift by", "type": "enum", "choices": ["Random amount", "Set amount"], "default": 0},
+  {"key": "direction", "label": "Shift direction", "type": "enum", "choices": ["Any", "Horizontal", "Vertical"], "default": 0},
+  {"key": "shuffle", "label": "Shuffle tiles", "type": "bool", "default": false},
+  {"key": "turn", "label": "Turn tiles", "type": "enum", "choices": ["None", "Quarter turns", "Free"], "default": 0},
+  {"key": "gap", "label": "Gap width", "type": "float", "min": 0.0, "max": 40.0, "step": 0.1, "default": 2.0, "unit": " px"},
+  {"key": "gap_colour", "label": "Gap colour", "type": "color", "default": [0.0, 0.0, 0.0, 1.0]},
+  {"key": "rate", "label": "Changes per second", "type": "float", "min": 0.0, "max": 30.0, "step": 0.1, "default": 0.0, "unit": " per s"},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

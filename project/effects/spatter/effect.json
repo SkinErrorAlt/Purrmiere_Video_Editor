@@ -1,0 +1,14 @@
+{
+ "id": "spatter",
+ "label": "Spatter",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Sprays the picture back on with an airbrush: every edge breaks up into specks and blots of paint. More smoothness gives bigger, rounder blots.",
+ "params": [
+  {"key": "spray_radius", "label": "Spray radius", "type": "float", "min": 0.0, "max": 25.0, "step": 0.1, "default": 10.0, "unit": " px"},
+  {"key": "smoothness", "label": "Smoothness", "type": "float", "min": 1.0, "max": 15.0, "step": 0.1, "default": 5.0},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

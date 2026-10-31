@@ -1,0 +1,12 @@
+{
+ "id": "centre_split",
+ "label": "Centre Split",
+ "category": "Transition",
+ "version": 1,
+ "blurb": "The picture splits through the middle and the pieces slide away: four quarters to the corners, or two halves to the sides or to the top and bottom.",
+ "params": [
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0, "max": 1, "step": 0.005, "default": 0.5},
+  {"key": "split", "label": "Split into", "type": "enum", "choices": ["Four quarters", "Left and right halves", "Top and bottom halves"], "default": 0}
+ ],
+ "passes": "single"
+}

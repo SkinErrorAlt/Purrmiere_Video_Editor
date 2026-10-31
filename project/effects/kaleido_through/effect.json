@@ -1,0 +1,20 @@
+{
+ "id": "kaleido_through",
+ "label": "Kaleidoscope Through",
+ "category": "Transition",
+ "version": 1,
+ "blurb": "A kaleidoscope blooms out from a point and takes over the whole frame, turning and rushing in, right on the cut; the next clip unfolds back out of the same pattern. Unlike Kaleidoscope, which holds still, this grows in and out to hide a cut. Put it on both clips of a cut, or use Progress to key it by hand.",
+ "params": [
+  {"key": "when", "label": "When", "type": "enum", "choices": ["In at the start and out at the end", "In at the start", "Out at the end", "By Progress"], "default": 0},
+  {"key": "duration", "label": "Length", "type": "float", "min": 0.1, "max": 3.0, "step": 0.01, "default": 0.6, "unit": " s"},
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0.0, "max": 1.0, "step": 0.005, "default": 0.0},
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "segments", "label": "Mirrors", "type": "int", "min": 3, "max": 16, "step": 1, "default": 6},
+  {"key": "spin", "label": "Spin", "type": "float", "min": -2.0, "max": 2.0, "step": 0.05, "default": 0.5, "unit": " turns"},
+  {"key": "zoom", "label": "Rush in", "type": "float", "min": 0.0, "max": 3.0, "step": 0.05, "default": 1.0},
+  {"key": "softness", "label": "Softness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "edges", "label": "Edges", "type": "enum", "choices": ["Mirror", "Repeat"], "default": 0}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}],
+ "passes": "single"
+}

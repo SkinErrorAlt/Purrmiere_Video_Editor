@@ -1,0 +1,20 @@
+{
+ "id": "glitter",
+ "label": "Glitter",
+ "group": "Particles",
+ "space": "2D",
+ "from": ["PowerPoint Glitter"],
+ "blurb": "The picture is cut into triangles or diamonds, and each one is a little card that lifts and flips over on its own axis in a diagonal wave across the frame, seen in perspective and catching a narrow silver glint that sweeps across it as it turns, with the incoming picture on its back. The order is a little different on every cut.",
+ "default_duration": 2.0,
+ "params": [
+  {"key": "shape", "label": "Shape", "type": "enum", "choices": ["Triangles", "Diamonds"], "default": 1},
+  {"key": "size", "label": "Size", "type": "float", "min": 20, "max": 300, "step": 1, "default": 110, "unit": " px"},
+  {"key": "direction", "label": "Starts from", "type": "enum", "choices": ["Left", "Right", "Top", "Bottom"], "default": 0},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "glint", "label": "Glint", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.7},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 10, "max": 90, "step": 1, "default": 50, "unit": " deg"},
+  {"key": "lift", "label": "Lift", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.4},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]},
+  {"key": "behind", "label": "Behind the cards", "type": "enum", "choices": ["Incoming picture", "Background colour"], "default": 0}
+ ]
+}

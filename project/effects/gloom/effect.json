@@ -1,0 +1,14 @@
+{
+ "id": "gloom",
+ "label": "Gloom",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "The opposite of a glow: the dark parts spread softly into their surroundings and deepen, for a moody, heavy picture.",
+ "params": [
+  {"key": "radius", "label": "Radius", "type": "float", "min": 0, "max": 80, "step": 0.1, "default": 14, "unit": " px"},
+  {"key": "threshold", "label": "Darker than", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.45},
+  {"key": "intensity", "label": "Intensity", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 0.7}
+ ],
+ "passes": "single"
+}

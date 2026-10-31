@@ -1,0 +1,15 @@
+{
+ "id": "pixel_sort",
+ "label": "Pixel Sort",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Smears each row towards its brightest neighbour, the streaked look of a sorted image.",
+ "params": [
+  {"key": "threshold", "label": "Start above", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.55},
+  {"key": "reach", "label": "How far it smears", "type": "float", "min": 0.0, "max": 400.0, "step": 1.0, "default": 80.0},
+  {"key": "taps", "label": "Quality", "type": "int", "min": 2, "max": 32, "step": 1, "default": 16},
+  {"key": "vertical_sort", "label": "Down the picture instead", "type": "bool", "default": false}
+ ],
+ "passes": "single"
+}

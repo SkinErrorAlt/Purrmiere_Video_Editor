@@ -1,0 +1,16 @@
+{
+ "id": "wind",
+ "label": "Wind",
+ "category": "Stylize",
+ "version": 1,
+ "blurb": "Blows fine streaks off the picture in one direction, as if a strong wind were dragging the edges along. Blast makes longer, bolder streaks and Stagger breaks them up.",
+ "params": [
+  {"key": "method", "label": "Method", "type": "enum", "choices": ["Wind", "Blast", "Stagger"], "default": 0},
+  {"key": "direction", "label": "Direction", "type": "enum", "choices": ["From the right", "From the left", "From the top", "From the bottom"], "default": 0},
+  {"key": "streak_len", "label": "Streak length", "type": "float", "min": 1.0, "max": 400.0, "step": 0.5, "default": 40.0, "unit": " px"},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.8},
+  {"key": "streaks", "label": "Streaks", "type": "enum", "choices": ["Light", "Dark"], "default": 0},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

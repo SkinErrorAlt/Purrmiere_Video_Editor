@@ -1,0 +1,15 @@
+{
+ "id": "pixelize",
+ "label": "Pixelate",
+ "group": "Glitch",
+ "space": "2D",
+ "from": ["gl pixelize", "CapCut Pixelate"],
+ "blurb": "The picture breaks into square blocks that grow to their biggest halfway through, where it swaps to the incoming picture, then shrink back to sharp.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "block", "label": "Biggest block", "type": "float", "min": 4, "max": 240, "step": 1, "default": 72, "unit": " px"},
+  {"key": "steps", "label": "Steps", "type": "int", "min": 0, "max": 60, "step": 1, "default": 0},
+  {"key": "blend", "label": "Blend length", "type": "float", "min": 0.05, "max": 1, "step": 0.01, "default": 0.35},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 0}
+ ]
+}

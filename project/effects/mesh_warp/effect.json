@@ -1,0 +1,20 @@
+{
+ "id": "mesh_warp",
+ "label": "Mesh Warp",
+ "category": "Distort",
+ "version": 1,
+ "blurb": "Bends the picture smoothly by dragging the nine points of a 3 by 3 mesh on the Program monitor: reshape a face, a product or a horizon by hand.",
+ "params": [
+  {"key": "m00", "label": "Top left", "type": "vec2", "default": [0.0, 0.0]},
+  {"key": "m10", "label": "Top middle", "type": "vec2", "default": [0.5, 0.0]},
+  {"key": "m20", "label": "Top right", "type": "vec2", "default": [1.0, 0.0]},
+  {"key": "m01", "label": "Middle left", "type": "vec2", "default": [0.0, 0.5]},
+  {"key": "m11", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "m21", "label": "Middle right", "type": "vec2", "default": [1.0, 0.5]},
+  {"key": "m02", "label": "Bottom left", "type": "vec2", "default": [0.0, 1.0]},
+  {"key": "m12", "label": "Bottom middle", "type": "vec2", "default": [0.5, 1.0]},
+  {"key": "m22", "label": "Bottom right", "type": "vec2", "default": [1.0, 1.0]}
+ ],
+ "handles": [{"kind": "point", "keys": ["m00", "m10", "m20", "m01", "m11", "m21", "m02", "m12", "m22"]}],
+ "passes": "single"
+}

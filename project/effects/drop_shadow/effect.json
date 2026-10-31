@@ -1,0 +1,22 @@
+{
+ "id": "drop_shadow",
+ "label": "Drop Shadow",
+ "category": "Light & Shadow",
+ "version": 1,
+ "blurb": "The alpha channel offset, blurred with the gaussian, tinted and placed under the picture.",
+ "params": [
+  {"key": "colour", "label": "Shadow Colour", "type": "color", "default": [0, 0, 0, 1]},
+  {"key": "opacity", "label": "Opacity", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "angle", "label": "Direction", "type": "float", "min": -180, "max": 180, "step": 1, "default": 135, "unit": "deg"},
+  {"key": "distance", "label": "Distance", "type": "float", "min": 0, "max": 200, "step": 0.5, "default": 8},
+  {"key": "softness", "label": "Softness", "type": "float", "min": 0, "max": 200, "step": 0.5, "default": 6},
+  {"key": "shadow_only", "label": "Shadow Only", "type": "bool", "default": false}
+ ],
+ "handles": [{"kind": "angle", "key": "angle", "zero": "right", "turn": "ccw", "length": "distance", "length_unit": "px"}],
+ "passes": [
+  {"shader": "shadow.gdshader"},
+  {"shader": "res://effects/blur_gaussian/gauss.gdshader", "set": {"direction": [1.0, 0.0], "kernel": 0, "dims": 0, "edge": false}, "map": {"radius": "softness"}},
+  {"shader": "res://effects/blur_gaussian/gauss.gdshader", "set": {"direction": [0.0, 1.0], "kernel": 0, "dims": 0, "edge": false}, "map": {"radius": "softness"}},
+  {"shader": "compose.gdshader"}
+ ]
+}

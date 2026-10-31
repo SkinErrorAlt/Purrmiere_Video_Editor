@@ -1,0 +1,20 @@
+{
+ "id": "purr_manga_tone",
+ "label": "Manga Screentone",
+ "category": "Purrmiere",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "A black and white manga page: firm ink outlines, the shading laid in with stuck on screentone in dots, lines or crossed lines, solid black in the deepest shadows and clean white paper in the light.",
+ "params": [
+  {"key": "tone_size", "label": "Tone size", "type": "float", "min": 2.0, "max": 20.0, "step": 0.1, "default": 5.0, "unit": " px"},
+  {"key": "style", "label": "Tone", "type": "enum", "default": 0, "choices": ["Dots", "Lines", "Crossed lines"]},
+  {"key": "light_cut", "label": "White above", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.72},
+  {"key": "dark_cut", "label": "Dense tone below", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.38},
+  {"key": "black_cut", "label": "Solid black below", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.12},
+  {"key": "line_width", "label": "Ink line", "type": "float", "min": 0.3, "max": 6.0, "step": 0.1, "default": 1.5, "unit": " px"},
+  {"key": "threshold", "label": "Ink threshold", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.25},
+  {"key": "ink", "label": "Ink", "type": "color", "default": [0.05, 0.05, 0.06, 1.0]},
+  {"key": "paper", "label": "Paper", "type": "color", "default": [0.99, 0.98, 0.96, 1.0]}
+ ],
+ "passes": "single"
+}

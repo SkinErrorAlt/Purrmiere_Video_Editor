@@ -1,0 +1,15 @@
+{
+ "id": "fly_eye",
+ "label": "Fly Eye",
+ "group": "Distort",
+ "space": "2D",
+ "from": ["gl flyeye"],
+ "blurb": "The picture is seen through a grid of little bulging lenses, like an insect's eye, with colour fringes, while it fades into the incoming picture.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "lenses", "label": "Lenses down", "type": "float", "min": 2, "max": 40, "step": 0.5, "default": 8},
+  {"key": "strength", "label": "Bulge", "type": "float", "min": 0, "max": 0.2, "step": 0.002, "default": 0.05},
+  {"key": "colour_split", "label": "Colour fringe", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.3},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 0}
+ ]
+}

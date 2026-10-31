@@ -1,0 +1,18 @@
+{
+ "id": "glitch_displace",
+ "label": "Glitch",
+ "group": "Glitch",
+ "space": "2D",
+ "from": ["gl GlitchDisplace", "CapCut Glitch"],
+ "blurb": "The picture tears into jumping horizontal slices and blocks with the colours pulled apart, and in the middle of the noise it cuts to the incoming picture.",
+ "default_duration": 0.8,
+ "steps": true,
+ "params": [
+  {"key": "strength", "label": "Tear amount", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "rate", "label": "Jumps", "type": "float", "min": 4, "max": 60, "step": 1, "default": 20},
+  {"key": "slices", "label": "Slices", "type": "float", "min": 4, "max": 80, "step": 1, "default": 18},
+  {"key": "colour_split", "label": "Colour split", "type": "float", "min": 0, "max": 60, "step": 1, "default": 14, "unit": " px"},
+  {"key": "blocks", "label": "Blocks", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.3},
+  {"key": "swap_width", "label": "Swap length", "type": "float", "min": 0, "max": 0.5, "step": 0.01, "default": 0.2}
+ ]
+}

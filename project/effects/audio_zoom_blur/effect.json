@@ -1,0 +1,82 @@
+{
+ "id": "audio_zoom_blur",
+ "label": "Zoom Blur Punch",
+ "category": "Audio Reactive",
+ "tags": [
+  "audio",
+  "music",
+  "beat",
+  "reactive",
+  "visualiser"
+ ],
+ "version": 1,
+ "blurb": "A burst of zoom blur from the centre on each hit. Drop a clip from the timeline, or a file from the bin or the Source monitor, on its Sound well.",
+ "params": [
+  {
+   "key": "punch",
+   "label": "Punch",
+   "type": "float",
+   "min": 0,
+   "max": 1,
+   "step": 0.01,
+   "default": 0.25
+  },
+  {
+   "key": "centre",
+   "label": "Centre",
+   "type": "vec2",
+   "default": [
+    0.5,
+    0.5
+   ]
+  },
+  {
+   "key": "samples",
+   "label": "Samples",
+   "type": "int",
+   "min": 2,
+   "max": 32,
+   "step": 1,
+   "default": 12
+  },
+  {
+   "key": "keep_centre",
+   "label": "Keep centre",
+   "type": "float",
+   "min": 0,
+   "max": 1,
+   "step": 0.01,
+   "default": 0.2
+  }
+ ],
+ "passes": [
+  {
+   "shader": "res://effects/zoom_blur/effect.gdshader"
+  }
+ ],
+ "reactive": {
+  "defaults": {
+   "snd_mode": 1,
+   "snd_band": 1
+  },
+  "drive": {
+   "strength": {
+    "rest": 0,
+    "peak": "punch"
+   }
+  }
+ },
+ "handles": [
+  {
+   "kind": "point",
+   "key": "centre"
+  },
+  {
+   "kind": "ring",
+   "key": "keep_centre",
+   "about": "centre",
+   "unit": "uv",
+   "scale": 2.0
+  }
+ ]
+}

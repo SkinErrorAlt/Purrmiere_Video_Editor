@@ -1,0 +1,12 @@
+{
+ "id": "puppet",
+ "label": "Puppet",
+ "category": "Distort",
+ "version": 1,
+ "blurb": "Bends the picture like a puppet: pin it with the Puppet tool on the Program monitor and drag the pins. The rest of the picture follows as stiffly as it can.",
+ "tags": ["puppet", "pins", "warp", "bend", "animate"],
+ "params": [
+  {"key": "density", "label": "Mesh density", "type": "int", "min": 4, "max": 64, "step": 1, "default": 16, "keyable": false}
+ ],
+ "passes": "single"
+}

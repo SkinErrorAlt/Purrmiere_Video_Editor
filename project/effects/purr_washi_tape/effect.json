@@ -1,0 +1,22 @@
+{
+ "id": "purr_washi_tape",
+ "label": "Washi Tape",
+ "category": "Purrmiere",
+ "tags": ["graphic"],
+ "version": 1,
+ "blurb": "Sticks the shot into a scrapbook like a photo: a white photo border, a soft shadow and strips of patterned washi tape with torn ends across the corners, in dots, stripes or little paws.",
+ "params": [
+  {"key": "tape_colour", "label": "Tape colour", "type": "color", "default": [1.0, 0.7, 0.8, 0.85]},
+  {"key": "pattern", "label": "Pattern", "type": "enum", "default": 2, "choices": ["Plain", "Dots", "Stripes", "Paws"]},
+  {"key": "pattern_colour", "label": "Pattern colour", "type": "color", "default": [1.0, 1.0, 1.0, 0.8]},
+  {"key": "corners", "label": "Taped corners", "type": "enum", "default": 1, "choices": ["All four", "Top two", "Two opposite"]},
+  {"key": "tape_width", "label": "Tape width", "type": "float", "min": 10.0, "max": 300.0, "step": 0.5, "default": 70.0, "unit": " px"},
+  {"key": "tape_len", "label": "Tape length", "type": "float", "min": 30.0, "max": 800.0, "step": 1.0, "default": 150.0, "unit": " px"},
+  {"key": "border", "label": "Photo border", "type": "float", "min": 0.0, "max": 80.0, "step": 0.5, "default": 16.0, "unit": " px"},
+  {"key": "margin", "label": "Margin", "type": "float", "min": 0.0, "max": 0.3, "step": 0.001, "default": 0.13},
+  {"key": "tilt", "label": "Tilt", "type": "float", "min": -15.0, "max": 15.0, "step": 0.1, "default": 2.0, "unit": " deg"},
+  {"key": "shadow", "label": "Shadow", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5}
+ ],
+ "handles": [{"kind": "angle", "key": "tilt", "zero": "right", "turn": "cw"}],
+ "passes": "single"
+}

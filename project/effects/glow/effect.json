@@ -1,0 +1,28 @@
+{
+ "id": "glow",
+ "label": "Glow",
+ "category": "Stylize",
+ "tags": ["light"],
+ "version": 1,
+ "blurb": "A bright pass through a progressive down and up chain, added back with a tint.",
+ "params": [
+  {"key": "threshold", "label": "Threshold", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "knee", "label": "Soft Knee", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.3},
+  {"key": "intensity", "label": "Intensity", "type": "float", "min": 0, "max": 4, "step": 0.01, "default": 1},
+  {"key": "radius", "label": "Radius", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "tint", "label": "Tint", "type": "color", "default": [1, 1, 1, 1]},
+  {"key": "glow_only", "label": "Glow Only", "type": "bool", "default": false}
+ ],
+ "passes": [
+  {"shader": "bright.gdshader"},
+  {"shader": "down13.gdshader", "scale": 0.5},
+  {"shader": "down13.gdshader", "scale": 0.5},
+  {"shader": "down13.gdshader", "scale": 0.5},
+  {"shader": "down13.gdshader", "scale": 0.5},
+  {"shader": "up_tent.gdshader", "scale": 2.0, "inputs": {"level_tex": 3}},
+  {"shader": "up_tent.gdshader", "scale": 2.0, "inputs": {"level_tex": 2}},
+  {"shader": "up_tent.gdshader", "scale": 2.0, "inputs": {"level_tex": 1}},
+  {"shader": "up_tent.gdshader", "scale": 2.0, "inputs": {"level_tex": 0}},
+  {"shader": "glow_mix.gdshader"}
+ ]
+}

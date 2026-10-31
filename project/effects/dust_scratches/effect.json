@@ -1,0 +1,14 @@
+{
+ "id": "dust_scratches",
+ "label": "Dust and Scratches",
+ "category": "Noise & Grain",
+ "tags": ["repair"],
+ "version": 1,
+ "blurb": "Vertical scratches and dust specks, the way a print that has been through a projector looks.",
+ "params": [
+  {"key": "scratches", "label": "Scratches", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "dust", "label": "Dust", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "speed", "label": "Speed", "type": "float", "min": 0.0, "max": 60.0, "step": 0.5, "default": 12.0}
+ ],
+ "passes": "single"
+}

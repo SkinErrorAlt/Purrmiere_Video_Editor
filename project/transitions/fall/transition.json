@@ -1,0 +1,17 @@
+{
+ "id": "fall",
+ "label": "Fall",
+ "group": "3D",
+ "space": "3D",
+ "from": ["Keynote Fall"],
+ "blurb": "The outgoing picture tips forward on its bottom edge and falls flat towards you, gathering speed, to uncover the incoming picture behind it.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "hinge", "label": "Hinged at", "type": "enum", "choices": ["Bottom", "Top", "Left", "Right"], "default": 0},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Gravity", "Gentle", "Smooth"], "default": 0},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 10, "max": 90, "step": 1, "default": 40, "unit": " deg"},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "shadow", "label": "Shadow", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.4},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

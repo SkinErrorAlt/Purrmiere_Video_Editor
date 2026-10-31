@@ -1,0 +1,16 @@
+{
+ "id": "zigzag_wipe",
+ "label": "Zigzag",
+ "group": "Wipe",
+ "space": "2D",
+ "from": ["CapCut Zigzag"],
+ "blurb": "The incoming picture wipes across behind a sawtooth edge.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "direction", "label": "Direction", "type": "enum", "choices": ["From Left", "From Right", "From Top", "From Bottom"], "default": 0},
+  {"key": "teeth", "label": "Teeth", "type": "int", "min": 1, "max": 40, "step": 1, "default": 8},
+  {"key": "depth", "label": "Tooth depth", "type": "float", "min": 0, "max": 0.5, "step": 0.01, "default": 0.08},
+  {"key": "softness", "label": "Soft edge", "type": "float", "min": 0, "max": 0.2, "step": 0.005, "default": 0},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 1}
+ ]
+}

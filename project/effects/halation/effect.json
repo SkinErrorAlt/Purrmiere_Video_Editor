@@ -1,0 +1,16 @@
+{
+ "id": "halation",
+ "label": "Halation",
+ "category": "Stylize",
+ "tags": ["light"],
+ "version": 1,
+ "blurb": "A warm bloom that only the bright parts give off, the way film glows round a highlight.",
+ "params": [
+  {"key": "threshold", "label": "Only above", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "radius", "label": "Radius", "type": "float", "min": 0.0, "max": 80.0, "step": 0.5, "default": 16.0},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 4.0, "step": 0.01, "default": 0.8},
+  {"key": "tint", "label": "Tint", "type": "color", "default": [1.0, 0.45, 0.25, 1.0]},
+  {"key": "taps", "label": "Quality", "type": "int", "min": 4, "max": 24, "step": 1, "default": 10}
+ ],
+ "passes": "single"
+}

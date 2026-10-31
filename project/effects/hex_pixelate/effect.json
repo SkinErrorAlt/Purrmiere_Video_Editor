@@ -1,0 +1,14 @@
+{
+ "id": "hex_pixelate",
+ "label": "Hexagon Pixelate",
+ "category": "Stylize",
+ "version": 1,
+ "blurb": "Breaks the picture into hexagons of one colour each, with an optional line between them.",
+ "params": [
+  {"key": "size", "label": "Size", "type": "float", "min": 2.0, "max": 200.0, "step": 0.5, "default": 20.0, "unit": " px"},
+  {"key": "sampling", "label": "Colour from", "type": "enum", "choices": ["Centre", "Average of 7 taps"], "default": 1},
+  {"key": "border", "label": "Border width", "type": "float", "min": 0.0, "max": 20.0, "step": 0.1, "default": 0.0, "unit": " px"},
+  {"key": "border_colour", "label": "Border colour", "type": "color", "default": [0.0, 0.0, 0.0, 1.0]}
+ ],
+ "passes": "single"
+}

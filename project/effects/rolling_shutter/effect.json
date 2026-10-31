@@ -1,0 +1,19 @@
+{
+ "id": "rolling_shutter",
+ "label": "Rolling Shutter",
+ "category": "Distort",
+ "tags": ["repair"],
+ "version": 1,
+ "blurb": "The jelly wobble of a phone or action camera that reads its picture one row at a time: rows slide sideways out of step so the frame bends and wobbles, and Lean slants it like a fast pan. The same seed always gives the same wobble.",
+ "params": [
+  {"key": "amount", "label": "Wobble", "type": "float", "min": 0.0, "max": 200.0, "step": 0.5, "default": 16.0, "unit": " px"},
+  {"key": "speed", "label": "Speed", "type": "float", "min": 0.1, "max": 30.0, "step": 0.1, "default": 5.0, "unit": " Hz"},
+  {"key": "waves", "label": "Bends down the picture", "type": "float", "min": 0.2, "max": 8.0, "step": 0.05, "default": 1.5},
+  {"key": "lean", "label": "Lean", "type": "float", "min": -1.0, "max": 1.0, "step": 0.01, "default": 0.0},
+  {"key": "bounce", "label": "Up and down wobble", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0},
+  {"key": "scan", "label": "Rows run", "type": "enum", "choices": ["Top to bottom", "Left to right"], "default": 0},
+  {"key": "edges", "label": "Edges", "type": "enum", "choices": ["Mirror", "Repeat", "Zoom in to hide", "Transparent"], "default": 2}
+ ],
+ "passes": "single"
+}

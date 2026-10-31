@@ -1,0 +1,17 @@
+{
+ "id": "orange_teal",
+ "label": "Orange and Teal",
+ "category": "Colour Correction",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Pushes the shadows toward teal and the highlights toward orange, and holds skin tones close to their own colour.",
+ "params": [
+  {"key": "amount", "label": "Amount", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "balance", "label": "Balance", "type": "float", "min": -1.0, "max": 1.0, "step": 0.01, "default": 0.0},
+  {"key": "shadow_colour", "label": "Shadow colour", "type": "color", "default": [0.0, 0.55, 0.6, 1.0]},
+  {"key": "highlight_colour", "label": "Highlight colour", "type": "color", "default": [1.0, 0.62, 0.3, 1.0]},
+  {"key": "protect_skin", "label": "Protect skin", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "contrast", "label": "Contrast", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.2}
+ ],
+ "passes": "single"
+}

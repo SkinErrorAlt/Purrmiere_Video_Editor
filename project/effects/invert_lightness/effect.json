@@ -1,0 +1,13 @@
+{
+ "id": "invert_lightness",
+ "label": "Invert Lightness",
+ "category": "Channel",
+ "version": 1,
+ "blurb": "Turns light into dark and dark into light while every colour keeps its hue and saturation, so a dark blue becomes a light blue rather than orange and a dark screen becomes a light one. HSV value flips the brightest channel the way GIMP's Value Invert does. Perceptual lightness flips CIE lightness the way inverting the L channel in Lab does, keeps the hue, and pulls back only as much colour as the new lightness can hold, so strong colours never clip.",
+ "params": [
+  {"key": "measure", "label": "Measured by", "type": "enum", "choices": ["HSV value", "Perceptual lightness"], "default": 1}
+ ],
+ "passes": [
+  {"shader": "effect.gdshader"}
+ ]
+}

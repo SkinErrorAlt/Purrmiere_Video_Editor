@@ -1,0 +1,20 @@
+{
+ "id": "crush",
+ "label": "Crush",
+ "group": "3D",
+ "space": "3D",
+ "from": ["PowerPoint Crush"],
+ "blurb": "The outgoing picture is crumpled like a real sheet of paper: it buckles along long creases into lit ridges and shadowed valleys while its edges pull in, closes up into a compact paper wad with deep folds that still shows the picture on its flat faces, and is tossed away over its shadow to uncover the incoming picture.",
+ "default_duration": 1.6,
+ "params": [
+  {"key": "strength", "label": "Crumple", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.85},
+  {"key": "ball_size", "label": "Ball size", "type": "float", "min": 0.1, "max": 0.45, "step": 0.01, "default": 0.24},
+  {"key": "toss", "label": "Tossed", "type": "enum", "choices": ["Down right", "Down left", "Up right", "Up left", "Away"], "default": 0},
+  {"key": "toss_speed", "label": "Toss speed", "type": "float", "min": 0.25, "max": 3, "step": 0.01, "default": 1.0},
+  {"key": "shadow", "label": "Floor shadow", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.75},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.85},
+  {"key": "grain", "label": "Paper grain", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.4},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 10, "max": 90, "step": 1, "default": 40, "unit": " deg"},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

@@ -1,0 +1,131 @@
+{
+ "id": "audio_spectrum_dots",
+ "label": "Spectrum Dots",
+ "category": "Audio Reactive",
+ "tags": [
+  "audio",
+  "music",
+  "beat",
+  "reactive",
+  "visualiser"
+ ],
+ "version": 1,
+ "blurb": "Columns of dots that light up like a meter, one column for each slice of the sound. Drop a clip from the timeline, or a file from the bin or the Source monitor, on its Sound well.",
+ "params": [
+  {
+   "key": "centre",
+   "label": "Base line",
+   "type": "vec2",
+   "default": [
+    0.5,
+    0.9
+   ]
+  },
+  {
+   "key": "width",
+   "label": "Width",
+   "type": "float",
+   "min": 0.05,
+   "max": 1,
+   "step": 0.01,
+   "default": 0.7
+  },
+  {
+   "key": "height",
+   "label": "Height",
+   "type": "float",
+   "min": 0.01,
+   "max": 1,
+   "step": 0.01,
+   "default": 0.4
+  },
+  {
+   "key": "count",
+   "label": "Columns",
+   "type": "float",
+   "min": 4,
+   "max": 128,
+   "step": 1,
+   "default": 24
+  },
+  {
+   "key": "rows",
+   "label": "Dots in each column",
+   "type": "float",
+   "min": 2,
+   "max": 64,
+   "step": 1,
+   "default": 14
+  },
+  {
+   "key": "gap",
+   "label": "Gap",
+   "type": "float",
+   "min": 0,
+   "max": 0.9,
+   "step": 0.01,
+   "default": 0.25
+  },
+  {
+   "key": "colour",
+   "label": "Colour",
+   "type": "color",
+   "default": [
+    0.4,
+    1.0,
+    0.6,
+    1
+   ]
+  },
+  {
+   "key": "peak_colour",
+   "label": "Peak colour",
+   "type": "color",
+   "default": [
+    1,
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "key": "opacity",
+   "label": "Opacity",
+   "type": "float",
+   "min": 0,
+   "max": 1,
+   "step": 0.01,
+   "default": 1
+  }
+ ],
+ "passes": [
+  {
+   "shader": "res://effects/_audio_visual/visual.gdshader",
+   "set": {
+    "visual": 2
+   }
+  }
+ ],
+ "reactive": {
+  "defaults": {
+   "snd_attack": 5,
+   "snd_release": 150,
+   "snd_threshold": 2,
+   "snd_bands": 2,
+   "look_height_mix": 0.0
+  },
+  "spectrum": {
+   "uniform": "spec_tex",
+   "bars": "count",
+   "peaks_on": "peaks_on"
+  },
+  "level": "level",
+  "look": true
+ },
+ "handles": [
+  {
+   "kind": "point",
+   "key": "centre"
+  }
+ ]
+}

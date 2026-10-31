@@ -1,0 +1,16 @@
+{
+ "id": "purr_pixel_palette",
+ "label": "Pixel Palette",
+ "category": "Purrmiere",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Turns the picture into pixel art: big square pixels, a small retro palette and ordered dithering between its colours, with an optional faint pixel grid. Palettes include a pocket console green, a home computer eight, Purrmiere pastel, neon night, sepia and one bit.",
+ "params": [
+  {"key": "size", "label": "Pixel size", "type": "float", "min": 1.0, "max": 40.0, "step": 0.5, "default": 6.0, "unit": " px"},
+  {"key": "palette", "label": "Palette", "type": "enum", "default": 2, "choices": ["Pocket green", "Home computer", "Purrmiere pastel", "Neon night", "Sepia", "One bit"]},
+  {"key": "dither", "label": "Dither", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "contrast", "label": "Contrast", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 1.1},
+  {"key": "grid", "label": "Pixel grid", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.12}
+ ],
+ "passes": "single"
+}

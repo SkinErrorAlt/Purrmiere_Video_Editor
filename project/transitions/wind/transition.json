@@ -1,0 +1,18 @@
+{
+ "id": "wind",
+ "label": "Wind",
+ "group": "Particles",
+ "space": "2D",
+ "from": ["PowerPoint Wind", "gl wind"],
+ "blurb": "A gust catches the picture like a sheet of paper: its trailing edge lifts and bends over in a soft fold, strips tear off that edge and tumble after it, and the whole sheet is blown away sideways into the distance, uncovering the incoming picture.",
+ "default_duration": 1.6,
+ "params": [
+  {"key": "direction", "label": "Blows", "type": "enum", "choices": ["To the right", "To the left", "Upwards", "Downwards"], "default": 0},
+  {"key": "lift", "label": "Lift", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.7},
+  {"key": "fold", "label": "Fold length", "type": "float", "min": 0.1, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "slant", "label": "Fold slant", "type": "float", "min": -60, "max": 60, "step": 1, "default": 25, "unit": " deg"},
+  {"key": "spin", "label": "Turn", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 1},
+  {"key": "strips", "label": "Torn strips", "type": "int", "min": 0, "max": 16, "step": 1, "default": 8},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 10, "max": 90, "step": 1, "default": 45, "unit": " deg"}
+ ]
+}

@@ -1,0 +1,18 @@
+{
+ "id": "purr_toy_bricks",
+ "label": "Toy Bricks",
+ "category": "Purrmiere",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Builds the picture from little plastic toy bricks seen from above: each brick takes one colour from a classic toy palette or from the picture, with a round stud on top, bevelled edges and a soft shadow on the light side.",
+ "params": [
+  {"key": "brick", "label": "Brick size", "type": "float", "min": 4.0, "max": 80.0, "step": 0.5, "default": 20.0, "unit": " px"},
+  {"key": "palette", "label": "Colours", "type": "enum", "default": 0, "choices": ["Toy palette", "Picture colours"]},
+  {"key": "stud", "label": "Studs", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.8},
+  {"key": "bevel", "label": "Bevel", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "light_angle", "label": "Light from", "type": "float", "min": -180.0, "max": 180.0, "step": 1.0, "default": -135.0, "unit": " deg"},
+  {"key": "gap", "label": "Gap", "type": "float", "min": 0.0, "max": 0.3, "step": 0.001, "default": 0.05}
+ ],
+ "handles": [{"kind": "angle", "key": "light_angle", "zero": "left", "turn": "cw"}],
+ "passes": "single"
+}

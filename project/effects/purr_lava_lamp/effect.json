@@ -1,0 +1,20 @@
+{
+ "id": "purr_lava_lamp",
+ "label": "Lava Lamp",
+ "category": "Purrmiere",
+ "tags": ["graphic"],
+ "version": 1,
+ "blurb": "Slow glowing wax blobs rise, stretch, merge and split in a warm lava lamp, with a soft gradient behind them. A relaxed animated background for chill content, or a light layer over the picture.",
+ "params": [
+  {"key": "blob_a", "label": "Wax colour", "type": "color", "default": [1.0, 0.35, 0.45, 1.0]},
+  {"key": "blob_b", "label": "Wax highlight", "type": "color", "default": [1.0, 0.75, 0.3, 1.0]},
+  {"key": "bg_top", "label": "Background top", "type": "color", "default": [0.25, 0.05, 0.35, 1.0]},
+  {"key": "bg_low", "label": "Background bottom", "type": "color", "default": [0.6, 0.12, 0.35, 1.0]},
+  {"key": "blobs", "label": "Blobs", "type": "int", "min": 2, "max": 12, "step": 1, "default": 7},
+  {"key": "size", "label": "Blob size", "type": "float", "min": 0.03, "max": 0.4, "step": 0.001, "default": 0.12},
+  {"key": "speed", "label": "Speed", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.25},
+  {"key": "placement", "label": "Placement", "type": "enum", "default": 2, "choices": ["Behind the clip", "Over the clip", "Replace the clip"]},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

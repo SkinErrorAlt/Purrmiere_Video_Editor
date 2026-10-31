@@ -1,0 +1,15 @@
+{
+ "id": "tangent_blur",
+ "label": "Motion Blur",
+ "group": "Zoom and Camera",
+ "space": "2D",
+ "from": ["gl tangentMotionBlur"],
+ "blurb": "The outgoing picture shoots off one way, speeding up hard under motion blur, and the incoming one shoots in behind it and brakes into place.",
+ "default_duration": 0.6,
+ "params": [
+  {"key": "direction", "label": "Moves", "type": "enum", "choices": ["Left", "Right", "Up", "Down", "Up left", "Up right", "Down left", "Down right"], "default": 0},
+  {"key": "reach", "label": "Travel", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.25},
+  {"key": "blur", "label": "Motion blur", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.8},
+  {"key": "blend", "label": "Blend", "type": "float", "min": 0.01, "max": 0.3, "step": 0.01, "default": 0.06}
+ ]
+}

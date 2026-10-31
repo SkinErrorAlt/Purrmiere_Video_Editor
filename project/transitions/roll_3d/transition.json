@@ -1,0 +1,18 @@
+{
+ "id": "roll_3d",
+ "label": "3D Roll",
+ "group": "3D",
+ "space": "3D",
+ "from": ["Film Impact 3D Roll", "seamless packs Roll"],
+ "blurb": "Both pictures wrap round a drum as wide as the frame that rolls toward you: the outgoing picture rolls up and over the top while the incoming one rolls up from below right behind it, compressing toward the drum's edge like a label on a can, smeared by motion blur at the fastest part and darkening softly toward the top and bottom of the drum. The drum flattens out again at both ends.",
+ "default_duration": 0.6,
+ "params": [
+  {"key": "direction", "label": "Rolls", "type": "enum", "choices": ["Up", "Down", "Left", "Right"], "default": 0},
+  {"key": "turns", "label": "Rolls past", "type": "enum", "choices": ["One frame", "Three frames", "Five frames"], "default": 0},
+  {"key": "curvature", "label": "Curvature", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "blur", "label": "Motion blur", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 1},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]},
+  {"key": "curve", "label": "Speed", "type": "enum", "choices": ["Whip, fast at the cut", "Smooth", "Even"], "default": 0}
+ ]
+}

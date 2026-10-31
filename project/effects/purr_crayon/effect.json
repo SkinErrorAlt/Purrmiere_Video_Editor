@@ -1,0 +1,19 @@
+{
+ "id": "purr_crayon",
+ "label": "Wax Crayon",
+ "category": "Purrmiere",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Colours the picture in with wax crayons: strokes laid at a slant, more wax where the colour is darker, the white tooth of the paper peeking through and a firmer crayon line along the edges.",
+ "params": [
+  {"key": "pressure", "label": "Pressure", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 1.0},
+  {"key": "angle", "label": "Stroke angle", "type": "float", "min": -90.0, "max": 90.0, "step": 1.0, "default": 55.0, "unit": " deg"},
+  {"key": "stroke", "label": "Stroke width", "type": "float", "min": 1.0, "max": 12.0, "step": 0.1, "default": 2.5, "unit": " px"},
+  {"key": "tooth", "label": "Paper tooth", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "colour_boost", "label": "Colour", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 1.35},
+  {"key": "outline", "label": "Edge line", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "paper", "label": "Paper", "type": "color", "default": [0.98, 0.97, 0.94, 1.0]}
+ ],
+ "handles": [{"kind": "angle", "key": "angle", "zero": "right", "turn": "ccw"}],
+ "passes": "single"
+}

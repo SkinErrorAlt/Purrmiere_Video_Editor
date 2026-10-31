@@ -1,0 +1,18 @@
+{
+ "id": "box",
+ "label": "Box",
+ "group": "3D",
+ "space": "3D",
+ "from": ["PowerPoint Box"],
+ "blurb": "The camera stands inside a box that turns: the outgoing picture swings away on one wall as the incoming picture comes round on the next.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "direction", "label": "Comes from", "type": "enum", "choices": ["Right", "Left", "Top", "Bottom"], "default": 0},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 10, "max": 90, "step": 1, "default": 40, "unit": " deg"},
+  {"key": "pull_back", "label": "Pull back", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.15},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "motion_blur", "label": "Motion blur", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 0.0},
+  {"key": "shutter", "label": "Shutter", "type": "float", "min": 0, "max": 360, "step": 1, "default": 180, "unit": " deg"},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

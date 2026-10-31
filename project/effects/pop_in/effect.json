@@ -1,0 +1,19 @@
+{
+ "id": "pop_in",
+ "label": "Pop In and Out",
+ "category": "Transform",
+ "version": 1,
+ "blurb": "The clip pops in from nothing with a springy overshoot and a squash and stretch, and pops back out at its end: the go to move for a meme, a sticker, a face cam or a picture landing on screen. Choose the point it grows from; the track below shows round it.",
+ "params": [
+  {"key": "when", "label": "When", "type": "enum", "choices": ["In at the start and out at the end", "In at the start", "Out at the end", "By Progress"], "default": 0},
+  {"key": "duration", "label": "Pop length", "type": "float", "min": 0.05, "max": 3.0, "step": 0.01, "default": 0.4, "unit": " s"},
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0.0, "max": 1.0, "step": 0.005, "default": 0.0},
+  {"key": "centre", "label": "Grows from", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "bounce", "label": "Bounce", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "squash", "label": "Squash and stretch", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "spin", "label": "Spin", "type": "float", "min": -720.0, "max": 720.0, "step": 1.0, "default": 0.0, "unit": " deg"},
+  {"key": "fade", "label": "Fade", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}],
+ "passes": "single"
+}

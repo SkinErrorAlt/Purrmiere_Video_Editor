@@ -1,0 +1,14 @@
+{
+ "id": "accented_edges",
+ "label": "Accented Edges",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Traces over every edge in the picture: a high edge brightness draws them like white chalk, a low one like black ink.",
+ "params": [
+  {"key": "edge_width", "label": "Edge width", "type": "float", "min": 1.0, "max": 14.0, "step": 0.1, "default": 2.0, "unit": " px"},
+  {"key": "edge_brightness", "label": "Edge brightness", "type": "float", "min": 0.0, "max": 50.0, "step": 0.1, "default": 38.0},
+  {"key": "smoothness", "label": "Smoothness", "type": "float", "min": 1.0, "max": 15.0, "step": 0.1, "default": 5.0}
+ ],
+ "passes": "single"
+}

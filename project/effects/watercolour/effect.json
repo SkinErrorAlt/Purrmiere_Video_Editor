@@ -1,0 +1,21 @@
+{
+ "id": "watercolour",
+ "label": "Watercolour",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Soft brush smoothing with bleeding colour, darker rims where the paint pools, pigment grain and paper texture.",
+ "params": [
+  {"key": "brush_size", "label": "Brush size", "type": "float", "min": 1.0, "max": 16.0, "step": 0.1, "default": 5.0, "unit": " px"},
+  {"key": "wetness", "label": "Wetness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "edge_darkening", "label": "Edge darkening", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "granulation", "label": "Granulation", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "paper", "label": "Paper texture", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "paper_colour", "label": "Paper colour", "type": "color", "default": [0.98, 0.96, 0.92, 1.0]},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": [
+  {"shader": "kuwahara.gdshader"},
+  {"shader": "finish.gdshader"}
+ ]
+}

@@ -1,0 +1,18 @@
+{
+ "id": "day_for_night",
+ "label": "Day for Night",
+ "category": "Colour Correction",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Makes daytime footage pass for night, the old film trick: darker, cooler and less colourful under a blue moonlight, with a bright sky pulled down and small bright lights left glowing.",
+ "params": [
+  {"key": "darkness", "label": "Darkness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "moonlight", "label": "Moonlight colour", "type": "color", "default": [0.55, 0.7, 1.0, 1.0]},
+  {"key": "tint_amount", "label": "Moonlight amount", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "saturation", "label": "Colour left", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "sky_darken", "label": "Darken the sky", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "keep_lights", "label": "Keep lights bright", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "contrast", "label": "Contrast", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3}
+ ],
+ "passes": "single"
+}

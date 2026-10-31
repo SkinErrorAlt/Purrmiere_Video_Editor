@@ -1,0 +1,20 @@
+{
+ "id": "purr_ink_splash",
+ "label": "Ink Splash Wipe",
+ "category": "Purrmiere",
+ "tags": ["graphic"],
+ "version": 1,
+ "blurb": "A transition where splashes of ink burst across the picture with ragged, splattered edges and flying droplets, and the next shot shows inside the ink as it spreads.",
+ "params": [
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0.0, "max": 1.0, "step": 0.001, "default": 0.5},
+  {"key": "timing", "label": "Timing", "type": "enum", "choices": ["Follow Progress", "Reveal at the clip start", "Hide at the clip end"], "default": 0},
+  {"key": "auto_len", "label": "Automatic length", "type": "float", "min": 0.05, "max": 10.0, "step": 0.01, "default": 1.0, "unit": " s"},
+  {"key": "ink", "label": "Ink colour", "type": "color", "default": [0.06, 0.05, 0.09, 1.0]},
+  {"key": "splashes", "label": "Splashes", "type": "int", "min": 1, "max": 8, "step": 1, "default": 4},
+  {"key": "rim", "label": "Ink rim", "type": "float", "min": 0.0, "max": 0.2, "step": 0.001, "default": 0.04},
+  {"key": "ragged", "label": "Ragged edge", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "droplets", "label": "Droplets", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

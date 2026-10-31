@@ -1,0 +1,14 @@
+{
+ "id": "tv_static",
+ "label": "TV Static",
+ "category": "Noise & Grain",
+ "version": 1,
+ "blurb": "Snow, the way an aerial with nothing on it looks, mixed over the picture.",
+ "params": [
+  {"key": "amount", "label": "Amount", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "block", "label": "Block size", "type": "float", "min": 1.0, "max": 32.0, "step": 0.5, "default": 2.0},
+  {"key": "bands", "label": "Rolling bands", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "speed", "label": "Speed", "type": "float", "min": 0.0, "max": 60.0, "step": 0.5, "default": 24.0}
+ ],
+ "passes": "single"
+}

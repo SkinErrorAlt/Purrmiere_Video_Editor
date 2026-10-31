@@ -1,0 +1,20 @@
+{
+ "id": "purr_sketch_to_colour",
+ "label": "Sketch to Colour",
+ "category": "Purrmiere",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "A transition through drawing: the colour washes away in patches to leave a pencil sketch, then the sketch lines rub out to bare paper. Set Timing to reveal at the clip start and the shot draws itself in and is coloured.",
+ "params": [
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0.0, "max": 1.0, "step": 0.001, "default": 0.5},
+  {"key": "timing", "label": "Timing", "type": "enum", "choices": ["Follow Progress", "Reveal at the clip start", "Hide at the clip end"], "default": 0},
+  {"key": "auto_len", "label": "Automatic length", "type": "float", "min": 0.05, "max": 10.0, "step": 0.01, "default": 1.0, "unit": " s"},
+  {"key": "paper", "label": "Paper", "type": "color", "default": [0.97, 0.96, 0.92, 1.0]},
+  {"key": "graphite", "label": "Pencil", "type": "color", "default": [0.2, 0.2, 0.24, 1.0]},
+  {"key": "line_width", "label": "Line width", "type": "float", "min": 0.3, "max": 5.0, "step": 0.1, "default": 1.2, "unit": " px"},
+  {"key": "threshold", "label": "Line threshold", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.2},
+  {"key": "hatching", "label": "Hatching", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "patch", "label": "Colour patch size", "type": "float", "min": 20.0, "max": 1000.0, "step": 1.0, "default": 260.0, "unit": " px"}
+ ],
+ "passes": "single"
+}

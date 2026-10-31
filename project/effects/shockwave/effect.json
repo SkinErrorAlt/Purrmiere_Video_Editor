@@ -1,0 +1,20 @@
+{
+ "id": "shockwave",
+ "label": "Shockwave",
+ "category": "Distort",
+ "version": 1,
+ "blurb": "One ring of force bursting out from a point, bending the picture as it passes with a bright rim and split colour on its edge, then gone. It fires at the start of the clip (or when you set).",
+ "params": [
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "starts_at", "label": "Starts at", "type": "float", "min": 0.0, "max": 600.0, "step": 0.01, "default": 0.0, "unit": " s"},
+  {"key": "duration", "label": "Length", "type": "float", "min": 0.05, "max": 5.0, "step": 0.01, "default": 0.7, "unit": " s"},
+  {"key": "size", "label": "Size", "type": "float", "min": 0.05, "max": 2.0, "step": 0.01, "default": 0.9},
+  {"key": "ring_width", "label": "Ring width", "type": "float", "min": 2.0, "max": 400.0, "step": 1.0, "default": 90.0, "unit": " px"},
+  {"key": "strength", "label": "Bend", "type": "float", "min": -200.0, "max": 200.0, "step": 0.5, "default": 60.0, "unit": " px"},
+  {"key": "colour_split", "label": "Colour split", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "rim", "label": "Bright rim", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "repeat_every", "label": "Repeat every (0 is once)", "type": "float", "min": 0.0, "max": 10.0, "step": 0.01, "default": 0.0, "unit": " s"}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}, {"kind": "ring", "key": "size", "about": "centre", "unit": "d"}],
+ "passes": "single"
+}

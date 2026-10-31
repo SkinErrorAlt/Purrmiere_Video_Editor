@@ -1,0 +1,16 @@
+{
+ "id": "light_leak",
+ "label": "Light Leak",
+ "group": "Light and Film",
+ "space": "2D",
+ "from": ["CapCut Light Leak"],
+ "blurb": "Warm streaks of orange and red light drift across the frame, like light leaking into an old camera, wash over the cut and fade away on the incoming picture. The streaks fall differently on every cut.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "direction", "label": "Drifts", "type": "enum", "choices": ["Left to right", "Right to left", "Top to bottom", "Bottom to top", "Diagonal"], "default": 0},
+  {"key": "colour", "label": "Colour", "type": "color", "default": [1, 0.55, 0.15, 1]},
+  {"key": "colour_two", "label": "Second colour", "type": "color", "default": [0.95, 0.15, 0.3, 1]},
+  {"key": "intensity", "label": "Intensity", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 1},
+  {"key": "size", "label": "Size", "type": "float", "min": 0.2, "max": 2, "step": 0.01, "default": 1}
+ ]
+}

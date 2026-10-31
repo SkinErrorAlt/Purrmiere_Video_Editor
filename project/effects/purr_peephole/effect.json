@@ -1,0 +1,19 @@
+{
+ "id": "purr_peephole",
+ "label": "Peephole",
+ "category": "Purrmiere",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Looks at the scene through a door peephole: a strong fish eye bulge in a round window, darkening and colour fringes towards its rim, a brass ring and darkness all round.",
+ "params": [
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "radius", "label": "Size", "type": "float", "min": 0.1, "max": 1.0, "step": 0.001, "default": 0.42},
+  {"key": "bulge", "label": "Fish eye", "type": "float", "min": 0.0, "max": 3.0, "step": 0.01, "default": 1.3},
+  {"key": "fringe", "label": "Colour fringe", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "ring", "label": "Brass ring", "type": "float", "min": 0.0, "max": 60.0, "step": 0.1, "default": 16.0, "unit": " px"},
+  {"key": "brass", "label": "Ring colour", "type": "color", "default": [0.75, 0.58, 0.26, 1.0]},
+  {"key": "surround", "label": "Surround", "type": "color", "default": [0.03, 0.03, 0.035, 1.0]}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}, {"kind": "ring", "key": "radius", "about": "centre", "unit": "h"}],
+ "passes": "single"
+}

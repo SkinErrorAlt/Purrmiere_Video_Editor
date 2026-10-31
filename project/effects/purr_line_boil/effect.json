@@ -1,0 +1,16 @@
+{
+ "id": "purr_line_boil",
+ "label": "Line Boil",
+ "category": "Purrmiere",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Makes live footage wobble like hand drawn animation: the whole picture is redrawn a few times a second with a slightly different wiggle each time, so edges shimmer and boil like pencil lines traced frame by frame.",
+ "params": [
+  {"key": "amount", "label": "Wiggle", "type": "float", "min": 0.0, "max": 12.0, "step": 0.1, "default": 2.5, "unit": " px"},
+  {"key": "rate", "label": "Redraws per second", "type": "float", "min": 1.0, "max": 30.0, "step": 0.5, "default": 10.0},
+  {"key": "scale", "label": "Wiggle size", "type": "float", "min": 4.0, "max": 300.0, "step": 0.5, "default": 40.0, "unit": " px"},
+  {"key": "shake", "label": "Shake", "type": "float", "min": 0.0, "max": 10.0, "step": 0.1, "default": 1.0, "unit": " px"},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

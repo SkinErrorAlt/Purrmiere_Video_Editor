@@ -1,0 +1,20 @@
+{
+ "id": "composite_video",
+ "label": "Composite Video",
+ "category": "VHS & Analogue",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "The picture as it looks after travelling down a composite video cable. Colour rides on a subcarrier inside the brightness signal, so dots crawl along colour edges, fine black and white stripes turn into shimmering rainbows, sharp edges ring, colour lags behind and smears sideways, and a little picture noise comes along. PAL flips part of its colour every line and averages pairs of lines, so it looks different from NTSC.",
+ "params": [
+  {"key": "system", "label": "System", "type": "enum", "choices": ["NTSC", "PAL"], "default": 0},
+  {"key": "dot_crawl", "label": "Dot crawl", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 1.0},
+  {"key": "cross_colour", "label": "Cross colour", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.7},
+  {"key": "ringing", "label": "Ringing", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "colour_delay", "label": "Colour delay", "type": "float", "min": -12.0, "max": 12.0, "step": 0.1, "default": 2.5, "unit": " px"},
+  {"key": "colour_blur", "label": "Colour blur", "type": "float", "min": 0.0, "max": 30.0, "step": 0.1, "default": 4.0, "unit": " px"},
+  {"key": "noise", "label": "Noise", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.15},
+  {"key": "moving", "label": "Dots move every frame", "type": "bool", "default": true},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

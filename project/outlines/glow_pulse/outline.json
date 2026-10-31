@@ -1,0 +1,12 @@
+{
+ "id": "glow_pulse",
+ "label": "Glow pulse",
+ "blurb": "A line with a soft glow that breathes in and out.",
+ "order": 4,
+ "reach": {"param": "glow", "scale": 2.5},
+ "params": [
+  {"key": "glow", "label": "Glow size", "type": "float", "min": 1, "max": 40, "step": 0.5, "default": 8, "unit": "px"},
+  {"key": "speed", "label": "Pulses a second", "type": "float", "min": 0, "max": 4, "step": 0.05, "default": 1},
+  {"key": "strength", "label": "Glow strength", "type": "float", "min": 0, "max": 1, "step": 0.05, "default": 0.8}
+ ]
+}

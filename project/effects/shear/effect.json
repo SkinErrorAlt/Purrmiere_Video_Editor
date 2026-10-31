@@ -1,0 +1,15 @@
+{
+ "id": "shear",
+ "label": "Shear",
+ "category": "Distort",
+ "version": 1,
+ "blurb": "Slants the picture, leaning the top one way and the bottom the other.",
+ "params": [
+  {"key": "horizontal", "label": "Lean sideways", "type": "float", "min": -1.0, "max": 1.0, "step": 0.005, "default": 0.2},
+  {"key": "vertical", "label": "Lean up and down", "type": "float", "min": -1.0, "max": 1.0, "step": 0.005, "default": 0.0},
+  {"key": "pivot", "label": "Pivot", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "wrap", "label": "Wrap round the edges", "type": "bool", "default": false}
+ ],
+ "handles": [{"kind": "point", "key": "pivot"}],
+ "passes": "single"
+}

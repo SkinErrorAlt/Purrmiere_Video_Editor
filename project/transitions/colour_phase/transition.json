@@ -1,0 +1,13 @@
+{
+ "id": "colour_phase",
+ "label": "Colour Phase",
+ "group": "Dissolve",
+ "space": "2D",
+ "from": ["gl colorphase"],
+ "blurb": "The red, green and blue in the picture change over one after another, so the dissolve passes through strange colours on the way. Order picks which goes first, and Spread how far apart they run.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "order", "label": "Order", "type": "enum", "choices": ["Red, green, blue", "Blue, green, red", "Green, red, blue", "Green, blue, red", "Red, blue, green", "Blue, red, green"], "default": 0},
+  {"key": "spread", "label": "Spread", "type": "float", "min": 0, "max": 0.9, "step": 0.01, "default": 0.4}
+ ]
+}

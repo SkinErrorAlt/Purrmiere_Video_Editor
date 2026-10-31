@@ -1,0 +1,19 @@
+{
+ "id": "oval",
+ "label": "Oval",
+ "group": "Shape",
+ "space": "2D",
+ "from": ["Impress Oval Horizontal", "Impress Oval Vertical"],
+ "blurb": "An oval opens from the centre with the incoming picture inside, wide or tall, or closes in on the outgoing picture.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "direction", "label": "Direction", "type": "enum", "choices": ["Out", "In"], "default": 0},
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "orientation", "label": "Shape", "type": "enum", "choices": ["Wide", "Tall"], "default": 0},
+  {"key": "stretch", "label": "Stretch", "type": "float", "min": 1, "max": 4, "step": 0.01, "default": 1.6},
+  {"key": "softness", "label": "Soft edge", "type": "float", "min": 0, "max": 300, "step": 0.5, "default": 2, "unit": " px"},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 1},
+  {"key": "border", "label": "Border", "type": "float", "min": 0, "max": 60, "step": 0.5, "default": 0, "unit": " px"},
+  {"key": "border_colour", "label": "Border colour", "type": "color", "default": [1, 1, 1, 1]}
+ ]
+}

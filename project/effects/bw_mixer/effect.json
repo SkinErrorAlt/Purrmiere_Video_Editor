@@ -1,0 +1,27 @@
+{
+ "id": "bw_mixer",
+ "label": "Black and White Mixer",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Black and white where you choose how bright each colour turns out: six sliders for reds, yellows, greens, cyans, blues and magentas, the way a photographer uses coloured filters on black and white film. Darken a blue sky, lighten skin, split two colours that would go the same grey. Greys stay exactly as they were. Tint adds a single colour over the result.",
+ "params": [
+  {"key": "preset", "label": "Filter", "type": "enum", "choices": ["Custom", "Neutral", "Red filter", "Yellow filter", "Green filter", "Blue filter", "Darker skies", "Infrared"], "default": 1, "writes": {
+   "1": {"reds": 40, "yellows": 60, "greens": 40, "cyans": 60, "blues": 20, "magentas": 80},
+   "2": {"reds": 120, "yellows": 110, "greens": -10, "cyans": -50, "blues": -50, "magentas": 120},
+   "3": {"reds": 120, "yellows": 110, "greens": 40, "cyans": -30, "blues": 0, "magentas": 70},
+   "4": {"reds": -40, "yellows": 90, "greens": 130, "cyans": 40, "blues": -40, "magentas": -20},
+   "5": {"reds": 0, "yellows": 0, "greens": 0, "cyans": 110, "blues": 110, "magentas": 110},
+   "6": {"reds": 80, "yellows": 90, "greens": 50, "cyans": -40, "blues": -40, "magentas": 60},
+   "7": {"reds": -70, "yellows": 200, "greens": 200, "cyans": -30, "blues": -20, "magentas": -200}
+  }},
+  {"key": "reds", "label": "Reds", "type": "float", "min": -200.0, "max": 300.0, "step": 1.0, "default": 40.0, "unit": " %"},
+  {"key": "yellows", "label": "Yellows", "type": "float", "min": -200.0, "max": 300.0, "step": 1.0, "default": 60.0, "unit": " %"},
+  {"key": "greens", "label": "Greens", "type": "float", "min": -200.0, "max": 300.0, "step": 1.0, "default": 40.0, "unit": " %"},
+  {"key": "cyans", "label": "Cyans", "type": "float", "min": -200.0, "max": 300.0, "step": 1.0, "default": 60.0, "unit": " %"},
+  {"key": "blues", "label": "Blues", "type": "float", "min": -200.0, "max": 300.0, "step": 1.0, "default": 20.0, "unit": " %"},
+  {"key": "magentas", "label": "Magentas", "type": "float", "min": -200.0, "max": 300.0, "step": 1.0, "default": 80.0, "unit": " %"},
+  {"key": "tint", "label": "Tint colour", "type": "color", "default": [0.86, 0.72, 0.52, 1.0]},
+  {"key": "tint_amount", "label": "Tint amount", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.0}
+ ],
+ "passes": "single"
+}

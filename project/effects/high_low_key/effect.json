@@ -1,0 +1,25 @@
+{
+ "id": "high_low_key",
+ "label": "High Key and Low Key",
+ "category": "Colour Correction",
+ "version": 1,
+ "tags": ["look"],
+ "blurb": "The portrait and product looks from Nik Color Efex and Photoshop Elements. High key makes the picture bright, airy and soft: the shadows lift to a pale grey, the whites bloom gently and the tones roll off smoothly into white while eyes and lines stay readable. Low key sinks the picture into deep black and keeps only its brightest parts, which are never crushed, with a soft dark falloff round them that Glow widens. Drain colour takes colour out, Dark corners darkens towards the edges of the frame.",
+ "params": [
+  {"key": "mode", "label": "Mode", "type": "enum", "choices": ["High key", "Low key"], "default": 0, "writes": {"0": {"glow": 35.0, "drain": 30.0, "dark_corners": 0.0}, "1": {"glow": 40.0, "drain": 15.0, "dark_corners": 35.0}}},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 100.0, "step": 1.0, "default": 70.0, "unit": " %"},
+  {"key": "brightness", "label": "Brightness", "type": "float", "min": -100.0, "max": 100.0, "step": 1.0, "default": 0.0},
+  {"key": "contrast", "label": "Contrast", "type": "float", "min": -100.0, "max": 100.0, "step": 1.0, "default": 0.0},
+  {"key": "glow", "label": "Glow", "type": "float", "min": 0.0, "max": 100.0, "step": 1.0, "default": 35.0, "unit": " %"},
+  {"key": "drain", "label": "Drain colour", "type": "float", "min": 0.0, "max": 100.0, "step": 1.0, "default": 30.0, "unit": " %"},
+  {"key": "dark_corners", "label": "Dark corners", "type": "float", "min": 0.0, "max": 100.0, "step": 1.0, "default": 0.0, "unit": " %"}
+ ],
+ "passes": [
+  {"shader": "key_prep.gdshader"},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "key_mix.gdshader", "scale": 16.0, "inputs": {"level_2": 2, "level_3": 3, "level_4": 4}}
+ ]
+}

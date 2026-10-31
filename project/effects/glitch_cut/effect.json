@@ -1,0 +1,20 @@
+{
+ "id": "glitch_cut",
+ "label": "Glitch Cut",
+ "category": "Transition",
+ "version": 1,
+ "blurb": "A digital glitch that builds up to the cut: blocks jump out of place, rows tear sideways, the colour channels split and the frame breaks into noise right on the cut, then the next clip glitches back in. Put it on both clips of a cut, or use Progress to key it by hand. The same seed always glitches the same way.",
+ "params": [
+  {"key": "when", "label": "When", "type": "enum", "choices": ["In at the start and out at the end", "In at the start", "Out at the end", "By Progress"], "default": 0},
+  {"key": "duration", "label": "Glitch length", "type": "float", "min": 0.05, "max": 2.0, "step": 0.01, "default": 0.4, "unit": " s"},
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0.0, "max": 1.0, "step": 0.005, "default": 0.0},
+  {"key": "blocks", "label": "Jumping blocks", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "block_size", "label": "Block size", "type": "float", "min": 8.0, "max": 160.0, "step": 1.0, "default": 48.0, "unit": " px"},
+  {"key": "tear", "label": "Tearing", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "colour_split", "label": "Colour split", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "noise", "label": "Noise on the cut", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "rate", "label": "Changes per second", "type": "float", "min": 4.0, "max": 60.0, "step": 1.0, "default": 20.0},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

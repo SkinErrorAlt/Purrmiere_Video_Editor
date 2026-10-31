@@ -1,0 +1,18 @@
+{
+ "id": "camera_shutter",
+ "label": "Camera Shutter",
+ "group": "Shape",
+ "space": "2D",
+ "from": ["CapCut Shutter"],
+ "blurb": "The blades of a camera iris swing in and close over the outgoing picture, then open again on the incoming one.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "blades", "label": "Blades", "type": "int", "min": 3, "max": 16, "step": 1, "default": 7},
+  {"key": "turn", "label": "Blade swing", "type": "float", "min": 0, "max": 180, "step": 1, "default": 50, "unit": " deg"},
+  {"key": "hold", "label": "Hold shut", "type": "float", "min": 0, "max": 0.6, "step": 0.01, "default": 0.06},
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "blade_colour", "label": "Blade colour", "type": "color", "default": [0.13, 0.13, 0.14, 1]},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "softness", "label": "Soft edge", "type": "float", "min": 0, "max": 300, "step": 0.5, "default": 2, "unit": " px"}
+ ]
+}

@@ -1,0 +1,19 @@
+{
+ "id": "yt_rgb_split_hit",
+ "label": "RGB Split Hit",
+ "category": "YouTube",
+ "tags": ["youtube"],
+ "version": 1,
+ "blurb": "A quick burst where the red and blue split apart and snap back, with a small zoom jolt, for a hit, a jump scare or a bass drop. It fires at the start of the clip unless you set a time, and can repeat on a beat.",
+ "params": [
+  {"key": "starts_at", "label": "Starts at", "type": "float", "min": 0.0, "max": 600.0, "step": 0.01, "default": 0.0, "unit": " s"},
+  {"key": "duration", "label": "Lasts", "type": "float", "min": 0.05, "max": 3.0, "step": 0.01, "default": 0.35, "unit": " s"},
+  {"key": "repeat_every", "label": "Repeat every", "type": "float", "min": 0.0, "max": 10.0, "step": 0.01, "default": 0.0, "unit": " s"},
+  {"key": "split", "label": "Split", "type": "float", "min": 0.0, "max": 200.0, "step": 0.5, "default": 40.0, "unit": " px"},
+  {"key": "angle", "label": "Angle", "type": "float", "min": -180.0, "max": 180.0, "step": 0.5, "default": 0.0, "unit": " deg"},
+  {"key": "jolt", "label": "Zoom jolt", "type": "float", "min": 0.0, "max": 50.0, "step": 0.5, "default": 8.0, "unit": " %"},
+  {"key": "wobble", "label": "Wobble", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4}
+ ],
+ "handles": [{"kind": "angle", "key": "angle", "zero": "right", "turn": "cw", "length": "split"}],
+ "passes": "single"
+}

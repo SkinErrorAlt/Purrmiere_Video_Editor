@@ -1,0 +1,25 @@
+{
+ "id": "auto_colour",
+ "label": "Auto Colour",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Measures every frame and corrects it on its own: each of red, green and blue is stretched from its darkest to its brightest value, and Snap neutral midtones then bends each channel so the average of the frame comes out neutral grey, which takes out a colour cast. The clip values push a little of the extremes to pure black and white for more punch.",
+ "params": [
+  {"key": "per_channel", "label": "Stretch each channel", "type": "bool", "default": true},
+  {"key": "snap_midtones", "label": "Snap neutral midtones", "type": "bool", "default": true},
+  {"key": "clip_black", "label": "Clip shadows", "type": "float", "min": 0.0, "max": 10.0, "step": 0.05, "default": 0.5, "unit": " %"},
+  {"key": "clip_white", "label": "Clip highlights", "type": "float", "min": 0.0, "max": 10.0, "step": 0.05, "default": 0.5, "unit": " %"}
+ ],
+ "passes": [
+  {"shader": "stats.gdshader", "scale": 0.0625, "set": {"stage": 0, "stat": 0}},
+  {"shader": "stats.gdshader", "scale": 1.0, "set": {"stage": 1, "stat": 0}},
+  {"shader": "stats.gdshader", "scale": 1.0, "set": {"stage": 0, "stat": 1}},
+  {"shader": "stats.gdshader", "scale": 1.0, "set": {"stage": 1, "stat": 1}},
+  {"shader": "stats.gdshader", "scale": 1.0, "set": {"stage": 0, "stat": 2}},
+  {"shader": "stats.gdshader", "scale": 1.0, "set": {"stage": 1, "stat": 2}},
+  {"shader": "apply.gdshader", "scale": 1.0, "set": {"stage": 0}, "inputs": {"mean_tex": 1, "min_tex": 3, "max_tex": 5}},
+  {"shader": "stats.gdshader", "scale": 1.0, "set": {"stage": 1, "stat": 0}},
+  {"shader": "apply.gdshader", "scale": 1.0, "set": {"stage": 1}, "inputs": {"mean_tex": 1, "min_tex": 3, "max_tex": 5}},
+  {"shader": "apply.gdshader", "scale": 16.0, "set": {"stage": 2}}
+ ]
+}

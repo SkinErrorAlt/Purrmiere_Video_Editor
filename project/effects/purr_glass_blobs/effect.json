@@ -1,0 +1,19 @@
+{
+ "id": "purr_glass_blobs",
+ "label": "Glass Blobs",
+ "category": "Purrmiere",
+ "tags": ["look", "light"],
+ "version": 1,
+ "blurb": "Liquid glass blobs that wander over the picture, merge and split like lava lamp drops, bending the picture behind them with a bright rim and a touch of colour fringing.",
+ "params": [
+  {"key": "count", "label": "Blobs", "type": "int", "min": 1, "max": 12, "step": 1, "default": 5},
+  {"key": "size", "label": "Size", "type": "float", "min": 0.03, "max": 0.5, "step": 0.001, "default": 0.16},
+  {"key": "refraction", "label": "Refraction", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45},
+  {"key": "chroma", "label": "Colour fringe", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "rim", "label": "Rim light", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "tint", "label": "Tint", "type": "color", "default": [0.85, 0.95, 1.0, 1.0]},
+  {"key": "speed", "label": "Speed", "type": "float", "min": 0.0, "max": 3.0, "step": 0.01, "default": 0.35},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

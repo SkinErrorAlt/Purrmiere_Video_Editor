@@ -1,0 +1,14 @@
+{
+ "id": "window_slice",
+ "label": "Window Slice",
+ "group": "Wipe",
+ "space": "2D",
+ "from": ["gl-transitions windowslice"],
+ "blurb": "The frame is cut into slices like a window shade, and each slice fills with the incoming picture as a soft front passes across.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "count", "label": "Slices", "type": "int", "min": 2, "max": 60, "step": 1, "default": 10},
+  {"key": "smoothness", "label": "Spread", "type": "float", "min": 0, "max": 2, "step": 0.05, "default": 0.5},
+  {"key": "direction", "label": "Direction", "type": "enum", "choices": ["Left to right", "Right to left", "Top to bottom", "Bottom to top"], "default": 0}
+ ]
+}

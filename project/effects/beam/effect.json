@@ -1,0 +1,23 @@
+{
+ "id": "beam",
+ "label": "Beam",
+ "category": "Generate",
+ "tags": ["light", "graphic"],
+ "version": 1,
+ "blurb": "A laser beam between two points with a hot core and a coloured glow; Length and Time shoot it along the path like a bolt.",
+ "params": [
+  {"key": "start", "label": "Start point", "type": "vec2", "default": [0.15, 0.7]},
+  {"key": "end", "label": "End point", "type": "vec2", "default": [0.85, 0.3]},
+  {"key": "length", "label": "Length", "type": "float", "min": 0, "max": 1, "step": 0.005, "default": 1.0},
+  {"key": "travel", "label": "Time", "type": "float", "min": 0, "max": 1, "step": 0.005, "default": 0.5},
+  {"key": "start_thickness", "label": "Start thickness", "type": "float", "min": 0, "max": 200, "step": 0.5, "default": 8, "unit": " px"},
+  {"key": "end_thickness", "label": "End thickness", "type": "float", "min": 0, "max": 200, "step": 0.5, "default": 8, "unit": " px"},
+  {"key": "softness", "label": "Softness", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.4},
+  {"key": "core", "label": "Core colour", "type": "color", "default": [1, 1, 1, 1]},
+  {"key": "glow", "label": "Glow colour", "type": "color", "default": [0.2, 0.6, 1, 1]},
+  {"key": "glow_size", "label": "Glow size", "type": "float", "min": 0, "max": 10, "step": 0.05, "default": 2.5},
+  {"key": "on_original", "label": "Over the picture", "type": "bool", "default": true}
+ ],
+ "handles": [{"kind": "line", "keys": ["start", "end"]}],
+ "passes": "single"
+}

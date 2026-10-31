@@ -1,0 +1,19 @@
+{
+ "id": "purr_mesh_gradient",
+ "label": "Mesh Gradient",
+ "category": "Purrmiere",
+ "tags": ["graphic"],
+ "version": 1,
+ "blurb": "A smooth, slowly flowing mesh gradient of four colours, the soft blended background used all over modern design, with a light grain so it never bands. Lovely behind titles, cut outs and talking heads.",
+ "params": [
+  {"key": "colour_1", "label": "Colour 1", "type": "color", "default": [1.0, 0.62, 0.74, 1.0]},
+  {"key": "colour_2", "label": "Colour 2", "type": "color", "default": [0.72, 0.62, 1.0, 1.0]},
+  {"key": "colour_3", "label": "Colour 3", "type": "color", "default": [1.0, 0.82, 0.62, 1.0]},
+  {"key": "colour_4", "label": "Colour 4", "type": "color", "default": [0.55, 0.9, 0.85, 1.0]},
+  {"key": "speed", "label": "Flow", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.2},
+  {"key": "warp", "label": "Swirl", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "grain", "label": "Grain", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.25},
+  {"key": "placement", "label": "Placement", "type": "enum", "default": 2, "choices": ["Behind the clip", "Over the clip", "Replace the clip"]}
+ ],
+ "passes": "single"
+}

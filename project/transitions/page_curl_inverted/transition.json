@@ -1,0 +1,19 @@
+{
+ "id": "page_curl_inverted",
+ "label": "Page Curl Back",
+ "group": "3D",
+ "space": "3D",
+ "from": ["gl InvertedPageCurl"],
+ "blurb": "The page curl played backwards: the incoming picture arrives rolled up and unrolls down over the outgoing one, landing flat with its last corner.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "corner", "label": "Starts at", "type": "enum", "choices": ["Bottom right", "Bottom left", "Top right", "Top left", "Right edge", "Left edge"], "default": 0},
+  {"key": "radius", "label": "Curl size", "type": "float", "min": 0.02, "max": 0.5, "step": 0.01, "default": 0.15},
+  {"key": "back_fade", "label": "Back of page", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "paper", "label": "Paper colour", "type": "color", "default": [0.95, 0.94, 0.9, 1]},
+  {"key": "shadow", "label": "Shadow", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 10, "max": 90, "step": 1, "default": 40, "unit": " deg"},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

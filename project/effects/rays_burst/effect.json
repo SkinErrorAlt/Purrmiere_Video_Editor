@@ -1,0 +1,24 @@
+{
+ "id": "rays_burst",
+ "label": "Light Rays Burst",
+ "category": "Transition",
+ "version": 1,
+ "blurb": "Shafts of light burst out of a point and from the bright parts of the picture, growing longer and brighter until the frame is filled with light on the cut; the next clip comes out of the light as the rays die away. Put it on both clips of a cut, or use Progress to key it by hand. Unlike Light Rays, which stays put, the rays grow and wash out the cut.",
+ "params": [
+  {"key": "when", "label": "When", "type": "enum", "choices": ["In at the start and out at the end", "In at the start", "Out at the end", "By Progress"], "default": 0},
+  {"key": "duration", "label": "Burst length", "type": "float", "min": 0.1, "max": 3.0, "step": 0.01, "default": 0.5, "unit": " s"},
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0.0, "max": 1.0, "step": 0.005, "default": 0.0},
+  {"key": "centre", "label": "Bursts from", "type": "vec2", "default": [0.5, 0.45]},
+  {"key": "colour", "label": "Light colour", "type": "color", "default": [1.0, 0.95, 0.84, 1.0]},
+  {"key": "threshold", "label": "Bright parts from", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.55},
+  {"key": "rays", "label": "Rays", "type": "int", "min": 4, "max": 64, "step": 1, "default": 22},
+  {"key": "spin", "label": "Turn", "type": "float", "min": -1.0, "max": 1.0, "step": 0.01, "default": 0.1, "unit": " turns"},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.8},
+  {"key": "white_out", "label": "White on the cut", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}],
+ "passes": [
+  {"shader": "rays.gdshader", "scale": 0.5},
+  {"shader": "compose.gdshader", "scale": 2.0}
+ ]
+}

@@ -1,0 +1,14 @@
+{
+ "id": "random_squares",
+ "label": "Random Squares",
+ "group": "Wipe",
+ "space": "2D",
+ "from": ["gl-transitions randomsquares"],
+ "blurb": "A grid of squares fades over to the incoming picture one by one in random order.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "columns", "label": "Columns", "type": "int", "min": 2, "max": 80, "step": 1, "default": 10},
+  {"key": "rows", "label": "Rows", "type": "int", "min": 2, "max": 80, "step": 1, "default": 10},
+  {"key": "smoothness", "label": "Smoothness", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5}
+ ]
+}

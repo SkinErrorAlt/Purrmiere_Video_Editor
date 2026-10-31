@@ -1,0 +1,89 @@
+{
+ "id": "audio_vignette_pump",
+ "label": "Vignette Pump",
+ "category": "Audio Reactive",
+ "tags": [
+  "audio",
+  "music",
+  "beat",
+  "reactive",
+  "visualiser"
+ ],
+ "version": 1,
+ "blurb": "The edges darken with the bass and open up again in the quiet parts. Drop a clip from the timeline, or a file from the bin or the Source monitor, on its Sound well.",
+ "params": [
+  {
+   "key": "dark_rest",
+   "label": "Vignette when quiet",
+   "type": "float",
+   "min": 0,
+   "max": 2,
+   "step": 0.01,
+   "default": 0.15
+  },
+  {
+   "key": "dark_peak",
+   "label": "Vignette when loud",
+   "type": "float",
+   "min": 0,
+   "max": 2,
+   "step": 0.01,
+   "default": 1.1
+  },
+  {
+   "key": "radius",
+   "label": "Radius",
+   "type": "float",
+   "min": 0,
+   "max": 1.5,
+   "step": 0.01,
+   "default": 0.75
+  },
+  {
+   "key": "softness",
+   "label": "Softness",
+   "type": "float",
+   "min": 0,
+   "max": 1,
+   "step": 0.01,
+   "default": 0.45
+  },
+  {
+   "key": "roundness",
+   "label": "Roundness",
+   "type": "float",
+   "min": 0,
+   "max": 1,
+   "step": 0.01,
+   "default": 1
+  },
+  {
+   "key": "colour",
+   "label": "Colour",
+   "type": "color",
+   "default": [
+    0,
+    0,
+    0,
+    1
+   ]
+  }
+ ],
+ "handles": [{"kind": "ring", "key": "radius", "unit": "uv", "scale": 1.41421356, "round": "roundness", "feather": "softness", "feather_mode": "add"}],
+ "passes": [
+  {
+   "shader": "res://effects/vignette/effect.gdshader"
+  }
+ ],
+ "reactive": {
+  "defaults": {
+   "snd_band": 1
+  },
+  "drive": {
+   "amount": {
+    "rest": "dark_rest",
+    "peak": "dark_peak"
+   }
+  }
+ }
+}

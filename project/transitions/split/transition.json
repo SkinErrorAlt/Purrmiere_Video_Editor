@@ -1,0 +1,15 @@
+{
+ "id": "split",
+ "label": "Split",
+ "group": "Wipe",
+ "space": "2D",
+ "from": ["PowerPoint Split"],
+ "blurb": "The incoming picture opens out from a line through the middle, or closes in from both edges, behind soft edges.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "orientation", "label": "Split", "type": "enum", "choices": ["Vertical", "Horizontal"], "default": 0},
+  {"key": "motion", "label": "Motion", "type": "enum", "choices": ["Out", "In"], "default": 0},
+  {"key": "softness", "label": "Soft edge", "type": "float", "min": 0, "max": 0.5, "step": 0.01, "default": 0.1},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 1}
+ ]
+}

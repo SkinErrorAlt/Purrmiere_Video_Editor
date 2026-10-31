@@ -1,0 +1,13 @@
+{
+ "id": "vibrance",
+ "label": "Vibrance",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Lifts the colours that are already dull without pushing the ones that are already strong.",
+ "params": [
+  {"key": "vibrance", "label": "Vibrance", "type": "float", "min": -1.0, "max": 2.0, "step": 0.01, "default": 0.4},
+  {"key": "saturation", "label": "Saturation", "type": "float", "min": 0.0, "max": 3.0, "step": 0.01, "default": 1.0},
+  {"key": "protect_skin", "label": "Hold back skin tones", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4}
+ ],
+ "passes": "single"
+}

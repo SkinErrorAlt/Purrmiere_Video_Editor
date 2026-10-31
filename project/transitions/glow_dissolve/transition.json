@@ -1,0 +1,18 @@
+{
+ "id": "glow_dissolve",
+ "label": "Glow",
+ "group": "Light and Film",
+ "space": "2D",
+ "from": ["Final Cut Pro Bloom", "Film Impact Glow", "Sapphire Dissolve Glow", "BCC Film Glow Dissolve"],
+ "blurb": "The bright parts of the outgoing picture bloom into a soft glow with a tight core and a wide halo, the two pictures dissolve under the brightest moment, and the incoming picture's glow settles. Only the highlights glow, in their own colours, so dark scenes stay dark.",
+ "default_duration": 1.0,
+ "pyramid": true,
+ "params": [
+  {"key": "threshold", "label": "Glows from", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "intensity", "label": "Intensity", "type": "float", "min": 0, "max": 4, "step": 0.01, "default": 2},
+  {"key": "radius", "label": "Radius", "type": "float", "min": 4, "max": 400, "step": 1, "default": 130, "unit": " px"},
+  {"key": "tint", "label": "Tint", "type": "color", "default": [1, 1, 1, 1]},
+  {"key": "glow_saturation", "label": "Glow saturation", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 1},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 1}
+ ]
+}

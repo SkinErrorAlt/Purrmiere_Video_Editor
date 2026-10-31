@@ -1,0 +1,71 @@
+{
+ "id": "audio_chromatic_split",
+ "label": "Chromatic Split",
+ "category": "Audio Reactive",
+ "tags": [
+  "audio",
+  "music",
+  "beat",
+  "reactive",
+  "visualiser"
+ ],
+ "version": 1,
+ "blurb": "Red and blue pull apart from the middle on each hit. Drop a clip from the timeline, or a file from the bin or the Source monitor, on its Sound well.",
+ "params": [
+  {
+   "key": "split",
+   "label": "Split",
+   "type": "float",
+   "min": 0,
+   "max": 40,
+   "step": 0.1,
+   "default": 14
+  },
+  {
+   "key": "falloff",
+   "label": "Falloff",
+   "type": "float",
+   "min": 0,
+   "max": 4,
+   "step": 0.01,
+   "default": 1
+  },
+  {
+   "key": "centre",
+   "label": "Centre",
+   "type": "vec2",
+   "default": [
+    0.5,
+    0.5
+   ]
+  },
+  {
+   "key": "sideways",
+   "label": "Sideways only",
+   "type": "bool",
+   "default": false
+  }
+ ],
+ "passes": [
+  {
+   "shader": "res://effects/chromatic_aberration/effect.gdshader"
+  }
+ ],
+ "reactive": {
+  "defaults": {
+   "snd_mode": 1
+  },
+  "drive": {
+   "strength": {
+    "rest": 0,
+    "peak": "split"
+   }
+  }
+ },
+ "handles": [
+  {
+   "kind": "point",
+   "key": "centre"
+  }
+ ]
+}

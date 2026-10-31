@@ -1,0 +1,15 @@
+{
+ "id": "tone_map",
+ "label": "Highlight Roll Off",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Works in linear light: raise the exposure and the highlights roll off smoothly toward white instead of clipping. White point is the brightness that lands on pure white; the knee is where Soft knee and Reinhard start to bend.",
+ "params": [
+  {"key": "exposure", "label": "Exposure", "type": "float", "min": -4.0, "max": 4.0, "step": 0.05, "default": 0.0, "unit": " stops"},
+  {"key": "operator", "label": "Curve", "type": "enum", "choices": ["Soft knee", "Reinhard", "Filmic ACES fit", "Hable"], "default": 0},
+  {"key": "knee", "label": "Knee", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "white_point", "label": "White point", "type": "float", "min": 1.0, "max": 16.0, "step": 0.05, "default": 2.0},
+  {"key": "preserve_colour", "label": "Keep colours", "type": "bool", "default": false}
+ ],
+ "passes": "single"
+}

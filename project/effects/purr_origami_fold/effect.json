@@ -1,0 +1,18 @@
+{
+ "id": "purr_origami_fold",
+ "label": "Origami Fold",
+ "category": "Purrmiere",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "A transition that folds the picture up like a paper fan: it creases into panels that tilt towards and away from the light and concertina off to one side, showing the next shot behind.",
+ "params": [
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0.0, "max": 1.0, "step": 0.001, "default": 0.5},
+  {"key": "timing", "label": "Timing", "type": "enum", "choices": ["Follow Progress", "Reveal at the clip start", "Hide at the clip end"], "default": 0},
+  {"key": "auto_len", "label": "Automatic length", "type": "float", "min": 0.05, "max": 10.0, "step": 0.01, "default": 1.0, "unit": " s"},
+  {"key": "panels", "label": "Panels", "type": "int", "min": 2, "max": 20, "step": 1, "default": 6},
+  {"key": "shade", "label": "Fold shading", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "bulge", "label": "Fold depth", "type": "float", "min": 0.0, "max": 0.5, "step": 0.001, "default": 0.12},
+  {"key": "direction", "label": "Folds away", "type": "enum", "default": 0, "choices": ["To the left", "To the right", "Upwards", "Downwards"]}
+ ],
+ "passes": "single"
+}

@@ -1,0 +1,14 @@
+{
+ "id": "flash",
+ "label": "Flash",
+ "group": "Light and Film",
+ "space": "2D",
+ "from": ["PowerPoint Flash", "CapCut White Flash"],
+ "blurb": "The outgoing picture burns brighter and goes to a flash of white, and the incoming picture comes back out of the flash. Flash length is how much of the span the flash fills, and Glow how much the pictures bloom on the way in and out.",
+ "default_duration": 0.8,
+ "params": [
+  {"key": "colour", "label": "Colour", "type": "color", "default": [1, 1, 1, 1]},
+  {"key": "flash_length", "label": "Flash length", "type": "float", "min": 0.05, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "glow", "label": "Glow", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5}
+ ]
+}

@@ -1,0 +1,15 @@
+{
+ "id": "zoom_left_wipe",
+ "label": "Zoom Wipe",
+ "group": "Zoom and Camera",
+ "space": "2D",
+ "from": ["gl ZoomLeftWipe"],
+ "blurb": "A soft edged wipe sweeps across while the outgoing picture zooms in towards the side the wipe is heading for.",
+ "default_duration": 0.8,
+ "params": [
+  {"key": "direction", "label": "Wipe moves", "type": "enum", "choices": ["Left", "Right", "Up", "Down"], "default": 0},
+  {"key": "zoom", "label": "Zoom", "type": "float", "min": 0, "max": 4, "step": 0.01, "default": 1},
+  {"key": "softness", "label": "Soft edge", "type": "float", "min": 0, "max": 0.5, "step": 0.01, "default": 0.06},
+  {"key": "timing", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth", "Strong"], "default": 1}
+ ]
+}

@@ -1,0 +1,13 @@
+{
+ "id": "multiply_blend",
+ "label": "Multiply Blend",
+ "group": "Dissolve",
+ "space": "2D",
+ "from": ["gl multiply_blend"],
+ "blurb": "The outgoing picture sinks into a blend of both pictures, multiplied together like two slides stacked in a projector, and the incoming picture rises out of it. Other blend modes give a lighter or punchier middle.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "mode", "label": "Blend", "type": "enum", "choices": ["Multiply", "Screen", "Darken", "Lighten", "Overlay", "Difference"], "default": 0},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 1}
+ ]
+}

@@ -1,0 +1,18 @@
+{
+ "id": "vhs_damage",
+ "label": "VHS",
+ "group": "Glitch",
+ "space": "2D",
+ "from": ["Film Impact VHS Damage", "Universe VHS", "CapCut VHS", "BCC Damaged TV Dissolve"],
+ "blurb": "The cut hides inside a worn tape: a band of bright tracking noise rolls through, the lines wobble sideways in bands, the colour smears to the right and fades, tape noise rises and the bottom lines tear where the heads switch. At the worst moment the tracking noise fills the frame and the picture cuts underneath it.",
+ "default_duration": 1.0,
+ "steps": true,
+ "params": [
+  {"key": "damage", "label": "Damage", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.8},
+  {"key": "tracking", "label": "Tracking band", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.7},
+  {"key": "jitter", "label": "Line wobble", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "chroma_bleed", "label": "Colour bleed", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.7},
+  {"key": "noise", "label": "Tape noise", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "colour_loss", "label": "Faded colour", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.4}
+ ]
+}

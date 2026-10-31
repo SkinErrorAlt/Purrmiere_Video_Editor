@@ -1,0 +1,14 @@
+{
+ "id": "burn",
+ "label": "Burn",
+ "group": "Light and Film",
+ "space": "2D",
+ "from": ["gl burn"],
+ "blurb": "A dissolve that glows hot in the middle: an orange light is added over both pictures as they swap, strongest halfway, as if the film were scorching.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "colour", "label": "Colour", "type": "color", "default": [0.9, 0.4, 0.2, 1]},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 1},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 0}
+ ]
+}

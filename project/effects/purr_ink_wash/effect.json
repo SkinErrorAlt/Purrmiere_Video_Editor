@@ -1,0 +1,19 @@
+{
+ "id": "purr_ink_wash",
+ "label": "Ink Wash",
+ "category": "Purrmiere",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Paints the picture as an East Asian style ink wash: a few tones of diluted ink that bleed softly into the paper, dry brush streaks at the edges of each wash, firmer ink along the outlines and an optional red seal stamped in the corner.",
+ "params": [
+  {"key": "ink", "label": "Ink", "type": "color", "default": [0.08, 0.08, 0.1, 1.0]},
+  {"key": "paper", "label": "Paper", "type": "color", "default": [0.95, 0.93, 0.86, 1.0]},
+  {"key": "levels", "label": "Wash tones", "type": "int", "min": 2, "max": 6, "step": 1, "default": 3},
+  {"key": "bleed", "label": "Bleed", "type": "float", "min": 0.0, "max": 30.0, "step": 0.1, "default": 5.0, "unit": " px"},
+  {"key": "dry", "label": "Dry brush", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45},
+  {"key": "edge_ink", "label": "Outline ink", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "seal", "label": "Red seal", "type": "bool", "default": true},
+  {"key": "seal_colour", "label": "Seal colour", "type": "color", "default": [0.78, 0.14, 0.1, 1.0]}
+ ],
+ "passes": "single"
+}

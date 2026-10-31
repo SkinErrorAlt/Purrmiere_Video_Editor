@@ -1,0 +1,27 @@
+{
+ "id": "highlight_repair",
+ "label": "Clipped Highlight Repair",
+ "category": "Colour Correction",
+ "tags": ["repair"],
+ "version": 1,
+ "blurb": "Repairs highlights where one or two colour channels hit their limit and the colour went wrong: a face turning yellow or pink in a bright light, a sky going cyan, a sunset going flat. It rebuilds the clipped channel from the colour of the unclipped bright parts nearby, then rolls the brightest tones off gently so the rebuilt colour fits, and keeps pure white clipping white. Highlight Roll Off only bends tones that were never clipped; this puts back the colour that was lost.",
+ "params": [
+  {"key": "threshold", "label": "Counts as clipped above", "type": "float", "min": 0.85, "max": 1.0, "step": 0.001, "default": 0.97},
+  {"key": "rebuild", "label": "Rebuild colour", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "roll_from", "label": "Roll off from", "type": "float", "min": 0.5, "max": 0.95, "step": 0.01, "default": 0.82},
+  {"key": "headroom", "label": "Headroom", "type": "float", "min": 1.05, "max": 2.0, "step": 0.01, "default": 1.3},
+  {"key": "show", "label": "Show clipped channels", "type": "bool", "default": false}
+ ],
+ "passes": [
+  {"shader": "ratios.gdshader", "scale": 0.5},
+  {"shader": "push.gdshader", "scale": 0.5},
+  {"shader": "push.gdshader", "scale": 0.5},
+  {"shader": "push.gdshader", "scale": 0.5},
+  {"shader": "push.gdshader", "scale": 0.5},
+  {"shader": "fill.gdshader"},
+  {"shader": "fill.gdshader"},
+  {"shader": "fill.gdshader"},
+  {"shader": "fill.gdshader"},
+  {"shader": "repair.gdshader", "scale": 32.0, "inputs": {"level_4": 1, "level_16": 3}}
+ ]
+}

@@ -1,0 +1,10 @@
+{
+ "id": "posterize",
+ "label": "Posterize",
+ "category": "Stylize",
+ "version": 1,
+ "params": [
+  {"key": "levels", "label": "Levels", "type": "int", "min": 2, "max": 64, "step": 1, "default": 6}
+ ],
+ "passes": "single"
+}

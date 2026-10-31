@@ -1,0 +1,17 @@
+{
+ "id": "shape_grid",
+ "label": "Shape Grid",
+ "group": "Shape",
+ "space": "2D",
+ "from": ["Canva Flow", "CapCut Grid Circles"],
+ "blurb": "A grid of shapes of the incoming picture grows one after another across the frame until they join up and cover it.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "shape", "label": "Shape", "type": "enum", "choices": ["Circle", "Square", "Diamond", "Plus"], "default": 0},
+  {"key": "cells", "label": "Across", "type": "int", "min": 2, "max": 48, "step": 1, "default": 10},
+  {"key": "order", "label": "Order", "type": "enum", "choices": ["Diagonal", "Left to right", "Top to bottom", "From the centre", "Random"], "default": 0},
+  {"key": "stagger", "label": "Stagger", "type": "float", "min": 0, "max": 0.95, "step": 0.01, "default": 0.6},
+  {"key": "softness", "label": "Soft edge", "type": "float", "min": 0, "max": 60, "step": 0.5, "default": 1.5, "unit": " px"},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 1}
+ ]
+}

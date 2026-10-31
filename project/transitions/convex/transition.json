@@ -1,0 +1,17 @@
+{
+ "id": "convex",
+ "label": "Convex",
+ "group": "3D",
+ "space": "3D",
+ "from": ["reveal.js convex"],
+ "blurb": "Both pictures turn as if on the outside of a turning drum: the outgoing one slides off and folds back away from you as the incoming one swings forward into place, as in reveal.js.",
+ "default_duration": 0.8,
+ "params": [
+  {"key": "direction", "label": "Slides move", "type": "enum", "choices": ["Left", "Right", "Up", "Down"], "default": 0},
+  {"key": "angle", "label": "Turn", "type": "float", "min": 10, "max": 90, "step": 1, "default": 90, "unit": " deg"},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 10, "max": 90, "step": 1, "default": 60, "unit": " deg"},
+  {"key": "eye", "label": "Eye height", "type": "float", "min": -0.5, "max": 0.5, "step": 0.01, "default": 0.1},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

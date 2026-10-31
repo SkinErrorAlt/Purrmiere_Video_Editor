@@ -1,0 +1,21 @@
+{
+ "id": "jigsaw",
+ "label": "Jigsaw",
+ "category": "Stylize",
+ "version": 1,
+ "blurb": "Cuts the picture into jigsaw puzzle pieces: thin dark cuts with a round or square tab on every edge, and a bevel that catches the light on one side of each cut and falls into shade on the other, so the pieces look raised. Light from sets where the light comes from. Change the seed to flip the tabs round.",
+ "params": [
+  {"key": "columns", "label": "Pieces across", "type": "int", "min": 2, "max": 40, "step": 1, "default": 6},
+  {"key": "rows", "label": "Pieces down", "type": "int", "min": 2, "max": 40, "step": 1, "default": 4},
+  {"key": "style", "label": "Tabs", "type": "enum", "choices": ["Round", "Square"], "default": 0},
+  {"key": "knob", "label": "Tab size", "type": "float", "min": 0.1, "max": 0.3, "step": 0.005, "default": 0.2},
+  {"key": "bevel", "label": "Bevel width", "type": "float", "min": 0.0, "max": 40.0, "step": 0.5, "default": 6.0, "unit": " px"},
+  {"key": "highlight", "label": "Light and shade", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "line", "label": "Cut width", "type": "float", "min": 0.0, "max": 10.0, "step": 0.1, "default": 1.5, "unit": " px"},
+  {"key": "line_dark", "label": "Cut darkness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "light_angle", "label": "Light from", "type": "float", "min": 0.0, "max": 360.0, "step": 1.0, "default": 225.0, "unit": " deg"},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "handles": [{"kind": "angle", "key": "light_angle", "zero": "right", "turn": "cw"}],
+ "passes": "single"
+}

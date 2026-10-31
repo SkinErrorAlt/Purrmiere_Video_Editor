@@ -1,0 +1,18 @@
+{
+ "id": "revolving_door",
+ "label": "Revolving Door",
+ "group": "3D",
+ "space": "3D",
+ "from": ["Keynote Revolving Door"],
+ "blurb": "Both pictures are wings of a revolving door turning on a post at one edge: the outgoing wing swings out towards you as the incoming wing swings round into place. Motion blur can be turned on.",
+ "default_duration": 1.3,
+ "params": [
+  {"key": "direction", "label": "Post on the", "type": "enum", "choices": ["Left", "Right"], "default": 0},
+  {"key": "pull_back", "label": "Pull back", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.35},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 10, "max": 90, "step": 1, "default": 40, "unit": " deg"},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "motion_blur", "label": "Motion blur", "type": "bool", "default": false},
+  {"key": "shutter", "label": "Shutter", "type": "float", "min": 0, "max": 360, "step": 1, "default": 180, "unit": " deg"},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

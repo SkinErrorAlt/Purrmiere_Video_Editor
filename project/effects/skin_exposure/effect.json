@@ -1,0 +1,19 @@
+{
+ "id": "skin_exposure",
+ "label": "Auto Skin Exposure",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Meters only the skin in the picture, every frame, and sets the exposure so faces sit at the level you choose, however the rest of the frame changes: a facecam whose auto exposure pumps, or a presenter walking from shade into sun. Set the target to what suits the person on camera; darker skin sits lower than lighter skin. With no skin in the frame it leaves the picture alone.",
+ "params": [
+  {"key": "target", "label": "Target skin level", "type": "float", "min": 20.0, "max": 90.0, "step": 0.5, "default": 55.0, "unit": " IRE"},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.8},
+  {"key": "max_stops", "label": "Most it may change", "type": "float", "min": 0.0, "max": 3.0, "step": 0.05, "default": 1.5, "unit": " stops"},
+  {"key": "skin_range", "label": "Skin range", "type": "float", "min": 10.0, "max": 90.0, "step": 1.0, "default": 40.0, "unit": " deg"},
+  {"key": "show_mask", "label": "Show the skin it measures", "type": "bool", "default": false}
+ ],
+ "passes": [
+  {"shader": "stats.gdshader", "scale": 0.03125},
+  {"shader": "combine.gdshader", "scale": 1.0},
+  {"shader": "apply.gdshader", "scale": 32.0}
+ ]
+}

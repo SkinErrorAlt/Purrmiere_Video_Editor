@@ -1,0 +1,20 @@
+{
+ "id": "bas_relief",
+ "label": "Bas Relief",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Carves the picture into a shallow stone relief lit from one side, in a dark and a light colour.",
+ "params": [
+  {"key": "detail", "label": "Detail", "type": "float", "min": 1, "max": 15, "step": 0.1, "default": 13},
+  {"key": "smoothness", "label": "Smoothness", "type": "float", "min": 1, "max": 15, "step": 0.1, "default": 3},
+  {"key": "light_angle", "label": "Light from", "type": "float", "min": -180, "max": 180, "step": 1, "default": 135, "unit": " deg"},
+  {"key": "dark_colour", "label": "Dark colour", "type": "color", "default": [0.25, 0.23, 0.21, 1.0]},
+  {"key": "light_colour", "label": "Light colour", "type": "color", "default": [0.92, 0.9, 0.86, 1.0]}
+ ],
+ "passes": [
+  {"shader": "soften.gdshader", "set": {"direction": [1, 0]}},
+  {"shader": "soften.gdshader", "set": {"direction": [0, 1]}},
+  {"shader": "relief.gdshader"}
+ ]
+}

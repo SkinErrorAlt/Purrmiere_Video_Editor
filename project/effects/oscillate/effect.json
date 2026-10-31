@@ -1,0 +1,22 @@
+{
+ "id": "oscillate",
+ "label": "Swing",
+ "category": "Transform",
+ "version": 1,
+ "blurb": "Moves the clip round a steady loop with no keyframes: swing round the pivot like a pendulum, spin, bob up and down, sway side to side, orbit in a small circle, breathe with a gentle scale pulse, rock in 3D or turn like a card on a turntable. Smooth eases in and out of each end, Bounce lands with a hop, Linear moves at a constant speed. The loop repeats exactly, and motion blur follows the path of the movement.",
+ "params": [
+  {"key": "motion", "label": "Motion", "type": "enum", "choices": ["Swing", "Spin", "Bob", "Sway", "Orbit", "Breathe", "Rock in 3D", "Turntable"], "default": 0},
+  {"key": "angle", "label": "Swing angle", "type": "float", "min": 0.0, "max": 180.0, "step": 0.1, "default": 10.0, "unit": " deg"},
+  {"key": "distance", "label": "Distance", "type": "float", "min": 0.0, "max": 2000.0, "step": 0.5, "default": 30.0, "unit": " px"},
+  {"key": "pulse", "label": "Pulse size", "type": "float", "min": 0.0, "max": 100.0, "step": 0.1, "default": 6.0, "unit": " %"},
+  {"key": "cycles", "label": "Cycles per second", "type": "float", "min": 0.0, "max": 10.0, "step": 0.01, "default": 0.5, "unit": " Hz"},
+  {"key": "pivot", "label": "Pivot", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "ease", "label": "Ease", "type": "enum", "choices": ["Smooth", "Bounce", "Linear"], "default": 0},
+  {"key": "phase", "label": "Phase", "type": "float", "min": -360.0, "max": 360.0, "step": 1.0, "default": 0.0, "unit": " deg"},
+  {"key": "perspective", "label": "Perspective", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "motion_blur", "label": "Motion blur", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "edges", "label": "Edges", "type": "enum", "choices": ["Transparent", "Repeat", "Mirror"], "default": 0}
+ ],
+ "handles": [{"kind": "point", "key": "pivot"}],
+ "passes": "single"
+}

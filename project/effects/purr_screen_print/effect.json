@@ -1,0 +1,21 @@
+{
+ "id": "purr_screen_print",
+ "label": "Screen Print",
+ "category": "Purrmiere",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "A three colour screen print: the picture is separated into flat layers of opaque ink, each pulled through its own screen slightly out of line with the others, with the mesh texture and the little voids where the ink did not reach.",
+ "params": [
+  {"key": "ink_1", "label": "Light ink", "type": "color", "default": [1.0, 0.82, 0.2, 1.0]},
+  {"key": "ink_2", "label": "Middle ink", "type": "color", "default": [0.95, 0.3, 0.52, 1.0]},
+  {"key": "ink_3", "label": "Dark ink", "type": "color", "default": [0.12, 0.1, 0.26, 1.0]},
+  {"key": "paper", "label": "Paper", "type": "color", "default": [0.97, 0.95, 0.9, 1.0]},
+  {"key": "cut_1", "label": "Light cut", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.78},
+  {"key": "cut_2", "label": "Middle cut", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.52},
+  {"key": "cut_3", "label": "Dark cut", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.28},
+  {"key": "offset", "label": "Misregistration", "type": "float", "min": 0.0, "max": 30.0, "step": 0.1, "default": 5.0, "unit": " px"},
+  {"key": "texture_amount", "label": "Ink texture", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

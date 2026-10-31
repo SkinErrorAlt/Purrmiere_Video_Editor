@@ -1,0 +1,41 @@
+{
+ "version": 1,
+ "name": "Export",
+ "tree": {
+  "t": "s",
+  "dir": "h",
+  "ratio": 0.55,
+  "a": {
+   "t": "g",
+   "tabs": [
+    "export",
+    "render",
+    "progress"
+   ],
+   "active": "export"
+  },
+  "b": {
+   "t": "s",
+   "dir": "v",
+   "ratio": 0.6,
+   "a": {
+    "t": "g",
+    "tabs": [
+     "program"
+    ],
+    "active": "program"
+   },
+   "b": {
+    "t": "g",
+    "tabs": [
+     "bin",
+     "events",
+     "timeline"
+    ],
+    "active": "bin"
+   }
+  }
+ },
+ "floats": [],
+ "state": {}
+}

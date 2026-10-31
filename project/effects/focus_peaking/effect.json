@@ -1,0 +1,15 @@
+{
+ "id": "focus_peaking",
+ "label": "Focus Peaking",
+ "category": "Utility",
+ "tags": ["measure"],
+ "version": 1,
+ "blurb": "Paints the sharpest edges in a bright colour, the way a camera monitor shows what is in focus.",
+ "params": [
+  {"key": "threshold", "label": "Threshold", "type": "float", "min": 0, "max": 1, "step": 0.005, "default": 0.15},
+  {"key": "colour", "label": "Peak colour", "type": "color", "default": [1, 0.1, 0.1, 1]},
+  {"key": "dim", "label": "Dim the picture", "type": "float", "min": 0, "max": 0.9, "step": 0.01, "default": 0.3},
+  {"key": "greyscale", "label": "Grey picture under the peaks", "type": "bool", "default": true}
+ ],
+ "passes": "single"
+}

@@ -1,0 +1,15 @@
+{
+ "id": "push",
+ "label": "Push",
+ "group": "Slide and Push",
+ "space": "2D",
+ "from": ["PowerPoint Push", "Keynote Push", "Google Slides Slide", "CapCut Slide"],
+ "blurb": "The incoming picture pushes the outgoing one out of the frame, the two moving together as one strip. Pick the side it comes from, any of eight ways, and a gap to put a band of the background colour between them.",
+ "default_duration": 0.8,
+ "params": [
+  {"key": "direction", "label": "From", "type": "enum", "choices": ["Right", "Left", "Bottom", "Top", "Bottom right", "Bottom left", "Top right", "Top left"], "default": 0},
+  {"key": "timing", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth", "Strong", "Slow end", "Overshoot", "Bounce"], "default": 1},
+  {"key": "gap", "label": "Gap", "type": "float", "min": 0, "max": 0.5, "step": 0.01, "default": 0},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

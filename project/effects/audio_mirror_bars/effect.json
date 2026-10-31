@@ -1,0 +1,136 @@
+{
+ "id": "audio_mirror_bars",
+ "label": "Mirrored Bars",
+ "category": "Audio Reactive",
+ "tags": [
+  "audio",
+  "music",
+  "beat",
+  "reactive",
+  "visualiser"
+ ],
+ "version": 1,
+ "blurb": "Spectrum bars mirrored out from the middle: the deepest bass in the centre and the treble at both edges, growing up and down or just up. Drop a clip from the timeline, or a file from the bin or the Source monitor, on its Sound well.",
+ "params": [
+  {
+   "key": "centre",
+   "label": "Centre",
+   "type": "vec2",
+   "default": [
+    0.5,
+    0.75
+   ]
+  },
+  {
+   "key": "width",
+   "label": "Width",
+   "type": "float",
+   "min": 0.05,
+   "max": 1,
+   "step": 0.01,
+   "default": 0.8
+  },
+  {
+   "key": "height",
+   "label": "Height",
+   "type": "float",
+   "min": 0.01,
+   "max": 1,
+   "step": 0.01,
+   "default": 0.3
+  },
+  {
+   "key": "count",
+   "label": "Bars each side",
+   "type": "float",
+   "min": 2,
+   "max": 128,
+   "step": 1,
+   "default": 24
+  },
+  {
+   "key": "gap",
+   "label": "Gap",
+   "type": "float",
+   "min": 0,
+   "max": 0.9,
+   "step": 0.01,
+   "default": 0.3
+  },
+  {
+   "key": "both_ways",
+   "label": "Grow up and down",
+   "type": "bool",
+   "default": true
+  },
+  {
+   "key": "colour",
+   "label": "Colour",
+   "type": "color",
+   "default": [
+    1.0,
+    0.45,
+    0.75,
+    1
+   ]
+  },
+  {
+   "key": "peak_colour",
+   "label": "Peak colour",
+   "type": "color",
+   "default": [
+    1,
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "key": "opacity",
+   "label": "Opacity",
+   "type": "float",
+   "min": 0,
+   "max": 1,
+   "step": 0.01,
+   "default": 1
+  }
+ ],
+ "passes": [
+  {
+   "shader": "res://effects/_audio_visual/visual.gdshader",
+   "set": {
+    "visual": 0
+   }
+  }
+ ],
+ "reactive": {
+  "defaults": {
+   "snd_attack": 5,
+   "snd_release": 150,
+   "snd_threshold": 2,
+   "snd_bands": 2
+  },
+  "spectrum": {
+   "uniform": "spec_tex",
+   "bars": "count",
+   "peaks_on": "peaks_on"
+  },
+  "level": "level",
+  "look": true
+ },
+ "handles": [
+  {
+   "kind": "point",
+   "key": "centre"
+  },
+  {
+   "kind": "ring",
+   "key": "width",
+   "key_y": "height",
+   "about": "centre",
+   "unit": "uv",
+   "scale": 2.0,
+   "shape": "box"
+  }
+ ]
+}

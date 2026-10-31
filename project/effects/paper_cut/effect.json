@@ -1,0 +1,32 @@
+{
+ "id": "paper_cut",
+ "label": "Paper Cut",
+ "category": "Stylize",
+ "version": 1,
+ "blurb": "Turns whatever has alpha into a shape cut out of paper: a rough torn or scissor cut edge that follows the subject's own outline, a paper border with fibres along the cut, a lit edge so the paper reads as thick, paper grain on the surface and a small shadow so it lifts off what is behind. Put a keyer or a mask before it and the cut follows the keyed silhouette. The cut can keep one seed, take a new one whenever the shape changes, or in Smart only recut the part of the outline that changed.",
+ "params": [
+  {"key": "cut_style", "label": "Cut", "type": "enum", "choices": ["Torn", "Scissor cut", "Deckle edge"], "default": 0},
+  {"key": "rough", "label": "Ragged", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "cut_scale", "label": "Cut size", "type": "float", "min": 4.0, "max": 120.0, "step": 0.5, "default": 26.0, "unit": " px"},
+  {"key": "grow", "label": "Move the cut", "type": "float", "min": -20.0, "max": 20.0, "step": 0.1, "default": 0.0, "unit": " px"},
+  {"key": "edge_width", "label": "Paper border", "type": "float", "min": 0.0, "max": 40.0, "step": 0.1, "default": 8.0, "unit": " px"},
+  {"key": "paper_colour", "label": "Paper colour", "type": "color", "default": [0.97, 0.95, 0.9, 1.0]},
+  {"key": "fibre", "label": "Fibres on the cut", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "grain", "label": "Paper grain", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "thickness", "label": "Paper thickness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45},
+  {"key": "lift", "label": "Lift", "type": "float", "min": 0.0, "max": 40.0, "step": 0.1, "default": 5.0, "unit": " px"},
+  {"key": "lift_angle", "label": "Shadow falls", "type": "float", "min": -180.0, "max": 180.0, "step": 1.0, "default": 135.0, "unit": " deg"},
+  {"key": "shadow", "label": "Shadow", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "shadow_soft", "label": "Shadow softness", "type": "float", "min": 0.0, "max": 40.0, "step": 0.1, "default": 7.0, "unit": " px"},
+  {"key": "seed_mode", "label": "New cut", "type": "enum", "choices": ["Keep the seed below", "Whenever the shape changes", "Smart, only where it changed"], "default": 2},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "handles": [{"kind": "angle", "key": "lift_angle", "length": "lift"}],
+ "passes": [
+  {"shader": "res://effects/feather_matte/dist_across.gdshader", "map": {"reach_a": "edge_width", "reach_b": "cut_scale", "reach_c": "lift", "reach_d": "shadow_soft", "reach_e": "grow"}},
+  {"shader": "res://effects/feather_matte/dist_down.gdshader", "map": {"reach_a": "edge_width", "reach_b": "cut_scale", "reach_c": "lift", "reach_d": "shadow_soft", "reach_e": "grow"}},
+  {"shader": "sign.gdshader", "when": {"param": "seed_mode", "gte": 1}},
+  {"shader": "global.gdshader", "scale": 0.03125, "when": {"param": "seed_mode", "eq": 1}, "inputs": {"sign_tex": 2}},
+  {"shader": "paper.gdshader", "scale": 32.0, "inputs": {"dist_tex": 1, "sign_tex": 2, "global_tex": 3}}
+ ]
+}

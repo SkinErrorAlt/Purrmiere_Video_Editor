@@ -1,0 +1,21 @@
+{
+ "id": "dehalo",
+ "label": "Dehalo",
+ "category": "Blur & Sharpen",
+ "tags": ["repair"],
+ "version": 1,
+ "blurb": "Removes the bright and dark outlines that oversharpening leaves along edges, common in phone video, old DVDs and streams that were sharpened before they were squeezed. It pulls each pixel back inside the brightness range a softened copy has nearby, so the rim goes and the edge stays; Keep fine detail stops it touching thin lines and small specks, which would otherwise look like halos. Works on brightness only, so colours do not shift.",
+ "params": [
+  {"key": "width", "label": "Halo width", "type": "float", "min": 0.5, "max": 8.0, "step": 0.05, "default": 2.0, "unit": " px"},
+  {"key": "bright", "label": "Bright halos", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "dark", "label": "Dark halos", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "edge", "label": "Edge contrast", "type": "float", "min": 0.02, "max": 0.8, "step": 0.01, "default": 0.12},
+  {"key": "keep_detail", "label": "Keep fine detail", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.85},
+  {"key": "show", "label": "Show the halos", "type": "bool", "default": false}
+ ],
+ "passes": [
+  {"shader": "res://effects/smart_sharpen/blur.gdshader", "set": {"direction": [1.0, 0.0]}, "map": {"radius": "width"}},
+  {"shader": "res://effects/smart_sharpen/blur.gdshader", "set": {"direction": [0.0, 1.0]}, "map": {"radius": "width"}},
+  {"shader": "dehalo.gdshader"}
+ ]
+}

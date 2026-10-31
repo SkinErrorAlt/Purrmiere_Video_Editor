@@ -1,0 +1,19 @@
+{
+ "id": "bokeh_lights",
+ "label": "Bokeh",
+ "group": "Light and Film",
+ "space": "2D",
+ "from": ["CapCut Bokeh", "Filmora wedding set", "Film Impact bokeh transitions"],
+ "blurb": "Out of focus discs of light drift across and swell while both pictures soften and dissolve underneath. Nearer discs are bigger, softer and move faster, each disc has a slightly brighter rim, and where they overlap the light adds up. Take the disc colours from the pictures or from a warm palette.",
+ "default_duration": 1.5,
+ "params": [
+  {"key": "count", "label": "Discs", "type": "int", "min": 4, "max": 160, "step": 1, "default": 45},
+  {"key": "size", "label": "Disc size", "type": "float", "min": 10, "max": 300, "step": 1, "default": 90, "unit": " px"},
+  {"key": "spread", "label": "Size variety", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "shape", "label": "Shape", "type": "enum", "choices": ["Round", "Six blade"], "default": 0},
+  {"key": "colour_source", "label": "Colours", "type": "enum", "choices": ["From the pictures", "Warm palette"], "default": 0},
+  {"key": "drift", "label": "Drift", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.4},
+  {"key": "defocus", "label": "Defocus", "type": "float", "min": 0, "max": 80, "step": 1, "default": 26, "unit": " px"},
+  {"key": "intensity", "label": "Intensity", "type": "float", "min": 0, "max": 3, "step": 0.01, "default": 1}
+ ]
+}

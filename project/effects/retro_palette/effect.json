@@ -1,0 +1,19 @@
+{
+ "id": "retro_palette",
+ "label": "Retro Palette",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Snaps every colour to the nearest one in an old console or computer palette, matched by how close they look, with optional dithering and big pixels.",
+ "params": [
+  {"key": "palette", "label": "Palette", "type": "enum", "choices": ["Game Boy", "Game Boy Pocket", "CGA", "PICO-8", "Commodore 64", "ZX Spectrum", "Grey 4", "1-bit", "Custom 4"], "default": 0},
+  {"key": "dither", "label": "Dither", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "pixel_size", "label": "Pixel size", "type": "float", "min": 1.0, "max": 32.0, "step": 1.0, "default": 3.0, "unit": " px"},
+  {"key": "lightness_only", "label": "Match lightness only", "type": "bool", "default": false},
+  {"key": "colour_1", "label": "Custom colour 1", "type": "color", "default": [0.13, 0.08, 0.2, 1.0]},
+  {"key": "colour_2", "label": "Custom colour 2", "type": "color", "default": [0.62, 0.23, 0.4, 1.0]},
+  {"key": "colour_3", "label": "Custom colour 3", "type": "color", "default": [0.95, 0.55, 0.3, 1.0]},
+  {"key": "colour_4", "label": "Custom colour 4", "type": "color", "default": [1.0, 0.93, 0.75, 1.0]}
+ ],
+ "passes": "single"
+}

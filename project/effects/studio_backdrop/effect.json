@@ -1,0 +1,25 @@
+{
+ "id": "studio_backdrop",
+ "label": "Studio Backdrop",
+ "category": "Generate",
+ "tags": ["graphic"],
+ "version": 1,
+ "blurb": "A photo studio backdrop: a coloured paper sweep lit by a soft light, curving down into a floor with a pool of light on it, darker at the corners, with a fine grain so it never bands. Behind a keyed talking head, a product, a cut out character or a title. Drag the light on the Program monitor. Replaces the picture by default; Behind the picture puts it behind a keyed person.",
+ "params": [
+  {"key": "colour", "label": "Backdrop colour", "type": "color", "default": [0.3, 0.38, 0.52, 1.0]},
+  {"key": "light_colour", "label": "Light colour", "type": "color", "default": [1.0, 0.97, 0.92, 1.0]},
+  {"key": "light", "label": "Light", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "light_at", "label": "Light at", "type": "vec2", "default": [0.5, 0.38]},
+  {"key": "light_size", "label": "Light size", "type": "float", "min": 0.1, "max": 2.0, "step": 0.01, "default": 0.7},
+  {"key": "floor_amount", "label": "Floor", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "horizon", "label": "Floor line", "type": "float", "min": 0.3, "max": 1.0, "step": 0.005, "default": 0.72},
+  {"key": "vignette", "label": "Dark corners", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "grain", "label": "Grain", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.25},
+  {"key": "blend", "label": "How it mixes", "type": "enum", "choices": ["Replace", "Multiply", "Screen", "Overlay", "Add", "Soft light", "Over", "Behind the picture"], "default": 0},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0}
+ ],
+ "handles": [{"kind": "point", "key": "light_at"}, {"kind": "ring", "key": "light_size", "about": "light_at", "unit": "h"}],
+ "passes": [
+  {"shader": "studio.gdshader"}
+ ]
+}

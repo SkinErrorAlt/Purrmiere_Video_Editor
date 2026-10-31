@@ -1,0 +1,111 @@
+{
+ "id": "grain_match",
+ "label": "Grain Match",
+ "category": "Noise & Grain",
+ "version": 1,
+ "blurb": "Measures how much grain or sensor noise the clip already has and adds only what is missing to reach a level, so clean game capture, a phone shot and a noisy camera shot sit together in one edit. Pick a reference picture from the bin instead and it matches that picture's grain. It measures on the flattest parts of the frame and leaves black bars and clipped areas out, and a clip already noisier than the target gets nothing added.",
+ "params": [
+  {
+   "key": "match",
+   "label": "Match to",
+   "type": "enum",
+   "choices": [
+    "A grain level",
+    "A reference picture"
+   ],
+   "default": 0
+  },
+  {
+   "key": "level",
+   "label": "Grain level",
+   "type": "float",
+   "min": 0.0,
+   "max": 10.0,
+   "step": 0.1,
+   "default": 2.0,
+   "unit": " %"
+  },
+  {
+   "key": "reference",
+   "label": "Reference picture",
+   "type": "texture",
+   "default": ""
+  },
+  {
+   "key": "grain_size",
+   "label": "Grain size",
+   "type": "float",
+   "min": 1.0,
+   "max": 4.0,
+   "step": 0.05,
+   "default": 1.3,
+   "unit": " px"
+  },
+  {
+   "key": "colour",
+   "label": "Colour in the grain",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.2
+  },
+  {
+   "key": "response",
+   "label": "Less in blacks and whites",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.6
+  },
+  {
+   "key": "animate",
+   "label": "Moves each frame",
+   "type": "bool",
+   "default": true
+  },
+  {
+   "key": "show_grain",
+   "label": "Show the grain only",
+   "type": "bool",
+   "default": false
+  }
+ ],
+ "passes": [
+  {
+   "shader": "measure.gdshader",
+   "scale": 0.25,
+   "set": {
+    "from_ref": false
+   }
+  },
+  {
+   "shader": "cells.gdshader",
+   "scale": 0.125
+  },
+  {
+   "shader": "measure.gdshader",
+   "scale": 8.0,
+   "set": {
+    "from_ref": true
+   }
+  },
+  {
+   "shader": "cells.gdshader",
+   "scale": 0.125
+  },
+  {
+   "shader": "combine.gdshader",
+   "scale": 1.0,
+   "inputs": {
+    "clip_cells": 1,
+    "ref_cells": 3
+   }
+  },
+  {
+   "shader": "apply.gdshader",
+   "scale": 32.0
+  }
+ ]
+}

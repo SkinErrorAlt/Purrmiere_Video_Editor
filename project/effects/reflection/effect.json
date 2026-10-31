@@ -1,0 +1,20 @@
+{
+ "id": "reflection",
+ "label": "Reflection",
+ "category": "Light & Shadow",
+ "version": 1,
+ "blurb": "A mirrored copy of the picture below a line, or above it, that fades and softens with distance. It stays inside the clip's own frame.",
+ "params": [
+  {"key": "edge", "label": "Mirror line", "type": "float", "min": 0, "max": 1, "step": 0.001, "default": 0.65},
+  {"key": "above", "label": "Reflect upwards", "type": "bool", "default": false},
+  {"key": "fade_length", "label": "Fade length", "type": "float", "min": 0.01, "max": 1, "step": 0.01, "default": 0.3},
+  {"key": "opacity", "label": "Opacity", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "blur", "label": "Blur", "type": "float", "min": 0, "max": 60, "step": 0.5, "default": 10, "unit": " px"},
+  {"key": "gap", "label": "Gap", "type": "float", "min": 0, "max": 400, "step": 1, "default": 0, "unit": " px"},
+  {"key": "keep_under", "label": "Keep the picture under it", "type": "bool", "default": false}
+ ],
+ "handles": [{"kind": "band", "key": "edge"}],
+ "passes": [
+  {"shader": "reflection.gdshader"}
+ ]
+}

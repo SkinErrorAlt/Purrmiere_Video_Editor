@@ -1,0 +1,15 @@
+{
+ "id": "sprayed_strokes",
+ "label": "Sprayed Strokes",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Photoshop's Sprayed Strokes: the picture is repainted in angled, sprayed streaks of its own colours, with every edge broken up by a fine spray. Stroke length sets how long the streaks run and Spray radius how far the spray scatters.",
+ "params": [
+  {"key": "stroke_length", "label": "Stroke length", "type": "float", "min": 0.0, "max": 20.0, "step": 0.1, "default": 12.0, "unit": " px"},
+  {"key": "spray_radius", "label": "Spray radius", "type": "float", "min": 0.0, "max": 25.0, "step": 0.1, "default": 7.0, "unit": " px"},
+  {"key": "direction", "label": "Stroke direction", "type": "enum", "choices": ["Right diagonal", "Horizontal", "Left diagonal", "Vertical"], "default": 0},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

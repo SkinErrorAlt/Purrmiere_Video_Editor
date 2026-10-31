@@ -1,0 +1,17 @@
+{
+ "id": "log_wheels",
+ "label": "Log Wheels",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Shadow, midtone and highlight balance with movable range borders, plus contrast round a pivot: the narrow, film style wheels of a grading suite.",
+ "params": [
+  {"key": "shadow", "label": "Shadow", "type": "vec3", "min": -0.5, "max": 0.5, "step": 0.005, "default": [0.0, 0.0, 0.0]},
+  {"key": "midtone", "label": "Midtone", "type": "vec3", "min": -0.5, "max": 0.5, "step": 0.005, "default": [0.0, 0.0, 0.0]},
+  {"key": "highlight", "label": "Highlight", "type": "vec3", "min": -0.5, "max": 0.5, "step": 0.005, "default": [0.0, 0.0, 0.0]},
+  {"key": "low_range", "label": "Low range", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.33},
+  {"key": "high_range", "label": "High range", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.55},
+  {"key": "contrast", "label": "Contrast", "type": "float", "min": 0, "max": 3, "step": 0.01, "default": 1.0},
+  {"key": "pivot", "label": "Pivot", "type": "float", "min": 0, "max": 1, "step": 0.005, "default": 0.435}
+ ],
+ "passes": "single"
+}

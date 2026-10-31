@@ -1,0 +1,16 @@
+{
+ "id": "dering",
+ "label": "Mosquito Noise Fix",
+ "category": "Image Control",
+ "tags": ["repair"],
+ "version": 1,
+ "blurb": "Cleans the buzzing specks and ripples that heavy compression leaves round sharp edges (text, hard outlines, a dark shape on a bright sky), known as ringing or mosquito noise. It smooths only the small wobbles close to strong edges, never across the edge itself, and leaves texture away from edges alone, where Denoise and Surface Blur would soften everything. Show where lights the areas it works on.",
+ "params": [
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "radius", "label": "Radius", "type": "float", "min": 1.0, "max": 4.0, "step": 0.1, "default": 2.0, "unit": " px"},
+  {"key": "reach", "label": "Distance from edges", "type": "float", "min": 2.0, "max": 16.0, "step": 0.5, "default": 6.0, "unit": " px"},
+  {"key": "edge", "label": "Edge contrast", "type": "float", "min": 0.05, "max": 0.8, "step": 0.01, "default": 0.25},
+  {"key": "show", "label": "Show where", "type": "bool", "default": false}
+ ],
+ "passes": "single"
+}

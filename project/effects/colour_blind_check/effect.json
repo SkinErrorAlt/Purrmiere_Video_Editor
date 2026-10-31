@@ -1,0 +1,14 @@
+{
+ "id": "colour_blind_check",
+ "label": "Colour Blindness Check",
+ "category": "Utility",
+ "tags": ["measure"],
+ "version": 1,
+ "blurb": "Shows the picture as someone with colour blindness sees it, so you can check that text, thumbnails and game colours still read. The most common kind, weak green, is picked first. Half and half puts the normal picture on the left to compare. Take it off before export.",
+ "params": [
+  {"key": "kind", "label": "Kind", "type": "enum", "choices": ["Weak red (protanopia)", "Weak green (deuteranopia)", "Weak blue (tritanopia)", "No colour (achromatopsia)"], "default": 1},
+  {"key": "severity", "label": "Severity", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "half_and_half", "label": "Half and half", "type": "bool", "default": false}
+ ],
+ "passes": "single"
+}

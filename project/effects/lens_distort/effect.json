@@ -1,0 +1,14 @@
+{
+ "id": "lens_distort",
+ "label": "Lens Distortion",
+ "category": "Distort",
+ "version": 1,
+ "params": [
+  {"key": "amount", "label": "Curvature", "type": "float", "min": -1, "max": 1, "step": 0.01, "default": 0.2},
+  {"key": "zoom", "label": "Zoom", "type": "float", "min": 0.5, "max": 2, "step": 0.01, "default": 1},
+  {"key": "centre", "label": "Centre", "type": "vec2", "min": 0, "max": 1, "step": 0.01, "default": [0.5, 0.5]},
+  {"key": "edge", "label": "Repeat Edge Pixels", "type": "bool", "default": false}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}],
+ "passes": "single"
+}

@@ -1,0 +1,22 @@
+{
+ "id": "garbage_matte",
+ "label": "Garbage Matte",
+ "category": "Keying",
+ "version": 1,
+ "blurb": "Cuts away everything outside an eight point shape, so the lights, stands and edges of the room round a green screen never reach the keyer. Drag the eight points on the monitor, feather the edge, or invert it to cut a hole instead. Show the shape draws the outline over the whole picture while you place it. Cut Out gives fixed rectangles and ellipses; this is a free shape.",
+ "params": [
+  {"key": "point_1", "label": "Top left", "type": "vec2", "min": -0.5, "max": 1.5, "default": [0.06, 0.06]},
+  {"key": "point_2", "label": "Top", "type": "vec2", "min": -0.5, "max": 1.5, "default": [0.5, 0.04]},
+  {"key": "point_3", "label": "Top right", "type": "vec2", "min": -0.5, "max": 1.5, "default": [0.94, 0.06]},
+  {"key": "point_4", "label": "Right", "type": "vec2", "min": -0.5, "max": 1.5, "default": [0.96, 0.5]},
+  {"key": "point_5", "label": "Bottom right", "type": "vec2", "min": -0.5, "max": 1.5, "default": [0.94, 0.94]},
+  {"key": "point_6", "label": "Bottom", "type": "vec2", "min": -0.5, "max": 1.5, "default": [0.5, 0.96]},
+  {"key": "point_7", "label": "Bottom left", "type": "vec2", "min": -0.5, "max": 1.5, "default": [0.06, 0.94]},
+  {"key": "point_8", "label": "Left", "type": "vec2", "min": -0.5, "max": 1.5, "default": [0.04, 0.5]},
+  {"key": "feather", "label": "Feather", "type": "float", "min": 0.0, "max": 200.0, "step": 0.1, "default": 2.0, "unit": " px"},
+  {"key": "invert", "label": "Invert", "type": "bool", "default": false},
+  {"key": "show_shape", "label": "Show the shape", "type": "bool", "default": false}
+ ],
+ "handles": [{"kind": "point", "keys": ["point_1", "point_2", "point_3", "point_4", "point_5", "point_6", "point_7", "point_8"]}],
+ "passes": "single"
+}

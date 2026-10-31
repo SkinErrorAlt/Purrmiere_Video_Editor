@@ -1,0 +1,17 @@
+{
+ "id": "depth_haze",
+ "label": "Depth Haze",
+ "category": "Light & Shadow",
+ "version": 1,
+ "blurb": "Atmosphere that thickens with distance: a haze colour rises towards the horizon of a ramp, or follows a depth picture, to sit composites into a scene.",
+ "params": [
+  {"key": "source", "label": "Depth from", "type": "enum", "choices": ["Ramp", "Picture (white is near)"], "default": 0},
+  {"key": "picture", "label": "Depth picture", "type": "texture", "default": ""},
+  {"key": "near_line", "label": "Clear at", "type": "float", "min": 0, "max": 1, "step": 0.005, "default": 0.95},
+  {"key": "far_line", "label": "Thickest at", "type": "float", "min": 0, "max": 1, "step": 0.005, "default": 0.35},
+  {"key": "density", "label": "Density", "type": "float", "min": 0, "max": 3, "step": 0.01, "default": 0.8},
+  {"key": "colour", "label": "Haze colour", "type": "color", "default": [0.75, 0.82, 0.9, 1]}
+ ],
+ "handles": [{"kind": "edges", "top": "near_line"}, {"kind": "edges", "top": "far_line"}],
+ "passes": "single"
+}

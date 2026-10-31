@@ -1,0 +1,18 @@
+{
+ "id": "card_flip",
+ "label": "Card Flip",
+ "category": "Transition",
+ "version": 1,
+ "blurb": "The picture turns over like a card in 3D, edge on at the cut, and the next clip turns in to finish the same spin. Put it on both clips of a cut, or use Progress to key it by hand. The track below shows round the card while it turns.",
+ "params": [
+  {"key": "when", "label": "When", "type": "enum", "choices": ["In at the start and out at the end", "In at the start", "Out at the end", "By Progress"], "default": 0},
+  {"key": "duration", "label": "Length", "type": "float", "min": 0.05, "max": 3.0, "step": 0.01, "default": 0.45, "unit": " s"},
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0.0, "max": 1.0, "step": 0.005, "default": 0.0},
+  {"key": "axis", "label": "Turn", "type": "enum", "choices": ["Sideways", "Over the top"], "default": 0},
+  {"key": "reverse", "label": "The other way", "type": "bool", "default": false},
+  {"key": "perspective", "label": "Depth", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "shade", "label": "Shading", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "shrink", "label": "Pull back", "type": "float", "min": 0.0, "max": 0.8, "step": 0.01, "default": 0.15}
+ ],
+ "passes": "single"
+}

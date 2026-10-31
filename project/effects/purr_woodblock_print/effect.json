@@ -1,0 +1,17 @@
+{
+ "id": "purr_woodblock_print",
+ "label": "Woodblock Print",
+ "category": "Purrmiere",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "A traditional woodblock print: the picture snapped to a small set of soft pigment colours, a black key block outline, the grain of the wooden block showing in the ink, a graded sky fading in from the top and soft fibrous paper.",
+ "params": [
+  {"key": "outline", "label": "Key block line", "type": "float", "min": 0.0, "max": 6.0, "step": 0.1, "default": 1.8, "unit": " px"},
+  {"key": "threshold", "label": "Line threshold", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.25},
+  {"key": "grain", "label": "Wood grain", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45},
+  {"key": "sky_fade", "label": "Graded sky", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "sky", "label": "Sky ink", "type": "color", "default": [0.15, 0.22, 0.4, 1.0]},
+  {"key": "paper", "label": "Paper", "type": "color", "default": [0.94, 0.9, 0.8, 1.0]}
+ ],
+ "passes": "single"
+}

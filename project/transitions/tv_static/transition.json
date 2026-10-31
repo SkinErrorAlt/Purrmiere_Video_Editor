@@ -1,0 +1,18 @@
+{
+ "id": "tv_static",
+ "label": "Static",
+ "group": "Glitch",
+ "space": "2D",
+ "from": ["Impress Static", "CapCut TV Static"],
+ "blurb": "The picture breaks up into flickering TV snow with rolling lines, and the incoming picture tunes in out of the noise.",
+ "default_duration": 0.8,
+ "steps": true,
+ "params": [
+  {"key": "amount", "label": "Snow", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 1},
+  {"key": "grain", "label": "Grain", "type": "float", "min": 1, "max": 16, "step": 0.5, "default": 2, "unit": " px"},
+  {"key": "colour", "label": "Coloured snow", "type": "bool", "default": false},
+  {"key": "rate", "label": "Flicker", "type": "float", "min": 4, "max": 60, "step": 1, "default": 24},
+  {"key": "roll", "label": "Roll and jitter", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "hold", "label": "Hold", "type": "float", "min": 0, "max": 0.8, "step": 0.01, "default": 0.15}
+ ]
+}

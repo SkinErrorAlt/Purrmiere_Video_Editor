@@ -1,0 +1,24 @@
+{
+ "id": "split_screen",
+ "label": "Split Screen",
+ "category": "Transform",
+ "version": 1,
+ "canvas": "frame",
+ "blurb": "Puts the clip in one part of a split screen: a half, a third or a quarter of the frame. Put one clip on each track and give each its own part; the picture fills its part (cropped round the centre you choose) or fits whole, with a gap between the parts in a colour and rounded corners if you like. It can slide in from its own side. For side by side reactions, two players or before and after.",
+ "params": [
+  {"key": "part", "label": "Part of the frame", "type": "enum", "choices": ["Left half", "Right half", "Top half", "Bottom half", "Left third", "Middle third, side by side", "Right third", "Top third", "Middle third, stacked", "Bottom third", "Top left quarter", "Top right quarter", "Bottom left quarter", "Bottom right quarter"], "default": 0},
+  {"key": "fit", "label": "Picture", "type": "enum", "choices": ["Fill the part", "Fit the whole picture"], "default": 0},
+  {"key": "focus", "label": "Crop centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "zoom", "label": "Zoom", "type": "float", "min": 1.0, "max": 4.0, "step": 0.01, "default": 1.0},
+  {"key": "gap", "label": "Gap", "type": "float", "min": 0.0, "max": 0.06, "step": 0.0005, "default": 0.006},
+  {"key": "outer", "label": "Gap round the outside too", "type": "bool", "default": false},
+  {"key": "gap_colour", "label": "Gap colour", "type": "color", "default": [0.05, 0.05, 0.06, 1.0]},
+  {"key": "roundness", "label": "Round corners", "type": "float", "min": 0.0, "max": 0.5, "step": 0.005, "default": 0.0},
+  {"key": "animate", "label": "Comes in", "type": "enum", "choices": ["Already there", "Slides in", "Slides in and out"], "default": 0},
+  {"key": "anim_time", "label": "Coming in time", "type": "float", "min": 0.05, "max": 2.0, "step": 0.01, "default": 0.45, "unit": " s"}
+ ],
+ "handles": [],
+ "passes": [
+  {"shader": "split.gdshader"}
+ ]
+}

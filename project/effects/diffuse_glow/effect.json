@@ -1,0 +1,26 @@
+{
+ "id": "diffuse_glow",
+ "label": "Diffuse Glow",
+ "category": "Light & Shadow",
+ "tags": ["light", "look"],
+ "version": 1,
+ "blurb": "The Photoshop filter: the highlights wash towards a glow colour (white by default) filled with fine see through grain, so the bright parts look luminous and slightly speckled while the darks stay clean. Graininess, Glow Amount and Clear Amount use Photoshop's ranges and defaults; a higher Clear Amount keeps more of the picture untouched and shrinks the glow to the brightest parts.",
+ "params": [
+  {"key": "graininess", "label": "Graininess", "type": "float", "min": 0, "max": 10, "step": 1, "default": 6},
+  {"key": "glow_amount", "label": "Glow Amount", "type": "float", "min": 0, "max": 20, "step": 1, "default": 10},
+  {"key": "clear_amount", "label": "Clear Amount", "type": "float", "min": 0, "max": 20, "step": 1, "default": 15},
+  {"key": "glow_colour", "label": "Glow colour", "type": "color", "default": [1.0, 1.0, 1.0, 1.0]},
+  {"key": "grain_size", "label": "Grain size", "type": "float", "min": 1, "max": 8, "step": 0.1, "default": 1, "unit": " px"},
+  {"key": "new_grain", "label": "New grain every frame", "type": "bool", "default": false}
+ ],
+ "passes": [
+  {"shader": "luma.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/blur_gaussian/up.gdshader", "scale": 2.0},
+  {"shader": "res://effects/blur_gaussian/up.gdshader", "scale": 2.0},
+  {"shader": "res://effects/blur_gaussian/up.gdshader", "scale": 2.0},
+  {"shader": "compose.gdshader", "scale": 2.0}
+ ]
+}

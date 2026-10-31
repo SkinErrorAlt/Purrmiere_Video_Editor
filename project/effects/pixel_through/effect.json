@@ -1,0 +1,23 @@
+{
+ "id": "pixel_through",
+ "label": "Pixelate Through",
+ "category": "Transition",
+ "version": 1,
+ "blurb": "The picture breaks into bigger and bigger blocks up to the cut and the next clip sharpens back out of the blocks: the retro game transition. Squares or hexagons, grown smoothly or in steps like an old console. Unlike Block Dissolve nothing vanishes; the blocks hide the cut. Put it on both clips of a cut, or use Progress to key it by hand.",
+ "params": [
+  {"key": "when", "label": "When", "type": "enum", "choices": ["In at the start and out at the end", "In at the start", "Out at the end", "By Progress"], "default": 0},
+  {"key": "duration", "label": "Length", "type": "float", "min": 0.05, "max": 3.0, "step": 0.01, "default": 0.5, "unit": " s"},
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0.0, "max": 1.0, "step": 0.005, "default": 0.0},
+  {"key": "size", "label": "Biggest block", "type": "float", "min": 4.0, "max": 400.0, "step": 1.0, "default": 120.0, "unit": " px"},
+  {"key": "shape", "label": "Blocks", "type": "enum", "choices": ["Squares", "Hexagons"], "default": 0},
+  {"key": "steps", "label": "Growth", "type": "enum", "choices": ["Smooth", "In steps"], "default": 1}
+ ],
+ "passes": [
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "blocks.gdshader", "scale": 32.0, "inputs": {"level_1": 0, "level_2": 1, "level_3": 2, "level_4": 3}}
+ ]
+}

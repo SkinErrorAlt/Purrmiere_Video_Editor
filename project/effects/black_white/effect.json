@@ -1,0 +1,11 @@
+{
+ "id": "black_white",
+ "label": "Black & White",
+ "category": "Image Control",
+ "version": 1,
+ "params": [
+  {"key": "amount", "label": "Amount", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 1},
+  {"key": "weights", "label": "Channel Weights", "type": "vec3", "min": 0, "max": 1, "step": 0.01, "default": [0.299, 0.587, 0.114]}
+ ],
+ "passes": "single"
+}

@@ -1,0 +1,11 @@
+{
+ "id": "remove_colour_matting",
+ "label": "Remove Colour Matting",
+ "category": "Channel",
+ "version": 1,
+ "blurb": "For a picture whose see through edges were mixed with a background colour when it was made, such as a logo rendered over black or white. It takes the background back out of every part that is not fully solid, so soft edges and shadows stop showing a dark or light fringe. Set Background to the colour the picture was made on.",
+ "params": [
+  {"key": "background", "label": "Background", "type": "color", "default": [0.0, 0.0, 0.0, 1.0]}
+ ],
+ "passes": "single"
+}

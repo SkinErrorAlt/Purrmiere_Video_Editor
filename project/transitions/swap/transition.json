@@ -1,0 +1,19 @@
+{
+ "id": "swap",
+ "label": "Swap",
+ "group": "3D",
+ "space": "3D",
+ "from": ["Keynote Swap", "gl swap"],
+ "blurb": "The two pictures trade places like cards being shuffled: the outgoing one swings out to the side and back while the incoming one swings round from behind it to the front.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "direction", "label": "Outgoing goes", "type": "enum", "choices": ["Left", "Right"], "default": 0},
+  {"key": "spread", "label": "Spread", "type": "float", "min": 0, "max": 1.5, "step": 0.01, "default": 0.6},
+  {"key": "depth", "label": "Depth", "type": "float", "min": 0, "max": 3, "step": 0.01, "default": 1.4},
+  {"key": "turn", "label": "Turn", "type": "float", "min": 0, "max": 60, "step": 1, "default": 25, "unit": " deg"},
+  {"key": "reflection", "label": "Reflection", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 10, "max": 90, "step": 1, "default": 40, "unit": " deg"},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.4},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

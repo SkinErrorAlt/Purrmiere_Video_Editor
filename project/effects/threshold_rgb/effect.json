@@ -1,0 +1,16 @@
+{
+ "id": "threshold_rgb",
+ "label": "Threshold RGB",
+ "category": "Image Control",
+ "version": 1,
+ "blurb": "Splits each colour channel on its own level: a channel brighter than its threshold goes fully on and the rest goes off, so the picture is left in the eight hard colours of red, green and blue mixed. Each channel can be flipped.",
+ "params": [
+  {"key": "red_threshold", "label": "Red threshold", "type": "float", "min": 0.0, "max": 1.0, "step": 0.005, "default": 0.5},
+  {"key": "green_threshold", "label": "Green threshold", "type": "float", "min": 0.0, "max": 1.0, "step": 0.005, "default": 0.5},
+  {"key": "blue_threshold", "label": "Blue threshold", "type": "float", "min": 0.0, "max": 1.0, "step": 0.005, "default": 0.5},
+  {"key": "invert_red", "label": "Flip red", "type": "bool", "default": false},
+  {"key": "invert_green", "label": "Flip green", "type": "bool", "default": false},
+  {"key": "invert_blue", "label": "Flip blue", "type": "bool", "default": false}
+ ],
+ "passes": "single"
+}

@@ -1,0 +1,15 @@
+{
+ "id": "solarize",
+ "label": "Solarize",
+ "category": "Stylize",
+ "version": 1,
+ "blurb": "Turns the tones above a threshold upside down, like a print flashed with light while it develops.",
+ "params": [
+  {"key": "threshold", "label": "Threshold", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "mode", "label": "Works on", "type": "enum", "choices": ["Lightness", "Per channel"], "default": 0},
+  {"key": "smoothness", "label": "Smoothness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.1},
+  {"key": "flip_darks", "label": "Flip the darks instead", "type": "bool", "default": false},
+  {"key": "mix_back", "label": "Mix back the original", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.0}
+ ],
+ "passes": "single"
+}

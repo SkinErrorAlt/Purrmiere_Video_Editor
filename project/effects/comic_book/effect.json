@@ -1,0 +1,19 @@
+{
+ "id": "comic_book",
+ "label": "Comic Book",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "A printed comic panel: bold flat colours in a few tones, black ink outlines, halftone dots in the shadows and paper white in the highlights.",
+ "params": [
+  {"key": "levels", "label": "Tones", "type": "int", "min": 2, "max": 8, "step": 1, "default": 4},
+  {"key": "saturation", "label": "Colour", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 1.35},
+  {"key": "outline", "label": "Ink lines", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "line_width", "label": "Line width", "type": "float", "min": 0.5, "max": 6.0, "step": 0.1, "default": 1.5, "unit": " px"},
+  {"key": "dots", "label": "Halftone dots", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "dot_size", "label": "Dot size", "type": "float", "min": 3.0, "max": 40.0, "step": 0.5, "default": 8.0, "unit": " px"},
+  {"key": "paper_colour", "label": "Paper colour", "type": "color", "default": [1.0, 0.97, 0.9, 1.0]},
+  {"key": "ink_colour", "label": "Ink colour", "type": "color", "default": [0.05, 0.04, 0.06, 1.0]}
+ ],
+ "passes": "single"
+}

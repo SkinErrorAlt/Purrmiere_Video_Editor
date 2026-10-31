@@ -1,0 +1,16 @@
+{
+ "id": "purr_quilt_patch",
+ "label": "Patchwork Quilt",
+ "category": "Purrmiere",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Sews the picture together from fabric patches: each square takes its colour from the picture and its own print of gingham, polka dots, stripes or plain cotton, puffed up with quilting and joined with stitched seams.",
+ "params": [
+  {"key": "patch", "label": "Patch size", "type": "float", "min": 10.0, "max": 300.0, "step": 0.5, "default": 56.0, "unit": " px"},
+  {"key": "print", "label": "Fabric prints", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "puff", "label": "Quilted puff", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "stitch", "label": "Seam stitches", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "thread", "label": "Thread", "type": "color", "default": [0.97, 0.94, 0.88, 1.0]}
+ ],
+ "passes": "single"
+}

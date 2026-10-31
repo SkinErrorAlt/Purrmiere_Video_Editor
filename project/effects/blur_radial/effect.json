@@ -1,0 +1,22 @@
+{
+ "id": "blur_radial",
+ "label": "Radial Blur",
+ "category": "Blur & Sharpen",
+ "version": 1,
+ "blurb": "Zoom, spin or spiral blur around a centre. Spiral zooms and spins at once, and its Spin Against Zoom setting leans it towards a pure spin (1) or a pure zoom (0). Low antialiasing runs the pass at half size.",
+ "params": [
+  {"key": "mode", "label": "Type", "type": "enum", "choices": ["Zoom", "Spin", "Spiral"], "default": 0},
+  {"key": "centre", "label": "Centre", "type": "vec2", "min": 0, "max": 1, "step": 0.01, "default": [0.5, 0.5]},
+  {"key": "amount", "label": "Amount", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.15},
+  {"key": "one_sided", "label": "One Sided", "type": "bool", "default": false},
+  {"key": "antialias", "label": "Antialiasing", "type": "enum", "choices": ["Low", "High"], "default": 1},
+  {"key": "edge", "label": "Repeat Edge Pixels", "type": "bool", "default": true},
+  {"key": "spiral_spin", "label": "Spiral: Spin Against Zoom", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}],
+ "passes": [
+  {"shader": "radial.gdshader", "scale": 0.5, "when": {"param": "antialias", "eq": 0}},
+  {"shader": "res://effects/blur_gaussian/up.gdshader", "scale": 2.0, "when": {"param": "antialias", "eq": 0}},
+  {"shader": "radial.gdshader", "scale": 1.0, "when": {"param": "antialias", "eq": 1}}
+ ]
+}

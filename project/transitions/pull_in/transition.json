@@ -1,0 +1,15 @@
+{
+ "id": "pull_in",
+ "label": "Pull In",
+ "group": "Zoom and Camera",
+ "space": "2D",
+ "from": ["CapCut Pull In"],
+ "blurb": "The camera rushes forward: the outgoing picture zooms in fast under zoom blur and the incoming one keeps the same rush going as it lands, so the cut hides inside the blur. The edges are mirrored so no gap shows.",
+ "default_duration": 0.6,
+ "params": [
+  {"key": "zoom", "label": "Zoom", "type": "float", "min": 1.2, "max": 6, "step": 0.1, "default": 2.5},
+  {"key": "blur", "label": "Zoom blur", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "blend", "label": "Blend", "type": "float", "min": 0.01, "max": 0.3, "step": 0.01, "default": 0.06},
+  {"key": "centre", "label": "Centre", "type": "vec2", "min": 0, "max": 1, "step": 0.01, "default": [0.5, 0.5]}
+ ]
+}

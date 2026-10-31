@@ -1,0 +1,17 @@
+{
+ "id": "fall_over",
+ "label": "Fall Over",
+ "group": "3D",
+ "space": "3D",
+ "from": ["PowerPoint Fall Over"],
+ "blurb": "The outgoing picture topples over backwards from its bottom edge, leaning to one side as it falls, and uncovers the incoming picture standing behind it.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "direction", "label": "Leans", "type": "enum", "choices": ["Left", "Right"], "default": 0},
+  {"key": "twist", "label": "Lean", "type": "float", "min": 0, "max": 30, "step": 0.1, "default": 12, "unit": " deg"},
+  {"key": "shadow", "label": "Shadow", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 10, "max": 90, "step": 1, "default": 40, "unit": " deg"},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

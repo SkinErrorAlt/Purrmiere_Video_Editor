@@ -1,0 +1,27 @@
+{
+ "id": "plate_blur",
+ "label": "Plate Blur",
+ "category": "Blur & Sharpen",
+ "version": 1,
+ "blurb": "Hides a number plate, a sign, a phone screen or a document seen at an angle: drag the four corners onto it on the Program monitor and it is blurred, pixelated in its own perspective (the blocks lie flat on the plate) or covered in a colour. Grow reaches a little past the corners so no edge of a letter shows. With Record on, dragging the corners writes keys so it follows the plate.",
+ "params": [
+  {"key": "top_left", "label": "Top left", "type": "vec2", "default": [0.4, 0.62]},
+  {"key": "top_right", "label": "Top right", "type": "vec2", "default": [0.6, 0.62]},
+  {"key": "bottom_right", "label": "Bottom right", "type": "vec2", "default": [0.6, 0.71]},
+  {"key": "bottom_left", "label": "Bottom left", "type": "vec2", "default": [0.4, 0.71]},
+  {"key": "style", "label": "Hide with", "type": "enum", "choices": ["Blur", "Big pixels", "Solid colour"], "default": 0},
+  {"key": "columns", "label": "Pixels across", "type": "float", "min": 2.0, "max": 30.0, "step": 1.0, "default": 8.0},
+  {"key": "rows", "label": "Pixels down", "type": "float", "min": 1.0, "max": 10.0, "step": 1.0, "default": 2.0},
+  {"key": "colour", "label": "Colour", "type": "color", "default": [0.1, 0.1, 0.1, 1.0]},
+  {"key": "grow", "label": "Grow", "type": "float", "min": 0.0, "max": 30.0, "step": 0.5, "default": 4.0, "unit": " px"},
+  {"key": "feather", "label": "Soft edge", "type": "float", "min": 0.0, "max": 30.0, "step": 0.5, "default": 3.0, "unit": " px"},
+  {"key": "show_outline", "label": "Show the outline", "type": "bool", "default": false}
+ ],
+ "handles": [{"kind": "quad", "keys": ["top_left", "top_right", "bottom_right", "bottom_left"]}],
+ "passes": [
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "plate.gdshader", "scale": 8.0, "inputs": {"mid_tex": 1}}
+ ]
+}

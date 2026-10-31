@@ -1,0 +1,16 @@
+{
+ "id": "chroma_smear",
+ "label": "Chroma Smear",
+ "category": "VHS & Analogue",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Drags the colour sideways while the brightness stays sharp, which is what makes tape colour look soft.",
+ "params": [
+  {"key": "smear", "label": "How far", "type": "float", "min": 0.0, "max": 60.0, "step": 0.1, "default": 8.0},
+  {"key": "taps", "label": "Quality", "type": "int", "min": 2, "max": 16, "step": 1, "default": 6},
+  {"key": "direction", "label": "Direction", "type": "float", "min": -180.0, "max": 180.0, "step": 1.0, "default": 0.0, "unit": " deg"},
+  {"key": "saturation", "label": "Colour strength", "type": "float", "min": 0.0, "max": 3.0, "step": 0.01, "default": 1.0}
+ ],
+ "handles": [{"kind": "angle", "key": "direction", "zero": "right", "turn": "cw", "length": "smear", "length_unit": "px"}],
+ "passes": "single"
+}

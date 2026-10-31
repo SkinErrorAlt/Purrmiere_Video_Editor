@@ -1,0 +1,22 @@
+{
+ "id": "matte_choke",
+ "label": "Matte Choker",
+ "category": "Keying",
+ "version": 1,
+ "blurb": "Shrinks the alpha edge inwards, or grows it outwards with a negative choke, over a round area, then softens it. The colour at the new edge can be pulled from inside the picture so no dark or green fringe shows.",
+ "params": [
+  {"key": "choke", "label": "Choke", "type": "float", "min": -40.0, "max": 40.0, "step": 0.1, "default": 1.0, "unit": " px"},
+  {"key": "softness", "label": "Softness", "type": "float", "min": 0.0, "max": 50.0, "step": 0.1, "default": 1.0, "unit": " px"},
+  {"key": "edge_colour_fix", "label": "Pull edge colour from inside", "type": "bool", "default": true},
+  {"key": "show_matte", "label": "Show the matte", "type": "bool", "default": false}
+ ],
+ "passes": [
+  {"shader": "shrink_across.gdshader", "when": {"param": "choke", "ne": 0}},
+  {"shader": "shrink_down.gdshader", "when": {"param": "choke", "ne": 0}},
+  {"shader": "res://effects/blur_gaussian/gauss.gdshader", "set": {"direction": [1.0, 0.0], "kernel": 0, "dims": 0, "edge": true, "ch_r": false, "ch_g": false, "ch_b": false, "ch_a": true}, "map": {"radius": "softness"}, "when": {"param": "softness", "gt": 0}},
+  {"shader": "res://effects/blur_gaussian/gauss.gdshader", "set": {"direction": [0.0, 1.0], "kernel": 0, "dims": 0, "edge": true, "ch_r": false, "ch_g": false, "ch_b": false, "ch_a": true}, "map": {"radius": "softness"}, "when": {"param": "softness", "gt": 0}},
+  {"shader": "fill_across.gdshader", "scale": 0.5, "when": {"param": "edge_colour_fix", "eq": 1}},
+  {"shader": "fill_down.gdshader", "when": {"param": "edge_colour_fix", "eq": 1}},
+  {"shader": "combine.gdshader", "scale": 2.0, "inputs": {"matte_tex": 3}}
+ ]
+}

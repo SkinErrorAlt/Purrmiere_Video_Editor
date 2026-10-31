@@ -1,0 +1,14 @@
+{
+ "id": "squeeze",
+ "label": "Squeeze",
+ "group": "Zoom and Camera",
+ "space": "2D",
+ "from": ["gl squeeze"],
+ "blurb": "The outgoing picture is squeezed flat into a line across the middle, its colours splitting apart as it goes, uncovering the incoming one.",
+ "default_duration": 0.8,
+ "params": [
+  {"key": "axis", "label": "Squeeze", "type": "enum", "choices": ["Top and bottom together", "Sides together"], "default": 0},
+  {"key": "colour_split", "label": "Colour split", "type": "float", "min": 0, "max": 0.2, "step": 0.005, "default": 0.04},
+  {"key": "timing", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth", "Speed up"], "default": 0}
+ ]
+}

@@ -1,0 +1,16 @@
+{
+ "id": "macroblock",
+ "label": "Compression",
+ "group": "Glitch",
+ "space": "2D",
+ "from": ["Sapphire Digital Damage", "Film Impact Glitch 2.0", "CapCut datamosh glitches"],
+ "blurb": "The cut breaks down like a damaged video stream: the frame falls into compression blocks, some keep the outgoing picture while the incoming colour bleeds into them, some go flat, some smear down or sideways, then the stream recovers on the incoming picture.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "block", "label": "Block size", "type": "enum", "choices": ["8 px", "16 px", "32 px"], "default": 1},
+  {"key": "amount", "label": "Damage", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.7},
+  {"key": "bleed", "label": "Colour bleed", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "smear", "label": "Smear", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "channel_split", "label": "Colour split", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0}
+ ]
+}

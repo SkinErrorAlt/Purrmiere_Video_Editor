@@ -1,0 +1,14 @@
+{
+ "id": "colour_density",
+ "label": "Colour Density",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Makes colours rich the way film does: the more saturated a colour, the deeper and darker it gets, instead of glowing like plain saturation. Bright colours can go paler, and skin can be spared.",
+ "params": [
+  {"key": "density", "label": "Density", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "saturation", "label": "Saturation", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 1.1},
+  {"key": "pale_highlights", "label": "Paler bright colours", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.2},
+  {"key": "keep_skin", "label": "Keep skin natural", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3}
+ ],
+ "passes": "single"
+}

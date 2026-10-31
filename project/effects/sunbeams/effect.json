@@ -1,0 +1,31 @@
+{
+ "id": "sunbeams",
+ "label": "Sunbeams",
+ "category": "Light & Shadow",
+ "tags": ["light"],
+ "version": 1,
+ "blurb": "Shafts of light stream from a sun through soft haze, broken up by slowly drifting noise so they shimmer. The sun can sit outside the frame and still send beams in. With Blocked by dark parts up, the dark shapes in the picture cast the shafts, so the beams pass between leaves, trees or window bars. Unlike Light Rays, the beams do not need anything bright in the picture.",
+ "params": [
+  {"key": "sun", "label": "Sun position", "type": "vec2", "default": [0.78, 0.06]},
+  {"key": "length", "label": "Beam length", "type": "float", "min": 0.1, "max": 3, "step": 0.01, "default": 1.8},
+  {"key": "count", "label": "Beam count", "type": "float", "min": 3, "max": 60, "step": 1, "default": 22},
+  {"key": "variety", "label": "Width variety", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "haze", "label": "Haze density", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.55},
+  {"key": "blocked", "label": "Blocked by dark parts", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.75},
+  {"key": "speed", "label": "Drift speed", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 0.25},
+  {"key": "colour", "label": "Colour", "type": "color", "default": [1.0, 0.86, 0.62, 1.0]},
+  {"key": "intensity", "label": "Intensity", "type": "float", "min": 0, "max": 3, "step": 0.01, "default": 0.85},
+  {"key": "falloff", "label": "Falloff", "type": "float", "min": 0.2, "max": 4, "step": 0.01, "default": 1.2},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 7},
+  {"key": "beams_only", "label": "Beams only", "type": "bool", "default": false}
+ ],
+ "handles": [{"kind": "point", "key": "sun"}],
+ "passes": [
+  {"shader": "mask.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "smear.gdshader", "set": {"span": 0.0625}},
+  {"shader": "smear.gdshader", "set": {"span": 0.25}},
+  {"shader": "smear.gdshader", "set": {"span": 1.0}},
+  {"shader": "compose.gdshader", "scale": 4.0}
+ ]
+}

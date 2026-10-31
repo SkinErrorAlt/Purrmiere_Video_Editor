@@ -1,0 +1,14 @@
+{
+ "id": "salt_pepper",
+ "label": "Salt and Pepper",
+ "category": "Noise & Grain",
+ "version": 1,
+ "blurb": "Scatters single black and white specks, for a worn or a damaged look.",
+ "params": [
+  {"key": "density", "label": "How many", "type": "float", "min": 0.0, "max": 0.2, "step": 0.001, "default": 0.01},
+  {"key": "balance", "label": "White against black", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "speck", "label": "Speck size", "type": "float", "min": 1.0, "max": 8.0, "step": 0.5, "default": 1.0},
+  {"key": "animate", "label": "Moves each frame", "type": "bool", "default": true}
+ ],
+ "passes": "single"
+}

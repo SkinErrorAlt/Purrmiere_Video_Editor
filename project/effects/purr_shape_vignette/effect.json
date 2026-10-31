@@ -1,0 +1,19 @@
+{
+ "id": "purr_shape_vignette",
+ "label": "Shape Vignette",
+ "category": "Purrmiere",
+ "tags": ["look", "graphic"],
+ "version": 1,
+ "blurb": "A soft vignette in the shape of a heart, a paw print, a star, a cat head, a circle or a rounded frame. Darken round the shape, fill round it with a colour or make the outside see through.",
+ "params": [
+  {"key": "shape", "label": "Shape", "type": "enum", "default": 0, "choices": ["Heart", "Paw print", "Star", "Cat head", "Circle", "Rounded frame"]},
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "size", "label": "Size", "type": "float", "min": 0.1, "max": 2.0, "step": 0.001, "default": 0.75},
+  {"key": "softness", "label": "Softness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.25},
+  {"key": "mode", "label": "Outside", "type": "enum", "default": 0, "choices": ["Darken", "Colour", "See through"]},
+  {"key": "colour", "label": "Colour", "type": "color", "default": [0.12, 0.05, 0.14, 1.0]},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.85}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}, {"kind": "ring", "key": "size", "about": "centre", "unit": "h", "scale": 1.818182, "knob": "corner", "shape_from": "shape", "shapes": [{"shape": "box", "fit": [-0.8048, -0.8715, 0.8048, 0.6]}, {"shape": "box", "fit": [-0.7647, -0.8471, 0.7647, 0.6353]}, {"shape": "box", "fit": [-0.9511, -1.0, 0.9511, 0.809]}, {"shape": "box", "fit": [-0.88, -0.95, 0.88, 0.88]}, {"shape": "circle"}, {"shape": "box", "fit": [-0.909091, -0.909091, 0.909091, 0.909091], "frame": true}]}],
+ "passes": "single"
+}

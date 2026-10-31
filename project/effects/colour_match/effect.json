@@ -1,0 +1,23 @@
+{
+ "id": "colour_match",
+ "label": "Colour Match",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Matches this clip's brightness, contrast and colour to a reference picture from the bin, such as a frame from the shot you want it to cut with. It measures both pictures every frame in a perceptual colour space and moves this one's averages and spread onto the reference's. With no reference chosen the clip passes through unchanged.",
+ "params": [
+  {"key": "reference", "label": "Reference picture", "type": "texture", "default": ""},
+  {"key": "amount", "label": "Amount", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "match_brightness", "label": "Match brightness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "match_contrast", "label": "Match contrast", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "match_colour", "label": "Match colour", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "compare", "label": "Show the reference on the left", "type": "bool", "default": false}
+ ],
+ "passes": [
+  {"shader": "stats.gdshader", "scale": 0.03125, "set": {"from_ref": false, "second": false}},
+  {"shader": "stats.gdshader", "scale": 1.0, "set": {"from_ref": false, "second": true}, "inputs": {"mean_tex": 0}},
+  {"shader": "stats.gdshader", "scale": 1.0, "set": {"from_ref": true, "second": false}},
+  {"shader": "stats.gdshader", "scale": 1.0, "set": {"from_ref": true, "second": true}, "inputs": {"mean_tex": 2}},
+  {"shader": "combine.gdshader", "scale": 1.0, "inputs": {"src_mean": 0, "src_spread": 1, "ref_mean": 2, "ref_spread": 3}},
+  {"shader": "apply.gdshader", "scale": 32.0}
+ ]
+}

@@ -1,0 +1,19 @@
+{
+ "id": "purr_neon_tube",
+ "label": "Neon Tubes",
+ "category": "Purrmiere",
+ "tags": ["light", "look"],
+ "version": 1,
+ "blurb": "Bends the outlines of the picture into glowing neon tubes with a white hot core and a soft halo, over a darkened picture, with an optional mains flicker. The halo reaches past the clip's own edges.",
+ "params": [
+  {"key": "width", "label": "Tube width", "type": "float", "min": 0.5, "max": 8.0, "step": 0.1, "default": 1.5, "unit": " px"},
+  {"key": "threshold", "label": "Outline threshold", "type": "float", "min": 0.0, "max": 0.8, "step": 0.01, "default": 0.22},
+  {"key": "glow", "label": "Halo", "type": "float", "min": 0.0, "max": 3.0, "step": 0.01, "default": 1.2},
+  {"key": "darken", "label": "Darken the picture", "type": "float", "min": 0.0, "max": 0.97, "step": 0.01, "default": 0.85},
+  {"key": "tube_mode", "label": "Tube colour", "type": "enum", "default": 1, "choices": ["Picture colours", "Pink and cyan", "One colour", "Rainbow"]},
+  {"key": "tube_colour", "label": "One colour", "type": "color", "default": [1.0, 0.25, 0.75, 1.0]},
+  {"key": "flicker", "label": "Flicker", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.1},
+  {"key": "speed", "label": "Rainbow speed", "type": "float", "min": 0.0, "max": 4.0, "step": 0.01, "default": 0.5}
+ ],
+ "passes": "single"
+}

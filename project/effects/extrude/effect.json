@@ -1,0 +1,17 @@
+{
+ "id": "extrude",
+ "label": "Extrude",
+ "category": "Distort",
+ "version": 1,
+ "blurb": "Breaks the picture into square blocks or pyramids that stand out towards you in 3D, seen from the middle of the frame. Each one's height is random or set by how bright it is.",
+ "params": [
+  {"key": "kind", "label": "Type", "type": "enum", "choices": ["Blocks", "Pyramids"], "default": 0},
+  {"key": "size", "label": "Size", "type": "float", "min": 4.0, "max": 400.0, "step": 0.5, "default": 40.0, "unit": " px"},
+  {"key": "depth", "label": "Depth", "type": "float", "min": 0.0, "max": 100.0, "step": 0.5, "default": 30.0},
+  {"key": "depth_from", "label": "Depth from", "type": "enum", "choices": ["Random", "Brightness"], "default": 0},
+  {"key": "solid", "label": "Solid front faces", "type": "bool", "default": false},
+  {"key": "flat_edges", "label": "Leave part blocks flat", "type": "bool", "default": true},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

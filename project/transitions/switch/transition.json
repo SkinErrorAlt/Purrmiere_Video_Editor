@@ -1,0 +1,18 @@
+{
+ "id": "switch",
+ "label": "Switch",
+ "group": "3D",
+ "space": "3D",
+ "from": ["PowerPoint Switch"],
+ "blurb": "The two pictures switch places like cards being swapped: the outgoing one swings out to the side and behind while the incoming one swings round to the front.",
+ "default_duration": 1.25,
+ "params": [
+  {"key": "direction", "label": "Outgoing goes", "type": "enum", "choices": ["Left", "Right"], "default": 0},
+  {"key": "turn", "label": "Turn", "type": "float", "min": 0, "max": 80, "step": 1, "default": 45, "unit": " deg"},
+  {"key": "spread", "label": "Swing out", "type": "float", "min": 0.2, "max": 1.2, "step": 0.01, "default": 0.55},
+  {"key": "depth", "label": "Depth", "type": "float", "min": 0.2, "max": 3, "step": 0.01, "default": 1.8},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 10, "max": 90, "step": 1, "default": 40, "unit": " deg"},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

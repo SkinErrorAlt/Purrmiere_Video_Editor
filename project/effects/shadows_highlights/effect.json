@@ -1,0 +1,15 @@
+{
+ "id": "shadows_highlights",
+ "label": "Shadows and Highlights",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Opens the dark parts up and pulls the bright parts back, without touching the mid tones much.",
+ "params": [
+  {"key": "shadows", "label": "Shadows", "type": "float", "min": -1.0, "max": 1.0, "step": 0.005, "default": 0.3},
+  {"key": "highlights", "label": "Highlights", "type": "float", "min": -1.0, "max": 1.0, "step": 0.005, "default": -0.2},
+  {"key": "shadow_reach", "label": "Shadow range", "type": "float", "min": 0.05, "max": 1.0, "step": 0.005, "default": 0.35},
+  {"key": "highlight_reach", "label": "Highlight range", "type": "float", "min": 0.05, "max": 1.0, "step": 0.005, "default": 0.35},
+  {"key": "mid_contrast", "label": "Mid tone contrast", "type": "float", "min": -1.0, "max": 1.0, "step": 0.005, "default": 0.0}
+ ],
+ "passes": "single"
+}

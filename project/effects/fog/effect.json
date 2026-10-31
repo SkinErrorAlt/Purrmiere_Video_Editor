@@ -1,0 +1,19 @@
+{
+ "id": "fog",
+ "label": "Fog",
+ "category": "Generate",
+ "version": 1,
+ "blurb": "Soft drifting fog built from layered noise, thicker toward the bottom of the frame.",
+ "params": [
+  {"key": "density", "label": "Density", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "height_falloff", "label": "Thicker at the bottom", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "drift", "label": "Drift (frames per second)", "type": "vec2", "default": [0.03, 0.0]},
+  {"key": "churn", "label": "Churn", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.15},
+  {"key": "scale", "label": "Size", "type": "float", "min": 0.1, "max": 10.0, "step": 0.01, "default": 1.0},
+  {"key": "colour", "label": "Colour", "type": "color", "default": [0.86, 0.88, 0.92, 1.0]},
+  {"key": "detail", "label": "Detail", "type": "int", "min": 1, "max": 8, "step": 1, "default": 5},
+  {"key": "blend", "label": "How it mixes", "type": "enum", "choices": ["Replace", "Multiply", "Screen", "Overlay", "Add", "Soft light", "Over"], "default": 6},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0}
+ ],
+ "passes": "single"
+}

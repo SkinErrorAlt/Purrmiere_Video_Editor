@@ -1,0 +1,12 @@
+{
+ "id": "additive_dissolve",
+ "label": "Additive Dissolve",
+ "category": "Transition",
+ "version": 1,
+ "blurb": "A dissolve that flares brighter as it fades, the way light adds when two shots overlap. Put it on the outgoing clip above the incoming one.",
+ "params": [
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0, "max": 1, "step": 0.005, "default": 0.5},
+  {"key": "flare", "label": "Brightening", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 0.8}
+ ],
+ "passes": "single"
+}

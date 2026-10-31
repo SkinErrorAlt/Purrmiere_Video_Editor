@@ -1,0 +1,147 @@
+{
+ "id": "audio_circle_wave",
+ "label": "Circular Waveform",
+ "category": "Audio Reactive",
+ "tags": [
+  "audio",
+  "music",
+  "beat",
+  "reactive",
+  "visualiser"
+ ],
+ "version": 1,
+ "blurb": "The last few seconds of the sound drawn round a circle that swells with the level. Drop a clip from the timeline, or a file from the bin or the Source monitor, on its Sound well.",
+ "params": [
+  {
+   "key": "centre",
+   "label": "Centre",
+   "type": "vec2",
+   "default": [
+    0.5,
+    0.5
+   ]
+  },
+  {
+   "key": "radius",
+   "label": "Radius",
+   "type": "float",
+   "min": 0,
+   "max": 0.6,
+   "step": 0.005,
+   "default": 0.15
+  },
+  {
+   "key": "reach",
+   "label": "Wave size",
+   "type": "float",
+   "min": 0.01,
+   "max": 0.6,
+   "step": 0.005,
+   "default": 0.12
+  },
+  {
+   "key": "span",
+   "label": "Time shown",
+   "type": "float",
+   "min": 0.25,
+   "max": 20,
+   "step": 0.05,
+   "default": 3,
+   "unit": " s"
+  },
+  {
+   "key": "thickness",
+   "label": "Line width",
+   "type": "float",
+   "min": 0.5,
+   "max": 40,
+   "step": 0.5,
+   "default": 3,
+   "unit": " px"
+  },
+  {
+   "key": "fill",
+   "label": "Fill inside",
+   "type": "float",
+   "min": 0,
+   "max": 1,
+   "step": 0.01,
+   "default": 0.0
+  },
+  {
+   "key": "spin",
+   "label": "Spin",
+   "type": "float",
+   "min": -2,
+   "max": 2,
+   "step": 0.01,
+   "default": 0.0,
+   "unit": " turns/s"
+  },
+  {
+   "key": "pulse",
+   "label": "Swell",
+   "type": "float",
+   "min": 0,
+   "max": 1,
+   "step": 0.01,
+   "default": 0.15
+  },
+  {
+   "key": "colour",
+   "label": "Colour",
+   "type": "color",
+   "default": [
+    1.0,
+    0.45,
+    0.75,
+    1
+   ]
+  },
+  {
+   "key": "opacity",
+   "label": "Opacity",
+   "type": "float",
+   "min": 0,
+   "max": 1,
+   "step": 0.01,
+   "default": 1
+  }
+ ],
+ "passes": [
+  {
+   "shader": "res://effects/_audio_visual/visual.gdshader",
+   "set": {
+    "visual": 4
+   }
+  }
+ ],
+ "reactive": {
+  "defaults": {
+   "snd_attack": 0,
+   "snd_release": 60,
+   "snd_threshold": 0,
+   "snd_bands": 2
+  },
+  "wave": {
+   "uniform": "wave_tex",
+   "points": 128,
+   "span": "span"
+  },
+  "level": "level",
+  "look": true
+ },
+ "handles": [
+  {
+   "kind": "point",
+   "key": "centre"
+  },
+  {
+   "kind": "ring",
+   "key": "radius",
+   "about": "centre",
+   "unit": "h",
+   "feather": "reach"
+  }
+ ]
+}

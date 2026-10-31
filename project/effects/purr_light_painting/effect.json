@@ -1,0 +1,22 @@
+{
+ "id": "purr_light_painting",
+ "label": "Light Painting",
+ "category": "Purrmiere",
+ "tags": ["light", "graphic"],
+ "version": 1,
+ "blurb": "A ribbon of light draws itself through the frame like a long exposure light painting, looping on a Lissajous path with a glowing core and a fading tail, in rainbow or one colour.",
+ "params": [
+  {"key": "colour_mode", "label": "Colour", "type": "enum", "default": 0, "choices": ["Rainbow", "One colour"]},
+  {"key": "colour", "label": "One colour", "type": "color", "default": [0.3, 0.8, 1.0, 1.0]},
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "size", "label": "Size", "type": "float", "min": 0.05, "max": 1.0, "step": 0.001, "default": 0.35},
+  {"key": "loops", "label": "Loops", "type": "int", "min": 1, "max": 7, "step": 1, "default": 3},
+  {"key": "width", "label": "Line width", "type": "float", "min": 0.5, "max": 30.0, "step": 0.1, "default": 4.0, "unit": " px"},
+  {"key": "glow", "label": "Glow", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 1.0},
+  {"key": "speed", "label": "Draw speed", "type": "float", "min": 0.0, "max": 3.0, "step": 0.01, "default": 0.5},
+  {"key": "trail", "label": "Tail length", "type": "float", "min": 0.05, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 999, "step": 1, "default": 0}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}],
+ "passes": "single"
+}

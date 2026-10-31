@@ -1,0 +1,16 @@
+{
+ "id": "film_burn",
+ "label": "Film Burn",
+ "group": "Light and Film",
+ "space": "2D",
+ "from": ["CapCut Burn", "CapCut Film Burn"],
+ "blurb": "The film seems to melt in the projector: a ragged edge scorches dark, then flares orange, gold and white from one side until the frame is blown out, and the incoming picture cools back in from the glare. The burn's edges are different on every cut.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "origin", "label": "Burns from", "type": "enum", "choices": ["Left", "Right", "Top", "Bottom", "Middle", "Top left corner"], "default": 0},
+  {"key": "colour", "label": "Flame colour", "type": "color", "default": [1, 0.42, 0.05, 1]},
+  {"key": "scale", "label": "Scale", "type": "float", "min": 0.2, "max": 4, "step": 0.01, "default": 1},
+  {"key": "roughness", "label": "Ragged edge", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "scorch", "label": "Scorch", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6}
+ ]
+}

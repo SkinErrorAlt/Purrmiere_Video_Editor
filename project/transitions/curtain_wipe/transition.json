@@ -1,0 +1,17 @@
+{
+ "id": "curtain_wipe",
+ "label": "Curtain Reveal",
+ "group": "Wipe",
+ "space": "2D",
+ "from": ["CapCut Curtain"],
+ "blurb": "The outgoing picture becomes a pair of stage curtains that gather into folds as they are drawn aside, or one curtain that rises, revealing the incoming picture.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "style", "label": "Curtains", "type": "enum", "choices": ["Part to the sides", "Rise"], "default": 0},
+  {"key": "folds", "label": "Folds", "type": "int", "min": 2, "max": 24, "step": 1, "default": 7},
+  {"key": "fold_depth", "label": "Fold depth", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "drape", "label": "Drape", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.35},
+  {"key": "shadow", "label": "Shadow", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 1}
+ ]
+}

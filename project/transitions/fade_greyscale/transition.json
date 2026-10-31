@@ -1,0 +1,14 @@
+{
+ "id": "fade_greyscale",
+ "label": "Fade Through Grey",
+ "group": "Dissolve",
+ "space": "2D",
+ "from": ["gl fadegrayscale"],
+ "blurb": "The colour drains out of the outgoing picture, the two dissolve in black and white, and the colour floods back into the incoming one. Intensity sets how long the middle stays grey, and Tint colours the grey like an old print.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "intensity", "label": "Intensity", "type": "float", "min": 0.05, "max": 0.95, "step": 0.01, "default": 0.3},
+  {"key": "tint", "label": "Tint", "type": "color", "default": [1, 1, 1, 1]},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 0}
+ ]
+}

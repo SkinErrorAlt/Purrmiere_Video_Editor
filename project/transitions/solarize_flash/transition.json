@@ -1,0 +1,16 @@
+{
+ "id": "solarize_flash",
+ "label": "Solarize",
+ "group": "Light and Film",
+ "space": "2D",
+ "from": ["Film Impact Solarize", "Premiere invert colour flash"],
+ "blurb": "The tones of the outgoing picture flip from the brightest down, so it passes through a solarized look, like film fogged in the darkroom, to a full negative on the cut. The incoming picture starts as a negative and solarizes back. Invert flash makes it a short full negative flash instead, and Mono turns it black and white.",
+ "default_duration": 0.8,
+ "params": [
+  {"key": "style", "label": "Style", "type": "enum", "choices": ["Solarize", "Invert flash"], "default": 0},
+  {"key": "colour", "label": "Colour", "type": "enum", "choices": ["Colour", "Mono"], "default": 0},
+  {"key": "hold", "label": "Hold on the negative", "type": "float", "min": 0, "max": 0.6, "step": 0.01, "default": 0.12},
+  {"key": "softness", "label": "Curve softness", "type": "float", "min": 0.02, "max": 0.5, "step": 0.01, "default": 0.18},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 1}
+ ]
+}

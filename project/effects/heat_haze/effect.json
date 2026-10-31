@@ -1,0 +1,18 @@
+{
+ "id": "heat_haze",
+ "label": "Heat Haze",
+ "category": "Distort",
+ "version": 1,
+ "blurb": "The shimmer over hot ground: moving noise nudges the picture about while the pattern rises, strongest near the bottom of the frame.",
+ "params": [
+  {"key": "amount", "label": "Amount", "type": "float", "min": 0, "max": 60, "step": 0.1, "default": 6, "unit": " px"},
+  {"key": "scale", "label": "Ripple size", "type": "float", "min": 4, "max": 400, "step": 1, "default": 50, "unit": " px"},
+  {"key": "speed", "label": "Speed", "type": "float", "min": 0, "max": 5, "step": 0.01, "default": 1},
+  {"key": "rise", "label": "Rise", "type": "float", "min": 0, "max": 5, "step": 0.01, "default": 1},
+  {"key": "mask_bottom", "label": "Stronger at the bottom", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": [
+  {"shader": "haze.gdshader"}
+ ]
+}

@@ -1,0 +1,20 @@
+{
+ "id": "spin_card",
+ "label": "Spin Card",
+ "group": "3D",
+ "space": "3D",
+ "from": ["CapCut Spin Card"],
+ "blurb": "The picture becomes a two sided card that is spun round several times, backing off as it whirls and smearing with motion blur at full speed, and lands showing the incoming picture on its other side.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "turns", "label": "Spins", "type": "enum", "choices": ["Half turn", "One and a half turns", "Two and a half turns"], "default": 1},
+  {"key": "axis", "label": "Spins about", "type": "enum", "choices": ["Upright line", "Level line"], "default": 0},
+  {"key": "spin_way", "label": "Spins towards", "type": "enum", "choices": ["Left", "Right"], "default": 0},
+  {"key": "depth", "label": "Pull back", "type": "float", "min": 0, "max": 3, "step": 0.01, "default": 0.9},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 10, "max": 90, "step": 1, "default": 40, "unit": " deg"},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "motion_blur", "label": "Motion blur", "type": "bool", "default": true},
+  {"key": "shutter", "label": "Shutter", "type": "float", "min": 0, "max": 360, "step": 1, "default": 180, "unit": " deg"},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

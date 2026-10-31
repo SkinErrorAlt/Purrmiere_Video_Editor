@@ -1,0 +1,18 @@
+{
+ "id": "prism",
+ "label": "Prism",
+ "category": "Distort",
+ "version": 1,
+ "blurb": "Splits the picture into a spectrum like light through a prism. Several copies are laid along a line or out from the centre, each weighted by its own wavelength, so the fringes are a full rainbow.",
+ "params": [
+  {"key": "amount", "label": "Amount", "type": "float", "min": 0, "max": 100, "step": 0.1, "default": 12, "unit": " px"},
+  {"key": "mode", "label": "Mode", "type": "enum", "choices": ["Radial", "Linear"], "default": 0},
+  {"key": "angle", "label": "Angle", "type": "float", "min": -180, "max": 180, "step": 1, "default": 0, "unit": " deg"},
+  {"key": "samples", "label": "Samples", "type": "int", "min": 3, "max": 12, "step": 1, "default": 8},
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}, {"kind": "angle", "key": "angle", "zero": "right", "turn": "cw", "length": "amount", "length_unit": "px", "length_scale": 0.5}],
+ "passes": [
+  {"shader": "prism.gdshader"}
+ ]
+}

@@ -1,0 +1,22 @@
+{
+ "id": "cartoon",
+ "label": "Cartoon",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Smooths the picture while keeping its edges, flattens the lightness into a few bands and draws dark outlines.",
+ "params": [
+  {"key": "smoothing", "label": "Smoothing", "type": "float", "min": 0.0, "max": 12.0, "step": 0.1, "default": 3.0, "unit": " px"},
+  {"key": "smooth_passes", "label": "Smoothing passes", "type": "int", "min": 1, "max": 4, "step": 1, "default": 2},
+  {"key": "colour_tolerance", "label": "Colour tolerance", "type": "float", "min": 0.02, "max": 0.5, "step": 0.01, "default": 0.12},
+  {"key": "levels", "label": "Levels", "type": "int", "min": 2, "max": 16, "step": 1, "default": 5},
+  {"key": "saturation", "label": "Saturation", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 1.2},
+  {"key": "edge_width", "label": "Outline width", "type": "float", "min": 0.0, "max": 8.0, "step": 0.1, "default": 1.5, "unit": " px"},
+  {"key": "edge_threshold", "label": "Outline threshold", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.2},
+  {"key": "edge_colour", "label": "Outline colour", "type": "color", "default": [0.05, 0.04, 0.06, 1.0]}
+ ],
+ "passes": [
+  {"shader": "smooth.gdshader", "repeat": {"param": "smooth_passes", "max": 4}},
+  {"shader": "toon.gdshader"}
+ ]
+}

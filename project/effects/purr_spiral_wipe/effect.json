@@ -1,0 +1,21 @@
+{
+ "id": "purr_spiral_wipe",
+ "label": "Spiral Wipe",
+ "category": "Purrmiere",
+ "tags": ["graphic"],
+ "version": 1,
+ "blurb": "A transition that winds the picture away along a spiral, with one or more arms sweeping round from the centre and a coloured edge on the sweep.",
+ "params": [
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0.0, "max": 1.0, "step": 0.001, "default": 0.5},
+  {"key": "timing", "label": "Timing", "type": "enum", "choices": ["Follow Progress", "Reveal at the clip start", "Hide at the clip end"], "default": 0},
+  {"key": "auto_len", "label": "Automatic length", "type": "float", "min": 0.05, "max": 10.0, "step": 0.01, "default": 1.0, "unit": " s"},
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "arms", "label": "Arms", "type": "int", "min": 1, "max": 6, "step": 1, "default": 1},
+  {"key": "turns", "label": "Turns", "type": "float", "min": 0.0, "max": 6.0, "step": 0.01, "default": 1.5},
+  {"key": "edge", "label": "Edge", "type": "float", "min": 0.0, "max": 30.0, "step": 0.1, "default": 5.0, "unit": " px"},
+  {"key": "edge_colour", "label": "Edge colour", "type": "color", "default": [1.0, 0.85, 0.95, 1.0]},
+  {"key": "reverse", "label": "Wind the other way", "type": "bool", "default": false}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}],
+ "passes": "single"
+}

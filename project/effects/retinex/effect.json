@@ -1,0 +1,26 @@
+{
+ "id": "retinex",
+ "label": "Retinex",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Evens out uneven lighting the way the eye does: each part of the picture is compared with blurred copies of its surroundings at several sizes, so shadowed parts come up, bright parts settle and detail shows everywhere, with the colours restored afterwards. Scale is the largest blur, Scale division how many blurs are used, Level whether they lean small, even or large, and Dynamic how wide a range is kept.",
+ "params": [
+  {"key": "level", "label": "Level", "type": "enum", "choices": ["Uniform", "Low", "High"], "default": 0},
+  {"key": "scale", "label": "Scale", "type": "float", "min": 16.0, "max": 250.0, "step": 1.0, "default": 240.0, "unit": " px"},
+  {"key": "divisions", "label": "Scale division", "type": "int", "min": 1, "max": 8, "step": 1, "default": 3},
+  {"key": "dynamic", "label": "Dynamic", "type": "float", "min": 0.05, "max": 4.0, "step": 0.01, "default": 1.2}
+ ],
+ "passes": [
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "retinex.gdshader", "scale": 16.0, "set": {"stage": 0}, "inputs": {"level_1": 0, "level_2": 1, "level_3": 2, "level_4": 3, "level_5": 4, "level_6": 5, "level_7": 6, "level_8": 7}},
+  {"shader": "retinex.gdshader", "scale": 1.0, "set": {"stage": 2}},
+  {"shader": "retinex.gdshader", "scale": 16.0, "set": {"stage": 1}, "inputs": {"level_1": 0, "level_2": 1, "level_3": 2, "level_4": 3, "level_5": 4, "level_6": 5, "level_7": 6, "level_8": 7}}
+ ]
+}

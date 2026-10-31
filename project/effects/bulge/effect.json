@@ -1,0 +1,14 @@
+{
+ "id": "bulge",
+ "label": "Bulge",
+ "category": "Distort",
+ "version": 1,
+ "blurb": "Pushes the picture out or pulls it in round a point, like a fisheye or a pinch.",
+ "params": [
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "amount", "label": "Amount", "type": "float", "min": -2.0, "max": 2.0, "step": 0.01, "default": 0.5},
+  {"key": "radius", "label": "Radius", "type": "float", "min": 0.01, "max": 2.0, "step": 0.01, "default": 0.4}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}, {"kind": "ring", "key": "radius", "about": "centre", "unit": "h"}],
+ "passes": "single"
+}

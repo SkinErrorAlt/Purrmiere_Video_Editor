@@ -1,0 +1,15 @@
+{
+ "id": "colour_range_key",
+ "label": "Colour Range Key",
+ "category": "Keying",
+ "version": 1,
+ "blurb": "Makes one colour see through, with separate tolerance for the hue and the brightness.",
+ "params": [
+  {"key": "key_colour", "label": "Colour", "type": "color", "default": [0.0, 1.0, 0.0, 1.0]},
+  {"key": "hue_tolerance", "label": "Hue tolerance", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.2},
+  {"key": "luma_tolerance", "label": "Brightness tolerance", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "softness", "label": "Softness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.15},
+  {"key": "invert", "label": "Keep the colour instead", "type": "bool", "default": false}
+ ],
+ "passes": "single"
+}

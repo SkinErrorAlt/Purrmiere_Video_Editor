@@ -1,0 +1,20 @@
+{
+ "id": "purr_silhouette_sunset",
+ "label": "Silhouette Sunset",
+ "category": "Purrmiere",
+ "tags": ["look", "light"],
+ "version": 1,
+ "blurb": "Turns the darker parts of the shot into a crisp silhouette against a glowing sunset sky that replaces the brighter parts, with a sun glow you can place.",
+ "params": [
+  {"key": "threshold", "label": "Silhouette below", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.42},
+  {"key": "softness", "label": "Edge softness", "type": "float", "min": 0.0, "max": 0.5, "step": 0.001, "default": 0.06},
+  {"key": "sky_top", "label": "Sky top", "type": "color", "default": [0.22, 0.1, 0.4, 1.0]},
+  {"key": "sky_mid", "label": "Sky middle", "type": "color", "default": [1.0, 0.42, 0.35, 1.0]},
+  {"key": "sky_low", "label": "Sky low", "type": "color", "default": [1.0, 0.82, 0.45, 1.0]},
+  {"key": "silhouette", "label": "Silhouette colour", "type": "color", "default": [0.05, 0.03, 0.08, 1.0]},
+  {"key": "sun", "label": "Sun", "type": "vec2", "default": [0.5, 0.72]},
+  {"key": "keep", "label": "Keep picture detail", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.1}
+ ],
+ "handles": [{"kind": "point", "key": "sun"}],
+ "passes": "single"
+}

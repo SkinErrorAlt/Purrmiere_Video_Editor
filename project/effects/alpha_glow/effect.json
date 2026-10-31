@@ -1,0 +1,24 @@
+{
+ "id": "alpha_glow",
+ "label": "Alpha Glow",
+ "category": "Light & Shadow",
+ "tags": ["light"],
+ "version": 1,
+ "blurb": "A glow round the edge of whatever has alpha, such as a title or a logo, fading from the start colour at the edge to the end colour further out.",
+ "params": [
+  {"key": "radius", "label": "Radius", "type": "float", "min": 1, "max": 200, "step": 0.5, "default": 30, "unit": " px"},
+  {"key": "intensity", "label": "Intensity", "type": "float", "min": 0, "max": 4, "step": 0.01, "default": 1.5},
+  {"key": "start_colour", "label": "Start colour", "type": "color", "default": [1.0, 0.9, 0.45, 1.0]},
+  {"key": "end_colour", "label": "End colour", "type": "color", "default": [1.0, 0.3, 0.1, 1.0]},
+  {"key": "behind", "label": "Only outside the shape", "type": "bool", "default": true}
+ ],
+ "passes": [
+  {"shader": "res://effects/blur_gaussian/down.gdshader", "scale": 0.5, "when": {"param": "radius", "gt": 60}},
+  {"shader": "res://effects/blur_gaussian/down.gdshader", "scale": 0.5, "when": {"param": "radius", "gt": 120}},
+  {"shader": "res://effects/blur_gaussian/gauss.gdshader", "set": {"direction": [1.0, 0.0], "kernel": 0, "dims": 0, "edge": false, "ch_r": false, "ch_g": false, "ch_b": false, "ch_a": true}, "map": {"radius": "radius"}},
+  {"shader": "res://effects/blur_gaussian/gauss.gdshader", "set": {"direction": [0.0, 1.0], "kernel": 0, "dims": 0, "edge": false, "ch_r": false, "ch_g": false, "ch_b": false, "ch_a": true}, "map": {"radius": "radius"}},
+  {"shader": "res://effects/blur_gaussian/up.gdshader", "scale": 2.0, "when": {"param": "radius", "gt": 120}},
+  {"shader": "res://effects/blur_gaussian/up.gdshader", "scale": 2.0, "when": {"param": "radius", "gt": 60}},
+  {"shader": "compose.gdshader"}
+ ]
+}

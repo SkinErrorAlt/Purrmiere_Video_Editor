@@ -1,0 +1,20 @@
+{
+ "id": "purr_firelight",
+ "label": "Firelight Flicker",
+ "category": "Purrmiere",
+ "tags": ["light"],
+ "version": 1,
+ "blurb": "Lights the scene with a living flicker: a campfire or candle glow from below or the side that dances and changes warmth, or the cold flicker of a television in a dark room. The rest of the scene falls into shadow.",
+ "params": [
+  {"key": "preset", "label": "Light", "type": "enum", "default": 0, "choices": ["Campfire", "Candle", "Television", "Your colour"]},
+  {"key": "colour", "label": "Your colour", "type": "color", "default": [1.0, 0.55, 0.2, 1.0]},
+  {"key": "source", "label": "Light position", "type": "vec2", "default": [0.5, 1.1]},
+  {"key": "reach", "label": "Reach", "type": "float", "min": 0.1, "max": 3.0, "step": 0.01, "default": 1.1},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 3.0, "step": 0.01, "default": 1.2},
+  {"key": "ambient", "label": "Room light", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "flicker", "label": "Flicker", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "speed", "label": "Flicker speed", "type": "float", "min": 0.0, "max": 4.0, "step": 0.01, "default": 1.0}
+ ],
+ "handles": [{"kind": "point", "key": "source"}, {"kind": "ring", "key": "reach", "about": "source", "unit": "h"}],
+ "passes": "single"
+}

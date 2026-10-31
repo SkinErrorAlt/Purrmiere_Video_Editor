@@ -1,0 +1,15 @@
+{
+ "id": "key_check",
+ "label": "Key Check",
+ "category": "Keying",
+ "tags": ["measure"],
+ "version": 1,
+ "blurb": "Shows how good a key is before you move on: the result over a checkerboard or a loud colour so fringes and holes stand out, the alpha on its own in grey, or the alpha with every part see through pixel painted in a colour, which finds the faint holes in a subject and the haze left on a screen. Put it last and turn it off before export.",
+ "params": [
+  {"key": "view", "label": "View", "type": "enum", "choices": ["Over a checkerboard", "Over a colour", "Alpha in grey", "Mark part see through pixels"], "default": 0},
+  {"key": "colour", "label": "Colour", "type": "color", "default": [1.0, 0.0, 1.0, 1.0]},
+  {"key": "squares", "label": "Square size", "type": "float", "min": 4.0, "max": 200.0, "step": 1.0, "default": 16.0, "unit": " px"},
+  {"key": "threshold", "label": "Count as clear or solid within", "type": "float", "min": 0.0, "max": 0.2, "step": 0.005, "default": 0.02}
+ ],
+ "passes": "single"
+}

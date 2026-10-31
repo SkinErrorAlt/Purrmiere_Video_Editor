@@ -1,0 +1,24 @@
+{
+ "id": "paper_rip",
+ "label": "Paper Rip",
+ "group": "Wipe",
+ "space": "3D",
+ "from": ["CapCut Paper Rip"],
+ "blurb": "The outgoing picture tears like a sheet of paper: a ragged rip runs down from the top, leaving a white fibrous core and a fuzz of torn fibres along both edges, then each half rolls back on itself near the tear, showing the white back of the paper, and tilts up as it is pulled away over soft shadows that spread as it lifts.",
+ "default_duration": 1.4,
+ "params": [
+  {"key": "direction", "label": "Tear", "type": "enum", "choices": ["Vertical", "Horizontal", "Diagonal"], "default": 0},
+  {"key": "roughness", "label": "Tear roughness", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "fibres", "label": "Fibres", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "edge", "label": "Torn edge width", "type": "float", "min": 0, "max": 60, "step": 1, "default": 16, "unit": " px"},
+  {"key": "edge_colour", "label": "Paper colour", "type": "color", "default": [0.97, 0.96, 0.92, 1]},
+  {"key": "curl", "label": "Curl size", "type": "float", "min": 0.01, "max": 0.2, "step": 0.005, "default": 0.07},
+  {"key": "lift", "label": "Lift", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.85},
+  {"key": "tilt", "label": "Tilt", "type": "float", "min": 0, "max": 30, "step": 0.5, "default": 12, "unit": " deg"},
+  {"key": "shadow", "label": "Shadow", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "tear_speed", "label": "Tear speed", "type": "float", "min": 1, "max": 5, "step": 0.05, "default": 2.5},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 10, "max": 90, "step": 1, "default": 40, "unit": " deg"},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.75},
+  {"key": "curve", "label": "Pull", "type": "enum", "choices": ["Even", "Smooth", "Speed up"], "default": 2}
+ ]
+}

@@ -1,0 +1,23 @@
+{
+ "id": "lens_warp",
+ "label": "Lens Warp",
+ "group": "Zoom and Camera",
+ "space": "2D",
+ "from": ["Filmora Warp", "CapCut Fisheye", "CapCut Bulge", "seamless packs Lens Distortion and Warp"],
+ "blurb": "A seamless camera move through a bulging lens: the outgoing picture swells into a fisheye that grows to its strongest at the cut while the camera zooms, slides or spins under motion blur, and the incoming picture comes out of the same warp and move and relaxes flat. Colour fringes show only toward the rim and the edges are mirrored, so no gap or corner ever shows. A negative warp pinches instead.",
+ "default_duration": 0.6,
+ "params": [
+  {"key": "move", "label": "Move", "type": "enum", "choices": ["Zoom in", "Zoom out", "Slide", "Spin clockwise", "Spin anticlockwise"], "default": 0},
+  {"key": "direction", "label": "Slides towards", "type": "enum", "choices": ["Left", "Right", "Up", "Down", "Up left", "Up right", "Down left", "Down right"], "default": 0},
+  {"key": "warp", "label": "Warp", "type": "float", "min": -1, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "amount", "label": "Move amount", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.3},
+  {"key": "centre", "label": "Centre", "type": "vec2", "min": 0, "max": 1, "step": 0.01, "default": [0.5, 0.5]},
+  {"key": "fringe", "label": "Colour fringe", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.4},
+  {"key": "blur", "label": "Motion blur", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 1},
+  {"key": "blend", "label": "Overlap at the cut", "type": "float", "min": 0, "max": 8, "step": 0.5, "default": 2, "unit": " frames"},
+  {"key": "curve", "label": "Speed", "type": "enum", "choices": ["Whip, fast at the cut", "Smooth", "Even"], "default": 0}
+ ],
+ "handles": [
+  {"kind": "point", "key": "centre"}
+ ]
+}

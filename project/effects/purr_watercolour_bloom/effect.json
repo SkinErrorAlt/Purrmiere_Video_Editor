@@ -1,0 +1,20 @@
+{
+ "id": "purr_watercolour_bloom",
+ "label": "Watercolour Bloom",
+ "category": "Purrmiere",
+ "tags": ["graphic"],
+ "version": 1,
+ "blurb": "A transition of watercolour blooms: wet washes spread across the picture with soft feathered edges, a dark ring of pigment where each bloom dries and a little granulation, and the next shot shows inside them.",
+ "params": [
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0.0, "max": 1.0, "step": 0.001, "default": 0.5},
+  {"key": "timing", "label": "Timing", "type": "enum", "choices": ["Follow Progress", "Reveal at the clip start", "Hide at the clip end"], "default": 0},
+  {"key": "auto_len", "label": "Automatic length", "type": "float", "min": 0.05, "max": 10.0, "step": 0.01, "default": 1.0, "unit": " s"},
+  {"key": "pigment", "label": "Pigment rim", "type": "color", "default": [0.3, 0.45, 0.75, 1.0]},
+  {"key": "blooms", "label": "Blooms", "type": "int", "min": 1, "max": 10, "step": 1, "default": 5},
+  {"key": "rim", "label": "Rim width", "type": "float", "min": 0.0, "max": 0.2, "step": 0.001, "default": 0.04},
+  {"key": "feather", "label": "Soft edge", "type": "float", "min": 0.0, "max": 0.2, "step": 0.001, "default": 0.03},
+  {"key": "ragged", "label": "Ragged edge", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

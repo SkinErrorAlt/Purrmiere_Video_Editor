@@ -1,0 +1,15 @@
+{
+ "id": "deinterlace",
+ "label": "Deinterlace",
+ "category": "Image Control",
+ "tags": ["repair"],
+ "version": 1,
+ "blurb": "Removes the comb teeth that interlaced footage (old camcorders, TV captures, 1080i broadcasts) shows on anything that moves. Only where combed keeps full detail where the picture is still and rebuilds the other field's lines only where the two fields disagree; Every line rebuilds them everywhere; Blend the fields mixes them. Lines are rebuilt along the direction of the edges, so diagonals stay smooth instead of stepped. Interlace adds the comb; this takes it out.",
+ "params": [
+  {"key": "method", "label": "Method", "type": "enum", "choices": ["Only where combed", "Every line", "Blend the fields"], "default": 0},
+  {"key": "keep", "label": "Field to keep", "type": "enum", "choices": ["Top field (even lines)", "Bottom field (odd lines)"], "default": 0},
+  {"key": "threshold", "label": "Combing threshold", "type": "float", "min": 0.01, "max": 0.3, "step": 0.005, "default": 0.04},
+  {"key": "show", "label": "Show combing", "type": "bool", "default": false}
+ ],
+ "passes": "single"
+}

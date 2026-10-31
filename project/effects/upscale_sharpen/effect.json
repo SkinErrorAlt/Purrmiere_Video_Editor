@@ -1,0 +1,14 @@
+{
+ "id": "upscale_sharpen",
+ "label": "Upscale Sharpen",
+ "category": "Blur & Sharpen",
+ "version": 1,
+ "blurb": "Sharpening for footage that was made bigger than it was recorded (a 720p clip in a 1080p edit, a zoomed in crop, an old SD capture). It works at the size of the original pixels rather than the new ones, so it brings back the detail the upscale smeared instead of sharpening the smear, and it adapts to the local contrast (contrast adaptive sharpening) and it never goes past the brightest and darkest pixel nearby, so edges get no halos; fine noise below a level is left alone. Set how much bigger the clip was made.",
+ "params": [
+  {"key": "scale", "label": "Made bigger by", "type": "float", "min": 1.0, "max": 4.0, "step": 0.01, "default": 1.5, "unit": "x"},
+  {"key": "sharpness", "label": "Sharpness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "noise", "label": "Leave noise below", "type": "float", "min": 0.0, "max": 0.1, "step": 0.001, "default": 0.02},
+  {"key": "brightness_only", "label": "Brightness only", "type": "bool", "default": true}
+ ],
+ "passes": "single"
+}

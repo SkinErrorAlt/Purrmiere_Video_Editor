@@ -1,0 +1,14 @@
+{
+ "id": "wipe",
+ "label": "Wipe",
+ "group": "Wipe",
+ "space": "2D",
+ "from": ["PowerPoint Wipe", "Keynote Wipe", "CapCut Wipe"],
+ "blurb": "The incoming picture is wiped on from one side or corner behind a soft edge.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "direction", "label": "Direction", "type": "enum", "choices": ["From Left", "From Right", "From Top", "From Bottom", "From Top Left", "From Top Right", "From Bottom Left", "From Bottom Right"], "default": 0},
+  {"key": "softness", "label": "Soft edge", "type": "float", "min": 0, "max": 0.5, "step": 0.01, "default": 0.12},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 1}
+ ]
+}

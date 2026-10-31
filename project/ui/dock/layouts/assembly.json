@@ -1,0 +1,54 @@
+{
+ "version": 1,
+ "name": "Assembly",
+ "tree": {
+  "t": "s",
+  "dir": "v",
+  "ratio": 0.5,
+  "a": {
+   "t": "s",
+   "dir": "h",
+   "ratio": 0.5,
+   "a": {
+    "t": "g",
+    "tabs": [
+     "bin",
+     "instances",
+     "effects",
+     "presets"
+    ],
+    "active": "bin"
+   },
+   "b": {
+    "t": "g",
+    "tabs": [
+     "source",
+     "program"
+    ],
+    "active": "program"
+   }
+  },
+  "b": {
+   "t": "s",
+   "dir": "h",
+   "ratio": 0.8,
+   "a": {
+    "t": "g",
+    "tabs": [
+     "timeline"
+    ],
+    "active": "timeline"
+   },
+   "b": {
+    "t": "g",
+    "tabs": [
+     "audio",
+     "info"
+    ],
+    "active": "audio"
+   }
+  }
+ },
+ "floats": [],
+ "state": {}
+}

@@ -1,0 +1,16 @@
+{
+ "id": "film_grain",
+ "label": "Film Grain",
+ "category": "Noise & Grain",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Adds grain the way film does, strongest in the mid tones and weakest in the blacks.",
+ "params": [
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.25},
+  {"key": "grain_size", "label": "Grain size", "type": "float", "min": 0.5, "max": 16.0, "step": 0.1, "default": 1.5},
+  {"key": "colour_amount", "label": "Colour", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.15},
+  {"key": "shadow_keep", "label": "Keep shadows clean", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "animate", "label": "Moves each frame", "type": "bool", "default": true}
+ ],
+ "passes": "single"
+}

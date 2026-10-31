@@ -1,0 +1,22 @@
+{
+ "id": "sinus",
+ "label": "Sinus",
+ "category": "Generate",
+ "version": 1,
+ "blurb": "Smooth interfering sine waves in two colours, like the GIMP pattern of the same name. X and Y scale set how many waves cross the frame, Complexity how busily they fold into each other, and Distorted bends them further. Force tiling rounds the waves so the pattern repeats exactly across the frame. Colour blend and Exponent shape how one colour fades into the other.",
+ "params": [
+  {"key": "x_scale", "label": "X scale", "type": "float", "min": 0.1, "max": 100.0, "step": 0.1, "default": 15.0},
+  {"key": "y_scale", "label": "Y scale", "type": "float", "min": 0.1, "max": 100.0, "step": 0.1, "default": 15.0},
+  {"key": "complexity", "label": "Complexity", "type": "float", "min": 0.0, "max": 15.0, "step": 0.01, "default": 4.0},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0},
+  {"key": "tiling", "label": "Force tiling", "type": "bool", "default": false},
+  {"key": "distorted", "label": "Distorted", "type": "bool", "default": false},
+  {"key": "colour_a", "label": "First colour", "type": "color", "default": [1.0, 1.0, 0.0, 1.0]},
+  {"key": "colour_b", "label": "Second colour", "type": "color", "default": [0.0, 0.0, 1.0, 1.0]},
+  {"key": "colour_blend", "label": "Colour blend", "type": "enum", "choices": ["Linear", "Bilinear", "Sinusoidal"], "default": 2},
+  {"key": "exponent", "label": "Exponent", "type": "float", "min": -7.5, "max": 7.5, "step": 0.01, "default": 0.0},
+  {"key": "blend", "label": "How it mixes", "type": "enum", "choices": ["Replace", "Multiply", "Screen", "Overlay", "Add", "Soft light", "Over"], "default": 0},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0}
+ ],
+ "passes": "single"
+}

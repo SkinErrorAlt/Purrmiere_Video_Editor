@@ -1,0 +1,14 @@
+{
+ "id": "compound_blur",
+ "label": "Compound Blur",
+ "category": "Blur & Sharpen",
+ "version": 1,
+ "blurb": "Blurs by a map: bright parts of the map blur most. The map can be a picture from the bin, the clip's own brightness or a top to bottom ramp.",
+ "params": [
+  {"key": "source", "label": "Blur map", "type": "enum", "choices": ["Picture", "Own brightness", "Ramp top to bottom"], "default": 2},
+  {"key": "picture", "label": "Map picture", "type": "texture", "default": ""},
+  {"key": "max_blur", "label": "Maximum blur", "type": "float", "min": 0, "max": 80, "step": 0.1, "default": 12.0, "unit": " px"},
+  {"key": "invert", "label": "Invert the map", "type": "bool", "default": false}
+ ],
+ "passes": "single"
+}

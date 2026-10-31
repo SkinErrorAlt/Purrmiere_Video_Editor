@@ -1,0 +1,15 @@
+{
+ "id": "dreamy",
+ "label": "Dreamy",
+ "group": "Dissolve",
+ "space": "2D",
+ "from": ["gl Dreamy", "CapCut Dreamy"],
+ "blurb": "A soft, wavy dissolve: both pictures ripple up and down in gentle waves and glow as they blend, like a dream sequence.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "waves", "label": "Waves", "type": "float", "min": 1, "max": 20, "step": 0.5, "default": 5},
+  {"key": "wave_height", "label": "Wave height", "type": "float", "min": 0, "max": 0.1, "step": 0.001, "default": 0.03},
+  {"key": "glow", "label": "Glow", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "glow_size", "label": "Glow size", "type": "float", "min": 2, "max": 80, "step": 1, "default": 24, "unit": " px"}
+ ]
+}

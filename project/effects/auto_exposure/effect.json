@@ -1,0 +1,20 @@
+{
+ "id": "auto_exposure",
+ "label": "Auto Exposure",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Measures how bright each frame is, weighted to the middle, and brings it up or down towards a normal level, so a dark game level or a dim room reads without grading every clip. Bright parts roll off instead of clipping. It measures every frame, so a sudden flash moves it at once.",
+ "params": [
+  {"key": "target", "label": "Aim for brightness", "type": "float", "min": 0.05, "max": 0.8, "step": 0.01, "default": 0.42},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.8},
+  {"key": "max_boost", "label": "Brighten at most", "type": "float", "min": 0.0, "max": 4.0, "step": 0.05, "default": 2.0, "unit": " stops"},
+  {"key": "max_cut", "label": "Darken at most", "type": "float", "min": 0.0, "max": 4.0, "step": 0.05, "default": 1.5, "unit": " stops"},
+  {"key": "centre_weight", "label": "Weight to the middle", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "protect_highlights", "label": "Protect bright parts", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6}
+ ],
+ "passes": [
+  {"shader": "meter.gdshader", "scale": 0.25, "set": {"stage": 0}},
+  {"shader": "meter.gdshader", "scale": 0.25, "set": {"stage": 1}},
+  {"shader": "apply.gdshader", "scale": 16.0}
+ ]
+}

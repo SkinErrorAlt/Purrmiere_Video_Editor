@@ -1,0 +1,20 @@
+{
+ "id": "purr_tail_swish",
+ "label": "Tail Swish Wipe",
+ "category": "Purrmiere",
+ "tags": ["graphic"],
+ "version": 1,
+ "blurb": "A fluffy cat tail swishes across the frame in an S curve and wipes the picture away behind it, with soft fur along its edge. Pick the fur colour or leave the tail out for a clean curved wipe.",
+ "params": [
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0.0, "max": 1.0, "step": 0.001, "default": 0.5},
+  {"key": "timing", "label": "Timing", "type": "enum", "choices": ["Follow Progress", "Reveal at the clip start", "Hide at the clip end"], "default": 0},
+  {"key": "auto_len", "label": "Automatic length", "type": "float", "min": 0.05, "max": 10.0, "step": 0.01, "default": 1.0, "unit": " s"},
+  {"key": "fur", "label": "Fur colour", "type": "color", "default": [0.95, 0.6, 0.25, 1.0]},
+  {"key": "tail", "label": "Tail thickness", "type": "float", "min": 0.0, "max": 0.4, "step": 0.001, "default": 0.1},
+  {"key": "curl", "label": "Curl", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "fluff", "label": "Fluff", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "stripes", "label": "Tabby stripes", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "reverse", "label": "From the right", "type": "bool", "default": false}
+ ],
+ "passes": "single"
+}

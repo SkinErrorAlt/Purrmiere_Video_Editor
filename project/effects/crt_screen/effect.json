@@ -1,0 +1,17 @@
+{
+ "id": "crt_screen",
+ "label": "CRT Screen",
+ "category": "VHS & Analogue",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Bends the picture over a tube, rounds the corners off and darkens the edges, with an optional aperture grille.",
+ "params": [
+  {"key": "curve", "label": "Screen curve", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.25},
+  {"key": "corner", "label": "Corner rounding", "type": "float", "min": 0.0, "max": 0.5, "step": 0.005, "default": 0.06},
+  {"key": "vignette", "label": "Edge darkening", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "grille", "label": "Aperture grille", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.2},
+  {"key": "grille_gap", "label": "Grille spacing", "type": "float", "min": 1.0, "max": 16.0, "step": 0.5, "default": 3.0},
+  {"key": "brightness", "label": "Brightness back", "type": "float", "min": 0.5, "max": 3.0, "step": 0.01, "default": 1.15}
+ ],
+ "passes": "single"
+}

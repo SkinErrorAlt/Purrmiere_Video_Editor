@@ -1,0 +1,11 @@
+{
+ "id": "marching_ants",
+ "label": "Marching ants",
+ "blurb": "Light and dark dashes that crawl round the clip.",
+ "order": 3,
+ "reach": 1.5,
+ "params": [
+  {"key": "dash", "label": "Dash length", "type": "float", "min": 1, "max": 40, "step": 0.5, "default": 6, "unit": "px"},
+  {"key": "speed", "label": "Speed", "type": "float", "min": 0, "max": 200, "step": 1, "default": 24, "unit": "px a second"}
+ ]
+}

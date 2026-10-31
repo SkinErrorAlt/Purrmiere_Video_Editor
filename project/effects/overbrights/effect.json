@@ -1,0 +1,18 @@
+{
+ "id": "overbrights",
+ "label": "Overbrights",
+ "category": "Utility",
+ "tags": ["measure"],
+ "version": 1,
+ "blurb": "Shows where the picture has run out of range: parts pushed to full white or past it are painted in the over colour, parts crushed to full black or below in the under colour, and the rest is dimmed so the marks stand out. Purrmiere passes pictures between effects at eight bits a channel, so anything an earlier effect pushed past white or black arrives clipped at exactly white or black, and that is what gets marked. In Each channel, a part where all three channels clipped takes the over or under colour, and a part where only some channels ran past white shows those channels in their own colour, so pure red means only red ran out.",
+ "params": [
+  {"key": "check", "label": "Check", "type": "enum", "choices": ["Each channel", "Brightness", "Red", "Green", "Blue", "Alpha"], "default": 0},
+  {"key": "show", "label": "Show", "type": "enum", "choices": ["Over and under", "Over only", "Under only"], "default": 0},
+  {"key": "over_at", "label": "Over from", "type": "float", "min": 0.8, "max": 1.0, "step": 0.001, "default": 1.0},
+  {"key": "under_at", "label": "Under up to", "type": "float", "min": 0.0, "max": 0.2, "step": 0.001, "default": 0.0},
+  {"key": "over_colour", "label": "Over colour", "type": "color", "default": [1.0, 0.15, 0.55, 1.0]},
+  {"key": "under_colour", "label": "Under colour", "type": "color", "default": [0.15, 0.45, 1.0, 1.0]},
+  {"key": "rest", "label": "Rest of the picture", "type": "enum", "choices": ["Dimmed", "As it is", "Grey", "Black"], "default": 0}
+ ],
+ "passes": "single"
+}

@@ -1,0 +1,23 @@
+{
+ "id": "radial_pixelate",
+ "label": "Radial Pixelate",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Big pixels in polar form: the picture is cut into rings and wedges round a centre and each cell is filled with one colour, taken from the middle of the cell or averaged over it. The very middle is a single disc, and cell edges are smooth.",
+ "params": [
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "ring_width", "label": "Ring width", "type": "float", "min": 2.0, "max": 400.0, "step": 0.5, "default": 48.0, "unit": " px"},
+  {"key": "wedges", "label": "Wedges", "type": "int", "min": 3, "max": 256, "step": 1, "default": 32},
+  {"key": "colour_from", "label": "Colour from", "type": "enum", "choices": ["Cell centre", "Average"], "default": 1},
+  {"key": "gap", "label": "Gap width", "type": "float", "min": 0.0, "max": 20.0, "step": 0.1, "default": 0.0, "unit": " px"},
+  {"key": "gap_colour", "label": "Gap colour", "type": "color", "default": [0.0, 0.0, 0.0, 1.0]}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}],
+ "passes": [
+  {"shader": "res://effects/blur_gaussian/down.gdshader", "scale": 0.5},
+  {"shader": "res://effects/blur_gaussian/down.gdshader", "scale": 0.5},
+  {"shader": "res://effects/blur_gaussian/down.gdshader", "scale": 0.5},
+  {"shader": "cells.gdshader", "scale": 8.0, "inputs": {"avg_tex": 2}}
+ ]
+}

@@ -1,0 +1,17 @@
+{
+ "id": "exposure",
+ "label": "Exposure",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Opens the picture up or closes it down in stops, the way a camera does, with an offset and a gamma beside it.",
+ "params": [
+  {"key": "stops", "label": "Exposure", "type": "float", "min": -8.0, "max": 8.0, "step": 0.01, "default": 0.0, "unit": " stops"},
+  {"key": "offset", "label": "Offset", "type": "float", "min": -0.5, "max": 0.5, "step": 0.001, "default": 0.0},
+  {"key": "gamma_v", "label": "Gamma", "type": "float", "min": 0.1, "max": 4.0, "step": 0.01, "default": 1.0},
+  {"key": "per_channel", "label": "Per channel", "type": "bool", "default": false},
+  {"key": "stops_r", "label": "Red stops", "type": "float", "min": -8.0, "max": 8.0, "step": 0.01, "default": 0.0},
+  {"key": "stops_g", "label": "Green stops", "type": "float", "min": -8.0, "max": 8.0, "step": 0.01, "default": 0.0},
+  {"key": "stops_b", "label": "Blue stops", "type": "float", "min": -8.0, "max": 8.0, "step": 0.01, "default": 0.0}
+ ],
+ "passes": "single"
+}

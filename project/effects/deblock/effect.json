@@ -1,0 +1,20 @@
+{
+ "id": "deblock",
+ "label": "Deblock",
+ "category": "Image Control",
+ "tags": ["repair"],
+ "version": 1,
+ "blurb": "Smooths away the square blocks a starved video stream leaves in skies, walls and dark scenes, the way a decoder's loop filter does: it only softens the step across each block border when both sides are flat and the step is small, so real edges and texture stay sharp. Block size is 8 for most streams; for a clip that was made bigger after it was compressed, multiply (720p shown at 1080p is 12). Show the grid to line it up.",
+ "params": [
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "keep_edges", "label": "Keep steps bigger than", "type": "float", "min": 0.01, "max": 0.4, "step": 0.005, "default": 0.1},
+  {"key": "block_size", "label": "Block size", "type": "float", "min": 2.0, "max": 32.0, "step": 0.25, "default": 8.0, "unit": " px"},
+  {"key": "offset_x", "label": "Grid offset across", "type": "float", "min": 0.0, "max": 32.0, "step": 0.25, "default": 0.0, "unit": " px"},
+  {"key": "offset_y", "label": "Grid offset down", "type": "float", "min": 0.0, "max": 32.0, "step": 0.25, "default": 0.0, "unit": " px"},
+  {"key": "show_grid", "label": "Show the grid", "type": "bool", "default": false}
+ ],
+ "passes": [
+  {"shader": "deblock.gdshader", "set": {"axis": 0}},
+  {"shader": "deblock.gdshader", "set": {"axis": 1}}
+ ]
+}

@@ -1,0 +1,18 @@
+{
+ "id": "purr_underwater",
+ "label": "Underwater",
+ "category": "Purrmiere",
+ "tags": ["look", "light"],
+ "version": 1,
+ "blurb": "Sinks the picture under water: a wavering refraction, rippling caustic light, god rays slanting down from the surface, drifting specks and the blue green fade of depth.",
+ "params": [
+  {"key": "deep", "label": "Water colour", "type": "color", "default": [0.0, 0.32, 0.45, 1.0]},
+  {"key": "depth", "label": "Depth", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "waves", "label": "Wavering", "type": "float", "min": 0.0, "max": 30.0, "step": 0.1, "default": 6.0, "unit": " px"},
+  {"key": "caustics", "label": "Caustics", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "rays", "label": "Light rays", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "specks", "label": "Specks", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "speed", "label": "Speed", "type": "float", "min": 0.0, "max": 3.0, "step": 0.01, "default": 0.6}
+ ],
+ "passes": "single"
+}

@@ -1,0 +1,16 @@
+{
+ "id": "glass_wipe",
+ "label": "Glass Wipe",
+ "category": "Transition",
+ "version": 1,
+ "blurb": "A wipe led by a band of thick glass that bends the picture as it passes.",
+ "params": [
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0, "max": 1, "step": 0.005, "default": 0.5},
+  {"key": "angle", "label": "Angle", "type": "float", "min": -180, "max": 180, "step": 1, "default": 0, "unit": " deg"},
+  {"key": "band", "label": "Glass width", "type": "float", "min": 0.01, "max": 0.6, "step": 0.005, "default": 0.15},
+  {"key": "refraction", "label": "Refraction", "type": "float", "min": 0, "max": 300, "step": 0.5, "default": 40, "unit": " px"},
+  {"key": "shine", "label": "Shine", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.25}
+ ],
+ "handles": [{"kind": "angle", "key": "angle", "zero": "right", "turn": "ccw"}],
+ "passes": "single"
+}

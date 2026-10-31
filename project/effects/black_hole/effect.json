@@ -1,0 +1,16 @@
+{
+ "id": "black_hole",
+ "label": "Black Hole",
+ "category": "Distort",
+ "version": 1,
+ "blurb": "Sucks the picture into a point that grows a dark centre, with everything round it bent and squeezed towards the hole. Add swirl to make it spin in.",
+ "params": [
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "size", "label": "Size", "type": "float", "min": 0.0, "max": 0.5, "step": 0.001, "default": 0.12},
+  {"key": "swirl", "label": "Swirl", "type": "float", "min": -720.0, "max": 720.0, "step": 1.0, "default": 0.0, "unit": " deg"},
+  {"key": "softness", "label": "Rim softness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "edges", "label": "Edges", "type": "enum", "choices": ["Stretch the edge", "Mirror", "Transparent"], "default": 0}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}, {"kind": "ring", "key": "size", "about": "centre", "unit": "h"}],
+ "passes": "single"
+}

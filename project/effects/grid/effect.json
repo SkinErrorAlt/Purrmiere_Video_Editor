@@ -1,0 +1,396 @@
+{
+ "id": "grid",
+ "label": "Grid",
+ "category": "Purrmiere",
+ "version": 1,
+ "blurb": "Lays cells out in a grid. On its own every cell shows the whole picture; placed after a Pair View it takes that effect's regions, sorted so the active view comes first, and each cell's position, scale, rotation and region can be keyframed. Effects placed after the Grid act on the whole grid.",
+ "pairs_with": [
+  "pair_view"
+ ],
+ "params": [
+  {
+   "key": "cells",
+   "label": "Cells",
+   "type": "int",
+   "min": 1,
+   "max": 6,
+   "step": 1,
+   "default": 2
+  },
+  {
+   "key": "cols",
+   "label": "Columns (0 is automatic)",
+   "type": "int",
+   "min": 0,
+   "max": 6,
+   "step": 1,
+   "default": 0
+  },
+  {
+   "key": "gap",
+   "label": "Gap",
+   "type": "float",
+   "min": 0,
+   "max": 0.2,
+   "step": 0.001,
+   "default": 0.02
+  },
+  {
+   "key": "bg",
+   "label": "Background",
+   "type": "color",
+   "default": [
+    0,
+    0,
+    0,
+    1
+   ]
+  },
+  {
+   "key": "fit",
+   "label": "Cell fill",
+   "type": "enum",
+   "choices": [
+    "Fit",
+    "Fill",
+    "Stretch"
+   ],
+   "default": 0
+  },
+  {
+   "key": "source",
+   "label": "Cells show",
+   "type": "enum",
+   "choices": [
+    "Pair View regions",
+    "The whole picture"
+   ],
+   "default": 0
+  },
+  {
+   "key": "sort_by_view",
+   "label": "Active region first",
+   "type": "bool",
+   "default": true
+  },
+  {
+   "key": "grid_border",
+   "label": "Mark the active region",
+   "type": "bool",
+   "default": false
+  },
+  {
+   "key": "c0_x",
+   "label": "Position X",
+   "type": "float",
+   "min": -1,
+   "max": 1,
+   "step": 0.001,
+   "default": 0,
+   "group": "Cell 1"
+  },
+  {
+   "key": "c0_y",
+   "label": "Position Y",
+   "type": "float",
+   "min": -1,
+   "max": 1,
+   "step": 0.001,
+   "default": 0,
+   "group": "Cell 1"
+  },
+  {
+   "key": "c0_scale",
+   "label": "Scale",
+   "type": "float",
+   "min": 0.05,
+   "max": 4,
+   "step": 0.01,
+   "default": 1,
+   "group": "Cell 1"
+  },
+  {
+   "key": "c0_rot",
+   "label": "Rotation",
+   "type": "float",
+   "min": -360,
+   "max": 360,
+   "step": 0.5,
+   "default": 0,
+   "group": "Cell 1"
+  },
+  {
+   "key": "c0_crop",
+   "label": "Region (0 follows the order)",
+   "type": "int",
+   "min": 0,
+   "max": 8,
+   "step": 1,
+   "default": 0,
+   "group": "Cell 1"
+  },
+  {
+   "key": "c1_x",
+   "label": "Position X",
+   "type": "float",
+   "min": -1,
+   "max": 1,
+   "step": 0.001,
+   "default": 0,
+   "group": "Cell 2"
+  },
+  {
+   "key": "c1_y",
+   "label": "Position Y",
+   "type": "float",
+   "min": -1,
+   "max": 1,
+   "step": 0.001,
+   "default": 0,
+   "group": "Cell 2"
+  },
+  {
+   "key": "c1_scale",
+   "label": "Scale",
+   "type": "float",
+   "min": 0.05,
+   "max": 4,
+   "step": 0.01,
+   "default": 1,
+   "group": "Cell 2"
+  },
+  {
+   "key": "c1_rot",
+   "label": "Rotation",
+   "type": "float",
+   "min": -360,
+   "max": 360,
+   "step": 0.5,
+   "default": 0,
+   "group": "Cell 2"
+  },
+  {
+   "key": "c1_crop",
+   "label": "Region (0 follows the order)",
+   "type": "int",
+   "min": 0,
+   "max": 8,
+   "step": 1,
+   "default": 0,
+   "group": "Cell 2"
+  },
+  {
+   "key": "c2_x",
+   "label": "Position X",
+   "type": "float",
+   "min": -1,
+   "max": 1,
+   "step": 0.001,
+   "default": 0,
+   "group": "Cell 3"
+  },
+  {
+   "key": "c2_y",
+   "label": "Position Y",
+   "type": "float",
+   "min": -1,
+   "max": 1,
+   "step": 0.001,
+   "default": 0,
+   "group": "Cell 3"
+  },
+  {
+   "key": "c2_scale",
+   "label": "Scale",
+   "type": "float",
+   "min": 0.05,
+   "max": 4,
+   "step": 0.01,
+   "default": 1,
+   "group": "Cell 3"
+  },
+  {
+   "key": "c2_rot",
+   "label": "Rotation",
+   "type": "float",
+   "min": -360,
+   "max": 360,
+   "step": 0.5,
+   "default": 0,
+   "group": "Cell 3"
+  },
+  {
+   "key": "c2_crop",
+   "label": "Region (0 follows the order)",
+   "type": "int",
+   "min": 0,
+   "max": 8,
+   "step": 1,
+   "default": 0,
+   "group": "Cell 3"
+  },
+  {
+   "key": "c3_x",
+   "label": "Position X",
+   "type": "float",
+   "min": -1,
+   "max": 1,
+   "step": 0.001,
+   "default": 0,
+   "group": "Cell 4"
+  },
+  {
+   "key": "c3_y",
+   "label": "Position Y",
+   "type": "float",
+   "min": -1,
+   "max": 1,
+   "step": 0.001,
+   "default": 0,
+   "group": "Cell 4"
+  },
+  {
+   "key": "c3_scale",
+   "label": "Scale",
+   "type": "float",
+   "min": 0.05,
+   "max": 4,
+   "step": 0.01,
+   "default": 1,
+   "group": "Cell 4"
+  },
+  {
+   "key": "c3_rot",
+   "label": "Rotation",
+   "type": "float",
+   "min": -360,
+   "max": 360,
+   "step": 0.5,
+   "default": 0,
+   "group": "Cell 4"
+  },
+  {
+   "key": "c3_crop",
+   "label": "Region (0 follows the order)",
+   "type": "int",
+   "min": 0,
+   "max": 8,
+   "step": 1,
+   "default": 0,
+   "group": "Cell 4"
+  },
+  {
+   "key": "c4_x",
+   "label": "Position X",
+   "type": "float",
+   "min": -1,
+   "max": 1,
+   "step": 0.001,
+   "default": 0,
+   "group": "Cell 5"
+  },
+  {
+   "key": "c4_y",
+   "label": "Position Y",
+   "type": "float",
+   "min": -1,
+   "max": 1,
+   "step": 0.001,
+   "default": 0,
+   "group": "Cell 5"
+  },
+  {
+   "key": "c4_scale",
+   "label": "Scale",
+   "type": "float",
+   "min": 0.05,
+   "max": 4,
+   "step": 0.01,
+   "default": 1,
+   "group": "Cell 5"
+  },
+  {
+   "key": "c4_rot",
+   "label": "Rotation",
+   "type": "float",
+   "min": -360,
+   "max": 360,
+   "step": 0.5,
+   "default": 0,
+   "group": "Cell 5"
+  },
+  {
+   "key": "c4_crop",
+   "label": "Region (0 follows the order)",
+   "type": "int",
+   "min": 0,
+   "max": 8,
+   "step": 1,
+   "default": 0,
+   "group": "Cell 5"
+  },
+  {
+   "key": "c5_x",
+   "label": "Position X",
+   "type": "float",
+   "min": -1,
+   "max": 1,
+   "step": 0.001,
+   "default": 0,
+   "group": "Cell 6"
+  },
+  {
+   "key": "c5_y",
+   "label": "Position Y",
+   "type": "float",
+   "min": -1,
+   "max": 1,
+   "step": 0.001,
+   "default": 0,
+   "group": "Cell 6"
+  },
+  {
+   "key": "c5_scale",
+   "label": "Scale",
+   "type": "float",
+   "min": 0.05,
+   "max": 4,
+   "step": 0.01,
+   "default": 1,
+   "group": "Cell 6"
+  },
+  {
+   "key": "c5_rot",
+   "label": "Rotation",
+   "type": "float",
+   "min": -360,
+   "max": 360,
+   "step": 0.5,
+   "default": 0,
+   "group": "Cell 6"
+  },
+  {
+   "key": "c5_crop",
+   "label": "Region (0 follows the order)",
+   "type": "int",
+   "min": 0,
+   "max": 8,
+   "step": 1,
+   "default": 0,
+   "group": "Cell 6"
+  }
+ ],
+ "passes": "single",
+ "hidden_uniforms": [
+  "crop_count",
+  "crop?",
+  "crop_rot?",
+  "active_colour",
+  "paired",
+  "region_tex?",
+  "region_own",
+  "cut_on",
+  "cut_a?",
+  "cut_b?"
+ ]
+}

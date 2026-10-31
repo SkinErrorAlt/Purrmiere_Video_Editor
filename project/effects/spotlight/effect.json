@@ -1,0 +1,18 @@
+{
+ "id": "spotlight",
+ "label": "Spotlight",
+ "category": "Light & Shadow",
+ "tags": ["light"],
+ "version": 1,
+ "blurb": "A cone of light on the picture, bright inside and dark outside.",
+ "params": [
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.4]},
+  {"key": "radius", "label": "Radius", "type": "float", "min": 0.01, "max": 2.0, "step": 0.01, "default": 0.35},
+  {"key": "softness", "label": "Edge softness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "brightness", "label": "Inside", "type": "float", "min": 0.0, "max": 4.0, "step": 0.01, "default": 1.3},
+  {"key": "outside", "label": "Outside", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.25},
+  {"key": "colour", "label": "Light colour", "type": "color", "default": [1.0, 1.0, 1.0, 1.0]}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}, {"kind": "ring", "key": "radius", "about": "centre", "unit": "h", "feather": "softness", "feather_mode": "inner"}],
+ "passes": "single"
+}

@@ -1,0 +1,22 @@
+{
+ "id": "camcorder",
+ "label": "Camcorder",
+ "category": "Stylize",
+ "tags": ["graphic", "look"],
+ "version": 1,
+ "blurb": "A home video camera's viewfinder over the picture: a blinking red REC dot, a running time, a battery, corner marks, and a soft, slightly faded home video look.",
+ "params": [
+  {"key": "rec", "label": "REC and red dot", "type": "bool", "default": true},
+  {"key": "blink", "label": "Dot blinks per second", "type": "float", "min": 0.0, "max": 4.0, "step": 0.05, "default": 1.0},
+  {"key": "counter", "label": "Running time", "type": "bool", "default": true},
+  {"key": "counter_start", "label": "Time starts at", "type": "float", "min": 0.0, "max": 86399.0, "step": 1.0, "default": 0.0, "unit": " s"},
+  {"key": "battery", "label": "Battery", "type": "bool", "default": true},
+  {"key": "corners", "label": "Corner marks", "type": "bool", "default": true},
+  {"key": "centre_cross", "label": "Centre cross", "type": "bool", "default": false},
+  {"key": "overlay_colour", "label": "Overlay colour", "type": "color", "default": [1.0, 1.0, 1.0, 1.0]},
+  {"key": "size", "label": "Overlay size", "type": "float", "min": 0.5, "max": 2.0, "step": 0.01, "default": 1.0},
+  {"key": "margin", "label": "Distance from the edge", "type": "float", "min": 0.02, "max": 0.2, "step": 0.005, "default": 0.07},
+  {"key": "video_look", "label": "Home video look", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35}
+ ],
+ "passes": "single"
+}

@@ -1,0 +1,13 @@
+{
+ "id": "lut",
+ "label": "LUT",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Applies a 3D colour lookup table from a .cube file or a HALD picture, the way cameras and grading tools share looks.",
+ "params": [
+  {"key": "lut", "label": "LUT file", "type": "texture", "default": ""},
+  {"key": "intensity", "label": "Intensity", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "interpolation", "label": "Interpolation", "type": "enum", "choices": ["Tetrahedral", "Trilinear"], "default": 0}
+ ],
+ "passes": "single"
+}

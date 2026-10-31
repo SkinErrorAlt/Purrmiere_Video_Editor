@@ -1,0 +1,17 @@
+{
+ "id": "parametric",
+ "label": "Parametric",
+ "group": "Distort",
+ "space": "2D",
+ "from": ["gl CrazyParametricFun"],
+ "blurb": "Rings ripple out of the centre in a beat set by a spirograph curve, churning the outgoing picture before it fades into the incoming one.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "a", "label": "Curve size", "type": "float", "min": 1, "max": 10, "step": 0.1, "default": 4},
+  {"key": "b", "label": "Curve wheel", "type": "float", "min": 0.1, "max": 5, "step": 0.1, "default": 1},
+  {"key": "rings", "label": "Rings", "type": "float", "min": 1, "max": 300, "step": 1, "default": 120},
+  {"key": "strength", "label": "Churn", "type": "float", "min": 0, "max": 0.3, "step": 0.005, "default": 0.06},
+  {"key": "blend_start", "label": "Blend starts", "type": "float", "min": 0, "max": 0.9, "step": 0.01, "default": 0.2},
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]}
+ ]
+}

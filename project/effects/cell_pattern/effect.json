@@ -1,0 +1,20 @@
+{
+ "id": "cell_pattern",
+ "label": "Cell Pattern",
+ "category": "Generate",
+ "version": 1,
+ "blurb": "Worley cell noise drawn as soft cells, bright edges, flat crystals or bubbles. Evolve speed sets the cells drifting.",
+ "params": [
+  {"key": "style", "label": "Style", "type": "enum", "choices": ["Cells", "Edges", "Crystal", "Bubbles"], "default": 0},
+  {"key": "size", "label": "Cell size", "type": "float", "min": 4.0, "max": 2000.0, "step": 1.0, "default": 90.0, "unit": " px"},
+  {"key": "jitter", "label": "Jitter", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.9},
+  {"key": "evolve", "label": "Evolve speed", "type": "float", "min": 0.0, "max": 10.0, "step": 0.01, "default": 0.4},
+  {"key": "contrast", "label": "Contrast", "type": "float", "min": 0.0, "max": 4.0, "step": 0.01, "default": 1.0},
+  {"key": "colour_a", "label": "Colour one", "type": "color", "default": [0.04, 0.07, 0.14, 1.0]},
+  {"key": "colour_b", "label": "Colour two", "type": "color", "default": [0.55, 0.8, 1.0, 1.0]},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0},
+  {"key": "blend", "label": "How it mixes", "type": "enum", "choices": ["Replace", "Multiply", "Screen", "Overlay", "Add", "Soft light", "Over"], "default": 0},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0}
+ ],
+ "passes": "single"
+}

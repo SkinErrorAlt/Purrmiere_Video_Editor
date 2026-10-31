@@ -1,0 +1,24 @@
+{
+ "id": "four_colour_gradient",
+ "label": "4-Colour Gradient",
+ "category": "Generate",
+ "version": 1,
+ "blurb": "Four colours pinned to four points and blended across the frame. Jitter adds a little noise to stop banding.",
+ "params": [
+  {"key": "point_1", "label": "Point 1", "type": "vec2", "default": [0.1, 0.1]},
+  {"key": "colour_1", "label": "Colour 1", "type": "color", "default": [1.0, 0.85, 0.2, 1.0]},
+  {"key": "point_2", "label": "Point 2", "type": "vec2", "default": [0.9, 0.1]},
+  {"key": "colour_2", "label": "Colour 2", "type": "color", "default": [0.2, 0.8, 0.45, 1.0]},
+  {"key": "point_3", "label": "Point 3", "type": "vec2", "default": [0.1, 0.9]},
+  {"key": "colour_3", "label": "Colour 3", "type": "color", "default": [0.9, 0.25, 0.6, 1.0]},
+  {"key": "point_4", "label": "Point 4", "type": "vec2", "default": [0.9, 0.9]},
+  {"key": "colour_4", "label": "Colour 4", "type": "color", "default": [0.15, 0.3, 0.9, 1.0]},
+  {"key": "method", "label": "Blend by", "type": "enum", "choices": ["Inverse distance", "Smooth"], "default": 0},
+  {"key": "blend_power", "label": "Sharpness", "type": "float", "min": 0.5, "max": 8.0, "step": 0.05, "default": 2.0},
+  {"key": "jitter", "label": "Jitter", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.2},
+  {"key": "blend", "label": "How it mixes", "type": "enum", "choices": ["Replace", "Multiply", "Screen", "Overlay", "Add", "Soft light", "Over"], "default": 0},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0}
+ ],
+ "handles": [{"kind": "point", "key": "point_1"}, {"kind": "point", "key": "point_2"}, {"kind": "point", "key": "point_3"}, {"kind": "point", "key": "point_4"}],
+ "passes": "single"
+}

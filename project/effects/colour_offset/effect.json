@@ -1,0 +1,14 @@
+{
+ "id": "colour_offset",
+ "label": "Colour Offset",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Turns the red, green and blue channels round by their own phase, so a full turn of 360 degrees carries a channel from black up through white and back to where it started. What happens past white is set by Overflow: wrap round to black, fold back down like solarising, or follow a smooth wave.",
+ "params": [
+  {"key": "red_phase", "label": "Red phase", "type": "float", "min": -360.0, "max": 360.0, "step": 1.0, "default": 60.0, "unit": " deg"},
+  {"key": "green_phase", "label": "Green phase", "type": "float", "min": -360.0, "max": 360.0, "step": 1.0, "default": 0.0, "unit": " deg"},
+  {"key": "blue_phase", "label": "Blue phase", "type": "float", "min": -360.0, "max": 360.0, "step": 1.0, "default": -60.0, "unit": " deg"},
+  {"key": "overflow", "label": "Overflow", "type": "enum", "choices": ["Wrap", "Solarise", "Smooth wave"], "default": 0}
+ ],
+ "passes": "single"
+}

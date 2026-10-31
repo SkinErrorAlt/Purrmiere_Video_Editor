@@ -1,0 +1,22 @@
+{
+ "id": "polariser",
+ "label": "Polariser",
+ "category": "Colour Correction",
+ "version": 1,
+ "tags": ["look"],
+ "blurb": "A circular polarising filter on the lens, as in Nik Color Efex Polarization. Blue sky darkens and deepens most at right angles to the sun, so the sky changes across the frame rather than as a flat wash, while cloud whites stay white. Shine on leaves, glass and water drops dims, showing the colour underneath, and foliage turns richer. Sun direction is where the sun sits round the camera: 0 straight ahead, 90 to the right, 180 behind, minus 90 to the left.",
+ "params": [
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 100.0, "step": 1.0, "default": 80.0, "unit": " %"},
+  {"key": "sun_angle", "label": "Sun direction", "type": "float", "min": -180.0, "max": 180.0, "step": 1.0, "default": 70.0, "unit": " deg"},
+  {"key": "sky_darkening", "label": "Sky darkening", "type": "float", "min": 0.0, "max": 100.0, "step": 1.0, "default": 70.0, "unit": " %"},
+  {"key": "glare_cut", "label": "Glare cut", "type": "float", "min": 0.0, "max": 100.0, "step": 1.0, "default": 60.0, "unit": " %"},
+  {"key": "foliage", "label": "Foliage richness", "type": "float", "min": 0.0, "max": 100.0, "step": 1.0, "default": 50.0, "unit": " %"},
+  {"key": "keep_skin", "label": "Keep skin natural", "type": "float", "min": 0.0, "max": 100.0, "step": 1.0, "default": 80.0, "unit": " %"}
+ ],
+ "passes": [
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "polarise.gdshader", "scale": 8.0, "inputs": {"near_tex": 1, "wide_tex": 2}}
+ ]
+}

@@ -1,0 +1,20 @@
+{
+ "id": "purr_stained_glass",
+ "label": "Stained Glass",
+ "category": "Purrmiere",
+ "tags": ["look", "light"],
+ "version": 1,
+ "blurb": "Rebuilds the picture as a stained glass window: irregular panes of rich coloured glass held in dark lead, with rippled glass, light glowing from the middle of each pane and an optional sweep of sunlight.",
+ "params": [
+  {"key": "cell", "label": "Pane size", "type": "float", "min": 8.0, "max": 200.0, "step": 0.5, "default": 38.0, "unit": " px"},
+  {"key": "lead", "label": "Lead width", "type": "float", "min": 0.0, "max": 12.0, "step": 0.1, "default": 3.0, "unit": " px"},
+  {"key": "lead_colour", "label": "Lead colour", "type": "color", "default": [0.07, 0.06, 0.06, 1.0]},
+  {"key": "saturation", "label": "Colour", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 1.4},
+  {"key": "glow", "label": "Pane glow", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "ripple", "label": "Rippled glass", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "sweep", "label": "Sunlight sweep", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "speed", "label": "Sweep speed", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.25},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

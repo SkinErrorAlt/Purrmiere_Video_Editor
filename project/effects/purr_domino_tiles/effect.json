@@ -1,0 +1,18 @@
+{
+ "id": "purr_domino_tiles",
+ "label": "Domino Tiles",
+ "category": "Purrmiere",
+ "tags": ["graphic"],
+ "version": 1,
+ "blurb": "A transition where the picture is cut into tall strips that topple over one after another like dominoes, darkening as they fall flat and leaving the next shot standing behind.",
+ "params": [
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0.0, "max": 1.0, "step": 0.001, "default": 0.5},
+  {"key": "timing", "label": "Timing", "type": "enum", "choices": ["Follow Progress", "Reveal at the clip start", "Hide at the clip end"], "default": 0},
+  {"key": "auto_len", "label": "Automatic length", "type": "float", "min": 0.05, "max": 10.0, "step": 0.01, "default": 1.0, "unit": " s"},
+  {"key": "strips", "label": "Strips", "type": "int", "min": 2, "max": 40, "step": 1, "default": 12},
+  {"key": "direction", "label": "Falls", "type": "enum", "default": 0, "choices": ["Left to right", "Right to left", "Top to bottom", "Bottom to top"]},
+  {"key": "overlap", "label": "Overlap", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "shade", "label": "Shading", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6}
+ ],
+ "passes": "single"
+}

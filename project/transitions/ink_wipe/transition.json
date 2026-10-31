@@ -1,0 +1,17 @@
+{
+ "id": "ink_wipe",
+ "label": "Ink",
+ "group": "Wipe",
+ "space": "2D",
+ "from": ["CapCut Ink"],
+ "blurb": "Blots of ink spread across the frame with ragged, feathery edges, and the incoming picture shows inside them.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "blots", "label": "Blots", "type": "int", "min": 1, "max": 6, "step": 1, "default": 3},
+  {"key": "spread", "label": "Raggedness", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.7},
+  {"key": "rim", "label": "Ink edge", "type": "float", "min": 0, "max": 80, "step": 1, "default": 18, "unit": " px"},
+  {"key": "ink_colour", "label": "Ink colour", "type": "color", "default": [0.03, 0.03, 0.05, 1]},
+  {"key": "softness", "label": "Soft edge", "type": "float", "min": 0, "max": 0.2, "step": 0.005, "default": 0.01},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth", "Fast start"], "default": 1}
+ ]
+}

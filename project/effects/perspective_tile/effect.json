@@ -1,0 +1,27 @@
+{
+ "id": "perspective_tile",
+ "label": "Perspective Tile",
+ "category": "Distort",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Tiles the picture across a plane that runs away to a horizon, like an endless floor or wall made of the clip, fading into fog. Far tiles are filtered so they never shimmer, and the horizon stays straight.",
+ "params": [
+  {"key": "tilt", "label": "Tilt", "type": "float", "min": 0.0, "max": 89.0, "step": 0.1, "default": 72.0, "unit": " deg"},
+  {"key": "turn", "label": "Turn", "type": "float", "min": -180.0, "max": 180.0, "step": 0.1, "default": 0.0, "unit": " deg"},
+  {"key": "height", "label": "Camera height", "type": "float", "min": 0.1, "max": 5.0, "step": 0.01, "default": 1.0},
+  {"key": "tile_size", "label": "Tile size", "type": "float", "min": 0.05, "max": 8.0, "step": 0.01, "default": 2.0},
+  {"key": "mirror", "label": "Mirror every other tile", "type": "bool", "default": false},
+  {"key": "scroll", "label": "Scroll speed", "type": "float", "min": -10.0, "max": 10.0, "step": 0.01, "default": 0.0, "unit": " tiles/s"},
+  {"key": "horizon", "label": "Horizon position", "type": "float", "min": 0.0, "max": 1.0, "step": 0.001, "default": 0.35},
+  {"key": "fog_colour", "label": "Fog colour", "type": "color", "default": [0.06, 0.07, 0.11, 1.0]},
+  {"key": "fog", "label": "Fog amount", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5}
+ ],
+ "passes": [
+  {"shader": "res://effects/blur_gaussian/down.gdshader", "scale": 0.5},
+  {"shader": "res://effects/blur_gaussian/down.gdshader", "scale": 0.5},
+  {"shader": "res://effects/blur_gaussian/down.gdshader", "scale": 0.5},
+  {"shader": "res://effects/blur_gaussian/down.gdshader", "scale": 0.5},
+  {"shader": "res://effects/blur_gaussian/down.gdshader", "scale": 0.5},
+  {"shader": "plane.gdshader", "scale": 32.0, "inputs": {"mip1": 0, "mip2": 1, "mip3": 2, "mip4": 3, "mip5": 4}}
+ ]
+}

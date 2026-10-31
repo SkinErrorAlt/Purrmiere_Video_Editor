@@ -1,0 +1,14 @@
+{
+ "id": "crosswarp",
+ "label": "Cross Warp",
+ "group": "Distort",
+ "space": "2D",
+ "from": ["gl crosswarp"],
+ "blurb": "A soft sweep crosses the frame: behind it the outgoing picture is squeezed towards the centre while the incoming one swells out from it.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "direction", "label": "Sweeps", "type": "enum", "choices": ["Right to left", "Left to right", "Top to bottom", "Bottom to top"], "default": 0},
+  {"key": "width", "label": "Sweep width", "type": "float", "min": 0.05, "max": 2, "step": 0.01, "default": 1},
+  {"key": "centre", "label": "Warps towards", "type": "vec2", "default": [0.5, 0.5]}
+ ]
+}

@@ -1,0 +1,18 @@
+{
+ "id": "purr_dappled_light",
+ "label": "Dappled Light",
+ "category": "Purrmiere",
+ "tags": ["light"],
+ "version": 1,
+ "blurb": "Sunlight filtering through leaves: soft bright patches and round sun spots scattered over the scene, swaying gently as if a breeze moves the branches overhead.",
+ "params": [
+  {"key": "colour", "label": "Sunlight", "type": "color", "default": [1.0, 0.9, 0.68, 1.0]},
+  {"key": "strength", "label": "Light", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.8},
+  {"key": "shadow", "label": "Shade", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45},
+  {"key": "size", "label": "Leaf size", "type": "float", "min": 20.0, "max": 1000.0, "step": 1.0, "default": 180.0, "unit": " px"},
+  {"key": "spots", "label": "Sun spots", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "sway", "label": "Sway", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.4},
+  {"key": "softness", "label": "Softness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4}
+ ],
+ "passes": "single"
+}

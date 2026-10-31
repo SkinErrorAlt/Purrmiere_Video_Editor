@@ -1,0 +1,18 @@
+{
+ "id": "wave_bend",
+ "label": "Wave Warp",
+ "group": "Distort",
+ "space": "2D",
+ "from": ["seamless packs Wave", "CapCut Distortion Wave", "Filmora Warp"],
+ "blurb": "A travelling wave bends the outgoing picture across the way the frame is pushing, growing taller up to the cut, and the incoming picture carries on the same wave at the same place and flattens out as it settles. The crests keep moving at an even speed through the cut, motion blur follows the slope of the wave, the push happens mostly under the blur round the cut, and the wave eases off toward the frame edges so no mirrored edge ever shows.",
+ "default_duration": 0.8,
+ "params": [
+  {"key": "direction", "label": "Pushes towards", "type": "enum", "choices": ["Left", "Right", "Up", "Down"], "default": 0},
+  {"key": "waves", "label": "Waves across", "type": "float", "min": 0.5, "max": 6, "step": 0.1, "default": 1.5},
+  {"key": "amplitude", "label": "Height", "type": "float", "min": 0, "max": 0.3, "step": 0.005, "default": 0.15},
+  {"key": "travel", "label": "Push", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.3},
+  {"key": "speed", "label": "Wave speed", "type": "float", "min": 0, "max": 4, "step": 0.05, "default": 1.5},
+  {"key": "blur", "label": "Motion blur", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 0.6},
+  {"key": "curve", "label": "Speed", "type": "enum", "choices": ["Whip, fast at the cut", "Smooth", "Even"], "default": 0}
+ ]
+}

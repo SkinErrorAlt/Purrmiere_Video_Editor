@@ -1,0 +1,17 @@
+{
+ "id": "tile_reveal",
+ "label": "Tiles",
+ "group": "Shape",
+ "space": "2D",
+ "from": ["Keynote Mosaic"],
+ "blurb": "The frame breaks into tiles that each turn over flat, in a random order or a sweep, showing the outgoing picture on the front and the incoming one on the back.",
+ "default_duration": 1.4,
+ "params": [
+  {"key": "tiles", "label": "Tiles across", "type": "int", "min": 2, "max": 48, "step": 1, "default": 10},
+  {"key": "order", "label": "Order", "type": "enum", "choices": ["Random", "Left to right", "Diagonal", "From the centre"], "default": 0},
+  {"key": "axis", "label": "Turn", "type": "enum", "choices": ["Sideways", "Upwards"], "default": 0},
+  {"key": "stagger", "label": "Stagger", "type": "float", "min": 0, "max": 0.95, "step": 0.01, "default": 0.7},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

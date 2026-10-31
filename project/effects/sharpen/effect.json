@@ -1,0 +1,16 @@
+{
+ "id": "sharpen",
+ "label": "Sharpen",
+ "category": "Blur & Sharpen",
+ "version": 1,
+ "blurb": "Adds back the detail a small gaussian blur removes.",
+ "params": [
+  {"key": "amount", "label": "Sharpen Amount", "type": "float", "min": 0, "max": 5, "step": 0.01, "default": 0.5},
+  {"key": "radius", "label": "Radius", "type": "float", "min": 0.5, "max": 20, "step": 0.1, "default": 1.5}
+ ],
+ "passes": [
+  {"shader": "res://effects/blur_gaussian/gauss.gdshader", "set": {"direction": [1.0, 0.0], "kernel": 0, "dims": 0, "edge": true}},
+  {"shader": "res://effects/blur_gaussian/gauss.gdshader", "set": {"direction": [0.0, 1.0], "kernel": 0, "dims": 0, "edge": true}},
+  {"shader": "sharpen_mix.gdshader", "set": {"threshold": 0.0, "luma_only": false}}
+ ]
+}

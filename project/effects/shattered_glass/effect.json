@@ -1,0 +1,20 @@
+{
+ "id": "shattered_glass",
+ "label": "Shattered Glass",
+ "category": "Distort",
+ "version": 1,
+ "blurb": "A cracked screen: cracks run out from the point of impact and ring round it, each shard of glass shows the picture a little shifted, and the crack edges catch the light.",
+ "params": [
+  {"key": "impact", "label": "Impact point", "type": "vec2", "default": [0.42, 0.45]},
+  {"key": "spread", "label": "Spread", "type": "float", "min": 0.05, "max": 1.5, "step": 0.01, "default": 0.7},
+  {"key": "cracks", "label": "Cracks", "type": "int", "min": 4, "max": 40, "step": 1, "default": 16},
+  {"key": "rings", "label": "Ring cracks", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "shift", "label": "Shard shift", "type": "float", "min": 0.0, "max": 60.0, "step": 0.1, "default": 7.0, "unit": " px"},
+  {"key": "crack_width", "label": "Crack width", "type": "float", "min": 0.0, "max": 8.0, "step": 0.1, "default": 1.4, "unit": " px"},
+  {"key": "shine", "label": "Shine", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "tint", "label": "Shard tint", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.25},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "handles": [{"kind": "point", "key": "impact"}, {"kind": "ring", "key": "spread", "about": "impact", "unit": "d"}],
+ "passes": "single"
+}

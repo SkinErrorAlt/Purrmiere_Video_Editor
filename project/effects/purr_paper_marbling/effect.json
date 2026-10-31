@@ -1,0 +1,19 @@
+{
+ "id": "purr_paper_marbling",
+ "label": "Paper Marbling",
+ "category": "Purrmiere",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Swirls the picture like inks floating on water for marbled paper: the colours are combed and folded into feathery swirls that drift slowly, or replaced with classic marbling inks on cream.",
+ "params": [
+  {"key": "swirl", "label": "Swirl", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "scale", "label": "Pattern size", "type": "float", "min": 30.0, "max": 1200.0, "step": 1.0, "default": 320.0, "unit": " px"},
+  {"key": "comb", "label": "Combing", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "mode", "label": "Colours", "type": "enum", "default": 0, "choices": ["From the picture", "Classic inks"]},
+  {"key": "ink_1", "label": "Ink 1", "type": "color", "default": [0.15, 0.25, 0.5, 1.0]},
+  {"key": "ink_2", "label": "Ink 2", "type": "color", "default": [0.75, 0.3, 0.25, 1.0]},
+  {"key": "ink_3", "label": "Ink 3", "type": "color", "default": [0.92, 0.78, 0.45, 1.0]},
+  {"key": "drift", "label": "Drift", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.1}
+ ],
+ "passes": "single"
+}

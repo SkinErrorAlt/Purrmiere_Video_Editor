@@ -1,0 +1,21 @@
+{
+ "id": "old_film",
+ "label": "Old Film",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "An old print in one go: sepia or grey toning, grain, scratches, dust, a wobbling frame, flicker and dark corners.",
+ "params": [
+  {"key": "toning", "label": "Toning", "type": "enum", "choices": ["Sepia", "Grey", "None"], "default": 0},
+  {"key": "tone_amount", "label": "Toning amount", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.8},
+  {"key": "grain", "label": "Grain", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "scratches", "label": "Scratches", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "dust", "label": "Dust", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "weave", "label": "Gate weave", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "flicker", "label": "Flicker", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "vignette", "label": "Vignette", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "frame_rate", "label": "Frame rate", "type": "float", "min": 12.0, "max": 30.0, "step": 1.0, "default": 18.0, "unit": " fps"},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

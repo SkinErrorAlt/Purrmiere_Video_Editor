@@ -1,0 +1,21 @@
+{
+ "id": "inner_glow",
+ "label": "Inner Glow",
+ "category": "Light & Shadow",
+ "tags": ["light"],
+ "version": 1,
+ "blurb": "A glow that lives inside the shape, lighting it from its own edge inwards, or from the middle outwards, for titles, logos and cut outs. Choke keeps a solid band of glow at the start before it fades. Alpha Glow glows outside the shape; this one stays within it.",
+ "params": [
+  {"key": "colour", "label": "Colour", "type": "color", "default": [1.0, 0.9, 0.5, 1.0]},
+  {"key": "size", "label": "Size", "type": "float", "min": 1.0, "max": 150.0, "step": 0.1, "default": 20.0, "unit": " px"},
+  {"key": "choke", "label": "Choke", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.0},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.75},
+  {"key": "source", "label": "Glow from", "type": "enum", "choices": ["The edge", "The middle"], "default": 0},
+  {"key": "blend", "label": "Blend", "type": "enum", "choices": ["Screen", "Add", "Normal", "Multiply"], "default": 0}
+ ],
+ "passes": [
+  {"shader": "res://effects/feather_matte/dist_across.gdshader", "map": {"reach_a": "size"}},
+  {"shader": "res://effects/feather_matte/dist_down.gdshader", "map": {"reach_a": "size"}},
+  {"shader": "combine.gdshader"}
+ ]
+}

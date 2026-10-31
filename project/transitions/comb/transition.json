@@ -1,0 +1,15 @@
+{
+ "id": "comb",
+ "label": "Comb",
+ "group": "Wipe",
+ "space": "2D",
+ "from": ["PowerPoint Comb"],
+ "blurb": "The incoming picture slides in as strips like the teeth of a comb, every other strip coming from the opposite side. Push moves the outgoing strips out ahead of them.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "orientation", "label": "Strips", "type": "enum", "choices": ["Horizontal", "Vertical"], "default": 0},
+  {"key": "teeth", "label": "Number of strips", "type": "int", "min": 2, "max": 60, "step": 1, "default": 12},
+  {"key": "style", "label": "Style", "type": "enum", "choices": ["Cover", "Push"], "default": 0},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 1}
+ ]
+}

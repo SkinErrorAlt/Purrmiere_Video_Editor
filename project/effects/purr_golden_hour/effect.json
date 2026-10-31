@@ -1,0 +1,19 @@
+{
+ "id": "purr_golden_hour",
+ "label": "Golden Hour",
+ "category": "Purrmiere",
+ "tags": ["look", "light"],
+ "version": 1,
+ "blurb": "Turns any shot into the last warm hour of sunlight: a honey grade with warm lifted shadows, a soft glow pouring from a sun you can place, and gentle haze falling off away from it.",
+ "params": [
+  {"key": "sun", "label": "Sun position", "type": "vec2", "default": [0.82, 0.18]},
+  {"key": "warmth", "label": "Warmth", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "glow", "label": "Sun glow", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.8},
+  {"key": "glow_size", "label": "Glow size", "type": "float", "min": 0.05, "max": 2.0, "step": 0.01, "default": 0.7},
+  {"key": "lift", "label": "Warm shadows", "type": "float", "min": 0.0, "max": 0.5, "step": 0.001, "default": 0.08},
+  {"key": "haze", "label": "Haze", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "sun_colour", "label": "Sun colour", "type": "color", "default": [1.0, 0.72, 0.35, 1.0]}
+ ],
+ "handles": [{"kind": "point", "key": "sun"}, {"kind": "ring", "key": "glow_size", "about": "sun", "unit": "h"}],
+ "passes": "single"
+}

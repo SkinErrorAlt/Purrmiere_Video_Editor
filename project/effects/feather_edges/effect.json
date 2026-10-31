@@ -1,0 +1,16 @@
+{
+ "id": "feather_edges",
+ "label": "Feather Edges",
+ "category": "Transform",
+ "version": 1,
+ "blurb": "Fades the picture out towards its own edge, so it sits softly over whatever is under it.",
+ "params": [
+  {"key": "left", "label": "Left", "type": "float", "min": 0.0, "max": 0.5, "step": 0.002, "default": 0.05},
+  {"key": "right", "label": "Right", "type": "float", "min": 0.0, "max": 0.5, "step": 0.002, "default": 0.05},
+  {"key": "top", "label": "Top", "type": "float", "min": 0.0, "max": 0.5, "step": 0.002, "default": 0.05},
+  {"key": "bottom", "label": "Bottom", "type": "float", "min": 0.0, "max": 0.5, "step": 0.002, "default": 0.05},
+  {"key": "rounded", "label": "Round the corners", "type": "float", "min": 0.0, "max": 0.5, "step": 0.002, "default": 0.0}
+ ],
+ "handles": [{"kind": "edges", "left": "left", "top": "top", "right": "right", "bottom": "bottom"}],
+ "passes": "single"
+}

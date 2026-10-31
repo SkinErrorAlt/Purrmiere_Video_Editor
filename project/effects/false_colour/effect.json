@@ -1,0 +1,14 @@
+{
+ "id": "false_colour",
+ "label": "False Colour",
+ "category": "Utility",
+ "tags": ["measure"],
+ "version": 1,
+ "blurb": "Paints exposure levels in colour like a camera monitor, measured on Rec.709 brightness in IRE. Green is 18 percent grey, pink is skin, yellow is close to clipping and red is clipped.",
+ "params": [
+  {"key": "mode", "label": "Mode", "type": "enum", "choices": ["Exposure bands", "Heat map", "Clipping only"], "default": 0},
+  {"key": "opacity", "label": "Opacity", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "show_picture", "label": "Grey picture underneath", "type": "bool", "default": false}
+ ],
+ "passes": "single"
+}

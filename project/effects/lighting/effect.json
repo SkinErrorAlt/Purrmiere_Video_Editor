@@ -1,0 +1,26 @@
+{
+ "id": "lighting",
+ "label": "Lighting",
+ "category": "Light & Shadow",
+ "tags": ["light"],
+ "version": 1,
+ "blurb": "Lights the picture with a point light or a spot light. The lightness of the picture works as a bump map, so texture catches the light and gets a small shine.",
+ "params": [
+  {"key": "light_position", "label": "Light position", "type": "vec2", "default": [0.3, 0.3]},
+  {"key": "height", "label": "Height", "type": "float", "min": 0.01, "max": 2, "step": 0.01, "default": 0.3},
+  {"key": "radius", "label": "Reach", "type": "float", "min": 0.05, "max": 3, "step": 0.01, "default": 1},
+  {"key": "colour", "label": "Colour", "type": "color", "default": [1.0, 0.96, 0.88, 1.0]},
+  {"key": "intensity", "label": "Intensity", "type": "float", "min": 0, "max": 4, "step": 0.01, "default": 1.2},
+  {"key": "ambient", "label": "Ambient", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.2},
+  {"key": "bump", "label": "Bump", "type": "float", "min": 0, "max": 10, "step": 0.1, "default": 2},
+  {"key": "shine", "label": "Shine", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.3},
+  {"key": "spot", "label": "Spot light", "type": "bool", "default": false},
+  {"key": "spot_angle", "label": "Spot angle", "type": "float", "min": 1, "max": 90, "step": 0.5, "default": 30, "unit": " deg"},
+  {"key": "spot_target", "label": "Spot aims at", "type": "vec2", "default": [0.6, 0.7]},
+  {"key": "spot_softness", "label": "Spot softness", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.3}
+ ],
+ "handles": [{"kind": "line", "keys": ["light_position", "spot_target"]}, {"kind": "ring", "key": "radius", "about": "light_position", "unit": "h"}],
+ "passes": [
+  {"shader": "lighting.gdshader"}
+ ]
+}

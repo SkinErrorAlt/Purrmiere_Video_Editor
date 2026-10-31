@@ -1,0 +1,19 @@
+{
+ "id": "film_looks",
+ "label": "Film Looks",
+ "category": "Colour Correction",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Twelve ready made grades, from warm and cool film prints to a faded matte, golden hour, neon night, a green screen terminal look, two strip colour and silver black and white. Pick one, then fine tune it; skin is kept natural where the look would spoil it.",
+ "params": [
+  {"key": "look", "label": "Look", "type": "enum", "choices": ["Warm print", "Cool print", "Faded matte", "Golden hour", "Winter blue", "Neon night", "Green terminal", "Seventies", "Two strip colour", "Horror", "Silver black and white", "Summer pop"], "default": 0},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "exposure", "label": "Exposure", "type": "float", "min": -2.0, "max": 2.0, "step": 0.01, "default": 0.0, "unit": " stops"},
+  {"key": "contrast", "label": "Contrast", "type": "float", "min": -1.0, "max": 1.0, "step": 0.01, "default": 0.0},
+  {"key": "saturation", "label": "Saturation", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 1.0},
+  {"key": "warmth", "label": "Warmth", "type": "float", "min": -1.0, "max": 1.0, "step": 0.01, "default": 0.0},
+  {"key": "fade", "label": "Fade", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.0},
+  {"key": "keep_skin", "label": "Keep skin natural", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3}
+ ],
+ "passes": "single"
+}

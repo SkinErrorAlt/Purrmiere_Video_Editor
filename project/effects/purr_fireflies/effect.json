@@ -1,0 +1,19 @@
+{
+ "id": "purr_fireflies",
+ "label": "Fireflies",
+ "category": "Purrmiere",
+ "tags": ["light"],
+ "version": 1,
+ "blurb": "Warm fireflies drift through the picture, each one wandering on its own path and blinking slowly with a soft glow round it. Lovely over dusk shots, gardens and cosy scenes.",
+ "params": [
+  {"key": "colour", "label": "Glow colour", "type": "color", "default": [1.0, 0.85, 0.35, 1.0]},
+  {"key": "density", "label": "Density", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45},
+  {"key": "size", "label": "Firefly size", "type": "float", "min": 1.0, "max": 20.0, "step": 0.1, "default": 3.0, "unit": " px"},
+  {"key": "glow", "label": "Glow size", "type": "float", "min": 2.0, "max": 80.0, "step": 0.5, "default": 18.0, "unit": " px"},
+  {"key": "brightness", "label": "Brightness", "type": "float", "min": 0.0, "max": 3.0, "step": 0.01, "default": 1.0},
+  {"key": "speed", "label": "Wander", "type": "float", "min": 0.0, "max": 3.0, "step": 0.01, "default": 0.4},
+  {"key": "blink", "label": "Blink", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

@@ -1,0 +1,18 @@
+{
+ "id": "rotate_3d",
+ "label": "Rotate",
+ "group": "3D",
+ "space": "3D",
+ "from": ["PowerPoint Rotate", "CapCut 3D Rotate"],
+ "blurb": "The outgoing picture turns on its middle until it is edge on, then the incoming picture turns the rest of the way in from edge on.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "direction", "label": "Turns towards", "type": "enum", "choices": ["Right", "Left", "Up", "Down"], "default": 0},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 10, "max": 90, "step": 1, "default": 40, "unit": " deg"},
+  {"key": "pull_back", "label": "Pull back", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.3},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "motion_blur", "label": "Motion blur", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 0.0},
+  {"key": "shutter", "label": "Shutter", "type": "float", "min": 0, "max": 360, "step": 1, "default": 180, "unit": " deg"},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

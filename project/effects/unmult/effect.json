@@ -1,0 +1,14 @@
+{
+ "id": "unmult",
+ "label": "Remove Black",
+ "category": "Keying",
+ "version": 1,
+ "blurb": "Takes the alpha from the brightest channel so flares, fire and sparks shot on black sit over the picture the way a screen blend would. Remove white does the same for dark marks on white paper.",
+ "params": [
+  {"key": "mode", "label": "Mode", "type": "enum", "choices": ["Remove black", "Remove white"], "default": 0},
+  {"key": "threshold", "label": "Threshold", "type": "float", "min": 0.0, "max": 0.9, "step": 0.005, "default": 0.02},
+  {"key": "gamma", "label": "Alpha curve", "type": "float", "min": 0.2, "max": 5.0, "step": 0.01, "default": 1.0},
+  {"key": "boost", "label": "Keep faint parts", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.0}
+ ],
+ "passes": "single"
+}

@@ -1,0 +1,14 @@
+{
+ "id": "directional_warp",
+ "label": "Directional Warp",
+ "group": "Zoom and Camera",
+ "space": "2D",
+ "from": ["gl directionalwarp"],
+ "blurb": "A soft wave sweeps over the frame and both pictures warp in towards the middle along it as one turns into the other.",
+ "default_duration": 0.8,
+ "params": [
+  {"key": "direction", "label": "Moves", "type": "enum", "choices": ["Left", "Right", "Up", "Down", "Up left", "Up right", "Down left", "Down right"], "default": 4},
+  {"key": "smoothness", "label": "Softness", "type": "float", "min": 0.05, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "timing", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 0}
+ ]
+}

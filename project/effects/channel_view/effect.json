@@ -1,0 +1,13 @@
+{
+ "id": "channel_view",
+ "label": "Channel View",
+ "category": "Utility",
+ "tags": ["measure"],
+ "version": 1,
+ "blurb": "Shows one channel on its own as grey: red, green, blue, alpha, lightness or saturation, or the picture over a checkerboard to judge transparency.",
+ "params": [
+  {"key": "channel", "label": "Show", "type": "enum", "choices": ["Red", "Green", "Blue", "Alpha", "Lightness", "Saturation", "Over a checkerboard"], "default": 3},
+  {"key": "checker", "label": "Checker size", "type": "float", "min": 2, "max": 128, "step": 1, "default": 16, "unit": " px"}
+ ],
+ "passes": "single"
+}

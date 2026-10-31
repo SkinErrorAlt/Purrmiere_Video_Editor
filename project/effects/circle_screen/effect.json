@@ -1,0 +1,22 @@
+{
+ "id": "circle_screen",
+ "label": "Circle Screen",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "A halftone made of concentric circles round a centre: each ring of ink gets thicker where the picture is dark and thinner where it is light, like Photoshop's Halftone Pattern in circle mode. Rings stay perfectly round on any frame shape. Keep the colours inks each ring in the picture's own colour.",
+ "params": [
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "spacing", "label": "Ring spacing", "type": "float", "min": 2.0, "max": 200.0, "step": 0.1, "default": 10.0, "unit": " px"},
+  {"key": "contrast", "label": "Contrast", "type": "float", "min": 0.0, "max": 4.0, "step": 0.01, "default": 1.0},
+  {"key": "ink", "label": "Ink colour", "type": "color", "default": [0.05, 0.05, 0.06, 1.0]},
+  {"key": "paper", "label": "Paper colour", "type": "color", "default": [0.97, 0.96, 0.93, 1.0]},
+  {"key": "keep_colours", "label": "Keep the colours", "type": "bool", "default": false}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}],
+ "passes": [
+  {"shader": "res://effects/blur_gaussian/down.gdshader", "scale": 0.5},
+  {"shader": "res://effects/blur_gaussian/down.gdshader", "scale": 0.5},
+  {"shader": "screen.gdshader", "scale": 4.0, "inputs": {"soft_tex": 1}}
+ ]
+}

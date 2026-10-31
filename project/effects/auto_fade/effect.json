@@ -1,0 +1,15 @@
+{
+ "id": "auto_fade",
+ "label": "Auto Fade",
+ "category": "Transition",
+ "version": 1,
+ "blurb": "Fades the clip in at its start and out at its end by set times, with no keyframes, so it keeps working after a trim. Fades to transparent or through a colour.",
+ "params": [
+  {"key": "fade_in", "label": "Fade in", "type": "float", "min": 0, "max": 10, "step": 0.05, "default": 0.5, "unit": " s"},
+  {"key": "fade_out", "label": "Fade out", "type": "float", "min": 0, "max": 10, "step": 0.05, "default": 0.5, "unit": " s"},
+  {"key": "to", "label": "Fade to", "type": "enum", "choices": ["Transparent", "The colour"], "default": 0},
+  {"key": "colour", "label": "Colour", "type": "color", "default": [0, 0, 0, 1]},
+  {"key": "curve", "label": "Curve", "type": "enum", "choices": ["Linear", "Smooth", "Ease in and out strongly"], "default": 1}
+ ],
+ "passes": "single"
+}

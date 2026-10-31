@@ -1,0 +1,18 @@
+{
+ "id": "blinds",
+ "label": "Blinds",
+ "group": "Wipe",
+ "space": "2D",
+ "from": ["PowerPoint Blinds", "Keynote Blinds", "Impress Venetian Blinds"],
+ "blurb": "The frame becomes a set of slats that turn over like window blinds, with the outgoing picture on their fronts and the incoming one on their backs. Wipe slides the incoming picture down each slat instead.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "orientation", "label": "Slats", "type": "enum", "choices": ["Horizontal", "Vertical"], "default": 0},
+  {"key": "slats", "label": "Number of slats", "type": "int", "min": 2, "max": 40, "step": 1, "default": 8},
+  {"key": "style", "label": "Style", "type": "enum", "choices": ["Turn", "Wipe"], "default": 0},
+  {"key": "stagger", "label": "Stagger", "type": "float", "min": 0, "max": 0.9, "step": 0.01, "default": 0.2},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 1},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

@@ -1,0 +1,19 @@
+{
+ "id": "purr_steam_wisps",
+ "label": "Steam Wisps",
+ "category": "Purrmiere",
+ "tags": ["light"],
+ "version": 1,
+ "blurb": "Soft curls of steam rise from a point you place, twisting and thinning as they climb. Perfect over hot drinks, food shots and cosy scenes.",
+ "params": [
+  {"key": "source", "label": "Source", "type": "vec2", "default": [0.5, 0.72]},
+  {"key": "width", "label": "Width", "type": "float", "min": 0.01, "max": 0.6, "step": 0.001, "default": 0.08},
+  {"key": "height", "label": "Height", "type": "float", "min": 0.05, "max": 1.2, "step": 0.001, "default": 0.5},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 1.0},
+  {"key": "curl", "label": "Curl", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "speed", "label": "Speed", "type": "float", "min": 0.0, "max": 3.0, "step": 0.01, "default": 0.5},
+  {"key": "colour", "label": "Colour", "type": "color", "default": [1.0, 1.0, 1.0, 1.0]}
+ ],
+ "handles": [{"kind": "point", "key": "source"}],
+ "passes": "single"
+}

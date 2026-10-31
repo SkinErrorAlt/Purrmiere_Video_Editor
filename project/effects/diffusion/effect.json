@@ -1,0 +1,21 @@
+{
+ "id": "diffusion",
+ "label": "Diffusion",
+ "category": "Blur & Sharpen",
+ "version": 1,
+ "blurb": "The look of a mist filter on the lens: highlights bloom softly into the picture. Black mist lifts and softens the shadows instead, like the black version of the filter.",
+ "params": [
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "size", "label": "Size", "type": "float", "min": 2, "max": 200, "step": 0.5, "default": 40, "unit": " px"},
+  {"key": "threshold", "label": "Threshold", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.55},
+  {"key": "black_mist", "label": "Black mist", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0},
+  {"key": "warmth", "label": "Warmth", "type": "float", "min": -1, "max": 1, "step": 0.01, "default": 0.2}
+ ],
+ "passes": [
+  {"shader": "bright.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/blur_gaussian/gauss.gdshader", "set": {"direction": [1.0, 0.0], "kernel": 0, "dims": 0, "edge": true}, "map": {"radius": "size"}},
+  {"shader": "res://effects/blur_gaussian/gauss.gdshader", "set": {"direction": [0.0, 1.0], "kernel": 0, "dims": 0, "edge": true}, "map": {"radius": "size"}},
+  {"shader": "compose.gdshader", "scale": 4.0}
+ ]
+}

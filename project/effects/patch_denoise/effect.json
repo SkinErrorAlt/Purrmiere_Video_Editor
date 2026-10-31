@@ -1,0 +1,47 @@
+{
+ "id": "patch_denoise",
+ "label": "Patch Denoise",
+ "category": "Blur & Sharpen",
+ "tags": ["repair"],
+ "version": 1,
+ "blurb": "Noise reduction that averages each pixel with the places nearby that look like it (non local means), rather than with whatever is next to it, so edges, text and texture stay while grain and sensor noise go. Lightness and colour noise are set apart; a bigger search area cleans more and costs more. Slower than Denoise, and much cleaner on noisy low light footage.",
+ "params": [
+  {
+   "key": "luma_strength",
+   "label": "Lightness noise",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.5
+  },
+  {
+   "key": "chroma_strength",
+   "label": "Colour noise",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.6
+  },
+  {
+   "key": "search",
+   "label": "Search area",
+   "type": "int",
+   "min": 1,
+   "max": 5,
+   "step": 1,
+   "default": 3
+  },
+  {
+   "key": "detail",
+   "label": "Keep fine detail",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.15
+  }
+ ],
+ "passes": "single"
+}

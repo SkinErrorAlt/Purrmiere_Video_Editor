@@ -1,0 +1,16 @@
+{
+ "id": "chop",
+ "label": "Chop",
+ "group": "Slide and Push",
+ "space": "2D",
+ "from": ["Canva Chop"],
+ "blurb": "The outgoing picture is cut into pieces along slanted lines and the pieces slide away in opposite directions along the cuts, showing the incoming picture behind.",
+ "default_duration": 0.8,
+ "params": [
+  {"key": "pieces", "label": "Pieces", "type": "int", "min": 2, "max": 16, "step": 1, "default": 2},
+  {"key": "angle", "label": "Cut angle", "type": "float", "min": -80, "max": 80, "step": 1, "default": 20, "unit": " deg"},
+  {"key": "timing", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth", "Strong", "Slow end", "Speed up"], "default": 2},
+  {"key": "stagger", "label": "Stagger", "type": "float", "min": 0, "max": 0.8, "step": 0.01, "default": 0},
+  {"key": "edge_shade", "label": "Cut shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0}
+ ]
+}

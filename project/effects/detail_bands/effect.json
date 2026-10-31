@@ -1,0 +1,23 @@
+{
+ "id": "detail_bands",
+ "label": "Detail by Size",
+ "category": "Blur & Sharpen",
+ "version": 1,
+ "blurb": "Sharpens or softens detail by its size, in three bands: fine (edges, hair, noise), medium (texture such as skin, fabric, foliage) and large (the shape and depth of things). Push a band up to bring it out or down to smooth it, so you can soften skin texture while keeping eyelashes sharp, or add punch without sharpening the noise. Detail size scales all three bands for larger or smaller pictures.",
+ "params": [
+  {"key": "fine", "label": "Fine detail", "type": "float", "min": -1.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "medium", "label": "Medium detail", "type": "float", "min": -1.0, "max": 1.0, "step": 0.01, "default": 0.2},
+  {"key": "large", "label": "Large detail", "type": "float", "min": -1.0, "max": 1.0, "step": 0.01, "default": 0.0},
+  {"key": "size", "label": "Detail size", "type": "float", "min": 0.5, "max": 3.0, "step": 0.01, "default": 1.0},
+  {"key": "luma_only", "label": "Brightness only", "type": "bool", "default": true}
+ ],
+ "passes": [
+  {"shader": "blur.gdshader", "set": {"direction": [1.0, 0.0], "band": 1}},
+  {"shader": "blur.gdshader", "set": {"direction": [0.0, 1.0], "band": 1}},
+  {"shader": "blur.gdshader", "set": {"direction": [1.0, 0.0], "band": 2}},
+  {"shader": "blur.gdshader", "set": {"direction": [0.0, 1.0], "band": 2}},
+  {"shader": "blur.gdshader", "set": {"direction": [1.0, 0.0], "band": 3}},
+  {"shader": "blur.gdshader", "set": {"direction": [0.0, 1.0], "band": 3}},
+  {"shader": "combine.gdshader", "inputs": {"g1_tex": 1, "g2_tex": 3}}
+ ]
+}

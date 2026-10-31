@@ -1,0 +1,17 @@
+{
+ "id": "swirl",
+ "label": "Swirl",
+ "group": "Distort",
+ "space": "2D",
+ "from": ["gl Swirl", "Keynote Twirl"],
+ "blurb": "The picture twists round its middle like water going down a plug hole, tightest at the centre, and untwists into the incoming one.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "turns", "label": "Turns", "type": "float", "min": 0.25, "max": 8, "step": 0.05, "default": 4},
+  {"key": "direction", "label": "Direction", "type": "enum", "choices": ["Clockwise", "Anticlockwise"], "default": 0},
+  {"key": "radius", "label": "Size", "type": "float", "min": 0.1, "max": 1.5, "step": 0.01, "default": 1},
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "blend", "label": "Blend length", "type": "float", "min": 0.05, "max": 1, "step": 0.01, "default": 1},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 0}
+ ]
+}

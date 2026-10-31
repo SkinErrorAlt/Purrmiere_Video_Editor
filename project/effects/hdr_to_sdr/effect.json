@@ -1,0 +1,16 @@
+{
+ "id": "hdr_to_sdr",
+ "label": "HDR to SDR",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Fixes grey, washed out HDR recordings (a game or phone captured with HDR on): the HDR10 or HLG signal is decoded to light, the wide Rec.2020 colours are brought into Rec.709, and bright highlights roll off smoothly into a normal picture.",
+ "params": [
+  {"key": "source", "label": "Recorded as", "type": "enum", "choices": ["HDR10 (PQ)", "HLG"], "default": 0},
+  {"key": "peak", "label": "Brightest part of the recording", "type": "float", "min": 100.0, "max": 10000.0, "step": 10.0, "default": 1000.0, "unit": " nits"},
+  {"key": "exposure", "label": "Exposure", "type": "float", "min": -3.0, "max": 3.0, "step": 0.01, "default": 0.0, "unit": " stops"},
+  {"key": "tone", "label": "Highlights", "type": "enum", "choices": ["Soft roll off", "Filmic", "Clip"], "default": 0},
+  {"key": "saturation", "label": "Saturation", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 1.0},
+  {"key": "convert_gamut", "label": "Convert Rec.2020 colours", "type": "bool", "default": true}
+ ],
+ "passes": "single"
+}

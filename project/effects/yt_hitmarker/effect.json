@@ -1,0 +1,23 @@
+{
+ "id": "yt_hitmarker",
+ "label": "Hit Marker",
+ "category": "YouTube",
+ "tags": ["youtube", "graphic"],
+ "version": 1,
+ "blurb": "The shooter game hit marker: four short slashes round a point that pop in and fade, white for a hit or red for the final one. The meme version is a big one with Repeat every set short. Drag it onto the target on the Program monitor.",
+ "params": [
+  {"key": "position", "label": "Position", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "size", "label": "Size", "type": "float", "min": 0.005, "max": 0.5, "step": 0.001, "default": 0.04},
+  {"key": "thickness", "label": "Thickness", "type": "float", "min": 0.5, "max": 30.0, "step": 0.5, "default": 4.0, "unit": " px"},
+  {"key": "gap", "label": "Gap in the middle", "type": "float", "min": 0.0, "max": 0.9, "step": 0.01, "default": 0.4},
+  {"key": "colour", "label": "Colour", "type": "color", "default": [1.0, 1.0, 1.0, 1.0]},
+  {"key": "final_hit", "label": "Final hit", "type": "bool", "default": false},
+  {"key": "final_colour", "label": "Final hit colour", "type": "color", "default": [1.0, 0.15, 0.12, 1.0]},
+  {"key": "outline", "label": "Dark edge", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "starts_at", "label": "Starts at", "type": "float", "min": 0.0, "max": 600.0, "step": 0.01, "default": 0.0, "unit": " s"},
+  {"key": "duration", "label": "Lasts", "type": "float", "min": 0.05, "max": 5.0, "step": 0.01, "default": 0.3, "unit": " s"},
+  {"key": "repeat_every", "label": "Repeat every", "type": "float", "min": 0.0, "max": 10.0, "step": 0.01, "default": 0.0, "unit": " s"}
+ ],
+ "handles": [{"kind": "point", "key": "position"}, {"kind": "ring", "key": "size", "about": "position", "unit": "h", "scale": 2.0, "shape": "box"}],
+ "passes": "single"
+}

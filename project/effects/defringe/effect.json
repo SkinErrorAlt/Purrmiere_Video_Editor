@@ -1,0 +1,13 @@
+{
+ "id": "defringe",
+ "label": "Defringe",
+ "category": "Keying",
+ "version": 1,
+ "blurb": "Takes away the dark or light halo round a PNG, a render or a keyed picture whose edge was saved blended with black, white or a screen colour. Each edge pixel has the background it was mixed with worked back out, so the edge keeps the colour of the subject. Solid parts are not touched.",
+ "params": [
+  {"key": "fringe", "label": "The edge was saved on", "type": "enum", "choices": ["Black (a dark halo)", "White (a light halo)", "A colour"], "default": 0},
+  {"key": "matte_colour", "label": "That colour", "type": "color", "default": [0.1, 0.7, 0.25, 1.0]},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0}
+ ],
+ "passes": "single"
+}

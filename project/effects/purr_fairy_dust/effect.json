@@ -1,0 +1,21 @@
+{
+ "id": "purr_fairy_dust",
+ "label": "Fairy Dust",
+ "category": "Purrmiere",
+ "tags": ["light", "graphic"],
+ "version": 1,
+ "blurb": "A glowing spark flies a looping path across the frame and leaves a trail of twinkling glitter behind it that drifts down and fades, like a wand being waved through the shot.",
+ "params": [
+  {"key": "colour", "label": "Glitter colour", "type": "color", "default": [1.0, 0.85, 0.5, 1.0]},
+  {"key": "head_colour", "label": "Spark colour", "type": "color", "default": [1.0, 1.0, 0.95, 1.0]},
+  {"key": "centre", "label": "Path centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "size", "label": "Path size", "type": "float", "min": 0.05, "max": 1.0, "step": 0.001, "default": 0.38},
+  {"key": "speed", "label": "Speed", "type": "float", "min": -3.0, "max": 3.0, "step": 0.01, "default": 0.5},
+  {"key": "trail", "label": "Trail length", "type": "float", "min": 0.05, "max": 1.0, "step": 0.01, "default": 0.45},
+  {"key": "sparkle", "label": "Glitter size", "type": "float", "min": 1.0, "max": 30.0, "step": 0.1, "default": 8.0, "unit": " px"},
+  {"key": "fall", "label": "Glitter falls", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 999, "step": 1, "default": 0}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}],
+ "passes": "single"
+}

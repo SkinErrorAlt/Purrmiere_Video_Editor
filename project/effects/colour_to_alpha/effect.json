@@ -1,0 +1,15 @@
+{
+ "id": "colour_to_alpha",
+ "label": "Colour to Alpha",
+ "category": "Keying",
+ "version": 1,
+ "blurb": "Takes one colour out of the picture the way GIMP's Colour to Alpha does: that colour turns fully see through, and every pixel that was a blend with it turns partly see through with the colour taken out of what is left, so a drawing or logo on paper, green or any flat colour lifts off as a clean cut out with soft edges and no fringe. Laid back over the same colour it gives the original exactly. Anything closer to the colour than the transparency threshold goes fully clear, and anything further than the opacity threshold stays fully solid.",
+ "params": [
+  {"key": "colour", "label": "Colour", "type": "color", "default": [1.0, 1.0, 1.0, 1.0]},
+  {"key": "transparency_threshold", "label": "Transparency threshold", "type": "float", "min": 0.0, "max": 1.0, "step": 0.001, "default": 0.0},
+  {"key": "opacity_threshold", "label": "Opacity threshold", "type": "float", "min": 0.0, "max": 1.0, "step": 0.001, "default": 1.0}
+ ],
+ "passes": [
+  {"shader": "effect.gdshader"}
+ ]
+}

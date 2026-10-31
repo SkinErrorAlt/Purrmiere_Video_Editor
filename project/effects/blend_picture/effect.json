@@ -1,0 +1,19 @@
+{
+ "id": "blend_picture",
+ "label": "Blend with Picture",
+ "category": "Channel",
+ "version": 1,
+ "blurb": "Blends a picture from the bin with the clip in any of 24 blend modes, for texture, grunge, dust and light overlays, paper, a logo in Screen, or a colour wash. Fill, fit, stretch or tile it, then move and size it on the monitor. With no picture chosen the clip passes through. Solid Composite blends a flat colour; this blends a picture.",
+ "params": [
+  {"key": "picture", "label": "Picture", "type": "texture", "default": ""},
+  {"key": "mode", "label": "Blend mode", "type": "enum", "choices": ["Normal", "Darken", "Multiply", "Colour burn", "Linear burn", "Lighten", "Screen", "Colour dodge", "Add", "Overlay", "Soft light", "Hard light", "Vivid light", "Linear light", "Pin light", "Hard mix", "Difference", "Exclusion", "Subtract", "Divide", "Hue", "Saturation", "Colour", "Luminosity"], "default": 9},
+  {"key": "opacity", "label": "Opacity", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "fit", "label": "Fit", "type": "enum", "choices": ["Fill the frame", "Fit inside", "Stretch", "Tile"], "default": 0},
+  {"key": "scale", "label": "Size", "type": "float", "min": 0.05, "max": 10.0, "step": 0.01, "default": 1.0},
+  {"key": "position", "label": "Position", "type": "vec2", "min": -1.0, "max": 2.0, "default": [0.5, 0.5]},
+  {"key": "order", "label": "Order", "type": "enum", "choices": ["Picture over the clip", "Clip over the picture"], "default": 0},
+  {"key": "keep_alpha", "label": "Only where the clip is", "type": "bool", "default": true}
+ ],
+ "handles": [{"kind": "point", "key": "position"}],
+ "passes": "single"
+}

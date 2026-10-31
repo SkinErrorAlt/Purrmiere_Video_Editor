@@ -1,0 +1,71 @@
+{
+ "version": 1,
+ "name": "Editing",
+ "tree": {
+  "t": "s",
+  "dir": "v",
+  "ratio": 0.56,
+  "a": {
+   "t": "s",
+   "dir": "h",
+   "ratio": 0.4,
+   "a": {
+    "t": "g",
+    "tabs": [
+     "effect_controls",
+     "source",
+     "audio_editor",
+     "keyframes",
+     "effects",
+     "transitions",
+     "presets"
+    ],
+    "active": "effect_controls"
+   },
+   "b": {
+    "t": "g",
+    "tabs": [
+     "program"
+    ],
+    "active": "program"
+   }
+  },
+  "b": {
+   "t": "s",
+   "dir": "h",
+   "ratio": 0.22,
+   "a": {
+    "t": "g",
+    "tabs": [
+     "bin",
+     "instances",
+     "markers",
+     "history",
+     "info"
+    ],
+    "active": "bin"
+   },
+   "b": {
+    "t": "s",
+    "dir": "h",
+    "ratio": 0.744,
+    "a": {
+     "t": "g",
+     "tabs": [
+      "timeline"
+     ],
+     "active": "timeline"
+    },
+    "b": {
+     "t": "g",
+     "tabs": [
+      "audio"
+     ],
+     "active": "audio"
+    }
+   }
+  }
+ },
+ "floats": [],
+ "state": {}
+}

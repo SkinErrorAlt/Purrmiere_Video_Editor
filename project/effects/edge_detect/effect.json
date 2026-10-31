@@ -1,0 +1,15 @@
+{
+ "id": "edge_detect",
+ "label": "Find Edges",
+ "category": "Stylize",
+ "version": 1,
+ "blurb": "Keeps only the edges, found with a Sobel, on white or on black.",
+ "params": [
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 8.0, "step": 0.05, "default": 1.0},
+  {"key": "edge_width", "label": "Edge width", "type": "float", "min": 0.5, "max": 8.0, "step": 0.1, "default": 1.0},
+  {"key": "on_white", "label": "Black lines on white", "type": "bool", "default": true},
+  {"key": "keep_colour", "label": "Keep the colours", "type": "bool", "default": false},
+  {"key": "threshold", "label": "Threshold", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.0}
+ ],
+ "passes": "single"
+}

@@ -1,0 +1,20 @@
+{
+ "id": "high_pass",
+ "label": "High Pass",
+ "category": "Blur & Sharpen",
+ "version": 1,
+ "blurb": "Takes a gaussian blur away from the picture so only the fine detail is left. Show that detail as grey, or lay it back over the picture to sharpen it.",
+ "params": [
+  {"key": "radius", "label": "Radius", "type": "float", "min": 0.5, "max": 100, "step": 0.1, "default": 6, "unit": " px"},
+  {"key": "output", "label": "Output", "type": "enum", "choices": ["Grey detail", "Sharpen by overlay", "Sharpen by soft light"], "default": 0},
+  {"key": "amount", "label": "Amount", "type": "float", "min": 0, "max": 4, "step": 0.01, "default": 1},
+  {"key": "monochrome", "label": "Monochrome", "type": "bool", "default": false}
+ ],
+ "passes": [
+  {"shader": "res://effects/blur_gaussian/down.gdshader", "scale": 0.5, "when": {"param": "radius", "gt": 50}},
+  {"shader": "res://effects/blur_gaussian/gauss.gdshader", "set": {"direction": [1.0, 0.0], "kernel": 0, "dims": 0, "edge": true}, "map": {"radius": "radius"}},
+  {"shader": "res://effects/blur_gaussian/gauss.gdshader", "set": {"direction": [0.0, 1.0], "kernel": 0, "dims": 0, "edge": true}, "map": {"radius": "radius"}},
+  {"shader": "res://effects/blur_gaussian/up.gdshader", "scale": 2.0, "when": {"param": "radius", "gt": 50}},
+  {"shader": "compose.gdshader", "map": {"output_mode": "output"}}
+ ]
+}

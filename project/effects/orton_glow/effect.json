@@ -1,0 +1,25 @@
+{
+ "id": "orton_glow",
+ "label": "Orton Glow",
+ "category": "Light & Shadow",
+ "tags": ["light", "look"],
+ "version": 1,
+ "blurb": "The darkroom Orton look: a brightened sharp copy of the picture is laid over a brightened, heavily blurred copy, so the picture keeps its detail while light glows softly round it and colours go deep and rich, like a dreamy landscape photograph. Multiply is the classic mix; Soft light is gentler and Screen glows into the dark parts as well.",
+ "params": [
+  {"key": "radius", "label": "Glow size", "type": "float", "min": 0.0, "max": 150.0, "step": 0.5, "default": 25.0, "unit": " px"},
+  {"key": "brightness", "label": "Brighten", "type": "float", "min": 0.0, "max": 3.0, "step": 0.01, "default": 1.5},
+  {"key": "glow", "label": "Glow", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.8},
+  {"key": "mode", "label": "Mix", "type": "enum", "choices": ["Multiply", "Soft light", "Screen"], "default": 0},
+  {"key": "saturation", "label": "Saturation", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 1.15}
+ ],
+ "passes": [
+  {"shader": "brighten.gdshader"},
+  {"shader": "res://effects/blur_gaussian/down.gdshader", "scale": 0.5, "when": {"param": "radius", "gt": 50}},
+  {"shader": "res://effects/blur_gaussian/down.gdshader", "scale": 0.5, "when": {"param": "radius", "gt": 100}},
+  {"shader": "res://effects/blur_gaussian/gauss.gdshader", "set": {"direction": [1.0, 0.0]}},
+  {"shader": "res://effects/blur_gaussian/gauss.gdshader", "set": {"direction": [0.0, 1.0]}},
+  {"shader": "res://effects/blur_gaussian/up.gdshader", "scale": 2.0, "when": {"param": "radius", "gt": 100}},
+  {"shader": "res://effects/blur_gaussian/up.gdshader", "scale": 2.0, "when": {"param": "radius", "gt": 50}},
+  {"shader": "orton_mix.gdshader"}
+ ]
+}

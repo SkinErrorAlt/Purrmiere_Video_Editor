@@ -1,0 +1,19 @@
+{
+ "id": "frozen",
+ "label": "Frozen",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Frost creeping in from the edges of the frame: feathery ice crystals that bend and blur the picture under them, with the whole shot turned cold. It can grow in from the start of the clip.",
+ "params": [
+  {"key": "amount", "label": "How far in", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "grow_time", "label": "Grows in over", "type": "float", "min": 0.0, "max": 10.0, "step": 0.05, "default": 0.0, "unit": " s"},
+  {"key": "crystal_size", "label": "Crystal size", "type": "float", "min": 4.0, "max": 300.0, "step": 1.0, "default": 60.0, "unit": " px"},
+  {"key": "tint", "label": "Ice colour", "type": "color", "default": [0.8, 0.92, 1.0, 1.0]},
+  {"key": "frost", "label": "Frost opacity", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.75},
+  {"key": "refraction", "label": "Refraction", "type": "float", "min": 0.0, "max": 40.0, "step": 0.1, "default": 8.0, "unit": " px"},
+  {"key": "cold", "label": "Cold grade", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

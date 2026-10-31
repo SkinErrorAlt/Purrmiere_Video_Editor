@@ -1,0 +1,19 @@
+{
+ "id": "rough_pastels",
+ "label": "Rough Pastels",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Redraws the picture in chalky pastel strokes on a textured ground: thick chalk in the light parts, the texture showing through in the dark ones.",
+ "params": [
+  {"key": "stroke_length", "label": "Stroke length", "type": "float", "min": 1, "max": 60, "step": 0.5, "default": 18, "unit": " px"},
+  {"key": "stroke_detail", "label": "Stroke detail", "type": "float", "min": 1, "max": 20, "step": 0.1, "default": 4},
+  {"key": "texture_kind", "label": "Texture", "type": "enum", "choices": ["Brick", "Burlap", "Canvas", "Sandstone"], "default": 2},
+  {"key": "scaling", "label": "Texture scaling", "type": "float", "min": 50, "max": 200, "step": 1, "default": 100, "unit": " %"},
+  {"key": "relief", "label": "Relief", "type": "float", "min": 0, "max": 50, "step": 0.5, "default": 20},
+  {"key": "light_angle", "label": "Light from", "type": "float", "min": -180, "max": 180, "step": 1, "default": 90, "unit": " deg"},
+  {"key": "angle", "label": "Stroke angle", "type": "float", "min": -180, "max": 180, "step": 1, "default": 45, "unit": " deg"},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

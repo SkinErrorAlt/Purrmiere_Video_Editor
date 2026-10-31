@@ -1,0 +1,18 @@
+{
+ "id": "turning_helix",
+ "label": "Turning Helix",
+ "group": "3D",
+ "space": "3D",
+ "from": ["Impress Turning Helix"],
+ "blurb": "The picture is sliced into thin bands that each spin half a turn about the upright centre line, one after another down the frame, so the slices form a turning helix with the incoming picture on their backs.",
+ "default_duration": 2.0,
+ "params": [
+  {"key": "rows", "label": "Slices", "type": "int", "min": 2, "max": 60, "step": 1, "default": 16},
+  {"key": "direction", "label": "Starts at", "type": "enum", "choices": ["Top", "Bottom"], "default": 0},
+  {"key": "stagger", "label": "Stagger", "type": "float", "min": 0, "max": 0.9, "step": 0.01, "default": 0.5},
+  {"key": "pull_back", "label": "Pull back", "type": "float", "min": 0, "max": 1.5, "step": 0.01, "default": 0.5},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 10, "max": 90, "step": 1, "default": 40, "unit": " deg"},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

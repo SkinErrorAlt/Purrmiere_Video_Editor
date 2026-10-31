@@ -1,0 +1,19 @@
+{
+ "id": "purr_disco_lights",
+ "label": "Disco Lights",
+ "category": "Purrmiere",
+ "tags": ["light"],
+ "version": 1,
+ "blurb": "A mirror ball fills the room with coloured spots of light that sweep across the picture, with sharp glints flashing and the room dimmed a little so the spots pop.",
+ "params": [
+  {"key": "colour_mode", "label": "Colour", "type": "enum", "default": 0, "choices": ["Rainbow", "Pink and blue", "One colour"]},
+  {"key": "colour", "label": "One colour", "type": "color", "default": [1.0, 1.0, 1.0, 1.0]},
+  {"key": "density", "label": "Spots", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.55},
+  {"key": "size", "label": "Spot size", "type": "float", "min": 4.0, "max": 200.0, "step": 0.5, "default": 26.0, "unit": " px"},
+  {"key": "speed", "label": "Sweep speed", "type": "float", "min": -3.0, "max": 3.0, "step": 0.01, "default": 0.4},
+  {"key": "dim", "label": "Dim the room", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 3.0, "step": 0.01, "default": 1.2},
+  {"key": "glints", "label": "Glints", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5}
+ ],
+ "passes": "single"
+}

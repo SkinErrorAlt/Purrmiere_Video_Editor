@@ -1,0 +1,20 @@
+{
+ "id": "shred",
+ "label": "Shred",
+ "group": "Particles",
+ "space": "2D",
+ "from": ["PowerPoint Shred"],
+ "blurb": "Shreds the picture like paper: strips with real thickness slide in from above and below, or fall away, curling and twisting so their white backs and edges catch the light from one side. The particle styles burst the picture into small pieces that tumble in 3D, or gather the incoming picture out of them.",
+ "default_duration": 1.6,
+ "params": [
+  {"key": "mode", "label": "Style", "type": "enum", "choices": ["Strips in", "Strips out", "Particles in", "Particles out"], "default": 0},
+  {"key": "strips", "label": "Strips", "type": "int", "min": 2, "max": 60, "step": 1, "default": 16},
+  {"key": "particle_size", "label": "Piece size", "type": "float", "min": 4, "max": 80, "step": 1, "default": 22, "unit": " px"},
+  {"key": "stagger", "label": "Stagger", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "twist", "label": "Twist", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 1},
+  {"key": "curl", "label": "Curl", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 1},
+  {"key": "thickness", "label": "Paper thickness", "type": "float", "min": 0, "max": 20, "step": 0.5, "default": 5, "unit": " px"},
+  {"key": "paper", "label": "Paper back", "type": "color", "default": [0.93, 0.92, 0.89, 1]}
+ ]
+}

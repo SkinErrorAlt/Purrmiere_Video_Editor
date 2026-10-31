@@ -1,0 +1,15 @@
+{
+ "id": "widescreen_stretch",
+ "label": "Smart Stretch",
+ "category": "Transform",
+ "tags": ["repair"],
+ "version": 1,
+ "blurb": "For a 4:3 or square picture stretched sideways to fill a wide frame: it takes the stretch back out of the middle, so faces and the thing you are looking at have their natural shape, and pushes it into the sides, where it shows least. Stretch the clip to fill the frame first (Scale width in Motion), then set how much it was stretched. Below 1 it does the opposite and widens the middle.",
+ "params": [
+  {"key": "stretched_by", "label": "The picture was stretched by", "type": "float", "min": 0.75, "max": 1.6, "step": 0.001, "default": 1.333, "unit": "x"},
+  {"key": "hold", "label": "Keep the middle natural", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "middle", "label": "Middle at", "type": "float", "min": 0.25, "max": 0.75, "step": 0.005, "default": 0.5},
+  {"key": "show_guides", "label": "Show the natural area", "type": "bool", "default": false}
+ ],
+ "passes": "single"
+}

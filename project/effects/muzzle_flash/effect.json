@@ -1,0 +1,23 @@
+{
+ "id": "muzzle_flash",
+ "label": "Muzzle Flash",
+ "category": "Generate",
+ "tags": ["light"],
+ "version": 1,
+ "blurb": "A gun's muzzle flash at a point, aimed with the direction handle: a white hot core with jagged orange petals of burning gas, lasting one frame and a dimmer second, then a puff of smoke that rolls forward and rises. Each shot lights the scene for that frame and gets a new shape. Rifle, pistol, shotgun and side vented muzzle brake styles, firing at a set rate from a start time, for a set number of shots or until the clip ends.",
+ "params": [
+  {"key": "position", "label": "Muzzle", "type": "vec2", "default": [0.6, 0.55]},
+  {"key": "angle", "label": "Direction", "type": "float", "min": -180.0, "max": 180.0, "step": 0.5, "default": -8.0, "unit": " deg"},
+  {"key": "size", "label": "Size", "type": "float", "min": 10.0, "max": 1000.0, "step": 0.5, "default": 130.0, "unit": " px"},
+  {"key": "style", "label": "Style", "type": "enum", "choices": ["Rifle", "Pistol", "Shotgun", "Side vents"], "default": 0},
+  {"key": "rate", "label": "Shots per second", "type": "float", "min": 0.2, "max": 20.0, "step": 0.1, "default": 6.0},
+  {"key": "start", "label": "Starts at", "type": "float", "min": 0.0, "max": 600.0, "step": 0.01, "default": 0.0, "unit": " s"},
+  {"key": "shots", "label": "Shots, 0 for no limit", "type": "int", "min": 0, "max": 500, "step": 1, "default": 0},
+  {"key": "smoke", "label": "Smoke", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "light", "label": "Light the scene", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "vary", "label": "New shape every shot", "type": "bool", "default": true},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "handles": [{"kind": "point", "key": "position"}, {"kind": "angle", "key": "angle", "about": "position", "zero": "right", "turn": "cw"}],
+ "passes": "single"
+}

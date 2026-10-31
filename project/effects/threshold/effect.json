@@ -1,0 +1,11 @@
+{
+ "id": "threshold",
+ "label": "Threshold",
+ "category": "Stylize",
+ "version": 1,
+ "params": [
+  {"key": "level", "label": "Level", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "softness", "label": "Softness", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.05}
+ ],
+ "passes": "single"
+}

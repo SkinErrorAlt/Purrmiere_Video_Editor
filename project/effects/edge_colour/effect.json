@@ -1,0 +1,21 @@
+{
+ "id": "edge_colour",
+ "label": "Edge Colour",
+ "category": "Keying",
+ "version": 1,
+ "blurb": "Corrects the colour in a thin band just inside the edge of the alpha, where a key leaves green, blue or dark fringes: pull the colour from further inside, take the colour out, darken or brighten it, or tint it towards the new background. The rest of the subject is left alone. Show the band to see what it touches.",
+ "params": [
+  {"key": "width", "label": "Edge width", "type": "float", "min": 0.5, "max": 50.0, "step": 0.1, "default": 4.0, "unit": " px"},
+  {"key": "pull", "label": "Pull colour from inside", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "desaturate", "label": "Take the colour out", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "brightness", "label": "Brightness", "type": "float", "min": -1.0, "max": 1.0, "step": 0.01, "default": 0.0},
+  {"key": "tint", "label": "Tint colour", "type": "color", "default": [1.0, 0.8, 0.6, 1.0]},
+  {"key": "tint_amount", "label": "Tint", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.0},
+  {"key": "show_band", "label": "Show the band", "type": "bool", "default": false}
+ ],
+ "passes": [
+  {"shader": "res://effects/feather_matte/dist_across.gdshader", "set": {"reach_extra": 3.0}, "map": {"reach_a": "width"}},
+  {"shader": "res://effects/feather_matte/dist_down.gdshader", "set": {"reach_extra": 3.0}, "map": {"reach_a": "width"}},
+  {"shader": "combine.gdshader"}
+ ]
+}

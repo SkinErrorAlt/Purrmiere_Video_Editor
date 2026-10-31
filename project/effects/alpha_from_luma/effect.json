@@ -1,0 +1,14 @@
+{
+ "id": "alpha_from_luma",
+ "label": "Alpha from Luminance",
+ "category": "Channel",
+ "version": 1,
+ "blurb": "Turns brightness into transparency, so the dark parts of the picture go see through.",
+ "params": [
+  {"key": "invert", "label": "Dark is solid", "type": "bool", "default": false},
+  {"key": "low", "label": "Black point", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.0},
+  {"key": "high", "label": "White point", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "keep_colour", "label": "Keep the colours", "type": "bool", "default": true}
+ ],
+ "passes": "single"
+}

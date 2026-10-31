@@ -1,0 +1,22 @@
+{
+ "id": "light_wrap",
+ "label": "Light Wrap",
+ "category": "Keying",
+ "tags": ["light"],
+ "version": 1,
+ "blurb": "Lets the light of the new background spill round the edges of a keyed or cut out subject so it sits in the scene instead of looking pasted on. Choose the background picture from the bin (the same one you put underneath); with no picture it wraps with the colour. Match the light also tints the whole subject a little towards the colour of the background.",
+ "params": [
+  {"key": "background", "label": "Background picture", "type": "texture", "default": ""},
+  {"key": "colour", "label": "Light colour with no picture", "type": "color", "default": [1.0, 0.85, 0.6, 1.0]},
+  {"key": "width", "label": "Wrap width", "type": "float", "min": 1.0, "max": 60.0, "step": 0.1, "default": 24.0, "unit": " px"},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.8},
+  {"key": "blend", "label": "Blend", "type": "enum", "choices": ["Screen", "Add", "Normal", "Soft light"], "default": 0},
+  {"key": "fit", "label": "Picture fit", "type": "enum", "choices": ["Fill the frame", "Fit inside", "Stretch"], "default": 0},
+  {"key": "ambient", "label": "Match the light", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.15}
+ ],
+ "passes": [
+  {"shader": "res://effects/blur_gaussian/gauss.gdshader", "set": {"direction": [1.0, 0.0], "kernel": 0, "dims": 0, "edge": true, "ch_r": false, "ch_g": false, "ch_b": false, "ch_a": true}, "map": {"radius": "width"}},
+  {"shader": "res://effects/blur_gaussian/gauss.gdshader", "set": {"direction": [0.0, 1.0], "kernel": 0, "dims": 0, "edge": true, "ch_r": false, "ch_g": false, "ch_b": false, "ch_a": true}, "map": {"radius": "width"}},
+  {"shader": "combine.gdshader"}
+ ]
+}

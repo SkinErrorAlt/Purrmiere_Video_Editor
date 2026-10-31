@@ -1,0 +1,18 @@
+{
+ "id": "vignette_fix",
+ "label": "Vignette Removal",
+ "category": "Image Control",
+ "tags": ["repair"],
+ "version": 1,
+ "blurb": "Brightens the dark corners a wide lens, a cheap adapter or a lens hood leaves, in linear light the way the light was lost, so the sky and walls come out even. Amount is how many stops darker the corners are; Midpoint sets how far in the darkening starts; Roundness follows the frame's shape or a circle; highlights that would blow out are rolled off softly instead. Show the correction draws the brightening as grey to line it up on a flat wall.",
+ "params": [
+  {"key": "amount", "label": "Amount", "type": "float", "min": 0.0, "max": 3.0, "step": 0.01, "default": 0.7, "unit": " stops"},
+  {"key": "midpoint", "label": "Midpoint", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "roundness", "label": "Roundness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "centre", "label": "Lens centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "protect", "label": "Protect highlights", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "show", "label": "Show the correction", "type": "bool", "default": false}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}],
+ "passes": "single"
+}

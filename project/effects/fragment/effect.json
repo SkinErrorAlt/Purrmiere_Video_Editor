@@ -1,0 +1,13 @@
+{
+ "id": "fragment",
+ "label": "Fragment",
+ "category": "Distort",
+ "version": 1,
+ "blurb": "Lays several copies of the picture over each other, each pushed a little apart and averaged, for a shaken, double vision look.",
+ "params": [
+  {"key": "shift", "label": "Distance", "type": "float", "min": 0.0, "max": 200.0, "step": 0.5, "default": 6.0, "unit": " px"},
+  {"key": "copies", "label": "Copies", "type": "int", "min": 2, "max": 8, "step": 1, "default": 4},
+  {"key": "angle", "label": "Angle", "type": "float", "min": -180.0, "max": 180.0, "step": 1.0, "default": 45.0, "unit": " deg"}
+ ],
+ "passes": "single"
+}

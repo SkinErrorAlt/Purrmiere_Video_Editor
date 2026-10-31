@@ -1,0 +1,17 @@
+{
+ "id": "purr_plastic_wrap",
+ "label": "Plastic Wrap",
+ "category": "Purrmiere",
+ "tags": ["look", "light"],
+ "version": 1,
+ "blurb": "Wraps the picture in crinkled cling film: bright glossy streaks follow the creases of the plastic and the shapes underneath, as if a light caught a wrapped photo.",
+ "params": [
+  {"key": "strength", "label": "Gloss", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.8},
+  {"key": "crinkle", "label": "Crinkle", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "scale", "label": "Crease size", "type": "float", "min": 10.0, "max": 600.0, "step": 1.0, "default": 120.0, "unit": " px"},
+  {"key": "sharpness", "label": "Sharpness", "type": "float", "min": 2.0, "max": 80.0, "step": 0.5, "default": 24.0},
+  {"key": "light_angle", "label": "Light from", "type": "float", "min": -180.0, "max": 180.0, "step": 1.0, "default": -130.0, "unit": " deg"}
+ ],
+ "handles": [{"kind": "angle", "key": "light_angle", "zero": "left", "turn": "cw"}],
+ "passes": "single"
+}

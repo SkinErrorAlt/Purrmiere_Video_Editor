@@ -1,0 +1,22 @@
+{
+ "id": "code_rain",
+ "label": "Code Rain",
+ "category": "Generate",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Columns of glowing symbols pouring down the screen, a bright one leading each stream and the rest fading behind it, the hacker film look.",
+ "params": [
+  {"key": "colour", "label": "Colour", "type": "color", "default": [0.25, 1.0, 0.45, 1.0]},
+  {"key": "head_colour", "label": "Leading symbol colour", "type": "color", "default": [0.85, 1.0, 0.9, 1.0]},
+  {"key": "glyph_size", "label": "Symbol size", "type": "float", "min": 6.0, "max": 80.0, "step": 0.5, "default": 16.0, "unit": " px"},
+  {"key": "density", "label": "How many streams", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.55},
+  {"key": "speed", "label": "Speed", "type": "float", "min": 0.0, "max": 4.0, "step": 0.01, "default": 1.0},
+  {"key": "trail", "label": "Trail length", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "change_rate", "label": "Symbol changes per second", "type": "float", "min": 0.0, "max": 30.0, "step": 0.5, "default": 6.0},
+  {"key": "darken", "label": "Darken the picture", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0},
+  {"key": "blend", "label": "How it mixes", "type": "enum", "choices": ["Replace", "Multiply", "Screen", "Overlay", "Add", "Soft light", "Over"], "default": 2},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0}
+ ],
+ "passes": "single"
+}

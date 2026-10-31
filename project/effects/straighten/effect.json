@@ -1,0 +1,16 @@
+{
+ "id": "straighten",
+ "label": "Straighten",
+ "category": "Transform",
+ "tags": ["repair"],
+ "version": 1,
+ "blurb": "Levels a tilted horizon, such as a headset view where the head was on one side: turn the picture by a few degrees and it zooms in just enough that no corner shows. Level guides help line it up.",
+ "params": [
+  {"key": "angle", "label": "Angle", "type": "float", "min": -45.0, "max": 45.0, "step": 0.05, "default": 0.0, "unit": " deg"},
+  {"key": "fill", "label": "Corners", "type": "enum", "choices": ["Zoom in to hide them", "Mirror the picture", "Leave them empty"], "default": 0},
+  {"key": "guides", "label": "Level guides", "type": "bool", "default": false},
+  {"key": "guide_colour", "label": "Guide colour", "type": "color", "default": [1.0, 0.85, 0.2, 0.8]}
+ ],
+ "handles": [{"kind": "angle", "key": "angle", "zero": "right", "turn": "ccw"}],
+ "passes": "single"
+}

@@ -1,0 +1,18 @@
+{
+ "id": "supernova",
+ "label": "Supernova",
+ "category": "Light & Shadow",
+ "tags": ["light"],
+ "version": 1,
+ "blurb": "A blazing star with a white hot core and a burst of thin coloured spokes running out across the frame. Radius sets the size of the core, Spokes how many rays there are, and Random hue lets each spoke wander round the colour wheel from the chosen colour. Change the seed for a different burst.",
+ "params": [
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.62, 0.38]},
+  {"key": "colour", "label": "Colour", "type": "color", "default": [0.35, 0.55, 1.0, 1.0]},
+  {"key": "radius", "label": "Radius", "type": "float", "min": 1.0, "max": 400.0, "step": 0.5, "default": 24.0, "unit": " px"},
+  {"key": "spokes", "label": "Spokes", "type": "int", "min": 1, "max": 1024, "step": 1, "default": 100},
+  {"key": "random_hue", "label": "Random hue", "type": "float", "min": 0.0, "max": 360.0, "step": 1.0, "default": 0.0, "unit": " deg"},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}],
+ "passes": "single"
+}

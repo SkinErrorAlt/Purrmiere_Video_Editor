@@ -1,0 +1,14 @@
+{
+ "id": "dip_to_colour",
+ "label": "Dip to Colour",
+ "category": "Transition",
+ "version": 1,
+ "blurb": "Fades the picture into any colour. The dip mode then fades the colour away to show the clip below, a whole dip on one clip.",
+ "params": [
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0, "max": 1, "step": 0.005, "default": 0.5},
+  {"key": "colour", "label": "Colour", "type": "color", "default": [1, 1, 1, 1]},
+  {"key": "mode", "label": "Mode", "type": "enum", "choices": ["Fade to the colour", "Dip: the colour, then what is below"], "default": 0},
+  {"key": "hold", "label": "Hold on the colour", "type": "float", "min": 0, "max": 0.8, "step": 0.01, "default": 0.1}
+ ],
+ "passes": "single"
+}

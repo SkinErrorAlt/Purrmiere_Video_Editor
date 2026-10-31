@@ -1,0 +1,18 @@
+{
+ "id": "tape_rewind",
+ "label": "Tape Rewind",
+ "category": "VHS & Analogue",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "A video tape being wound back or fast forwarded: bands of torn, sideways dragged picture race up or down the screen, lines of noise, bleeding colour and a jittering frame, with the rewind, fast forward, play or pause symbol in the corner. Put it on a clip that plays backwards for the \"let's rewind\" gag.",
+ "params": [
+  {"key": "mode", "label": "Symbol", "type": "enum", "choices": ["Rewind", "Fast forward", "Play", "Pause", "None"], "default": 0},
+  {"key": "mess", "label": "Mess", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "bands", "label": "Torn bands", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "noise_lines", "label": "Noise lines", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "bleed", "label": "Colour bleed", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "symbol_size", "label": "Symbol size", "type": "float", "min": 0.3, "max": 3.0, "step": 0.01, "default": 1.0},
+  {"key": "symbol_colour", "label": "Symbol colour", "type": "color", "default": [1.0, 1.0, 1.0, 1.0]}
+ ],
+ "passes": "single"
+}

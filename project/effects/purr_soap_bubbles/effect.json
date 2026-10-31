@@ -1,0 +1,18 @@
+{
+ "id": "purr_soap_bubbles",
+ "label": "Soap Bubbles",
+ "category": "Purrmiere",
+ "tags": ["light", "graphic"],
+ "version": 1,
+ "blurb": "Soap bubbles float up across the picture, each with a swirling rainbow film, a bright window highlight and a slight lens on what is behind it. Every bubble follows the clock, so the same frame always looks the same.",
+ "params": [
+  {"key": "density", "label": "Density", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45},
+  {"key": "size", "label": "Size", "type": "float", "min": 10.0, "max": 400.0, "step": 0.5, "default": 70.0, "unit": " px"},
+  {"key": "rise", "label": "Rise speed", "type": "float", "min": -2.0, "max": 2.0, "step": 0.01, "default": 0.25},
+  {"key": "film", "label": "Rainbow film", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.8},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "wobble", "label": "Wobble", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

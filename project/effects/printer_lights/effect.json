@@ -1,0 +1,15 @@
+{
+ "id": "printer_lights",
+ "label": "Printer Lights",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Balances colour the way a film lab does, in printer points per channel and overall: each point is a fixed slice of a stop, so the numbers repeat from shot to shot.",
+ "params": [
+  {"key": "master", "label": "Master", "type": "float", "min": -50, "max": 50, "step": 1, "default": 0},
+  {"key": "red", "label": "Red", "type": "float", "min": -50, "max": 50, "step": 1, "default": 0},
+  {"key": "green", "label": "Green", "type": "float", "min": -50, "max": 50, "step": 1, "default": 0},
+  {"key": "blue", "label": "Blue", "type": "float", "min": -50, "max": 50, "step": 1, "default": 0},
+  {"key": "stops_per_point", "label": "Stops per point", "type": "float", "min": 0.01, "max": 0.5, "step": 0.001, "default": 0.083}
+ ],
+ "passes": "single"
+}

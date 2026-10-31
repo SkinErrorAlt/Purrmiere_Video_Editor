@@ -1,0 +1,14 @@
+{
+ "id": "invert",
+ "label": "Invert",
+ "category": "Channel",
+ "version": 1,
+ "params": [
+  {"key": "invert_r", "label": "Red", "type": "bool", "default": true},
+  {"key": "invert_g", "label": "Green", "type": "bool", "default": true},
+  {"key": "invert_b", "label": "Blue", "type": "bool", "default": true},
+  {"key": "invert_a", "label": "Alpha", "type": "bool", "default": false},
+  {"key": "amount", "label": "Amount", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 1}
+ ],
+ "passes": "single"
+}

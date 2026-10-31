@@ -1,0 +1,19 @@
+{
+ "id": "purr_energy_shield",
+ "label": "Energy Shield",
+ "category": "Purrmiere",
+ "tags": ["light"],
+ "version": 1,
+ "blurb": "A shimmering sci fi force field of hexagons over the picture, flickering cell by cell, with a bright ripple that spreads from an impact point. Keyframe or drive Impact to make it flare when something hits.",
+ "params": [
+  {"key": "colour", "label": "Colour", "type": "color", "default": [0.3, 0.85, 1.0, 1.0]},
+  {"key": "hex", "label": "Cell size", "type": "float", "min": 6.0, "max": 200.0, "step": 0.5, "default": 40.0, "unit": " px"},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.6},
+  {"key": "shimmer", "label": "Shimmer speed", "type": "float", "min": 0.0, "max": 3.0, "step": 0.01, "default": 0.8},
+  {"key": "impact", "label": "Impact", "type": "float", "min": 0.0, "max": 1.0, "step": 0.001, "default": 0.0},
+  {"key": "impact_point", "label": "Impact point", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "edge_only", "label": "Stronger at the edges", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4}
+ ],
+ "handles": [{"kind": "point", "key": "impact_point"}],
+ "passes": "single"
+}

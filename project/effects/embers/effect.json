@@ -1,0 +1,23 @@
+{
+ "id": "embers",
+ "label": "Embers",
+ "category": "Generate",
+ "version": 1,
+ "blurb": "Glowing sparks drifting up through the frame in three layers of depth, flickering as they go and pushed about by the wind, for fires, forges and boss fights.",
+ "params": [
+  {"key": "amount", "label": "How many", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "size", "label": "Size", "type": "float", "min": 0.5, "max": 30.0, "step": 0.1, "default": 4.5, "unit": " px"},
+  {"key": "rise", "label": "Rise speed", "type": "float", "min": 0.0, "max": 3.0, "step": 0.01, "default": 0.6},
+  {"key": "wind", "label": "Wind", "type": "float", "min": -2.0, "max": 2.0, "step": 0.01, "default": 0.3},
+  {"key": "sway", "label": "Sway", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "flicker", "label": "Flicker", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "streak", "label": "Streak", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "glow", "label": "Glow", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "colour", "label": "Colour", "type": "color", "default": [1.0, 0.5, 0.12, 1.0]},
+  {"key": "colour_spread", "label": "Colour spread", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0},
+  {"key": "blend", "label": "How it mixes", "type": "enum", "choices": ["Replace", "Multiply", "Screen", "Overlay", "Add", "Soft light", "Over"], "default": 4},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0}
+ ],
+ "passes": "single"
+}

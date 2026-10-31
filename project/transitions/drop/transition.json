@@ -1,0 +1,16 @@
+{
+ "id": "drop",
+ "label": "Drop",
+ "group": "3D",
+ "space": "2D",
+ "from": ["Keynote Drop"],
+ "blurb": "The incoming picture drops in from above over the outgoing one, lands with a bounce or two and settles, with a soft shadow under its leading edge.",
+ "default_duration": 1.3,
+ "params": [
+  {"key": "direction", "label": "Drops from", "type": "enum", "choices": ["Top", "Bottom", "Left", "Right"], "default": 0},
+  {"key": "bounce", "label": "Bounce", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 1},
+  {"key": "squash", "label": "Squash", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.3},
+  {"key": "shadow", "label": "Shadow", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

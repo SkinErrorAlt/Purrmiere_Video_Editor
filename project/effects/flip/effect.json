@@ -1,0 +1,11 @@
+{
+ "id": "flip",
+ "label": "Flip",
+ "category": "Transform",
+ "version": 1,
+ "params": [
+  {"key": "horizontal", "label": "Horizontal", "type": "bool", "default": true},
+  {"key": "vertical", "label": "Vertical", "type": "bool", "default": false}
+ ],
+ "passes": "single"
+}

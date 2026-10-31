@@ -1,0 +1,17 @@
+{
+ "id": "blur_dissolve",
+ "label": "Blur",
+ "group": "Dissolve",
+ "space": "2D",
+ "from": ["CapCut Blur", "Canva Dissolve with blur", "Film Impact Lens Blur", "FCP Cross Blur"],
+ "blurb": "The outgoing picture blurs out of focus, dissolves into the blurred incoming picture, and that one sharpens up. Pick a round blur, a sideways or up and down smear, a zoom blur, or Lens, which defocuses like a camera lens: bright points open into crisp discs, squeezed into cat's eyes towards the corners.",
+ "default_duration": 0.8,
+ "pyramid": true,
+ "params": [
+  {"key": "amount", "label": "Blur", "type": "float", "min": 0, "max": 200, "step": 1, "default": 60, "unit": " px"},
+  {"key": "kind", "label": "Kind", "type": "enum", "choices": ["Round", "Sideways", "Up and down", "Zoom", "Lens"], "default": 0},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 1},
+  {"key": "highlights", "label": "Lens highlights", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.8},
+  {"key": "cats_eye", "label": "Lens cat's eye", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.3}
+ ]
+}

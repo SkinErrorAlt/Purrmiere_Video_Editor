@@ -1,0 +1,17 @@
+{
+ "id": "keyhole",
+ "label": "Keyhole",
+ "group": "Shape",
+ "space": "2D",
+ "from": ["Impress Iris variants"],
+ "blurb": "A keyhole opens from the centre, a round top over a widening slot, with the incoming picture showing through it until it fills the frame.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "direction", "label": "Direction", "type": "enum", "choices": ["Out", "In"], "default": 0},
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "softness", "label": "Soft edge", "type": "float", "min": 0, "max": 300, "step": 0.5, "default": 2, "unit": " px"},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 1},
+  {"key": "border", "label": "Border", "type": "float", "min": 0, "max": 60, "step": 0.5, "default": 0, "unit": " px"},
+  {"key": "border_colour", "label": "Border colour", "type": "color", "default": [1, 1, 1, 1]}
+ ]
+}

@@ -1,0 +1,18 @@
+{
+ "id": "hit_flash",
+ "label": "Hit Flash",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "One quick flash when something lands, fading straight back to the picture. It fires at the start of the clip (or when you set), and can repeat on a steady beat.",
+ "params": [
+  {"key": "starts_at", "label": "Starts at", "type": "float", "min": 0.0, "max": 600.0, "step": 0.01, "default": 0.0, "unit": " s"},
+  {"key": "hold", "label": "Hold", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.03, "unit": " s"},
+  {"key": "fade", "label": "Fade out", "type": "float", "min": 0.02, "max": 3.0, "step": 0.01, "default": 0.3, "unit": " s"},
+  {"key": "repeat_every", "label": "Repeat every (0 is once)", "type": "float", "min": 0.0, "max": 10.0, "step": 0.01, "default": 0.0, "unit": " s"},
+  {"key": "mode", "label": "Flash", "type": "enum", "choices": ["Wash to colour", "Brighten", "Burn out", "Invert"], "default": 0},
+  {"key": "colour", "label": "Colour", "type": "color", "default": [1.0, 1.0, 1.0, 1.0]},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.85}
+ ],
+ "passes": "single"
+}

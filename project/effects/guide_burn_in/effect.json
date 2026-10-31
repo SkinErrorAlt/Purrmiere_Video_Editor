@@ -1,0 +1,21 @@
+{
+ "id": "guide_burn_in",
+ "label": "Guides Burn In",
+ "category": "Utility",
+ "tags": ["measure"],
+ "version": 1,
+ "blurb": "Burns framing guides into the picture for a review copy or a template: action and title safe boxes, a centre cross, rule of thirds, the crop another shape would keep (9:16, 1:1, 4:5, 4:3, 16:9 or 2.39:1, with the rest darkened), and where the buttons and caption of YouTube Shorts, TikTok or Instagram Reels sit. The Program monitor's own guides show these without exporting them; use this when they must be in the file. Put it on an adjustment layer at the top.",
+ "params": [
+  {"key": "safe", "label": "Safe boxes", "type": "enum", "choices": ["None", "Action and title safe, 93 and 90 percent", "Action and title safe, 90 and 80 percent"], "default": 1},
+  {"key": "centre", "label": "Centre cross", "type": "bool", "default": true},
+  {"key": "thirds", "label": "Rule of thirds", "type": "bool", "default": false},
+  {"key": "crop", "label": "Crop guide", "type": "enum", "choices": ["None", "9:16", "1:1", "4:5", "4:3", "16:9", "2.39:1"], "default": 0},
+  {"key": "crop_darken", "label": "Darken outside the crop", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "zones", "label": "App buttons and caption", "type": "enum", "choices": ["None", "YouTube Shorts", "TikTok", "Instagram Reels"], "default": 0},
+  {"key": "colour", "label": "Colour", "type": "color", "default": [1.0, 1.0, 1.0, 0.85]},
+  {"key": "width", "label": "Line width", "type": "float", "min": 0.5, "max": 8.0, "step": 0.1, "default": 1.5, "unit": " px"}
+ ],
+ "passes": [
+  {"shader": "guides.gdshader"}
+ ]
+}

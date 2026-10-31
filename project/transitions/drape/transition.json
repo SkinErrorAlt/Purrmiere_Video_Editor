@@ -1,0 +1,17 @@
+{
+ "id": "drape",
+ "label": "Drape",
+ "group": "3D",
+ "space": "3D",
+ "from": ["PowerPoint Drape"],
+ "blurb": "The outgoing picture is pulled aside like a heavy drape, bunching into folds against one edge of the frame and uncovering the incoming picture.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "direction", "label": "Gathers to", "type": "enum", "choices": ["Left", "Right"], "default": 0},
+  {"key": "folds", "label": "Folds", "type": "int", "min": 2, "max": 20, "step": 1, "default": 8},
+  {"key": "fold_depth", "label": "Fold depth", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.7},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "shadow", "label": "Shadow", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.4},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

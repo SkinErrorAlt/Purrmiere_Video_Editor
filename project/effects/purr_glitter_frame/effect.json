@@ -1,0 +1,17 @@
+{
+ "id": "purr_glitter_frame",
+ "label": "Glitter Frame",
+ "category": "Purrmiere",
+ "tags": ["graphic", "light"],
+ "version": 1,
+ "blurb": "Borders the shot with a band of sparkling glitter in gold, silver, rose or rainbow, every flake catching the light at its own moment and the odd one flashing into a star.",
+ "params": [
+  {"key": "width", "label": "Border width", "type": "float", "min": 2.0, "max": 300.0, "step": 0.5, "default": 36.0, "unit": " px"},
+  {"key": "palette", "label": "Glitter", "type": "enum", "default": 0, "choices": ["Gold", "Silver", "Rose gold", "Rainbow"]},
+  {"key": "flake", "label": "Flake size", "type": "float", "min": 0.5, "max": 8.0, "step": 0.1, "default": 2.0, "unit": " px"},
+  {"key": "twinkle", "label": "Twinkle speed", "type": "float", "min": 0.0, "max": 4.0, "step": 0.01, "default": 1.5},
+  {"key": "stars", "label": "Star flashes", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "softness", "label": "Inner edge", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.25}
+ ],
+ "passes": "single"
+}

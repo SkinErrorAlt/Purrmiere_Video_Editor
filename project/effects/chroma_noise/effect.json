@@ -1,0 +1,13 @@
+{
+ "id": "chroma_noise",
+ "label": "Chroma Noise",
+ "category": "Noise & Grain",
+ "version": 1,
+ "blurb": "Noise in the colour only, leaving the brightness alone, the way a cheap sensor looks.",
+ "params": [
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "grain_size", "label": "Grain size", "type": "float", "min": 0.5, "max": 16.0, "step": 0.1, "default": 3.0},
+  {"key": "animate", "label": "Moves each frame", "type": "bool", "default": true}
+ ],
+ "passes": "single"
+}

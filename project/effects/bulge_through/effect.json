@@ -1,0 +1,20 @@
+{
+ "id": "bulge_through",
+ "label": "Bulge Through",
+ "category": "Transition",
+ "version": 1,
+ "blurb": "The lens warp transition: the picture swells out into a fisheye bubble round a point, with colour fringes at its edge, and pushes in until the cut; the next clip settles back out of the same bubble. Put it on both clips of a cut, or use Progress to key it by hand. The picture repeats round the edges, so no gap shows.",
+ "params": [
+  {"key": "when", "label": "When", "type": "enum", "choices": ["In at the start and out at the end", "In at the start", "Out at the end", "By Progress"], "default": 0},
+  {"key": "duration", "label": "Length", "type": "float", "min": 0.05, "max": 3.0, "step": 0.01, "default": 0.4, "unit": " s"},
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0.0, "max": 1.0, "step": 0.005, "default": 0.0},
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "amount", "label": "Bulge", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.8},
+  {"key": "size", "label": "Size", "type": "float", "min": 0.2, "max": 2.0, "step": 0.01, "default": 0.6},
+  {"key": "zoom", "label": "Push in", "type": "float", "min": 0.0, "max": 2.0, "step": 0.05, "default": 0.5},
+  {"key": "fringe", "label": "Colour fringe", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "edges", "label": "Edges", "type": "enum", "choices": ["Mirror", "Repeat"], "default": 0}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}, {"kind": "ring", "key": "size", "about": "centre", "unit": "h"}],
+ "passes": "single"
+}

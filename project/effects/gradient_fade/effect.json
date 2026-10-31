@@ -1,0 +1,18 @@
+{
+ "id": "gradient_fade",
+ "label": "Gradient Fade",
+ "category": "Keying",
+ "version": 1,
+ "blurb": "Fades the clip to see through along a line or out from a centre, so it melts into the clip underneath: a sky that fades into the shot below, a face cam that fades at the bottom, a vignette of transparency. Drag the start and end on the monitor. Feather Edges fades only at the sides of the frame; this fades in any direction, with a dither so the fade does not band.",
+ "params": [
+  {"key": "shape", "label": "Shape", "type": "enum", "choices": ["Along a line", "Out from a centre"], "default": 0},
+  {"key": "start", "label": "Start", "type": "vec2", "min": -1.0, "max": 2.0, "default": [0.5, 0.55]},
+  {"key": "end", "label": "End", "type": "vec2", "min": -1.0, "max": 2.0, "default": [0.5, 0.98]},
+  {"key": "start_opacity", "label": "Opacity at the start", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "end_opacity", "label": "Opacity at the end", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.0},
+  {"key": "curve", "label": "Curve", "type": "enum", "choices": ["Smooth", "Straight", "Slow start", "Slow finish"], "default": 0},
+  {"key": "dither", "label": "Dither against banding", "type": "bool", "default": true}
+ ],
+ "handles": [{"kind": "line", "keys": ["start", "end"]}],
+ "passes": "single"
+}

@@ -1,0 +1,17 @@
+{
+ "id": "channel_change",
+ "label": "Channel Change",
+ "category": "Transition",
+ "version": 1,
+ "blurb": "Flicking the channel on an old television: the picture rolls, tears sideways and loses its colour, then bursts into static right on the cut, and the next clip rolls in out of the static. Put it on both clips of a cut, or use Progress to key it by hand.",
+ "params": [
+  {"key": "when", "label": "When", "type": "enum", "choices": ["In at the start and out at the end", "In at the start", "Out at the end", "By Progress"], "default": 0},
+  {"key": "duration", "label": "Length", "type": "float", "min": 0.05, "max": 3.0, "step": 0.01, "default": 0.35, "unit": " s"},
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0.0, "max": 1.0, "step": 0.005, "default": 0.0},
+  {"key": "static_amount", "label": "Static", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "roll", "label": "Roll", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "tear", "label": "Tearing", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "colour_noise", "label": "Colour in the static", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.25}
+ ],
+ "passes": "single"
+}

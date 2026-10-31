@@ -1,0 +1,15 @@
+{
+ "id": "butterfly_wave",
+ "label": "Butterfly Wave",
+ "group": "Distort",
+ "space": "2D",
+ "from": ["gl ButterflyWaveScrawler"],
+ "blurb": "Wavy scribbled bands traced from the butterfly curve smear both pictures with the colours fringing apart, while the outgoing picture fades into the incoming one.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "amplitude", "label": "Wave growth", "type": "float", "min": 0, "max": 3, "step": 0.01, "default": 1},
+  {"key": "waves", "label": "Waves", "type": "float", "min": 1, "max": 60, "step": 0.5, "default": 30},
+  {"key": "colour_split", "label": "Colour fringe", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.3},
+  {"key": "strength", "label": "Smear", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 1}
+ ]
+}

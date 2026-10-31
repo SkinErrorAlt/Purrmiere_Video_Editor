@@ -1,0 +1,16 @@
+{
+ "id": "colour_replace",
+ "label": "Change to Colour",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Finds one colour in the picture and turns it into another, keeping the shading of the original. Choose whether only the hue changes or the saturation and lightness too.",
+ "params": [
+  {"key": "from", "label": "From", "type": "color", "default": [0.8, 0.1, 0.1, 1.0]},
+  {"key": "to", "label": "To", "type": "color", "default": [0.1, 0.35, 0.9, 1.0]},
+  {"key": "tolerance", "label": "Tolerance", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.15},
+  {"key": "softness", "label": "Softness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.1},
+  {"key": "change", "label": "Change", "type": "enum", "choices": ["Hue", "Hue and saturation", "Hue, saturation and lightness"], "default": 0},
+  {"key": "show_mask", "label": "Show mask", "type": "bool", "default": false}
+ ],
+ "passes": "single"
+}

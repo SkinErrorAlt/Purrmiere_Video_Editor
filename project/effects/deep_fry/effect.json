@@ -1,0 +1,19 @@
+{
+ "id": "deep_fry",
+ "label": "Deep Fry",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "The deep fried meme look: colour and contrast pushed far too hard, oversharpened edges, orange heat, grain and chunky compression blocks.",
+ "params": [
+  {"key": "amount", "label": "Amount", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.85},
+  {"key": "saturation", "label": "Saturation", "type": "float", "min": 0.0, "max": 5.0, "step": 0.01, "default": 2.4},
+  {"key": "contrast", "label": "Contrast", "type": "float", "min": 0.0, "max": 3.0, "step": 0.01, "default": 1.8},
+  {"key": "sharpen", "label": "Sharpen", "type": "float", "min": 0.0, "max": 8.0, "step": 0.05, "default": 3.0},
+  {"key": "crush", "label": "Blocks", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.55},
+  {"key": "noise", "label": "Grain", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "heat", "label": "Orange heat", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

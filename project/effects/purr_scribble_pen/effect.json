@@ -1,0 +1,17 @@
+{
+ "id": "purr_scribble_pen",
+ "label": "Scribble Pen",
+ "category": "Purrmiere",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Draws the picture with a restless ballpoint scribble: loopy wandering pen lines that pile up densely in the dark areas and thin out to bare paper in the light, with layers of scribble crossing in the deepest shadows.",
+ "params": [
+  {"key": "ink", "label": "Ink", "type": "color", "default": [0.12, 0.15, 0.35, 1.0]},
+  {"key": "paper", "label": "Paper", "type": "color", "default": [0.97, 0.96, 0.93, 1.0]},
+  {"key": "size", "label": "Scribble size", "type": "float", "min": 2.0, "max": 30.0, "step": 0.1, "default": 6.0, "unit": " px"},
+  {"key": "darkness", "label": "Darkness", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 1.0},
+  {"key": "wander", "label": "Wander", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "outline", "label": "Outline", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5}
+ ],
+ "passes": "single"
+}

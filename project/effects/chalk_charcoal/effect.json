@@ -1,0 +1,18 @@
+{
+ "id": "chalk_charcoal",
+ "label": "Chalk and Charcoal",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Draws the shadows in black charcoal and the lights in white chalk on grey paper, the two laid in strokes that cross.",
+ "params": [
+  {"key": "charcoal_area", "label": "Charcoal area", "type": "float", "min": 0, "max": 20, "step": 0.1, "default": 6},
+  {"key": "chalk_area", "label": "Chalk area", "type": "float", "min": 0, "max": 20, "step": 0.1, "default": 6},
+  {"key": "stroke_pressure", "label": "Stroke pressure", "type": "float", "min": 0, "max": 5, "step": 0.05, "default": 1},
+  {"key": "charcoal_colour", "label": "Charcoal", "type": "color", "default": [0.07, 0.07, 0.08, 1.0]},
+  {"key": "chalk_colour", "label": "Chalk", "type": "color", "default": [0.97, 0.97, 0.95, 1.0]},
+  {"key": "paper", "label": "Paper", "type": "color", "default": [0.5, 0.5, 0.5, 1.0]},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

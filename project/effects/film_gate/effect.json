@@ -1,0 +1,20 @@
+{
+ "id": "film_gate",
+ "label": "Film Gate",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "The edge of a camera or projector gate round the picture: the opening's own rounded corners and slightly bowed, hand filed edges for Super 8, 16 mm or 35 mm, a soft edge with a warm burnt falloff, a hair caught in the gate that wobbles a little, and the film weaving in the gate so the frame line slips into view on the bigger jumps.",
+ "params": [
+  {"key": "format", "label": "Format", "type": "enum", "choices": ["Super 8", "16 mm", "35 mm"], "default": 0},
+  {"key": "corner", "label": "Corner rounding", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "softness", "label": "Edge softness", "type": "float", "min": 0.0, "max": 60.0, "step": 0.1, "default": 8.0, "unit": " px"},
+  {"key": "darkness", "label": "Edge darkness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "hair", "label": "Hair in the gate", "type": "bool", "default": true},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0},
+  {"key": "frame_line", "label": "Frame line", "type": "bool", "default": true},
+  {"key": "jitter", "label": "Jitter", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "overscan", "label": "Overscan", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3}
+ ],
+ "passes": "single"
+}

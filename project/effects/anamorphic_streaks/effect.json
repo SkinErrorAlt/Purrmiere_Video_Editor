@@ -1,0 +1,23 @@
+{
+ "id": "anamorphic_streaks",
+ "label": "Anamorphic Streaks",
+ "category": "Light & Shadow",
+ "tags": ["light"],
+ "version": 1,
+ "blurb": "Long thin streaks of light across the bright spots, like an anamorphic lens. The bright parts are blurred sideways only, tinted and added back.",
+ "params": [
+  {"key": "threshold", "label": "Threshold", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.75},
+  {"key": "length", "label": "Length", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "intensity", "label": "Intensity", "type": "float", "min": 0, "max": 4, "step": 0.01, "default": 1},
+  {"key": "colour", "label": "Colour", "type": "color", "default": [0.35, 0.55, 1.0, 1.0]},
+  {"key": "vertical", "label": "Vertical", "type": "bool", "default": false}
+ ],
+ "passes": [
+  {"shader": "bright.gdshader", "scale": 0.5},
+  {"shader": "res://effects/blur_gaussian/down.gdshader", "scale": 0.5},
+  {"shader": "streak.gdshader", "set": {"span": 0.015625}, "map": {"streak_length": "length"}},
+  {"shader": "streak.gdshader", "set": {"span": 0.125}, "map": {"streak_length": "length"}},
+  {"shader": "streak.gdshader", "set": {"span": 1.0}, "map": {"streak_length": "length"}},
+  {"shader": "compose.gdshader", "scale": 4.0}
+ ]
+}

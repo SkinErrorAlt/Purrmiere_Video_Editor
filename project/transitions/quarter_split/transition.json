@@ -1,0 +1,21 @@
+{
+ "id": "quarter_split",
+ "label": "Centre Split",
+ "group": "Slide and Push",
+ "space": "2D",
+ "from": ["Premiere Center Split", "VEGAS Split"],
+ "blurb": "The outgoing picture splits at a centre point into four quarters, or two halves, that slide out to the corners along straight lines and all leave the frame at the same moment, uncovering the incoming picture under their soft shadows. In reverses it, so the incoming quarters close in from the corners. Each piece keeps its content whole and unscaled.",
+ "default_duration": 0.8,
+ "params": [
+  {"key": "pieces", "label": "Pieces", "type": "enum", "choices": ["Four quarters", "Two halves, left and right", "Two halves, top and bottom"], "default": 0},
+  {"key": "motion", "label": "Motion", "type": "enum", "choices": ["Out to the corners", "In from the corners"], "default": 0},
+  {"key": "centre", "label": "Split point", "type": "vec2", "min": 0, "max": 1, "step": 0.01, "default": [0.5, 0.5]},
+  {"key": "gap", "label": "Gap", "type": "float", "min": 0, "max": 80, "step": 1, "default": 0, "unit": " px"},
+  {"key": "shadow", "label": "Shadow", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "blur", "label": "Motion blur", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 0.5},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Smooth", "Speed up", "Slow down", "Even"], "default": 0}
+ ],
+ "handles": [
+  {"kind": "point", "key": "centre"}
+ ]
+}

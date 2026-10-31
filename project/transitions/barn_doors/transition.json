@@ -1,0 +1,17 @@
+{
+ "id": "barn_doors",
+ "label": "Barn Doors",
+ "group": "Wipe",
+ "space": "2D",
+ "from": ["Premiere Barn Doors", "Impress Barn Doors"],
+ "blurb": "The incoming picture opens out from the middle like a pair of doors swinging apart, or closes in from both sides, with an optional coloured border on the edges.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "orientation", "label": "Doors", "type": "enum", "choices": ["Vertical", "Horizontal"], "default": 0},
+  {"key": "motion", "label": "Motion", "type": "enum", "choices": ["Open", "Close"], "default": 0},
+  {"key": "border_width", "label": "Border", "type": "float", "min": 0, "max": 100, "step": 1, "default": 0, "unit": " px"},
+  {"key": "border_colour", "label": "Border colour", "type": "color", "default": [1, 1, 1, 1]},
+  {"key": "softness", "label": "Soft edge", "type": "float", "min": 0, "max": 50, "step": 1, "default": 0, "unit": " px"},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 0}
+ ]
+}

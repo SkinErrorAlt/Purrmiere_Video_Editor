@@ -1,0 +1,20 @@
+{
+ "id": "long_shadow",
+ "label": "Long Shadow",
+ "category": "Light & Shadow",
+ "version": 1,
+ "blurb": "The flat design long shadow: the alpha shape is cast along one direction for a set length, with a hard edge and an optional fade.",
+ "params": [
+  {"key": "angle", "label": "Angle", "type": "float", "min": -180, "max": 180, "step": 1, "default": 45, "unit": " deg"},
+  {"key": "length", "label": "Length", "type": "float", "min": 0, "max": 2000, "step": 1, "default": 400, "unit": " px"},
+  {"key": "colour", "label": "Colour", "type": "color", "default": [0.0, 0.0, 0.0, 1.0]},
+  {"key": "fade", "label": "Fade", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "opacity", "label": "Opacity", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5}
+ ],
+ "handles": [{"kind": "angle", "key": "angle", "zero": "right", "turn": "cw", "length": "length", "length_unit": "px"}],
+ "passes": [
+  {"shader": "march.gdshader", "set": {"fine_stage": true}, "map": {"shadow_length": "length"}},
+  {"shader": "march.gdshader", "set": {"fine_stage": false}, "map": {"shadow_length": "length"}},
+  {"shader": "compose.gdshader"}
+ ]
+}

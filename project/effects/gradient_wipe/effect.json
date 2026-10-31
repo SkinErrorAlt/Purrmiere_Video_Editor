@@ -1,0 +1,20 @@
+{
+ "id": "gradient_wipe",
+ "label": "Gradient Wipe",
+ "category": "Transition",
+ "version": 1,
+ "blurb": "Wipes the picture away in the order of a gradient: dark parts first, along a line, out from a centre, through noise or by a picture you choose.",
+ "params": [
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "source", "label": "Gradient from", "type": "enum", "choices": ["The picture's lightness", "Linear", "Radial", "Noise", "A picture file"], "default": 0},
+  {"key": "gradient_picture", "label": "Gradient picture", "type": "texture", "default": ""},
+  {"key": "angle", "label": "Angle", "type": "float", "min": -180.0, "max": 180.0, "step": 1.0, "default": 0.0, "unit": " deg"},
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "scale", "label": "Noise size", "type": "float", "min": 0.1, "max": 10.0, "step": 0.01, "default": 1.0},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0},
+  {"key": "feather", "label": "Softness", "type": "float", "min": 0.0, "max": 0.5, "step": 0.005, "default": 0.1},
+  {"key": "invert", "label": "The other way", "type": "bool", "default": false}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}, {"kind": "angle", "key": "angle", "zero": "right", "turn": "cw"}],
+ "passes": "single"
+}

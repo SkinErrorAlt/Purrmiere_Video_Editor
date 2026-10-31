@@ -1,0 +1,140 @@
+{
+ "id": "audio_blur_pulse",
+ "label": "Blur Pulse",
+ "category": "Audio Reactive",
+ "tags": [
+  "audio",
+  "music",
+  "beat",
+  "reactive",
+  "visualiser"
+ ],
+ "version": 1,
+ "blurb": "The picture blurs with the sound. Swap the two values to blur in the quiet parts instead. Drop a clip from the timeline, or a file from the bin or the Source monitor, on its Sound well.",
+ "params": [
+  {
+   "key": "blur_peak",
+   "label": "Blur when loud",
+   "type": "float",
+   "min": 0,
+   "max": 200,
+   "step": 0.1,
+   "default": 18
+  },
+  {
+   "key": "blur_rest",
+   "label": "Blur when quiet",
+   "type": "float",
+   "min": 0,
+   "max": 200,
+   "step": 0.1,
+   "default": 0
+  },
+  {
+   "key": "dims",
+   "label": "Blur Dimensions",
+   "type": "enum",
+   "choices": [
+    "Both",
+    "Horizontal",
+    "Vertical"
+   ],
+   "default": 0
+  },
+  {
+   "key": "edge",
+   "label": "Repeat Edge Pixels",
+   "type": "bool",
+   "default": true
+  },
+  {
+   "key": "kernel",
+   "label": "Kernel",
+   "type": "enum",
+   "choices": [
+    "Smooth",
+    "Flat",
+    "Soft"
+   ],
+   "default": 0
+  }
+ ],
+ "passes": [
+  {
+   "shader": "res://effects/blur_gaussian/down.gdshader",
+   "scale": 0.5,
+   "when": {
+    "param": "radius",
+    "gt": 62
+   }
+  },
+  {
+   "shader": "res://effects/blur_gaussian/down.gdshader",
+   "scale": 0.5,
+   "when": {
+    "param": "radius",
+    "gt": 124
+   }
+  },
+  {
+   "shader": "res://effects/blur_gaussian/down.gdshader",
+   "scale": 0.5,
+   "when": {
+    "param": "radius",
+    "gt": 186
+   }
+  },
+  {
+   "shader": "res://effects/blur_gaussian/gauss.gdshader",
+   "scale": 1.0,
+   "set": {
+    "direction": [
+     1.0,
+     0.0
+    ]
+   }
+  },
+  {
+   "shader": "res://effects/blur_gaussian/gauss.gdshader",
+   "scale": 1.0,
+   "set": {
+    "direction": [
+     0.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "shader": "res://effects/blur_gaussian/up.gdshader",
+   "scale": 2.0,
+   "when": {
+    "param": "radius",
+    "gt": 186
+   }
+  },
+  {
+   "shader": "res://effects/blur_gaussian/up.gdshader",
+   "scale": 2.0,
+   "when": {
+    "param": "radius",
+    "gt": 124
+   }
+  },
+  {
+   "shader": "res://effects/blur_gaussian/up.gdshader",
+   "scale": 2.0,
+   "when": {
+    "param": "radius",
+    "gt": 62
+   }
+  }
+ ],
+ "reactive": {
+  "drive": {
+   "radius": {
+    "rest": "blur_rest",
+    "peak": "blur_peak"
+   }
+  }
+ }
+}

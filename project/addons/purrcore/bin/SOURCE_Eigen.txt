@@ -1,0 +1,6 @@
+Eigen 3.4.1, the Eigen/ folder of the official release archive, unmodified.
+Source: https://gitlab.com/libeigen/eigen/-/releases/3.4.1 (eigen-3.4.1.tar.gz,
+SHA-256 b93c667d1b69265cdb4d9f30ec21f8facbbe8b307cf34c0b9942834c6d4fdbe2).
+Licence: MPL 2.0 (COPYING.MPL2); a few files are BSD or Apache 2.0 (COPYING.BSD, COPYING.APACHE).
+purrcore builds with EIGEN_MPL2_ONLY, so no LGPL file is used. The unsupported/ folder is not included.
+The complete unmodified source of this version is available at the address above (MPL 2.0 section 3.2).

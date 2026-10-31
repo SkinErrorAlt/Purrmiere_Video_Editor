@@ -1,0 +1,12 @@
+{
+ "id": "reduce_interlace_flicker",
+ "label": "Reduce Interlace Flicker",
+ "category": "Blur & Sharpen",
+ "tags": ["repair"],
+ "version": 1,
+ "blurb": "Softens thin horizontal lines that twitter on interlaced screens and in downscaled screen recordings, with a small vertical blur.",
+ "params": [
+  {"key": "softness", "label": "Softness", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5}
+ ],
+ "passes": "single"
+}

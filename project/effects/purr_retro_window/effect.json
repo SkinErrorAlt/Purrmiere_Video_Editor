@@ -1,0 +1,18 @@
+{
+ "id": "purr_retro_window",
+ "label": "Retro Window",
+ "category": "Purrmiere",
+ "tags": ["graphic"],
+ "version": 1,
+ "blurb": "Frames the shot inside an old desktop computer window: a bevelled grey frame, a gradient title bar with three little buttons and the picture in the window, with everything outside left see through.",
+ "params": [
+  {"key": "title_a", "label": "Title bar", "type": "color", "default": [0.05, 0.1, 0.5, 1.0]},
+  {"key": "title_b", "label": "Title bar end", "type": "color", "default": [0.35, 0.55, 0.85, 1.0]},
+  {"key": "frame", "label": "Frame", "type": "color", "default": [0.76, 0.76, 0.76, 1.0]},
+  {"key": "margin", "label": "Margin", "type": "float", "min": 0.0, "max": 0.3, "step": 0.001, "default": 0.06},
+  {"key": "bar", "label": "Title bar height", "type": "float", "min": 10.0, "max": 80.0, "step": 0.5, "default": 30.0, "unit": " px"},
+  {"key": "border", "label": "Frame width", "type": "float", "min": 2.0, "max": 30.0, "step": 0.5, "default": 6.0, "unit": " px"},
+  {"key": "shadow", "label": "Drop shadow", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4}
+ ],
+ "passes": "single"
+}

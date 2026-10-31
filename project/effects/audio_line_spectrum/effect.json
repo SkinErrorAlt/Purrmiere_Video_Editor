@@ -1,0 +1,132 @@
+{
+ "id": "audio_line_spectrum",
+ "label": "Line Spectrum",
+ "category": "Audio Reactive",
+ "tags": [
+  "audio",
+  "music",
+  "beat",
+  "reactive",
+  "visualiser"
+ ],
+ "version": 1,
+ "blurb": "The spectrum drawn as one smooth line with a soft fill under it, bass on the left and treble on the right. Drop a clip from the timeline, or a file from the bin or the Source monitor, on its Sound well.",
+ "params": [
+  {
+   "key": "centre",
+   "label": "Base line",
+   "type": "vec2",
+   "default": [
+    0.5,
+    0.85
+   ]
+  },
+  {
+   "key": "width",
+   "label": "Width",
+   "type": "float",
+   "min": 0.05,
+   "max": 1,
+   "step": 0.01,
+   "default": 0.85
+  },
+  {
+   "key": "height",
+   "label": "Height",
+   "type": "float",
+   "min": 0.01,
+   "max": 1,
+   "step": 0.01,
+   "default": 0.35
+  },
+  {
+   "key": "count",
+   "label": "Points",
+   "type": "float",
+   "min": 8,
+   "max": 256,
+   "step": 1,
+   "default": 96
+  },
+  {
+   "key": "thickness",
+   "label": "Line width",
+   "type": "float",
+   "min": 0.5,
+   "max": 40,
+   "step": 0.5,
+   "default": 3,
+   "unit": " px"
+  },
+  {
+   "key": "fill",
+   "label": "Fill under",
+   "type": "float",
+   "min": 0,
+   "max": 1,
+   "step": 0.01,
+   "default": 0.35
+  },
+  {
+   "key": "colour",
+   "label": "Colour",
+   "type": "color",
+   "default": [
+    1.0,
+    0.45,
+    0.75,
+    1
+   ]
+  },
+  {
+   "key": "peak_colour",
+   "label": "Peak colour",
+   "type": "color",
+   "default": [
+    1,
+    1,
+    1,
+    0.8
+   ]
+  },
+  {
+   "key": "opacity",
+   "label": "Opacity",
+   "type": "float",
+   "min": 0,
+   "max": 1,
+   "step": 0.01,
+   "default": 1
+  }
+ ],
+ "passes": [
+  {
+   "shader": "res://effects/_audio_visual/visual.gdshader",
+   "set": {
+    "visual": 1
+   }
+  }
+ ],
+ "reactive": {
+  "defaults": {
+   "snd_attack": 5,
+   "snd_release": 150,
+   "snd_threshold": 2,
+   "snd_bands": 2,
+   "snd_interp": 1
+  },
+  "spectrum": {
+   "uniform": "spec_tex",
+   "bars": "count",
+   "peaks_on": "peaks_on"
+  },
+  "level": "level",
+  "look": true
+ },
+ "handles": [
+  {
+   "kind": "point",
+   "key": "centre"
+  }
+ ]
+}

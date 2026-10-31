@@ -1,0 +1,16 @@
+{
+ "id": "pinwheel",
+ "label": "Pinwheel",
+ "category": "Transition",
+ "version": 1,
+ "blurb": "The picture is cut away by blades sweeping round a centre like a pinwheel.",
+ "params": [
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0, "max": 1, "step": 0.005, "default": 0.5},
+  {"key": "blades", "label": "Blades", "type": "int", "min": 2, "max": 24, "step": 1, "default": 8},
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "feather", "label": "Softness", "type": "float", "min": 0, "max": 0.2, "step": 0.001, "default": 0.01},
+  {"key": "reverse", "label": "Turn the other way", "type": "bool", "default": false}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}],
+ "passes": "single"
+}

@@ -1,0 +1,19 @@
+{
+ "id": "value_propagate",
+ "label": "Value Propagate",
+ "category": "Distort",
+ "version": 1,
+ "blurb": "Spreads the lightest or darkest values, or the most or least opaque, into their neighbours in the directions you pick. Only values between the two thresholds spread.",
+ "params": [
+  {"key": "mode", "label": "Spread", "type": "enum", "choices": ["More white", "More black", "More opaque", "More transparent"], "default": 0},
+  {"key": "spread", "label": "Distance", "type": "float", "min": 0.0, "max": 50.0, "step": 0.5, "default": 4.0, "unit": " px"},
+  {"key": "rate", "label": "Propagating rate", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "lower", "label": "Lower threshold", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.0},
+  {"key": "upper", "label": "Upper threshold", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "to_left", "label": "Spread to the left", "type": "bool", "default": true},
+  {"key": "to_right", "label": "Spread to the right", "type": "bool", "default": true},
+  {"key": "to_top", "label": "Spread upwards", "type": "bool", "default": true},
+  {"key": "to_bottom", "label": "Spread downwards", "type": "bool", "default": true}
+ ],
+ "passes": "single"
+}

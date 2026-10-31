@@ -1,0 +1,333 @@
+{
+ "id": "pair_view",
+ "label": "Pair View",
+ "category": "Purrmiere",
+ "version": 1,
+ "blurb": "Named crop regions of one picture (two players in a split screen recording, a Discord call). A keyframeable view picks which region fills the frame, or every region shows at once in a grid. Each region has an offset that moves its picture and its sound in time, so a region recorded late can be lined up. Edit the regions in Effect Controls, place them on the picture with the Program monitor, and line them up with Sync regions.",
+ "params": [
+  {
+   "key": "view",
+   "label": "View",
+   "type": "float",
+   "min": 0,
+   "max": 7,
+   "step": 1,
+   "default": 0
+  },
+  {
+   "key": "view2",
+   "label": "Group 2 view",
+   "type": "float",
+   "min": 0,
+   "max": 7,
+   "step": 1,
+   "default": 0
+  },
+  {
+   "key": "group",
+   "label": "Group",
+   "type": "float",
+   "min": 0,
+   "max": 3,
+   "step": 1,
+   "default": 0
+  },
+  {
+   "key": "sound_view",
+   "label": "Sound from",
+   "type": "enum",
+   "choices": [
+    "The view on screen",
+    "View 1",
+    "View 2",
+    "View 3",
+    "View 4",
+    "View 5",
+    "View 6",
+    "View 7",
+    "View 8"
+   ],
+   "default": 0
+  },
+  {
+   "key": "view_mode",
+   "label": "View picks by",
+   "type": "enum",
+   "choices": [
+    "Index",
+    "Range 0 to 1"
+   ],
+   "default": 0
+  },
+  {
+   "key": "layout",
+   "label": "Layout",
+   "type": "enum",
+   "choices": [
+    "Full view",
+    "Side by side",
+    "Top and bottom",
+    "Picture in picture"
+   ],
+   "default": 0
+  },
+  {
+   "key": "grid",
+   "label": "Show every region",
+   "type": "bool",
+   "default": false
+  },
+  {
+   "key": "fit",
+   "label": "Region fill",
+   "type": "enum",
+   "choices": [
+    "Fit",
+    "Fill",
+    "Stretch"
+   ],
+   "default": 0
+  },
+  {
+   "key": "split_fit",
+   "label": "Split fill",
+   "type": "enum",
+   "choices": [
+    "Fit",
+    "Fill",
+    "Stretch"
+   ],
+   "default": 1
+  },
+  {
+   "key": "zoom",
+   "label": "Zoom",
+   "type": "float",
+   "min": 0.25,
+   "max": 8,
+   "step": 0.01,
+   "default": 1
+  },
+  {
+   "key": "pan_x",
+   "label": "Pan X",
+   "type": "float",
+   "min": -1,
+   "max": 1,
+   "step": 0.005,
+   "default": 0
+  },
+  {
+   "key": "pan_y",
+   "label": "Pan Y",
+   "type": "float",
+   "min": -1,
+   "max": 1,
+   "step": 0.005,
+   "default": 0
+  },
+  {
+   "key": "grid_gap",
+   "label": "Grid gap",
+   "type": "float",
+   "min": 0,
+   "max": 0.1,
+   "step": 0.001,
+   "default": 0.01
+  },
+  {
+   "key": "grid_border",
+   "label": "Grid marks the active region",
+   "type": "bool",
+   "default": true
+  },
+  {
+   "key": "crops",
+   "label": "Regions",
+   "type": "string",
+   "default": "[{\"name\": \"View 1\", \"rect\": [0, 0, 1, 1], \"auto\": true}]",
+   "hidden": true
+  },
+  {
+   "key": "groups",
+   "label": "Region groups",
+   "type": "string",
+   "default": "",
+   "hidden": true
+  },
+  {
+   "key": "view_audio",
+   "label": "View audio",
+   "type": "string",
+   "default": "",
+   "hidden": true
+  },
+  {
+   "key": "view_cuts",
+   "label": "Cut on view changes",
+   "type": "bool",
+   "default": false,
+   "keyable": false,
+   "hidden": true
+  },
+  {
+   "key": "sync_marks",
+   "label": "Sync marks",
+   "type": "string",
+   "default": "",
+   "keyable": false,
+   "hidden": true
+  },
+  {
+   "key": "marks_follow",
+   "label": "Carry the offset across cuts",
+   "type": "bool",
+   "default": false,
+   "keyable": false,
+   "hidden": true
+  },
+  {
+   "key": "drop_on_view",
+   "label": "Dropped effects go on the view",
+   "type": "bool",
+   "default": true,
+   "keyable": false,
+   "hidden": true
+  },
+  {
+   "key": "offset0",
+   "label": "Offset 1",
+   "type": "float",
+   "min": -600,
+   "max": 600,
+   "step": 0.001,
+   "default": 0,
+   "unit": " s",
+   "hidden": true
+  },
+  {
+   "key": "offset1",
+   "label": "Offset 2",
+   "type": "float",
+   "min": -600,
+   "max": 600,
+   "step": 0.001,
+   "default": 0,
+   "unit": " s",
+   "hidden": true
+  },
+  {
+   "key": "offset2",
+   "label": "Offset 3",
+   "type": "float",
+   "min": -600,
+   "max": 600,
+   "step": 0.001,
+   "default": 0,
+   "unit": " s",
+   "hidden": true
+  },
+  {
+   "key": "offset3",
+   "label": "Offset 4",
+   "type": "float",
+   "min": -600,
+   "max": 600,
+   "step": 0.001,
+   "default": 0,
+   "unit": " s",
+   "hidden": true
+  },
+  {
+   "key": "offset4",
+   "label": "Offset 5",
+   "type": "float",
+   "min": -600,
+   "max": 600,
+   "step": 0.001,
+   "default": 0,
+   "unit": " s",
+   "hidden": true
+  },
+  {
+   "key": "offset5",
+   "label": "Offset 6",
+   "type": "float",
+   "min": -600,
+   "max": 600,
+   "step": 0.001,
+   "default": 0,
+   "unit": " s",
+   "hidden": true
+  },
+  {
+   "key": "offset6",
+   "label": "Offset 7",
+   "type": "float",
+   "min": -600,
+   "max": 600,
+   "step": 0.001,
+   "default": 0,
+   "unit": " s",
+   "hidden": true
+  },
+  {
+   "key": "offset7",
+   "label": "Offset 8",
+   "type": "float",
+   "min": -600,
+   "max": 600,
+   "step": 0.001,
+   "default": 0,
+   "unit": " s",
+   "hidden": true
+  },
+  {"key": "place0", "label": "On screen at", "type": "vec2", "min": -1, "max": 2, "step": 0.001, "default": [0.2, 0.2], "hidden": true},
+  {"key": "place1", "label": "On screen at", "type": "vec2", "min": -1, "max": 2, "step": 0.001, "default": [0.8, 0.8], "hidden": true},
+  {"key": "place2", "label": "On screen at", "type": "vec2", "min": -1, "max": 2, "step": 0.001, "default": [0.2, 0.8], "hidden": true},
+  {"key": "place3", "label": "On screen at", "type": "vec2", "min": -1, "max": 2, "step": 0.001, "default": [0.8, 0.2], "hidden": true},
+  {"key": "place4", "label": "On screen at", "type": "vec2", "min": -1, "max": 2, "step": 0.001, "default": [0.2, 0.2], "hidden": true},
+  {"key": "place5", "label": "On screen at", "type": "vec2", "min": -1, "max": 2, "step": 0.001, "default": [0.8, 0.8], "hidden": true},
+  {"key": "place6", "label": "On screen at", "type": "vec2", "min": -1, "max": 2, "step": 0.001, "default": [0.2, 0.8], "hidden": true},
+  {"key": "place7", "label": "On screen at", "type": "vec2", "min": -1, "max": 2, "step": 0.001, "default": [0.8, 0.2], "hidden": true},
+  {"key": "size0", "label": "On screen size", "type": "float", "min": 0.02, "max": 1, "step": 0.001, "default": 0.3, "hidden": true},
+  {"key": "size1", "label": "On screen size", "type": "float", "min": 0.02, "max": 1, "step": 0.001, "default": 0.3, "hidden": true},
+  {"key": "size2", "label": "On screen size", "type": "float", "min": 0.02, "max": 1, "step": 0.001, "default": 0.3, "hidden": true},
+  {"key": "size3", "label": "On screen size", "type": "float", "min": 0.02, "max": 1, "step": 0.001, "default": 0.3, "hidden": true},
+  {"key": "size4", "label": "On screen size", "type": "float", "min": 0.02, "max": 1, "step": 0.001, "default": 0.3, "hidden": true},
+  {"key": "size5", "label": "On screen size", "type": "float", "min": 0.02, "max": 1, "step": 0.001, "default": 0.3, "hidden": true},
+  {"key": "size6", "label": "On screen size", "type": "float", "min": 0.02, "max": 1, "step": 0.001, "default": 0.3, "hidden": true},
+  {"key": "size7", "label": "On screen size", "type": "float", "min": 0.02, "max": 1, "step": 0.001, "default": 0.3, "hidden": true},
+  {"key": "turn0", "label": "Turn", "type": "float", "min": -180, "max": 180, "step": 0.1, "default": 0, "unit": " deg", "hidden": true},
+  {"key": "turn1", "label": "Turn", "type": "float", "min": -180, "max": 180, "step": 0.1, "default": 0, "unit": " deg", "hidden": true},
+  {"key": "turn2", "label": "Turn", "type": "float", "min": -180, "max": 180, "step": 0.1, "default": 0, "unit": " deg", "hidden": true},
+  {"key": "turn3", "label": "Turn", "type": "float", "min": -180, "max": 180, "step": 0.1, "default": 0, "unit": " deg", "hidden": true},
+  {"key": "turn4", "label": "Turn", "type": "float", "min": -180, "max": 180, "step": 0.1, "default": 0, "unit": " deg", "hidden": true},
+  {"key": "turn5", "label": "Turn", "type": "float", "min": -180, "max": 180, "step": 0.1, "default": 0, "unit": " deg", "hidden": true},
+  {"key": "turn6", "label": "Turn", "type": "float", "min": -180, "max": 180, "step": 0.1, "default": 0, "unit": " deg", "hidden": true},
+  {"key": "turn7", "label": "Turn", "type": "float", "min": -180, "max": 180, "step": 0.1, "default": 0, "unit": " deg", "hidden": true},
+  {"key": "solo", "label": "Only this region", "type": "int", "min": -1, "max": 7, "step": 1, "default": -1, "keyable": false, "hidden": true}
+ ],
+ "passes": "single",
+ "hidden_uniforms": [
+  "crop_count",
+  "crop?",
+  "crop_rot?",
+  "active_colour",
+  "region_tex?",
+  "region_own",
+  "sync_mode",
+  "sync_show",
+  "canvas_px",
+  "source_box",
+  "placing",
+  "region_out",
+  "grid_cols",
+  "cut_on",
+  "cut_a?",
+  "cut_b?"
+ ],
+ "handles": [
+  {"kind": "regions"}
+ ]
+}

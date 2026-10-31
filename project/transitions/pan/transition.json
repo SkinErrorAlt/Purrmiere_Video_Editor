@@ -1,0 +1,16 @@
+{
+ "id": "pan",
+ "label": "Pan",
+ "group": "Slide and Push",
+ "space": "2D",
+ "from": ["PowerPoint Pan"],
+ "blurb": "A camera pan from one picture to the next, as if the two sat end to end on a long strip with a gap between them. The camera eases off, pulls back a little on the way and settles on the incoming picture.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "direction", "label": "From", "type": "enum", "choices": ["Right", "Left", "Bottom", "Top", "Bottom right", "Bottom left", "Top right", "Top left"], "default": 2},
+  {"key": "timing", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth", "Strong", "Slow end", "Overshoot", "Bounce"], "default": 2},
+  {"key": "gap", "label": "Gap", "type": "float", "min": 0, "max": 0.5, "step": 0.01, "default": 0.08},
+  {"key": "pull_back", "label": "Pull back", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.12},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

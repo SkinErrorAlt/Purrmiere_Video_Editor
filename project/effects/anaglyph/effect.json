@@ -1,0 +1,15 @@
+{
+ "id": "anaglyph",
+ "label": "Anaglyph 3D",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Splits the picture into a red image and a cyan image set apart, for red and cyan 3D glasses.",
+ "params": [
+  {"key": "depth", "label": "Depth", "type": "float", "min": 0.0, "max": 60.0, "step": 0.5, "default": 8.0, "unit": " px"},
+  {"key": "depth_from", "label": "Depth from", "type": "enum", "choices": ["Flat", "Lightness as depth"], "default": 0},
+  {"key": "colour_mode", "label": "Colour", "type": "enum", "choices": ["True", "Grey", "Half colour", "Optimised Dubois"], "default": 2},
+  {"key": "swap", "label": "Swap the eyes", "type": "bool", "default": false}
+ ],
+ "passes": "single"
+}

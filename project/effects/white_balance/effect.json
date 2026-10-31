@@ -1,0 +1,13 @@
+{
+ "id": "white_balance",
+ "label": "White Balance",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Warms the picture up or cools it down, and leans it green or magenta.",
+ "params": [
+  {"key": "temperature", "label": "Temperature", "type": "float", "min": -1.0, "max": 1.0, "step": 0.005, "default": 0.0},
+  {"key": "green_tint", "label": "Tint", "type": "float", "min": -1.0, "max": 1.0, "step": 0.005, "default": 0.0},
+  {"key": "keep_luma", "label": "Keep the brightness", "type": "bool", "default": true}
+ ],
+ "passes": "single"
+}

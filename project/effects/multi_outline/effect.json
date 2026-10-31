@@ -1,0 +1,28 @@
+{
+ "id": "multi_outline",
+ "label": "Multi Outline",
+ "category": "Light & Shadow",
+ "version": 1,
+ "blurb": "Up to three outlines stacked round whatever has alpha, such as a cut out person, a logo or a title, each with its own width, colour and gap, plus a soft glow outside the last one for a neon look. Widths are measured on the true distance from the edge, so thick outlines stay smooth and even with no scallops or holes, which the single Outline cannot do.",
+ "params": [
+  {"key": "position", "label": "First outline", "type": "enum", "choices": ["Outside the edge", "Centred on the edge", "Inside the edge"], "default": 0},
+  {"key": "width_1", "label": "Width", "type": "float", "min": 0.0, "max": 40.0, "step": 0.1, "default": 6.0, "unit": " px"},
+  {"key": "colour_1", "label": "Colour", "type": "color", "default": [1.0, 1.0, 1.0, 1.0]},
+  {"key": "use_2", "label": "Second outline", "type": "bool", "default": true},
+  {"key": "gap_2", "label": "Gap before the second", "type": "float", "min": 0.0, "max": 20.0, "step": 0.1, "default": 0.0, "unit": " px"},
+  {"key": "width_2", "label": "Second width", "type": "float", "min": 0.0, "max": 40.0, "step": 0.1, "default": 3.0, "unit": " px"},
+  {"key": "colour_2", "label": "Second colour", "type": "color", "default": [0.1, 0.1, 0.12, 1.0]},
+  {"key": "use_3", "label": "Third outline", "type": "bool", "default": false},
+  {"key": "gap_3", "label": "Gap before the third", "type": "float", "min": 0.0, "max": 20.0, "step": 0.1, "default": 0.0, "unit": " px"},
+  {"key": "width_3", "label": "Third width", "type": "float", "min": 0.0, "max": 40.0, "step": 0.1, "default": 4.0, "unit": " px"},
+  {"key": "colour_3", "label": "Third colour", "type": "color", "default": [1.0, 0.8, 0.2, 1.0]},
+  {"key": "softness", "label": "Edge softness", "type": "float", "min": 0.0, "max": 4.0, "step": 0.05, "default": 0.75, "unit": " px"},
+  {"key": "glow", "label": "Glow", "type": "float", "min": 0.0, "max": 40.0, "step": 0.1, "default": 0.0, "unit": " px"},
+  {"key": "hide_fill", "label": "Hide the picture inside", "type": "bool", "default": false}
+ ],
+ "passes": [
+  {"shader": "res://effects/feather_matte/dist_across.gdshader", "map": {"reach_a": "width_1", "reach_b": "width_2", "reach_c": "width_3", "reach_d": "glow", "reach_e": "gap_2", "reach_f": "gap_3"}},
+  {"shader": "res://effects/feather_matte/dist_down.gdshader", "map": {"reach_a": "width_1", "reach_b": "width_2", "reach_c": "width_3", "reach_d": "glow", "reach_e": "gap_2", "reach_f": "gap_3"}},
+  {"shader": "combine.gdshader"}
+ ]
+}

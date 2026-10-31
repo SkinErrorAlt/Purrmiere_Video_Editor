@@ -1,0 +1,19 @@
+{
+ "id": "honeycomb_2d",
+ "label": "Honeycomb Wipe",
+ "group": "Shape",
+ "space": "2D",
+ "from": ["CapCut Honeycomb", "gl hexagonalize as a reveal"],
+ "blurb": "The incoming picture appears in hexagonal cells that grow out from their centres, sweeping across the frame with a little randomness.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "cell_size", "label": "Cell size", "type": "float", "min": 20, "max": 400, "step": 1, "default": 90, "unit": " px"},
+  {"key": "order", "label": "Order", "type": "enum", "choices": ["Left to right", "Right to left", "Top to bottom", "Bottom to top", "From the centre", "Random"], "default": 0},
+  {"key": "randomness", "label": "Randomness", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.35},
+  {"key": "cell_time", "label": "Cell time", "type": "float", "min": 0.05, "max": 1, "step": 0.01, "default": 0.3},
+  {"key": "softness", "label": "Soft edge", "type": "float", "min": 0, "max": 60, "step": 0.5, "default": 1.5, "unit": " px"},
+  {"key": "lines", "label": "Outlines", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0},
+  {"key": "line_colour", "label": "Outline colour", "type": "color", "default": [0, 0, 0, 1]},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 1}
+ ]
+}

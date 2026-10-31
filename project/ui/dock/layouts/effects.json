@@ -1,0 +1,67 @@
+{
+ "version": 1,
+ "name": "Effects",
+ "tree": {
+  "t": "s",
+  "dir": "v",
+  "ratio": 0.56,
+  "a": {
+   "t": "s",
+   "dir": "h",
+   "ratio": 0.45,
+   "a": {
+    "t": "g",
+    "tabs": [
+     "effect_controls",
+     "keyframes",
+     "source"
+    ],
+    "active": "effect_controls"
+   },
+   "b": {
+    "t": "g",
+    "tabs": [
+     "program"
+    ],
+    "active": "program"
+   }
+  },
+  "b": {
+   "t": "s",
+   "dir": "h",
+   "ratio": 0.22,
+   "a": {
+    "t": "g",
+    "tabs": [
+     "effects",
+     "transitions",
+     "presets",
+     "bin"
+    ],
+    "active": "effects"
+   },
+   "b": {
+    "t": "s",
+    "dir": "h",
+    "ratio": 0.744,
+    "a": {
+     "t": "g",
+     "tabs": [
+      "timeline"
+     ],
+     "active": "timeline"
+    },
+    "b": {
+     "t": "g",
+     "tabs": [
+      "audio",
+      "history"
+     ],
+     "active": "audio"
+    }
+   }
+  }
+ },
+ "floats": [],
+ "state": {}
+}

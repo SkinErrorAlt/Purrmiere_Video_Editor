@@ -1,0 +1,122 @@
+{
+ "id": "audio_beat_particles",
+ "label": "Beat Particles",
+ "category": "Audio Reactive",
+ "tags": [
+  "audio",
+  "music",
+  "beat",
+  "reactive",
+  "visualiser"
+ ],
+ "version": 1,
+ "blurb": "A burst of dots flies out on every beat and fades as it falls. Drop a clip from the timeline, or a file from the bin or the Source monitor, on its Sound well.",
+ "params": [
+  {
+   "key": "centre",
+   "label": "Centre",
+   "type": "vec2",
+   "default": [
+    0.5,
+    0.5
+   ]
+  },
+  {
+   "key": "particles",
+   "label": "Dots in each burst",
+   "type": "float",
+   "min": 1,
+   "max": 64,
+   "step": 1,
+   "default": 24
+  },
+  {
+   "key": "dot_size",
+   "label": "Dot size",
+   "type": "float",
+   "min": 1,
+   "max": 60,
+   "step": 0.5,
+   "default": 8,
+   "unit": " px"
+  },
+  {
+   "key": "speed",
+   "label": "Speed",
+   "type": "float",
+   "min": 0,
+   "max": 2,
+   "step": 0.01,
+   "default": 0.35
+  },
+  {
+   "key": "gravity",
+   "label": "Fall",
+   "type": "float",
+   "min": -2,
+   "max": 2,
+   "step": 0.01,
+   "default": 0.25
+  },
+  {
+   "key": "life",
+   "label": "Life",
+   "type": "float",
+   "min": 0.1,
+   "max": 5,
+   "step": 0.05,
+   "default": 1.5,
+   "unit": " s"
+  },
+  {
+   "key": "colour",
+   "label": "Colour",
+   "type": "color",
+   "default": [
+    1.0,
+    0.45,
+    0.75,
+    1
+   ]
+  },
+  {
+   "key": "opacity",
+   "label": "Opacity",
+   "type": "float",
+   "min": 0,
+   "max": 1,
+   "step": 0.01,
+   "default": 1
+  }
+ ],
+ "passes": [
+  {
+   "shader": "res://effects/_audio_visual/visual.gdshader",
+   "set": {
+    "visual": 5
+   }
+  }
+ ],
+ "reactive": {
+  "defaults": {
+   "snd_attack": 5,
+   "snd_release": 150,
+   "snd_threshold": 8,
+   "snd_bands": 2,
+   "snd_mode": 1,
+   "snd_band": 1
+  },
+  "beats": {
+   "uniform": "beat_tex",
+   "life": "life"
+  },
+  "level": "level",
+  "look": true
+ },
+ "handles": [
+  {
+   "kind": "point",
+   "key": "centre"
+  }
+ ]
+}

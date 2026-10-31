@@ -1,0 +1,19 @@
+{
+ "id": "purr_photo_album",
+ "label": "Photo Album",
+ "category": "Purrmiere",
+ "tags": ["graphic"],
+ "version": 1,
+ "blurb": "Mounts the shot in an old photo album: a white bordered print with black paper corner holders, a soft shadow and a slight tilt on a dark album page or a cream one.",
+ "params": [
+  {"key": "page", "label": "Page", "type": "enum", "default": 0, "choices": ["Dark album page", "Cream album page", "See through"]},
+  {"key": "border", "label": "Photo border", "type": "float", "min": 0.0, "max": 80.0, "step": 0.5, "default": 16.0, "unit": " px"},
+  {"key": "corner", "label": "Corner size", "type": "float", "min": 10.0, "max": 200.0, "step": 0.5, "default": 46.0, "unit": " px"},
+  {"key": "corner_colour", "label": "Corner colour", "type": "color", "default": [0.08, 0.07, 0.07, 1.0]},
+  {"key": "margin", "label": "Margin", "type": "float", "min": 0.0, "max": 0.3, "step": 0.001, "default": 0.1},
+  {"key": "tilt", "label": "Tilt", "type": "float", "min": -15.0, "max": 15.0, "step": 0.1, "default": -2.0, "unit": " deg"},
+  {"key": "shadow", "label": "Shadow", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5}
+ ],
+ "handles": [{"kind": "angle", "key": "tilt", "zero": "right", "turn": "cw"}],
+ "passes": "single"
+}

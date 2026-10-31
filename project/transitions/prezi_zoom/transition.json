@@ -1,0 +1,19 @@
+{
+ "id": "prezi_zoom",
+ "label": "Zoom Through",
+ "group": "Zoom and Camera",
+ "space": "2D",
+ "from": ["Prezi zoom"],
+ "blurb": "A Prezi style move between frames: the incoming picture waits as a small frame inside the outgoing one, and the camera pulls back a little, pans across and dives into it until it fills the screen. Out of runs it the other way, from a small frame inside the incoming picture.",
+ "default_duration": 1.5,
+ "params": [
+  {"key": "way", "label": "Way", "type": "enum", "choices": ["Into", "Out of"], "default": 0},
+  {"key": "inset_size", "label": "Frame size", "type": "float", "min": 0.1, "max": 0.6, "step": 0.01, "default": 0.3},
+  {"key": "inset_centre", "label": "Frame position", "type": "vec2", "min": 0, "max": 1, "step": 0.01, "default": [0.7, 0.35]},
+  {"key": "arc", "label": "Pull back", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.35},
+  {"key": "turn", "label": "Turn", "type": "float", "min": -45, "max": 45, "step": 0.5, "default": 0, "unit": " deg"},
+  {"key": "timing", "label": "Timing", "type": "enum", "choices": ["Even", "Strong", "Smooth"], "default": 1},
+  {"key": "frame_line", "label": "Frame outline", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

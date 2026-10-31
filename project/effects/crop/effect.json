@@ -1,0 +1,15 @@
+{
+ "id": "crop",
+ "label": "Crop",
+ "category": "Transform",
+ "version": 1,
+ "params": [
+  {"key": "left", "label": "Left", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0},
+  {"key": "top", "label": "Top", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0},
+  {"key": "right", "label": "Right", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0},
+  {"key": "bottom", "label": "Bottom", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0},
+  {"key": "feather", "label": "Feather", "type": "float", "min": 0, "max": 0.5, "step": 0.005, "default": 0}
+ ],
+ "handles": [{"kind": "edges", "left": "left", "top": "top", "right": "right", "bottom": "bottom"}],
+ "passes": "single"
+}

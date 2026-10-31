@@ -1,0 +1,19 @@
+{
+ "id": "sponge",
+ "label": "Sponge",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Paints the picture with a sponge: softened colour dabbed on in a mottled, holey texture with stronger contrast.",
+ "params": [
+  {"key": "brush_size", "label": "Brush size", "type": "float", "min": 2, "max": 30, "step": 0.1, "default": 8, "unit": " px"},
+  {"key": "definition", "label": "Definition", "type": "float", "min": 0, "max": 25, "step": 0.1, "default": 12},
+  {"key": "smoothness", "label": "Smoothness", "type": "float", "min": 1, "max": 15, "step": 0.1, "default": 5},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": [
+  {"shader": "soften.gdshader", "set": {"direction": [1, 0]}},
+  {"shader": "soften.gdshader", "set": {"direction": [0, 1]}},
+  {"shader": "dab.gdshader"}
+ ]
+}

@@ -1,0 +1,18 @@
+{
+ "id": "lens_flare_flash",
+ "label": "Lens Flare",
+ "group": "Light and Film",
+ "space": "2D",
+ "from": ["CapCut Flare", "CapCut Lens Flash"],
+ "blurb": "A lens flare sweeps across the frame, with a hot core, a long streak, rays and coloured ghosts, and bursts into a flash at the cut so the incoming picture comes out of the light.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "path", "label": "Path", "type": "enum", "choices": ["Left to right", "Right to left", "Top to bottom", "Bottom to top", "Stays in the middle"], "default": 0},
+  {"key": "tint", "label": "Tint", "type": "color", "default": [1, 0.82, 0.55, 1]},
+  {"key": "intensity", "label": "Intensity", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 1},
+  {"key": "size", "label": "Size", "type": "float", "min": 0.3, "max": 3, "step": 0.01, "default": 1},
+  {"key": "streak", "label": "Streak", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "ghosts", "label": "Ghosts", "type": "bool", "default": true},
+  {"key": "flash_amount", "label": "Flash", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.9}
+ ]
+}

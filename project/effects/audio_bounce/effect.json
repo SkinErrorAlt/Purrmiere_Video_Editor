@@ -1,0 +1,58 @@
+{
+ "id": "audio_bounce",
+ "label": "Position Bounce",
+ "category": "Audio Reactive",
+ "tags": [
+  "audio",
+  "music",
+  "beat",
+  "reactive",
+  "visualiser"
+ ],
+ "version": 1,
+ "blurb": "The picture jumps by Move on each hit and drops back over the beat decay. Drop a clip from the timeline, or a file from the bin or the Source monitor, on its Sound well.",
+ "params": [
+  {
+   "key": "travel",
+   "label": "Move",
+   "type": "vec2",
+   "default": [
+    0,
+    -40
+   ],
+   "unit": " px"
+  },
+  {
+   "key": "edges",
+   "label": "Edges",
+   "type": "enum",
+   "choices": [
+    "Transparent",
+    "Mirror",
+    "Repeat",
+    "Stretch"
+   ],
+   "default": 1
+  }
+ ],
+ "passes": [
+  {
+   "shader": "res://effects/audio_pulse_scale/motion.gdshader"
+  }
+ ],
+ "reactive": {
+  "defaults": {
+   "snd_mode": 1,
+   "snd_band": 1
+  },
+  "drive": {
+   "shift": {
+    "rest": [
+     0,
+     0
+    ],
+    "peak": "travel"
+   }
+  }
+ }
+}

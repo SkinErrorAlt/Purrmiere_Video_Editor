@@ -1,0 +1,17 @@
+{
+ "id": "pixel_sort_dissolve",
+ "label": "Pixel Sort",
+ "group": "Glitch",
+ "space": "2D",
+ "from": ["Sapphire Pixel Sort", "Envato and Motion Array glitch art packs"],
+ "blurb": "Runs of pixels inside a brightness window are sorted into streaks that ramp from dark to bright. The window opens from the brightest parts down, the streaks grow to the cut and fall back on the incoming picture. Stretch smears the incoming picture forward from a moving line instead.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "direction", "label": "Sorts towards", "type": "enum", "choices": ["Right", "Left", "Down", "Up"], "default": 2},
+  {"key": "low", "label": "Darkest sorted", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.25},
+  {"key": "high", "label": "Brightest sorted", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.9},
+  {"key": "max_length", "label": "Longest streak", "type": "float", "min": 20, "max": 800, "step": 1, "default": 320, "unit": " px"},
+  {"key": "mode", "label": "Mode", "type": "enum", "choices": ["Sort", "Stretch"], "default": 0},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 1}
+ ]
+}

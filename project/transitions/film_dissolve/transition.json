@@ -1,0 +1,13 @@
+{
+ "id": "film_dissolve",
+ "label": "Film Dissolve",
+ "group": "Dissolve",
+ "space": "2D",
+ "from": ["Premiere Film Dissolve"],
+ "blurb": "A dissolve worked out in linear light, the way two exposures mix on film, so bright parts carry through the middle and the picture never dips dull and grey halfway.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "linear_light", "label": "Linear light", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 1},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 0}
+ ]
+}

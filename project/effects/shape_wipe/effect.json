@@ -1,0 +1,19 @@
+{
+ "id": "shape_wipe",
+ "label": "Shape Iris",
+ "category": "Transition",
+ "version": 1,
+ "blurb": "A shape grows out from a centre and cuts the picture away as it goes, with a coloured rim at its edge if you want one.",
+ "params": [
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0.0, "max": 1.0, "step": 0.005, "default": 0.5},
+  {"key": "shape", "label": "Shape", "type": "enum", "choices": ["Star", "Heart", "Triangle", "Cross", "Hexagon", "Rounded square"], "default": 0},
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "rotation", "label": "Rotation", "type": "float", "min": -180.0, "max": 180.0, "step": 1.0, "default": 0.0, "unit": " deg"},
+  {"key": "border", "label": "Rim width", "type": "float", "min": 0.0, "max": 200.0, "step": 0.5, "default": 0.0, "unit": " px"},
+  {"key": "border_colour", "label": "Rim colour", "type": "color", "default": [1.0, 0.85, 0.3, 1.0]},
+  {"key": "feather", "label": "Softness", "type": "float", "min": 0.0, "max": 0.5, "step": 0.005, "default": 0.005},
+  {"key": "invert", "label": "The other way", "type": "bool", "default": false}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}, {"kind": "angle", "key": "rotation", "about": "centre"}],
+ "passes": "single"
+}

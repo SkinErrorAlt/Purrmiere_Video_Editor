@@ -1,0 +1,18 @@
+{
+ "id": "weave",
+ "label": "Weave",
+ "category": "Distort",
+ "version": 1,
+ "blurb": "Lays the picture over a basket weave of ribbons that pass over and under each other, with shadows between them and fine threads along each ribbon.",
+ "params": [
+  {"key": "ribbon_width", "label": "Ribbon width", "type": "float", "min": 2.0, "max": 400.0, "step": 0.5, "default": 48.0, "unit": " px"},
+  {"key": "ribbon_spacing", "label": "Ribbon spacing", "type": "float", "min": 0.0, "max": 200.0, "step": 0.5, "default": 12.0, "unit": " px"},
+  {"key": "shadow_darkness", "label": "Shadow darkness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.75},
+  {"key": "shadow_depth", "label": "Shadow depth", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.75},
+  {"key": "thread_length", "label": "Thread length", "type": "float", "min": 1.0, "max": 400.0, "step": 0.5, "default": 200.0, "unit": " px"},
+  {"key": "thread_density", "label": "Thread density", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "thread_intensity", "label": "Thread intensity", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

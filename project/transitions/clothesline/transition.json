@@ -1,0 +1,18 @@
+{
+ "id": "clothesline",
+ "label": "Clothesline",
+ "group": "3D",
+ "space": "2D",
+ "from": ["Keynote Clothesline"],
+ "blurb": "Both pictures hang from pegs on a line that pulls them across: the outgoing picture is drawn off to the side and the incoming one arrives swaying, then settles still.",
+ "default_duration": 1.6,
+ "params": [
+  {"key": "direction", "label": "Moves towards", "type": "enum", "choices": ["Left", "Right"], "default": 0},
+  {"key": "sway", "label": "Sway", "type": "float", "min": 0, "max": 30, "step": 0.5, "default": 9, "unit": " deg"},
+  {"key": "pull_back", "label": "Pull back", "type": "float", "min": 0, "max": 0.6, "step": 0.01, "default": 0.22},
+  {"key": "gap", "label": "Gap", "type": "float", "min": 0, "max": 0.6, "step": 0.01, "default": 0.2},
+  {"key": "line_colour", "label": "Line colour", "type": "color", "default": [0.85, 0.85, 0.82, 1]},
+  {"key": "peg_colour", "label": "Peg colour", "type": "color", "default": [0.78, 0.6, 0.38, 1]},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

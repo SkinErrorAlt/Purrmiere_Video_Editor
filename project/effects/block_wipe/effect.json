@@ -1,0 +1,16 @@
+{
+ "id": "block_wipe",
+ "label": "Block Wipe",
+ "category": "Transition",
+ "version": 1,
+ "blurb": "The picture leaves block by block in an order: spiral boxes in or out, zig zag rows or columns, random, or random along a wipe.",
+ "params": [
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0, "max": 1, "step": 0.005, "default": 0.5},
+  {"key": "order", "label": "Order", "type": "enum", "choices": ["Spiral in", "Spiral out", "Zig zag rows", "Zig zag columns", "Random", "Random along a wipe"], "default": 0},
+  {"key": "columns", "label": "Columns", "type": "int", "min": 1, "max": 64, "step": 1, "default": 10},
+  {"key": "rows", "label": "Rows", "type": "int", "min": 1, "max": 64, "step": 1, "default": 6},
+  {"key": "fade", "label": "Block fade", "type": "float", "min": 0, "max": 0.5, "step": 0.005, "default": 0.03},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

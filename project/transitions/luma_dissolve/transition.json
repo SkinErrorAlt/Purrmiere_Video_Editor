@@ -1,0 +1,15 @@
+{
+ "id": "luma_dissolve",
+ "label": "Luma Dissolve",
+ "group": "Dissolve",
+ "space": "2D",
+ "from": ["Premiere Non Additive Dissolve", "gl luminance melt"],
+ "blurb": "The incoming picture shows through its brightest parts first and fills in towards the shadows, with the lighter of the two pictures winning where they meet. Pick which picture's brightness leads and whether the darks go first instead.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "key_from", "label": "Brightness of", "type": "enum", "choices": ["Incoming picture", "Outgoing picture"], "default": 0},
+  {"key": "order", "label": "Order", "type": "enum", "choices": ["Brights first", "Darks first"], "default": 0},
+  {"key": "softness", "label": "Softness", "type": "float", "min": 0.02, "max": 1, "step": 0.01, "default": 0.3},
+  {"key": "lighter", "label": "Lighter wins", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5}
+ ]
+}

@@ -1,0 +1,16 @@
+{
+ "id": "spill_replace",
+ "label": "Spill Replace",
+ "category": "Keying",
+ "version": 1,
+ "blurb": "Takes the green or blue light that bounced off the screen onto the subject away, then puts the same amount of light back in a colour you choose, such as the colour of the new background, so edges and hair take on the new scene instead of going grey. The method sets how hard it limits the screen channel: the average of the other two is the usual choice, the brighter of the two is gentle, the darker of the two is strongest. Spill Suppression only takes the colour away.",
+ "params": [
+  {"key": "screen", "label": "Screen", "type": "enum", "choices": ["Green", "Blue"], "default": 0},
+  {"key": "method", "label": "Limit to", "type": "enum", "choices": ["Average of the other two", "Brighter of the other two", "Darker of the other two"], "default": 0},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "replace_colour", "label": "Replace with", "type": "color", "default": [0.5, 0.5, 0.5, 1.0]},
+  {"key": "replace", "label": "Light put back", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "show_spill", "label": "Show the spill", "type": "bool", "default": false}
+ ],
+ "passes": "single"
+}

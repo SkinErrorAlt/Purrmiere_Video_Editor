@@ -1,0 +1,38 @@
+{
+ "id": "fireworks",
+ "label": "Fireworks",
+ "category": "Generate",
+ "tags": ["light"],
+ "version": 1,
+ "blurb": "Rockets climb on sputtering gold tails and break into shells of glowing stars that coast outwards, slow in the air, droop under gravity and burn out, each star cooling from white hot through its own colour to a dull ember and leaving a glittering trail. Every break flashes light over the scene and the glow lights the sky. Peony, willow, ring and crackle shells, mixed or one kind, in mixed colours, gold or a colour you pick. The show never repeats; a new seed gives a different one.",
+ "params": [
+  {"key": "rate", "label": "Bursts per second", "type": "float", "min": 0.05, "max": 3.0, "step": 0.01, "default": 0.9},
+  {"key": "size", "label": "Burst size", "type": "float", "min": 20.0, "max": 1500.0, "step": 1.0, "default": 300.0, "unit": " px"},
+  {"key": "stars", "label": "Stars per burst", "type": "int", "min": 16, "max": 200, "step": 1, "default": 90},
+  {"key": "kind", "label": "Burst type", "type": "enum", "choices": ["Mixed", "Peony", "Willow", "Ring", "Crackle"], "default": 0},
+  {"key": "palette", "label": "Colours", "type": "enum", "choices": ["Mixed", "Gold", "One colour"], "default": 0},
+  {"key": "colour", "label": "Colour", "type": "color", "default": [1.0, 0.22, 0.3, 1.0]},
+  {"key": "launch_x", "label": "Launch centre", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "launch_area", "label": "Launch area", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "height", "label": "Burst height", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.32},
+  {"key": "gravity", "label": "Gravity", "type": "float", "min": 0.0, "max": 1000.0, "step": 1.0, "default": 150.0, "unit": " px"},
+  {"key": "trail", "label": "Trail length", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.45, "unit": " s"},
+  {"key": "rockets", "label": "Rockets", "type": "bool", "default": true},
+  {"key": "glow", "label": "Glow", "type": "float", "min": 0.0, "max": 3.0, "step": 0.01, "default": 1.0},
+  {"key": "flash", "label": "Flash the scene", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "blend", "label": "How it mixes", "type": "enum", "choices": ["Add", "Screen", "Lighten", "Replace"], "default": 0},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": [
+  {"shader": "mask.gdshader", "scale": 0.125},
+  {"shader": "stars.gdshader", "scale": 8.0},
+  {"shader": "down.gdshader", "scale": 0.5, "set": {"gain": 3.0}},
+  {"shader": "down.gdshader", "scale": 0.5},
+  {"shader": "down.gdshader", "scale": 0.5},
+  {"shader": "down.gdshader", "scale": 0.5},
+  {"shader": "up.gdshader", "scale": 2.0, "inputs": {"level_tex": 4}},
+  {"shader": "up.gdshader", "scale": 2.0, "inputs": {"level_tex": 3}},
+  {"shader": "up.gdshader", "scale": 2.0, "inputs": {"level_tex": 2}},
+  {"shader": "mix.gdshader", "scale": 2.0, "inputs": {"stars_tex": 1}}
+ ]
+}

@@ -1,0 +1,20 @@
+{
+ "id": "purr_scan_reveal",
+ "label": "Scan Reveal",
+ "category": "Purrmiere",
+ "tags": ["light", "graphic"],
+ "version": 1,
+ "blurb": "A glowing scanner bar sweeps across and the picture appears behind it, with a tinted afterglow and fine scan lines trailing the bar. Set Timing to reveal at the clip start for an automatic scan in.",
+ "params": [
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0.0, "max": 1.0, "step": 0.001, "default": 0.5},
+  {"key": "timing", "label": "Timing", "type": "enum", "choices": ["Follow Progress", "Reveal at the clip start", "Hide at the clip end"], "default": 0},
+  {"key": "auto_len", "label": "Automatic length", "type": "float", "min": 0.05, "max": 10.0, "step": 0.01, "default": 1.0, "unit": " s"},
+  {"key": "direction", "label": "Direction", "type": "enum", "default": 0, "choices": ["Left to right", "Top to bottom", "Right to left", "Bottom to top"]},
+  {"key": "bar_colour", "label": "Bar colour", "type": "color", "default": [0.45, 1.0, 0.85, 1.0]},
+  {"key": "bar", "label": "Bar width", "type": "float", "min": 0.0, "max": 40.0, "step": 0.1, "default": 5.0, "unit": " px"},
+  {"key": "glow", "label": "Glow", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 1.0},
+  {"key": "trail", "label": "Afterglow", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "lines", "label": "Scan lines", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4}
+ ],
+ "passes": "single"
+}

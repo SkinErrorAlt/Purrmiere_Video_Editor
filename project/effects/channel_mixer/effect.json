@@ -1,0 +1,20 @@
+{
+ "id": "channel_mixer",
+ "label": "Channel Mixer",
+ "category": "Channel",
+ "version": 1,
+ "blurb": "Builds each output channel from a mix of the three input channels.",
+ "params": [
+  {"key": "r_from_r", "label": "Red from red", "type": "float", "min": -2.0, "max": 2.0, "step": 0.01, "default": 1.0},
+  {"key": "r_from_g", "label": "Red from green", "type": "float", "min": -2.0, "max": 2.0, "step": 0.01, "default": 0.0},
+  {"key": "r_from_b", "label": "Red from blue", "type": "float", "min": -2.0, "max": 2.0, "step": 0.01, "default": 0.0},
+  {"key": "g_from_r", "label": "Green from red", "type": "float", "min": -2.0, "max": 2.0, "step": 0.01, "default": 0.0},
+  {"key": "g_from_g", "label": "Green from green", "type": "float", "min": -2.0, "max": 2.0, "step": 0.01, "default": 1.0},
+  {"key": "g_from_b", "label": "Green from blue", "type": "float", "min": -2.0, "max": 2.0, "step": 0.01, "default": 0.0},
+  {"key": "b_from_r", "label": "Blue from red", "type": "float", "min": -2.0, "max": 2.0, "step": 0.01, "default": 0.0},
+  {"key": "b_from_g", "label": "Blue from green", "type": "float", "min": -2.0, "max": 2.0, "step": 0.01, "default": 0.0},
+  {"key": "b_from_b", "label": "Blue from blue", "type": "float", "min": -2.0, "max": 2.0, "step": 0.01, "default": 1.0},
+  {"key": "monochrome", "label": "Monochrome", "type": "bool", "default": false}
+ ],
+ "passes": "single"
+}

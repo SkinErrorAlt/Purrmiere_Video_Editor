@@ -1,0 +1,11 @@
+{
+ "id": "rainbow",
+ "label": "Rainbow",
+ "blurb": "Every colour round the clip, travelling. The outline colour only sets how see through it is.",
+ "order": 5,
+ "reach": 1.5,
+ "params": [
+  {"key": "speed", "label": "Speed", "type": "float", "min": 0, "max": 2, "step": 0.05, "default": 0.25, "unit": "turns a second"},
+  {"key": "bands", "label": "Rainbows round the clip", "type": "float", "min": 0.25, "max": 8, "step": 0.25, "default": 1}
+ ]
+}

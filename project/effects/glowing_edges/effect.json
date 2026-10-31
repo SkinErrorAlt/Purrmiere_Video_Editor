@@ -1,0 +1,18 @@
+{
+ "id": "glowing_edges",
+ "label": "Glowing Edges",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Turns the picture black and lets every edge glow in its own colour, like neon outlines.",
+ "params": [
+  {"key": "edge_width", "label": "Edge width", "type": "float", "min": 1, "max": 14, "step": 0.1, "default": 2, "unit": " px"},
+  {"key": "edge_brightness", "label": "Edge brightness", "type": "float", "min": 0, "max": 20, "step": 0.1, "default": 6},
+  {"key": "smoothness", "label": "Smoothness", "type": "float", "min": 1, "max": 15, "step": 0.1, "default": 5}
+ ],
+ "passes": [
+  {"shader": "soften.gdshader", "set": {"direction": [1, 0]}},
+  {"shader": "soften.gdshader", "set": {"direction": [0, 1]}},
+  {"shader": "edges.gdshader"}
+ ]
+}

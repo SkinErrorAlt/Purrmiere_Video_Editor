@@ -1,0 +1,20 @@
+{
+ "id": "yt_rec_dot",
+ "label": "Recording Dot",
+ "category": "YouTube",
+ "tags": ["youtube", "graphic"],
+ "version": 1,
+ "blurb": "A blinking red recording dot in a corner with optional camera viewfinder brackets round the frame, for a vlog, a live moment or a found footage bit. Add your own word beside the dot with a text clip.",
+ "params": [
+  {"key": "corner", "label": "Corner", "type": "enum", "choices": ["Top left", "Top right", "Bottom left", "Bottom right"], "default": 0},
+  {"key": "size", "label": "Dot size", "type": "float", "min": 0.005, "max": 0.1, "step": 0.001, "default": 0.022},
+  {"key": "margin", "label": "Margin", "type": "float", "min": 0.0, "max": 0.2, "step": 0.001, "default": 0.06},
+  {"key": "colour", "label": "Dot colour", "type": "color", "default": [1.0, 0.1, 0.1, 1.0]},
+  {"key": "blink", "label": "Blinks per second", "type": "float", "min": 0.0, "max": 4.0, "step": 0.05, "default": 1.0},
+  {"key": "brackets", "label": "Viewfinder brackets", "type": "bool", "default": true},
+  {"key": "bracket_colour", "label": "Bracket colour", "type": "color", "default": [1.0, 1.0, 1.0, 0.85]},
+  {"key": "bracket_size", "label": "Bracket length", "type": "float", "min": 0.02, "max": 0.3, "step": 0.001, "default": 0.08},
+  {"key": "line", "label": "Line", "type": "float", "min": 0.5, "max": 12.0, "step": 0.5, "default": 3.0, "unit": " px"}
+ ],
+ "passes": "single"
+}

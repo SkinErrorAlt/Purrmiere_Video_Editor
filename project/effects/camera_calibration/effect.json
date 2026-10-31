@@ -1,0 +1,19 @@
+{
+ "id": "camera_calibration",
+ "label": "Camera Calibration",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Moves the red, green and blue primaries the way the Calibration panel in Lightroom and Camera Raw does, so the whole palette shifts together: every colour made partly of a primary moves with it while greys stay neutral. A hue above 0 turns that primary towards the next hue round the wheel (red towards orange, green towards cyan, blue towards purple) and below 0 the other way, so blue at minus 50 makes skies cleaner and teal and warms skin. Saturation makes the colours built from that primary richer or quieter. Shadows tint puts green (below 0) or magenta (above 0) into the darkest tones only.",
+ "params": [
+  {"key": "shadows_tint", "label": "Shadows tint", "type": "float", "min": -100.0, "max": 100.0, "step": 1.0, "default": 0.0},
+  {"key": "red_hue", "label": "Red primary hue", "type": "float", "min": -100.0, "max": 100.0, "step": 1.0, "default": 10.0},
+  {"key": "red_saturation", "label": "Red primary saturation", "type": "float", "min": -100.0, "max": 100.0, "step": 1.0, "default": 0.0},
+  {"key": "green_hue", "label": "Green primary hue", "type": "float", "min": -100.0, "max": 100.0, "step": 1.0, "default": 0.0},
+  {"key": "green_saturation", "label": "Green primary saturation", "type": "float", "min": -100.0, "max": 100.0, "step": 1.0, "default": 0.0},
+  {"key": "blue_hue", "label": "Blue primary hue", "type": "float", "min": -100.0, "max": 100.0, "step": 1.0, "default": -40.0},
+  {"key": "blue_saturation", "label": "Blue primary saturation", "type": "float", "min": -100.0, "max": 100.0, "step": 1.0, "default": 30.0}
+ ],
+ "passes": [
+  {"shader": "effect.gdshader"}
+ ]
+}

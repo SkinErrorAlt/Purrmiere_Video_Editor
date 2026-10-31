@@ -1,0 +1,15 @@
+{
+ "id": "crosshatch",
+ "label": "Crosshatch",
+ "group": "Dissolve",
+ "space": "2D",
+ "from": ["gl crosshatch"],
+ "blurb": "The incoming picture shows through thin lines across and down the frame, more and more of them, until the lines fill in.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "centre", "label": "Starts at", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "spread", "label": "Spread from start", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.33},
+  {"key": "fade", "label": "Fade at the ends", "type": "float", "min": 0.01, "max": 0.5, "step": 0.01, "default": 0.1},
+  {"key": "line_width", "label": "Line width", "type": "float", "min": 1, "max": 24, "step": 0.5, "default": 2, "unit": " px"}
+ ]
+}

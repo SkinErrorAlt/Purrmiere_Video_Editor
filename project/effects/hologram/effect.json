@@ -1,0 +1,19 @@
+{
+ "id": "hologram",
+ "label": "Hologram",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "A see-through projection: a cold tint, moving scan lines, flicker, small sideways glitches and colour fringes.",
+ "params": [
+  {"key": "tint", "label": "Tint", "type": "color", "default": [0.35, 0.85, 1.0, 1.0]},
+  {"key": "line_density", "label": "Line density", "type": "float", "min": 20.0, "max": 1000.0, "step": 1.0, "default": 240.0},
+  {"key": "speed", "label": "Speed", "type": "float", "min": 0.0, "max": 5.0, "step": 0.01, "default": 1.0},
+  {"key": "flicker", "label": "Flicker", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "glitch", "label": "Glitch", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "fringe", "label": "Colour fringe", "type": "float", "min": 0.0, "max": 20.0, "step": 0.1, "default": 3.0, "unit": " px"},
+  {"key": "transparency", "label": "Transparency", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

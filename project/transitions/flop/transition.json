@@ -1,0 +1,17 @@
+{
+ "id": "flop",
+ "label": "Flop",
+ "group": "3D",
+ "space": "3D",
+ "from": ["Keynote Flop"],
+ "blurb": "The picture flops over like a loose sign, swinging round on its middle and wobbling as it lands with the incoming picture on its back.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "direction", "label": "Falls towards", "type": "enum", "choices": ["Right", "Left", "Up", "Down"], "default": 3},
+  {"key": "wobble", "label": "Wobble", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.8},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 10, "max": 90, "step": 1, "default": 40, "unit": " deg"},
+  {"key": "pull_back", "label": "Pull back", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.15},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

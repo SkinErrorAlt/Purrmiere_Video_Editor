@@ -1,0 +1,25 @@
+{
+ "id": "security_camera",
+ "label": "Security Camera",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "CCTV footage: a soft, low resolution, grainy black and white picture with scan lines, dark corners, a running date and time stamp and a camera number.",
+ "params": [
+  {"key": "show_text", "label": "Date, time and camera number", "type": "bool", "default": true},
+  {"key": "camera_number", "label": "Camera number", "type": "int", "min": 1, "max": 99, "step": 1, "default": 1},
+  {"key": "day", "label": "Day", "type": "int", "min": 1, "max": 31, "step": 1, "default": 25},
+  {"key": "month", "label": "Month", "type": "int", "min": 1, "max": 12, "step": 1, "default": 9},
+  {"key": "year", "label": "Year", "type": "int", "min": 2000, "max": 2099, "step": 1, "default": 2026},
+  {"key": "start_hour", "label": "Clock starts at hour", "type": "int", "min": 0, "max": 23, "step": 1, "default": 23},
+  {"key": "start_minute", "label": "Clock starts at minute", "type": "int", "min": 0, "max": 59, "step": 1, "default": 41},
+  {"key": "text_size", "label": "Text size", "type": "float", "min": 0.5, "max": 2.0, "step": 0.01, "default": 1.0},
+  {"key": "black_white", "label": "Black and white", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "tint", "label": "Tint", "type": "color", "default": [0.86, 1.0, 0.9, 1.0]},
+  {"key": "low_res", "label": "Low resolution", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "noise", "label": "Noise", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "lines", "label": "Scan lines", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.25},
+  {"key": "vignette", "label": "Dark corners", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5}
+ ],
+ "passes": "single"
+}

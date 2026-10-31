@@ -1,0 +1,23 @@
+{
+ "id": "damage_vignette",
+ "label": "Damage Vignette",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "The red edges of a game when the player takes a hit: ragged, vein streaked red creeping in from the edges, strongest just after the hit and settling to a steady glow. Pick the side the hit came from.",
+ "params": [
+  {"key": "colour", "label": "Colour", "type": "color", "default": [0.72, 0.0, 0.02, 1.0]},
+  {"key": "amount", "label": "Amount", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "reach", "label": "Reach", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "side", "label": "Hit from", "type": "enum", "choices": ["All round", "Left", "Right", "Top", "Bottom"], "default": 0},
+  {"key": "raggedness", "label": "Ragged edge", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "veins", "label": "Veins", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "darken", "label": "Darken", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "hit", "label": "Hit strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "starts_at", "label": "Hit at", "type": "float", "min": 0.0, "max": 600.0, "step": 0.01, "default": 0.0, "unit": " s"},
+  {"key": "hit_fade", "label": "Hit fades over", "type": "float", "min": 0.05, "max": 5.0, "step": 0.01, "default": 0.8, "unit": " s"},
+  {"key": "creep", "label": "Movement", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.3},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

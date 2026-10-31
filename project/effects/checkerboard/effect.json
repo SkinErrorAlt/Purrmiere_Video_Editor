@@ -1,0 +1,16 @@
+{
+ "id": "checkerboard",
+ "label": "Checkerboard",
+ "category": "Image Control",
+ "tags": ["measure"],
+ "version": 1,
+ "blurb": "A board of squares over the picture, useful for lining things up and for a transparency backdrop.",
+ "params": [
+  {"key": "squares", "label": "Squares across", "type": "float", "min": 1.0, "max": 128.0, "step": 1.0, "default": 16.0},
+  {"key": "colour_a", "label": "Colour one", "type": "color", "default": [0.22, 0.22, 0.24, 1.0]},
+  {"key": "colour_b", "label": "Colour two", "type": "color", "default": [0.32, 0.32, 0.35, 1.0]},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "behind", "label": "Behind the picture", "type": "bool", "default": true}
+ ],
+ "passes": "single"
+}

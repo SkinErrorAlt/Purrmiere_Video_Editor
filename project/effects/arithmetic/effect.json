@@ -1,0 +1,13 @@
+{
+ "id": "arithmetic",
+ "label": "Arithmetic",
+ "category": "Channel",
+ "version": 1,
+ "blurb": "Does one sum against a colour on every pixel: add it, take it away, multiply by it and so on.",
+ "params": [
+  {"key": "op", "label": "Operation", "type": "enum", "default": 0, "choices": ["Add", "Subtract", "Multiply", "Difference", "Screen", "Lightest", "Darkest", "Exclusion"]},
+  {"key": "operand", "label": "Colour", "type": "color", "default": [0.5, 0.5, 0.5, 1.0]},
+  {"key": "clip_result", "label": "Keep inside 0 to 1", "type": "bool", "default": true}
+ ],
+ "passes": "single"
+}

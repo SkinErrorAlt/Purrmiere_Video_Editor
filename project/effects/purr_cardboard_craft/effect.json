@@ -1,0 +1,20 @@
+{
+ "id": "purr_cardboard_craft",
+ "label": "Cardboard Craft",
+ "category": "Purrmiere",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Builds the picture from layers of cut cardboard stacked on top of each other: each tone is its own sheet with corrugated texture, a pale cut edge where it ends and a shadow falling on the sheet below.",
+ "params": [
+  {"key": "layers", "label": "Sheets", "type": "int", "min": 2, "max": 8, "step": 1, "default": 4},
+  {"key": "tint", "label": "Cardboard tint", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.55},
+  {"key": "card", "label": "Cardboard", "type": "color", "default": [0.72, 0.55, 0.36, 1.0]},
+  {"key": "edge", "label": "Cut edge", "type": "float", "min": 0.0, "max": 10.0, "step": 0.1, "default": 2.5, "unit": " px"},
+  {"key": "shadow", "label": "Shadow", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "shadow_len", "label": "Shadow length", "type": "float", "min": 0.0, "max": 30.0, "step": 0.1, "default": 7.0, "unit": " px"},
+  {"key": "light_angle", "label": "Light from", "type": "float", "min": -180.0, "max": 180.0, "step": 1.0, "default": -135.0, "unit": " deg"},
+  {"key": "corrugation", "label": "Corrugation", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35}
+ ],
+ "handles": [{"kind": "angle", "key": "light_angle", "zero": "left", "turn": "cw", "length": "shadow_len"}],
+ "passes": "single"
+}

@@ -1,0 +1,15 @@
+{
+ "id": "ascii_art",
+ "label": "ASCII",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Rebuilds the picture out of characters on a grid, darkest cells getting the busiest shape.",
+ "params": [
+  {"key": "cell", "label": "Cell size", "type": "float", "min": 4.0, "max": 64.0, "step": 1.0, "default": 10.0},
+  {"key": "ink", "label": "Ink", "type": "color", "default": [0.85, 1.0, 0.85, 1.0]},
+  {"key": "paper", "label": "Paper", "type": "color", "default": [0.02, 0.04, 0.02, 1.0]},
+  {"key": "keep_colour", "label": "Keep the colours", "type": "bool", "default": false}
+ ],
+ "passes": "single"
+}

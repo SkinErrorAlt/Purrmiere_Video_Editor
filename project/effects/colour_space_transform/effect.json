@@ -1,0 +1,16 @@
+{
+ "id": "colour_space_transform",
+ "label": "Colour Space Transform",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Converts between colour spaces properly, both ways: pick the gamut and the curve the clip is in and the ones you want out. By default it turns normal Rec.709 video into ARRI LogC3, so a film look LUT made for Alexa footage can go after it and look right. It also goes from any camera log to Rec.709 or linear light, or between Rec.2020, P3 and Rec.709, with a gentle roll off for highlights past white.",
+ "params": [
+  {"key": "in_gamut", "label": "Input gamut", "type": "enum", "choices": ["Rec.709 and sRGB", "Rec.2020", "Display P3", "ARRI Wide Gamut 3", "Sony S-Gamut3.Cine", "Panasonic V-Gamut", "ACES AP0", "ACES AP1"], "default": 0},
+  {"key": "in_curve", "label": "Input curve", "type": "enum", "choices": ["Rec.709", "sRGB", "Gamma 2.2", "Gamma 2.4", "Linear", "ARRI LogC3", "Sony S-Log3", "Panasonic V-Log", "ACEScct"], "default": 0},
+  {"key": "out_gamut", "label": "Output gamut", "type": "enum", "choices": ["Rec.709 and sRGB", "Rec.2020", "Display P3", "ARRI Wide Gamut 3", "Sony S-Gamut3.Cine", "Panasonic V-Gamut", "ACES AP0", "ACES AP1"], "default": 3},
+  {"key": "out_curve", "label": "Output curve", "type": "enum", "choices": ["Rec.709", "sRGB", "Gamma 2.2", "Gamma 2.4", "Linear", "ARRI LogC3", "Sony S-Log3", "Panasonic V-Log", "ACEScct"], "default": 5},
+  {"key": "highlights", "label": "Past white", "type": "enum", "choices": ["Clip", "Roll off"], "default": 1},
+  {"key": "exposure", "label": "Exposure", "type": "float", "min": -4.0, "max": 4.0, "step": 0.01, "default": 0.0, "unit": " stops"}
+ ],
+ "passes": "single"
+}

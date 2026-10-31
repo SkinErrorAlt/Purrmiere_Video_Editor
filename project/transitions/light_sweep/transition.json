@@ -1,0 +1,22 @@
+{
+ "id": "light_sweep",
+ "label": "Light Sweep",
+ "group": "Light and Film",
+ "space": "2D",
+ "from": ["Film Impact Light Sweep", "After Effects CC Light Wipe", "Universe Linear Wipe glow stroke"],
+ "blurb": "A band of light with a hot narrow core and a wide soft glow sweeps across the frame, with the outgoing picture ahead of it and the incoming picture behind. The light is added to the picture, so highlights flare while dark parts only lift a little. Sweep in a line at any angle, grow as a circle from a point, or open like doors from the middle.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "shape", "label": "Shape", "type": "enum", "choices": ["Line", "Circle", "Doors"], "default": 0},
+  {"key": "angle", "label": "Angle", "type": "float", "min": -180, "max": 180, "step": 1, "default": 20, "unit": " deg"},
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "width", "label": "Width", "type": "float", "min": 20, "max": 1200, "step": 1, "default": 300, "unit": " px"},
+  {"key": "intensity", "label": "Intensity", "type": "float", "min": 0, "max": 4, "step": 0.01, "default": 1.5},
+  {"key": "colour", "label": "Light colour", "type": "color", "default": [1, 0.95, 0.86, 1]},
+  {"key": "softness", "label": "Edge softness", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.3},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 0}
+ ],
+ "handles": [
+  {"kind": "point", "key": "centre"}
+ ]
+}

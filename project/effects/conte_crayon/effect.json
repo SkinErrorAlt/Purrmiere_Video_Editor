@@ -1,0 +1,21 @@
+{
+ "id": "conte_crayon",
+ "label": "Conte Crayon",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Draws the shadows in a dark crayon and the lights in a pale one on toned paper, with the grain of the paper showing through.",
+ "params": [
+  {"key": "fg_level", "label": "Dark crayon level", "type": "float", "min": 1, "max": 15, "step": 0.1, "default": 11},
+  {"key": "bg_level", "label": "Light crayon level", "type": "float", "min": 1, "max": 15, "step": 0.1, "default": 7},
+  {"key": "texture_kind", "label": "Texture", "type": "enum", "choices": ["Brick", "Burlap", "Canvas", "Sandstone"], "default": 2},
+  {"key": "scaling", "label": "Texture scaling", "type": "float", "min": 50, "max": 200, "step": 1, "default": 100, "unit": " %"},
+  {"key": "relief", "label": "Relief", "type": "float", "min": 0, "max": 50, "step": 0.5, "default": 4},
+  {"key": "light_angle", "label": "Light from", "type": "float", "min": -180, "max": 180, "step": 1, "default": 90, "unit": " deg"},
+  {"key": "fg_colour", "label": "Dark crayon", "type": "color", "default": [0.17, 0.09, 0.07, 1.0]},
+  {"key": "bg_colour", "label": "Light crayon", "type": "color", "default": [0.97, 0.95, 0.9, 1.0]},
+  {"key": "paper", "label": "Paper", "type": "color", "default": [0.66, 0.58, 0.48, 1.0]},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

@@ -1,0 +1,15 @@
+{
+ "id": "colour_chart",
+ "label": "Colour Chart",
+ "category": "Generate",
+ "tags": ["measure"],
+ "version": 1,
+ "blurb": "Draws the standard 24 patch colour checker (skin tones, sky, foliage, the primaries and a grey scale, at their published sRGB values) into the picture. Put it before a LUT or a grade to see at a glance what that grade does to known colours and to skin; take it off before export.",
+ "params": [
+  {"key": "layout", "label": "Where", "type": "enum", "choices": ["Box in the bottom right", "Strip along the bottom", "Full frame"], "default": 0},
+  {"key": "size", "label": "Size", "type": "float", "min": 0.15, "max": 0.8, "step": 0.01, "default": 0.32},
+  {"key": "gap", "label": "Gap between patches", "type": "float", "min": 0.0, "max": 0.3, "step": 0.01, "default": 0.12},
+  {"key": "opacity", "label": "Opacity", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0}
+ ],
+ "passes": "single"
+}

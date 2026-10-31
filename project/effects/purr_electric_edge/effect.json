@@ -1,0 +1,18 @@
+{
+ "id": "purr_electric_edge",
+ "label": "Electric Edge",
+ "category": "Purrmiere",
+ "tags": ["light"],
+ "version": 1,
+ "blurb": "Crackling electric arcs run round the edges of the frame or round a keyed subject, jumping to a new jagged path many times a second with a hot white core and a coloured glow.",
+ "params": [
+  {"key": "mode", "label": "Arcs on", "type": "enum", "default": 0, "choices": ["Frame edges", "Round the subject"]},
+  {"key": "colour", "label": "Colour", "type": "color", "default": [0.45, 0.65, 1.0, 1.0]},
+  {"key": "inset", "label": "Inset", "type": "float", "min": 0.0, "max": 200.0, "step": 0.5, "default": 14.0, "unit": " px"},
+  {"key": "jitter", "label": "Jaggedness", "type": "float", "min": 0.0, "max": 60.0, "step": 0.1, "default": 14.0, "unit": " px"},
+  {"key": "width", "label": "Arc width", "type": "float", "min": 0.5, "max": 10.0, "step": 0.1, "default": 2.0, "unit": " px"},
+  {"key": "rate", "label": "Jumps per second", "type": "float", "min": 1.0, "max": 30.0, "step": 0.5, "default": 14.0},
+  {"key": "glow", "label": "Glow", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 1.0}
+ ],
+ "passes": "single"
+}

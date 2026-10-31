@@ -1,0 +1,23 @@
+{
+ "id": "dot_wipe",
+ "label": "Dot Wipe",
+ "category": "Transition",
+ "version": 1,
+ "blurb": "A grid of round dots grows across the frame in a wave, from a side, out from a point or at random, and eats the picture away; on the next clip the picture grows back in dots the same way. Diamonds instead of circles, and a coloured rim if you want one. Put it on both clips of a cut, or use Progress to key it by hand; the track below shows through the dots.",
+ "params": [
+  {"key": "when", "label": "When", "type": "enum", "choices": ["In at the start and out at the end", "In at the start", "Out at the end", "By Progress"], "default": 0},
+  {"key": "duration", "label": "Length", "type": "float", "min": 0.1, "max": 3.0, "step": 0.01, "default": 0.7, "unit": " s"},
+  {"key": "progress", "label": "Progress", "type": "float", "min": 0.0, "max": 1.0, "step": 0.005, "default": 0.0},
+  {"key": "dots", "label": "Dots across", "type": "int", "min": 4, "max": 60, "step": 1, "default": 16},
+  {"key": "order", "label": "Order", "type": "enum", "choices": ["From a side", "Out from a point", "At random"], "default": 0},
+  {"key": "angle", "label": "Wave goes", "type": "float", "min": -180.0, "max": 180.0, "step": 1.0, "default": 90.0, "unit": " deg"},
+  {"key": "centre", "label": "Starts at", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "spread", "label": "One after another", "type": "float", "min": 0.0, "max": 0.9, "step": 0.01, "default": 0.6},
+  {"key": "shape", "label": "Shape", "type": "enum", "choices": ["Circles", "Diamonds"], "default": 0},
+  {"key": "rim", "label": "Rim width", "type": "float", "min": 0.0, "max": 20.0, "step": 0.5, "default": 0.0, "unit": " px"},
+  {"key": "rim_colour", "label": "Rim colour", "type": "color", "default": [1.0, 1.0, 1.0, 1.0]},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}, {"kind": "angle", "key": "angle"}],
+ "passes": "single"
+}

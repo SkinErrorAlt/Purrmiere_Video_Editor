@@ -1,0 +1,14 @@
+{
+ "id": "random_bars",
+ "label": "Random Bars",
+ "group": "Wipe",
+ "space": "2D",
+ "from": ["PowerPoint Random Bars"],
+ "blurb": "Thin bars of the incoming picture appear in random order until they fill the frame.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "orientation", "label": "Bars", "type": "enum", "choices": ["Vertical", "Horizontal"], "default": 0},
+  {"key": "bars", "label": "Number of bars", "type": "int", "min": 4, "max": 600, "step": 1, "default": 200},
+  {"key": "fade", "label": "Bar fade", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.06}
+ ]
+}

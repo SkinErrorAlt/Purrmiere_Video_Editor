@@ -1,0 +1,28 @@
+{
+ "id": "hdr_look",
+ "label": "HDR Look",
+ "category": "Colour Correction",
+ "version": 1,
+ "tags": ["look"],
+ "blurb": "Strong local tone mapping in the manner of Snapseed HDR Scape and Drama, Photoshop HDR Toning and Nik Detail Extractor: the shadows open, the highlights come down, and local contrast and colour are pushed until edges carry an even glow halo set by Halo radius. Natural stays close to the photograph, Strong and Drama push harder with more grit, Bright lifts the whole picture. Detail sets how much texture is raised, Smoothing keeps noise in the opened shadows from blowing up, and Keep skin natural holds faces back from the treatment.",
+ "params": [
+  {"key": "style", "label": "Style", "type": "enum", "choices": ["Natural", "Strong", "Drama", "Bright"], "default": 0},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 100.0, "step": 1.0, "default": 60.0, "unit": " %"},
+  {"key": "radius", "label": "Halo radius", "type": "float", "min": 4.0, "max": 250.0, "step": 0.5, "default": 50.0, "unit": " px"},
+  {"key": "saturation", "label": "Saturation", "type": "float", "min": -100.0, "max": 100.0, "step": 1.0, "default": 20.0},
+  {"key": "detail", "label": "Detail", "type": "float", "min": 0.0, "max": 100.0, "step": 1.0, "default": 50.0, "unit": " %"},
+  {"key": "smoothing", "label": "Smoothing", "type": "float", "min": 0.0, "max": 100.0, "step": 1.0, "default": 40.0, "unit": " %"},
+  {"key": "keep_skin", "label": "Keep skin natural", "type": "float", "min": 0.0, "max": 100.0, "step": 1.0, "default": 70.0, "unit": " %"}
+ ],
+ "passes": [
+  {"shader": "res://effects/tonal_contrast/gf_prep.gdshader"},
+  {"shader": "res://effects/tonal_contrast/gf_down.gdshader", "scale": 0.5},
+  {"shader": "res://effects/tonal_contrast/gf_down.gdshader", "scale": 0.5},
+  {"shader": "res://effects/tonal_contrast/gf_gauss.gdshader", "set": {"direction": [1.0, 0.0]}},
+  {"shader": "res://effects/tonal_contrast/gf_gauss.gdshader", "set": {"direction": [0.0, 1.0]}},
+  {"shader": "res://effects/tonal_contrast/gf_ab.gdshader", "set": {"gf_eps": 0.01}},
+  {"shader": "res://effects/tonal_contrast/gf_gauss.gdshader", "set": {"direction": [1.0, 0.0]}},
+  {"shader": "res://effects/tonal_contrast/gf_gauss.gdshader", "set": {"direction": [0.0, 1.0]}},
+  {"shader": "hdr_mix.gdshader", "scale": 4.0, "inputs": {"stats_tex": 4, "ab_tex": 7}}
+ ]
+}

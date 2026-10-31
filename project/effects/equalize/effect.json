@@ -1,0 +1,12 @@
+{
+ "id": "equalize",
+ "label": "Equalize",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Spreads the tones of every frame evenly from black to white by measuring the frame's own histogram, for flat or murky footage.",
+ "params": [
+  {"key": "mode", "label": "Equalize", "type": "enum", "choices": ["Brightness", "Each channel"], "default": 0},
+  {"key": "smoothness", "label": "Smoothness", "type": "float", "min": 0.005, "max": 0.3, "step": 0.005, "default": 0.04}
+ ],
+ "passes": "single"
+}

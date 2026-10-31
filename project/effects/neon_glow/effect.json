@@ -1,0 +1,21 @@
+{
+ "id": "neon_glow",
+ "label": "Neon Glow",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Turns the picture into a dim two colour image and lets a soft coloured glow pour out of its bright parts, like neon tubes in the dark. A negative glow size glows from the dark parts instead.",
+ "params": [
+  {"key": "glow_size", "label": "Glow size", "type": "float", "min": -24.0, "max": 24.0, "step": 0.1, "default": 5.0, "unit": " px"},
+  {"key": "glow_brightness", "label": "Glow brightness", "type": "float", "min": 0.0, "max": 50.0, "step": 0.1, "default": 15.0},
+  {"key": "glow_colour", "label": "Glow colour", "type": "color", "default": [0.2, 0.55, 1.0, 1.0]},
+  {"key": "dark_colour", "label": "Dark colour", "type": "color", "default": [0.0, 0.0, 0.0, 1.0]},
+  {"key": "light_colour", "label": "Light colour", "type": "color", "default": [1.0, 1.0, 1.0, 1.0]}
+ ],
+ "passes": [
+  {"shader": "source.gdshader", "scale": 0.5},
+  {"shader": "blur.gdshader", "set": {"direction": [1.0, 0.0]}, "map": {"radius": "glow_size"}},
+  {"shader": "blur.gdshader", "set": {"direction": [0.0, 1.0]}, "map": {"radius": "glow_size"}},
+  {"shader": "neon.gdshader", "scale": 2.0}
+ ]
+}

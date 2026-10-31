@@ -1,0 +1,16 @@
+{
+ "id": "pivot",
+ "label": "Pivot",
+ "group": "3D",
+ "space": "2D",
+ "from": ["Keynote Pivot"],
+ "blurb": "The outgoing picture swings away on a pin at one corner, casting a soft shadow, and uncovers the incoming picture. It can also swing the incoming picture in instead.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "corner", "label": "Pin at", "type": "enum", "choices": ["Top left", "Top right", "Bottom left", "Bottom right"], "default": 0},
+  {"key": "mode", "label": "Swings", "type": "enum", "choices": ["Out", "In"], "default": 0},
+  {"key": "swing", "label": "Swing", "type": "float", "min": 90, "max": 180, "step": 1, "default": 90, "unit": " deg"},
+  {"key": "shadow", "label": "Shadow", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

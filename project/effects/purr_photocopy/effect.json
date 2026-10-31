@@ -1,0 +1,19 @@
+{
+ "id": "purr_photocopy",
+ "label": "Photocopy",
+ "category": "Purrmiere",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Runs the picture through a tired office copier: crushed contrast, toner speckle and dropouts, dark streaks from a dirty drum, a slight skew and the grey shadow of the lid round the edges. More generations make a copy of a copy.",
+ "params": [
+  {"key": "threshold", "label": "Darkness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "generations", "label": "Generations", "type": "int", "min": 1, "max": 6, "step": 1, "default": 2},
+  {"key": "toner", "label": "Toner speckle", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45},
+  {"key": "streaks", "label": "Drum streaks", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "skew", "label": "Skew", "type": "float", "min": -5.0, "max": 5.0, "step": 0.01, "default": 0.6, "unit": " deg"},
+  {"key": "lid", "label": "Lid shadow", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "paper", "label": "Paper", "type": "color", "default": [0.97, 0.97, 0.95, 1.0]},
+  {"key": "toner_colour", "label": "Toner", "type": "color", "default": [0.08, 0.08, 0.09, 1.0]}
+ ],
+ "passes": "single"
+}

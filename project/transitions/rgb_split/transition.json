@@ -1,0 +1,16 @@
+{
+ "id": "rgb_split",
+ "label": "RGB Split",
+ "group": "Glitch",
+ "space": "2D",
+ "from": ["CapCut RGB Split"],
+ "blurb": "The red, green and blue parts of the picture slide apart with a little shake and a push in, then snap back together on the incoming picture.",
+ "default_duration": 0.7,
+ "params": [
+  {"key": "angle", "label": "Split angle", "type": "float", "min": -180, "max": 180, "step": 1, "default": 0, "unit": " deg"},
+  {"key": "split", "label": "Split distance", "type": "float", "min": 0, "max": 300, "step": 1, "default": 70, "unit": " px"},
+  {"key": "blend", "label": "Blend length", "type": "float", "min": 0.05, "max": 1, "step": 0.01, "default": 0.3},
+  {"key": "shake", "label": "Shake", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.25},
+  {"key": "zoom", "label": "Push in", "type": "float", "min": 0, "max": 0.5, "step": 0.01, "default": 0.08}
+ ]
+}

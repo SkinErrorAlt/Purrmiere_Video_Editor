@@ -1,0 +1,15 @@
+{
+ "id": "prestige",
+ "label": "Prestige",
+ "group": "3D",
+ "space": "3D",
+ "from": ["PowerPoint Prestige"],
+ "blurb": "An elegant hand over: the outgoing picture tips back and sinks away into the dark as the incoming one rises up from below and stands upright.",
+ "default_duration": 1.6,
+ "params": [
+  {"key": "tilt", "label": "Tilt", "type": "float", "min": 20, "max": 90, "step": 1, "default": 70, "unit": " deg"},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 10, "max": 90, "step": 1, "default": 40, "unit": " deg"},
+  {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

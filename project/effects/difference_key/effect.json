@@ -1,0 +1,16 @@
+{
+ "id": "difference_key",
+ "label": "Difference Key",
+ "category": "Keying",
+ "version": 1,
+ "blurb": "Compares the clip with a clean plate picture of the empty scene and makes everything that matches it transparent. With no clean plate chosen the clip passes through.",
+ "params": [
+  {"key": "clean_plate", "label": "Clean plate", "type": "texture", "default": ""},
+  {"key": "tolerance", "label": "Tolerance", "type": "float", "min": 0.0, "max": 1.0, "step": 0.005, "default": 0.08},
+  {"key": "softness", "label": "Softness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.005, "default": 0.08},
+  {"key": "matching", "label": "Compare by", "type": "enum", "choices": ["RGB", "Lightness", "Colour only"], "default": 0},
+  {"key": "pre_blur", "label": "Blur before comparing", "type": "float", "min": 0.0, "max": 20.0, "step": 0.1, "default": 2.0, "unit": " px"},
+  {"key": "show_matte", "label": "Show the matte", "type": "bool", "default": false}
+ ],
+ "passes": "single"
+}

@@ -1,0 +1,26 @@
+{
+ "id": "pip_frame",
+ "label": "Picture in Picture",
+ "category": "Transform",
+ "tags": ["graphic"],
+ "version": 1,
+ "canvas": "frame",
+ "blurb": "Puts the whole clip in a box in a corner of the frame, for a face cam, a reaction or a second angle: pick the corner and the size, and it keeps the same distance from the edge on any frame shape. Crop it to 16:9, 4:3, square, a circle or 9:16, round the corners, add a border and a shadow, and let it slide, pop or fade in at the start and out at the end. Everything round the box shows the track below.",
+ "params": [
+  {"key": "corner", "label": "Corner", "type": "enum", "choices": ["Top left", "Top right", "Bottom left", "Bottom right", "Middle", "Where I put it"], "default": 3},
+  {"key": "size", "label": "Size", "type": "float", "min": 0.05, "max": 1.0, "step": 0.005, "default": 0.3},
+  {"key": "margin", "label": "Distance from the edge", "type": "float", "min": 0.0, "max": 0.2, "step": 0.001, "default": 0.04},
+  {"key": "position", "label": "Placed at", "type": "vec2", "default": [0.75, 0.7]},
+  {"key": "shape", "label": "Shape", "type": "enum", "choices": ["As it is", "16:9", "4:3", "Square", "Circle", "9:16"], "default": 0},
+  {"key": "roundness", "label": "Round corners", "type": "float", "min": 0.0, "max": 0.5, "step": 0.005, "default": 0.08},
+  {"key": "border", "label": "Border", "type": "float", "min": 0.0, "max": 0.03, "step": 0.0005, "default": 0.005},
+  {"key": "border_colour", "label": "Border colour", "type": "color", "default": [1.0, 1.0, 1.0, 1.0]},
+  {"key": "shadow", "label": "Shadow", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "animate", "label": "Comes in", "type": "enum", "choices": ["Already there", "Slides in and out", "Pops in and out", "Fades in and out"], "default": 1},
+  {"key": "anim_time", "label": "Coming in time", "type": "float", "min": 0.05, "max": 2.0, "step": 0.01, "default": 0.4, "unit": " s"}
+ ],
+ "handles": [{"kind": "point", "key": "position"}],
+ "passes": [
+  {"shader": "pip.gdshader"}
+ ]
+}

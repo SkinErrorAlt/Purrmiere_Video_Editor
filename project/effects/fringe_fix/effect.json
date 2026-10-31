@@ -1,0 +1,23 @@
+{
+ "id": "fringe_fix",
+ "label": "Colour Fringe Fix",
+ "category": "Distort",
+ "tags": ["repair"],
+ "version": 1,
+ "blurb": "Takes out the colour fringes a lens leaves on high contrast edges. Red and Blue line up nudge those channels in or out from the lens centre until the red and blue edges towards the corners sit on the green one (lateral fringing). Purple and green fringes takes the colour out of the thin purple or green halo along bright edges, such as branches against the sky, while purple and green things away from edges keep their colour. Chromatic Aberration adds fringes; this removes them.",
+ "params": [
+  {"key": "red_shift", "label": "Red line up", "type": "float", "min": -8.0, "max": 8.0, "step": 0.05, "default": 0.0, "unit": " px"},
+  {"key": "blue_shift", "label": "Blue line up", "type": "float", "min": -8.0, "max": 8.0, "step": 0.05, "default": 0.0, "unit": " px"},
+  {"key": "centre", "label": "Lens centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "purple", "label": "Purple fringes", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.8},
+  {"key": "purple_hue", "label": "Purple hue", "type": "float", "min": 240.0, "max": 340.0, "step": 1.0, "default": 285.0, "unit": " deg"},
+  {"key": "green", "label": "Green fringes", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "green_hue", "label": "Green hue", "type": "float", "min": 60.0, "max": 170.0, "step": 1.0, "default": 115.0, "unit": " deg"},
+  {"key": "hue_range", "label": "Hue range", "type": "float", "min": 10.0, "max": 70.0, "step": 1.0, "default": 35.0, "unit": " deg"},
+  {"key": "width", "label": "Fringe width", "type": "float", "min": 1.0, "max": 12.0, "step": 0.1, "default": 3.0, "unit": " px"},
+  {"key": "edge_contrast", "label": "Edge contrast", "type": "float", "min": 0.05, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "show", "label": "Show what is fixed", "type": "bool", "default": false}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}],
+ "passes": "single"
+}

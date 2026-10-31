@@ -1,0 +1,16 @@
+{
+ "id": "colour_harmony",
+ "label": "Colour Harmony",
+ "category": "Colour Correction",
+ "version": 1,
+ "blurb": "Pulls every colour in the picture towards a colour scheme so the shot feels planned: two opposite hues, a split pair, neighbours, a triad or a single hue, all turned from one base hue. Greys stay grey and skin can be left alone.",
+ "params": [
+  {"key": "scheme", "label": "Scheme", "type": "enum", "choices": ["Opposites", "Split opposites", "Neighbours", "Triad", "One hue"], "default": 0},
+  {"key": "base_hue", "label": "Base hue", "type": "float", "min": 0.0, "max": 360.0, "step": 1.0, "default": 30.0, "unit": " deg"},
+  {"key": "pull", "label": "Pull", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "width", "label": "Leave hues this close", "type": "float", "min": 0.0, "max": 90.0, "step": 1.0, "default": 20.0, "unit": " deg"},
+  {"key": "saturation", "label": "Saturation", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 1.0},
+  {"key": "keep_skin", "label": "Keep skin natural", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6}
+ ],
+ "passes": "single"
+}
