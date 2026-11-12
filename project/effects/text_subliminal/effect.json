@@ -1,0 +1,82 @@
+{
+ "id": "text_subliminal",
+ "label": "Subliminal Flash",
+ "category": "Text",
+ "version": 1,
+ "applies_to": "text",
+ "text_transform": "subliminal",
+ "tags": [
+  "text",
+  "horror"
+ ],
+ "blurb": "Shows the text, or a hidden message in its place, for a few frames only: once, every few seconds or at random moments.",
+ "params": [
+  {
+   "key": "mode",
+   "label": "What flashes",
+   "type": "enum",
+   "choices": [
+    "The text (hidden the rest of the time)",
+    "A hidden message over the text"
+   ],
+   "default": 0
+  },
+  {
+   "key": "message",
+   "label": "Hidden message",
+   "type": "string",
+   "default": "",
+   "keyable": true
+  },
+  {
+   "key": "at",
+   "label": "First flash at",
+   "type": "float",
+   "min": 0,
+   "max": 3600,
+   "step": 0.01,
+   "default": 1,
+   "unit": " s"
+  },
+  {
+   "key": "frames",
+   "label": "Frames shown",
+   "type": "int",
+   "min": 1,
+   "max": 30,
+   "step": 1,
+   "default": 1
+  },
+  {
+   "key": "repeat",
+   "label": "Repeat",
+   "type": "enum",
+   "choices": [
+    "Once",
+    "Every few seconds",
+    "At random"
+   ],
+   "default": 0
+  },
+  {
+   "key": "every",
+   "label": "Every",
+   "type": "float",
+   "min": 0.1,
+   "max": 600,
+   "step": 0.01,
+   "default": 2,
+   "unit": " s"
+  },
+  {
+   "key": "seed",
+   "label": "Seed",
+   "type": "int",
+   "min": 0,
+   "max": 9999,
+   "step": 1,
+   "default": 0
+  }
+ ],
+ "passes": []
+}

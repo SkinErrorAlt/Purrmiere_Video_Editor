@@ -1,0 +1,17 @@
+{
+ "id": "frost_over",
+ "label": "Frost Over",
+ "group": "Distort",
+ "space": "2D",
+ "from": ["CapCut Freeze", "winter and ice reveal templates", "After Effects frost"],
+ "blurb": "Ice crystallizes across the frame in feathery, branching frost that creeps in from the edges with a cold blue-white rime, bending the picture through the crystals and glinting with tiny sparkles, until the whole frame is frozen over. Then it thaws and clears to reveal the incoming shot that was behind the ice. Set how fine the crystals are, the rime colour, how much it refracts and sparkles, and where in the span the frame is at its most frozen.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "crystal", "label": "Crystal fineness", "type": "float", "min": 0.3, "max": 3.0, "step": 0.01, "default": 1.0},
+  {"key": "rime", "label": "Rime colour", "type": "color", "default": [0.84, 0.92, 1.0, 1.0]},
+  {"key": "refraction", "label": "Refraction", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "sparkle", "label": "Sparkle", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "balance", "label": "Frozen at", "type": "float", "min": 0.3, "max": 0.7, "step": 0.01, "default": 0.5},
+  {"key": "softness", "label": "Front softness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4}
+ ]
+}

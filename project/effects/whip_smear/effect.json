@@ -1,0 +1,22 @@
+{
+ "id": "whip_smear",
+ "label": "Whip Smear",
+ "category": "Time",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Notices whenever the camera whips round, and only then turns it into a proper whip pan: the picture smears hard along the direction the camera is flying, lights and bright edges streak out further than everything else, and the frame leans the way a phone or a game capture bends on a fast turn. Walking, slow pans and shake are left alone, and the smear lets go a moment after the camera settles. Every whip in a long take gets it, in its own direction, with no keyframes.",
+ "history": {"max": 34},
+ "params": [
+  {"key": "smear", "label": "Smear", "type": "float", "min": 0.0, "max": 3.0, "step": 0.01, "default": 1.1},
+  {"key": "streaks", "label": "Light streaks", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "lean", "label": "Shutter lean", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "hold", "label": "Lets go over", "type": "float", "min": 0.05, "max": 0.8, "step": 0.01, "default": 0.25, "unit": " s"},
+  {"key": "sensitivity", "label": "Whip sensitivity", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5}
+ ],
+ "passes": [
+  {"shader": "res://effects/_events/thumbs.gdshader", "scale": 0.125},
+  {"shader": "res://effects/_events/stats_pan.gdshader", "scale": 0.25},
+  {"shader": "res://effects/_events/track_whip.gdshader", "scale": 1.0},
+  {"shader": "apply.gdshader", "scale": 32.0}
+ ]
+}

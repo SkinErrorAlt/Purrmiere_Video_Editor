@@ -1,0 +1,9 @@
+{
+ "id": "beat_punch", "label": "Zoom Punch", "group": "Zoom and Camera", "space": "2D",
+ "from": ["beat-synced zoom punch"],
+ "blurb": "A snappy zoom punch on the cut, like an edit hitting a beat: the frame scales up hard into the handover and the next shot drops back to size. Set how hard it punches.",
+ "default_duration": 0.4,
+ "params": [
+  {"key": "punch", "label": "Punch", "type": "float", "min": 0.05, "max": 0.8, "step": 0.01, "default": 0.32}
+ ]
+}

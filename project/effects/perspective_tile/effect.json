@@ -16,6 +16,7 @@
   {"key": "fog_colour", "label": "Fog colour", "type": "color", "default": [0.06, 0.07, 0.11, 1.0]},
   {"key": "fog", "label": "Fog amount", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5}
  ],
+ "handles": [{"kind": "band", "key": "horizon"}],
  "passes": [
   {"shader": "res://effects/blur_gaussian/down.gdshader", "scale": 0.5},
   {"shader": "res://effects/blur_gaussian/down.gdshader", "scale": 0.5},

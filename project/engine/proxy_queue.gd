@@ -34,6 +34,10 @@ var auto_policy: Callable = Callable()
 var held_ms: int = 0
 var skipped: int = 0
 var _manual_in_run: bool = false
+var picks: Array[Dictionary] = []
+var playhead_source: Callable = Callable()
+const FAR := 1.0e12
+const USE_STEP_SECONDS := 0.25
 
 
 static func instance() -> Node:
@@ -143,7 +147,7 @@ static func describe(doc: Object, m: Object) -> Dictionary:
 		return out
 	var fps: float = float(m.get("fps"))
 	var duration: float = float(m.get("duration"))
-	var r: String = Proxies.root_now(prefs, String(m.get("path")))
+	var r: String = Proxies.root_now(prefs, String(m.get("path")), int(m.get("width")))
 	out["root"] = r
 	out["count"] = Proxies.segment_count_for(duration, fps)
 	out["built"] = Proxies.built_segments(r, duration, fps).size()
@@ -167,9 +171,15 @@ func make_for(doc: Object, media_ids: PackedStringArray, used_only: bool = true,
 		var m: Object = doc.call("media_by_id", id)
 		if m == null or String(m.get("kind")) != "video" or String(m.get("path")).is_empty() or not FileAccess.file_exists(String(m.get("path"))):
 			continue
-		var r: String = Proxies.root_now(prefs, String(m.get("path")))
+		var r: String = Proxies.root_now(prefs, String(m.get("path")), int(m.get("width")))
 		for i: int in segments_for(doc, m, used_only):
-			if Proxies.have(r, i) or _queued(String(m.get("path")), i):
+			if Proxies.have(r, i):
+				continue
+			if _queued(String(m.get("path")), i):
+				for e1: Dictionary in queue:
+					if String(e1["path"]) == String(m.get("path")) and int(e1["index"]) == i and bool(e1.get("around", false)):
+						e1["auto"] = auto
+						e1.erase("around")
 				continue
 			queue.append({"path": String(m.get("path")), "label": String(m.get("label")), "index": i, "fps": float(m.get("fps")), "duration": float(m.get("duration")), "w": int(m.get("width")), "h": int(m.get("height")), "root": r, "auto": auto})
 			added += 1
@@ -178,6 +188,27 @@ func make_for(doc: Object, media_ids: PackedStringArray, used_only: bool = true,
 			for e2: Dictionary in queue:
 				if String(e2["path"]) == String(m.get("path")):
 					e2["auto"] = false
+	total += added
+	if added > 0 and not running:
+		_pump()
+	return added
+
+
+func queue_around(doc: Object, wanted: Array[Dictionary]) -> int:
+	var prefs: Node = _root_node("Prefs")
+	if doc == null or prefs == null:
+		return 0
+	var added: int = 0
+	for w: Dictionary in wanted:
+		var m: Object = doc.call("media_by_id", String(w.get("media_id", "")))
+		if m == null or String(m.get("kind")) != "video" or String(m.get("path")).is_empty() or not FileAccess.file_exists(String(m.get("path"))):
+			continue
+		var r: String = Proxies.root_now(prefs, String(m.get("path")), int(m.get("width")))
+		var i: int = int(w.get("index", -1))
+		if i < 0 or Proxies.have(r, i) or _queued(String(m.get("path")), i):
+			continue
+		queue.append({"path": String(m.get("path")), "label": String(m.get("label")), "index": i, "fps": float(m.get("fps")), "duration": float(m.get("duration")), "w": int(m.get("width")), "h": int(m.get("height")), "root": r, "auto": false, "around": true})
+		added += 1
 	total += added
 	if added > 0 and not running:
 		_pump()
@@ -194,7 +225,7 @@ func forget_for(doc: Object, media_ids: PackedStringArray) -> int:
 		var m: Object = doc.call("media_by_id", id)
 		if m == null or String(m.get("path")).is_empty():
 			continue
-		var r: String = Proxies.root_now(prefs, String(m.get("path")))
+		var r: String = Proxies.root_now(prefs, String(m.get("path")), int(m.get("width")))
 		var keep: Array[Dictionary] = []
 		for e: Dictionary in queue:
 			if String(e["root"]) != r:
@@ -335,7 +366,7 @@ func _pump() -> void:
 	_builder = ProxyBuilder.new()
 	add_child(_builder)
 	while not queue.is_empty() and not cancelled:
-		var e: Dictionary = queue.pop_front()
+		var e: Dictionary = take_next()
 		var policy: String = _policy(e)
 		while policy == POLICY_HOLD and not cancelled:
 			var t_hold: int = Time.get_ticks_msec()
@@ -349,7 +380,7 @@ func _pump() -> void:
 			done += 1
 			continue
 		var h: int = await _handle(String(e["path"]))
-		var width: int = Proxies.width_for(prefs)
+		var width: int = Proxies.wanted_width(Proxies.size_for(prefs), Proxies.width_for(prefs), int(e["w"]))
 		var crf: int = Proxies.quality_for(prefs)
 		var made: Dictionary = {"ok": false, "why": "the file did not open"}
 		if bool(e.get("auto", false)):
@@ -392,3 +423,81 @@ func _pump() -> void:
 		else:
 			events.call("toast", "Proxies: %d built, %d could not be made (%s)" % [b, f, last_error])
 	finished.emit(b, f)
+
+
+func _playhead_now() -> Dictionary:
+	if playhead_source.is_valid():
+		var v: Variant = playhead_source.call()
+		if v is Dictionary:
+			return v
+	var session: Node = _root_node("Session")
+	if session == null or session.get("doc") == null:
+		return {}
+	var d: Object = session.get("doc")
+	var sq: Object = d.call("active_sequence")
+	if sq == null:
+		return {}
+	return {"seq": sq, "t": float(session.call("playhead"))}
+
+
+static func uses_of(sq: Object, path: String, doc: Object) -> PackedVector2Array:
+	var out: PackedVector2Array = PackedVector2Array()
+	if sq == null or doc == null:
+		return out
+	for tr: Variant in sq.call("picture_tracks"):
+		var track: Object = tr
+		for cv: Variant in track.get("clips"):
+			var c: Object = cv
+			var m: Object = doc.call("media_by_id", String(c.get("media_id")))
+			if m == null or String(m.get("path")) != path:
+				continue
+			var a: float = float(c.get("start"))
+			var b: float = float(c.call("end"))
+			var t: float = a
+			while t < b:
+				out.append(Vector2(t, float(c.call("source_time", t))))
+				t += USE_STEP_SECONDS
+			out.append(Vector2(b, float(c.call("source_time", maxf(b - 0.0005, a)))))
+	return out
+
+
+static func distance_of(uses: PackedVector2Array, index: int, fps: float, playhead: float) -> float:
+	var a: float = Proxies.segment_start_for(index, fps)
+	var b: float = Proxies.segment_start_for(index + 1, fps)
+	var best: float = FAR
+	for u: Vector2 in uses:
+		if u.y >= a and u.y < b:
+			best = minf(best, absf(u.x - playhead))
+	return best
+
+
+func take_next() -> Dictionary:
+	if queue.size() <= 1:
+		var only: Dictionary = queue.pop_front()
+		picks.append(only)
+		return only
+	var here: Dictionary = _playhead_now()
+	var session: Node = _root_node("Session")
+	var d: Object = session.get("doc") if session != null else null
+	if here.has("doc"):
+		d = here["doc"]
+	var uses: Dictionary = {}
+	var best_i: int = 0
+	var best_score: float = INF
+	for i: int in queue.size():
+		var e: Dictionary = queue[i]
+		var path: String = String(e["path"])
+		if not uses.has(path):
+			uses[path] = uses_of(here.get("seq", null), path, d) if not here.is_empty() else PackedVector2Array()
+		var dist: float = distance_of(uses[path], int(e["index"]), float(e["fps"]), float(here.get("t", 0.0)))
+		var score: float = dist + (0.0 if dist < FAR else float(i))
+		if score < best_score:
+			best_score = score
+			best_i = i
+	var picked: Dictionary = queue[best_i]
+	queue.remove_at(best_i)
+	picked["distance"] = best_score
+	picks.append(picked)
+	if picks.size() > 256:
+		picks.remove_at(0)
+	return picked

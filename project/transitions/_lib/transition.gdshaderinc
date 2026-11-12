@@ -6,6 +6,11 @@ uniform float px_scale = 1.0;
 uniform float seed = 0.0;
 uniform float duration = 1.0;
 uniform float time = 0.0;
+uniform bool tr_canvas_on = false;
+uniform bool tr_margin_pass = false;
+uniform vec4 tr_canvas_map = vec4(1.0, 1.0, 0.0, 0.0);
+uniform vec2 tr_canvas_lo = vec2(0.0);
+uniform vec2 tr_canvas_hi = vec2(1.0);
 
 const float TR_PI = 3.14159265358979;
 
@@ -14,33 +19,57 @@ float tr_ratio() {
 }
 
 bool tr_inside(vec2 uv) {
+	if (tr_margin_pass) {
+		return uv.x >= tr_canvas_lo.x && uv.y >= tr_canvas_lo.y && uv.x <= tr_canvas_hi.x && uv.y <= tr_canvas_hi.y;
+	}
 	return uv.x >= 0.0 && uv.y >= 0.0 && uv.x <= 1.0 && uv.y <= 1.0;
 }
 
+vec2 tr_canvas_uv(vec2 uv) {
+	if (!tr_canvas_on) {
+		return uv;
+	}
+	vec2 h = 0.5 / max(frame_px, vec2(1.0));
+	vec2 c = tr_margin_pass ? clamp(uv, tr_canvas_lo + h, tr_canvas_hi - h) : clamp(uv, h, vec2(1.0) - h);
+	return c * tr_canvas_map.xy + tr_canvas_map.zw;
+}
+
+vec4 tr_tex_from(vec2 uv) {
+	return texture(from_tex, tr_canvas_uv(uv));
+}
+
+vec4 tr_tex_to(vec2 uv) {
+	return texture(to_tex, tr_canvas_uv(uv));
+}
+
+vec4 tr_tex_of(sampler2D trs, vec2 uv) {
+	return texture(trs, tr_canvas_uv(uv));
+}
+
 vec4 from_at(vec2 uv) {
-	return tr_inside(uv) ? texture(from_tex, uv) : vec4(0.0);
+	return tr_inside(uv) ? tr_tex_from(uv) : vec4(0.0);
 }
 
 vec4 to_at(vec2 uv) {
-	return tr_inside(uv) ? texture(to_tex, uv) : vec4(0.0);
+	return tr_inside(uv) ? tr_tex_to(uv) : vec4(0.0);
 }
 
 vec4 from_clamped(vec2 uv) {
-	return texture(from_tex, clamp(uv, vec2(0.0), vec2(1.0)));
+	return tr_tex_from(tr_margin_pass ? uv : clamp(uv, vec2(0.0), vec2(1.0)));
 }
 
 vec4 to_clamped(vec2 uv) {
-	return texture(to_tex, clamp(uv, vec2(0.0), vec2(1.0)));
+	return tr_tex_to(tr_margin_pass ? uv : clamp(uv, vec2(0.0), vec2(1.0)));
 }
 
 vec4 from_mirrored(vec2 uv) {
 	vec2 m = 1.0 - abs(1.0 - mod(uv, 2.0));
-	return texture(from_tex, m);
+	return tr_tex_from(tr_margin_pass ? uv : m);
 }
 
 vec4 to_mirrored(vec2 uv) {
 	vec2 m = 1.0 - abs(1.0 - mod(uv, 2.0));
-	return texture(to_tex, m);
+	return tr_tex_to(tr_margin_pass ? uv : m);
 }
 
 vec4 tr_over(vec4 top, vec4 under) {
@@ -187,7 +216,7 @@ vec4 tr_card_sample(vec4 hit, bool use_from, bool mirror_back) {
 	if (hit.z < 0.0 && mirror_back) {
 		cuv.x = 1.0 - cuv.x;
 	}
-	return use_from ? texture(from_tex, cuv) : texture(to_tex, cuv);
+	return use_from ? tr_tex_from(cuv) : tr_tex_to(cuv);
 }
 
 uniform sampler2D tr_from_pyr : filter_linear, repeat_disable;
@@ -220,6 +249,10 @@ vec4 tr_pyr_tap(bool trp_from, vec2 trp_o, vec2 trp_s, vec2 trp_p) {
 	return trp_from ? texture(tr_from_pyr, trp_a) : texture(tr_to_pyr, trp_a);
 }
 
+vec4 tr_pyr_fetch(bool trp_from, vec2 trp_o, vec2 trp_s, vec2 trp_uv) {
+	return tr_pyr_tap(trp_from, trp_o, trp_s, trp_uv * trp_s);
+}
+
 vec4 tr_pyr_level(bool trp_from, vec2 trp_uv, int trp_l) {
 	vec2 trp_s = tr_level_px(trp_l);
 	vec2 trp_o = tr_level_origin(trp_l);
@@ -247,7 +280,7 @@ vec4 tr_lod(bool trp_from, vec2 trp_uv, float trp_lod) {
 	if (!tr_inside(trp_uv)) {
 		return vec4(0.0);
 	}
-	vec4 trp_base = trp_from ? texture(from_tex, trp_uv) : texture(to_tex, trp_uv);
+	vec4 trp_base = trp_from ? tr_tex_from(trp_uv) : tr_tex_to(trp_uv);
 	float trp_lv = clamp(trp_lod, 0.0, float(max(tr_pyr_levels, 0)));
 	if (tr_pyr_levels <= 0 || trp_lv <= 0.0) {
 		return trp_base;

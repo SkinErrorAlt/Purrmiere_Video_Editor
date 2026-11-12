@@ -1,0 +1,67 @@
+{
+ "id": "text_timed_reveal",
+ "label": "Timed Reveal",
+ "category": "Text",
+ "version": 1,
+ "applies_to": "text",
+ "text_transform": "timed_reveal",
+ "tags": [
+  "text",
+  "horror"
+ ],
+ "blurb": "Letters, words or lines appear, or disappear, one at a time on a steady beat. Hidden ones can keep their place so nothing jumps.",
+ "params": [
+  {
+   "key": "unit",
+   "label": "One at a time",
+   "type": "enum",
+   "choices": [
+    "Letters",
+    "Words",
+    "Lines"
+   ],
+   "default": 1
+  },
+  {
+   "key": "start",
+   "label": "Starts at",
+   "type": "float",
+   "min": 0,
+   "max": 600,
+   "step": 0.01,
+   "default": 0.5,
+   "unit": " s"
+  },
+  {
+   "key": "interval",
+   "label": "Seconds between each",
+   "type": "float",
+   "min": 0.01,
+   "max": 30,
+   "step": 0.01,
+   "default": 0.4,
+   "unit": " s"
+  },
+  {
+   "key": "mode",
+   "label": "Do",
+   "type": "enum",
+   "choices": [
+    "Appear one by one",
+    "Disappear one by one"
+   ],
+   "default": 0
+  },
+  {
+   "key": "hidden",
+   "label": "Hidden ones are",
+   "type": "enum",
+   "choices": [
+    "Invisible, keeping their place",
+    "Taken out"
+   ],
+   "default": 0
+  }
+ ],
+ "passes": []
+}

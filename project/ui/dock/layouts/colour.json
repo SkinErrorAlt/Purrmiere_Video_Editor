@@ -29,7 +29,7 @@
   "b": {
    "t": "s",
    "dir": "h",
-   "ratio": 0.8,
+   "ratio": 0.6,
    "a": {
     "t": "g",
     "tabs": [
@@ -40,10 +40,11 @@
    "b": {
     "t": "g",
     "tabs": [
+     "scopes",
      "audio",
      "info"
     ],
-    "active": "audio"
+    "active": "scopes"
    }
   }
  },

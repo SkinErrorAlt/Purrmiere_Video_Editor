@@ -17,10 +17,14 @@ const MarkerLanes := preload("res://ui/timeline/timeline_marker_lanes.gd")
 const SequenceCmds := preload("res://doc/commands/sequence_cmds.gd")
 const SpeedCmds := preload("res://doc/commands/speed_cmds.gd")
 const Hit := preload("res://ui/timeline/timeline_hit.gd")
+const Fold := preload("res://ui/timeline/timeline_fold.gd")
+const NO_FOLD: Dictionary = {}
 const Lanes := preload("res://ui/timeline/timeline_lanes.gd")
 const FadeTools := preload("res://doc/commands/edit_tools.gd")
 const Stacks := preload("res://ui/timeline/timeline_stacks.gd")
 const TrTiming := preload("res://doc/transition_timing.gd")
+const FreeTransition := preload("res://doc/free_transition.gd")
+const TrOps := preload("res://modules/core_panels/transition_ops.gd")
 const TR_SNAP_PX := 8.0
 const CensorTool := preload("res://ui/timeline/timeline_censor.gd")
 const ViewCuts := preload("res://ui/timeline/timeline_view_cuts.gd")
@@ -29,6 +33,9 @@ const Keys := preload("res://ui/timeline/timeline_keys.gd")
 const RealignTool := preload("res://ui/timeline/timeline_realign.gd")
 const SpeedBand := preload("res://ui/timeline/timeline_speed_band.gd")
 const TrackerBand := preload("res://ui/timeline/timeline_tracker_band.gd")
+const MoveTool := preload("res://ui/timeline/timeline_move_tool.gd")
+const SlideTool := preload("res://ui/timeline/timeline_slide_tool.gd")
+const MarkerRuns := preload("res://doc/marker_runs.gd")
 const SLOP := 4.0
 const SNAP_PX := 8.0
 const IMMEDIATE: PackedStringArray = ["scrub", "header_w", "track_h", "divider", "pan", "band_scroll", "hscroll"]
@@ -60,13 +67,17 @@ var live_key: String = ""
 var value_a: float = 0.0
 var value_b: float = 0.0
 var marker_id: String = ""
+var free_id: String = ""
 var scrub_t: float = -1.0
 var ids: PackedStringArray = PackedStringArray()
 var doomed: Array[Rect2] = []
 var changed_serial: int = 0
+var preset_ids: PackedStringArray = PackedStringArray()
 
 
 func clear() -> void:
+	if not origin.is_empty() and MoveTool.owns(self):
+		MoveTool.finish(self)
 	mode = ""
 	active = false
 	press = Vector2.ZERO
@@ -90,13 +101,14 @@ func clear() -> void:
 	value_a = 0.0
 	value_b = 0.0
 	marker_id = ""
+	free_id = ""
 	scrub_t = -1.0
 	ids = PackedStringArray()
 	doomed = []
 
 
 func is_clear() -> bool:
-	return mode.is_empty() and not active and clip_id.is_empty() and track_id.is_empty() and side.is_empty() and origin.is_empty() and delta_t == 0.0 and track_delta == 0 and mods.is_empty() and not ripple and not insert and not duplicate and snap_targets.is_empty() and snap_x == -INF and marquee == Rect2() and live_key.is_empty() and marker_id.is_empty() and scrub_t < 0.0 and ids.is_empty() and doomed.is_empty() and value_a == 0.0 and value_b == 0.0 and edit_t == 0.0
+	return mode.is_empty() and not active and clip_id.is_empty() and track_id.is_empty() and side.is_empty() and origin.is_empty() and delta_t == 0.0 and track_delta == 0 and mods.is_empty() and not ripple and not insert and not duplicate and snap_targets.is_empty() and snap_x == -INF and marquee == Rect2() and live_key.is_empty() and marker_id.is_empty() and free_id.is_empty() and scrub_t < 0.0 and ids.is_empty() and doomed.is_empty() and value_a == 0.0 and value_b == 0.0 and edit_t == 0.0
 
 
 func state() -> Dictionary:
@@ -127,6 +139,14 @@ func _x_of(t: float) -> float:
 	return float(host.call("x_of", t))
 
 
+func _fold() -> Dictionary:
+	return host.call("fold") if host != null and host.has_method("fold") else NO_FOLD
+
+
+func _moved(t: float, dx: float) -> float:
+	return Fold.moved(_fold(), t, dx, _pps())
+
+
 static func mods_of(event: InputEventWithModifiers) -> Dictionary:
 	return {"ctrl": event.ctrl_pressed or event.meta_pressed, "shift": event.shift_pressed, "alt": event.alt_pressed}
 
@@ -146,6 +166,7 @@ func begin(kind: String, hit: Dictionary, pos: Vector2, mods_: Dictionary) -> vo
 		track_id = t.id
 	side = String(hit.get("edge", ""))
 	tr_field = TrTiming.OUT_FIELD if String(hit.get("tr_side", "")) == "out" else TrTiming.IN_FIELD
+	free_id = FreeTransition.id_of(hit.get("free", {}))
 	var m: Marker = hit.get("marker", null)
 	if m != null:
 		marker_id = m.id
@@ -191,7 +212,7 @@ func _capture_origin() -> void:
 		var vol: Dictionary = c.audio.get("volume", AnimProp.make(1.0))
 		origin["volume"] = AnimProp.evaluate_float(vol, c.param_time("audio.volume", maxf(seq.playhead - c.start, 0.0)), c.duration)
 		if mode == "move":
-			var family: PackedStringArray = Verbs.unlocked(seq, Verbs.MoveRule.drag_ids(seq, c.id, bool(host.get("linked_selection"))))
+			var family: PackedStringArray = preset_ids if not preset_ids.is_empty() else Verbs.unlocked(seq, Verbs.MoveRule.drag_ids(seq, c.id, bool(host.get("linked_selection"))))
 			if not family.has(c.id):
 				family = PackedStringArray([c.id])
 			ids = family
@@ -200,6 +221,7 @@ func _capture_origin() -> void:
 				var f: Clip = seq.clip_by_id(id)
 				starts[id] = f.start
 			origin["starts"] = starts
+	preset_ids = PackedStringArray()
 	if mode == "roll":
 		edit_t = c.start if side == "head" else c.end()
 	if mode == "transition" and c != null:
@@ -212,6 +234,15 @@ func _capture_origin() -> void:
 		var lim: Vector2 = TrTiming.limits(host.call("doc") if host.has_method("doc") else null, seq, c, tr_field)
 		origin["lo"] = lim.x
 		origin["hi"] = lim.y
+	if mode == "free_tr" and not free_id.is_empty():
+		var ftr: Track = seq.track_by_id(track_id)
+		var ft: Dictionary = FreeTransition.by_id(ftr.free_transitions, free_id) if ftr != null else {}
+		if ft.is_empty():
+			return
+		var fw: Vector2 = FreeTransition.span(ft)
+		origin["w0"] = fw.x
+		origin["w1"] = fw.y
+		origin["free"] = ft.duplicate(true)
 
 
 func marker_selection() -> PackedStringArray:
@@ -231,6 +262,8 @@ func _capture_markers(seq: Sequence) -> void:
 		return
 	var sel: PackedStringArray = marker_selection()
 	ids = sel if sel.has(marker_id) else PackedStringArray([marker_id])
+	if not bool(mods.get("alt", false)):
+		ids = MarkerRuns.with_runs(seq, ids)
 	var times: Dictionary = {}
 	for id: String in ids:
 		var other: Marker = seq.marker_by_id(id)
@@ -264,7 +297,7 @@ func _open() -> void:
 			if f != null:
 				starts[id] = f.start
 		origin["starts"] = starts
-		if Verbs.MoveRule.needs_select(seq, clip_id):
+		if not MoveTool.owns(self) and Verbs.MoveRule.needs_select(seq, clip_id):
 			Verbs.select(doc, seq, ids if bool(host.get("linked_selection")) else PackedStringArray([clip_id]), "replace", PackedStringArray([clip_id]))
 
 
@@ -315,8 +348,9 @@ func snap(t: float, extra_offsets: PackedFloat64Array = PackedFloat64Array()) ->
 	snap_x = -INF
 	if not bool(host.get("snapping")) or snap_targets.is_empty():
 		return quantise(t)
+	var fold: Dictionary = _fold()
 	var reach: float = SNAP_PX / _pps()
-	var best_d: float = reach
+	var best_d: float = reach if fold.is_empty() else SNAP_PX
 	var best: float = t
 	var offsets: PackedFloat64Array = PackedFloat64Array([0.0])
 	offsets.append_array(extra_offsets)
@@ -333,7 +367,7 @@ func snap(t: float, extra_offsets: PackedFloat64Array = PackedFloat64Array()) ->
 		for i: int in [lo - 1, lo]:
 			if i < 0 or i >= snap_targets.size():
 				continue
-			var d: float = absf(snap_targets[i] - probe)
+			var d: float = absf(snap_targets[i] - probe) if fold.is_empty() else absf(Fold.px_between(fold, probe, snap_targets[i], _pps()))
 			if d < best_d:
 				best_d = d
 				best = snap_targets[i] - off
@@ -368,6 +402,8 @@ func motion(pos: Vector2, mods_: Dictionary) -> bool:
 		return SpeedBand.drag_motion(host, self, pos, mods_)
 	if mode == TrackerBand.DRAG_MODE:
 		return TrackerBand.drag_motion(host, self, pos, mods_)
+	if mode == SlideTool.DRAG_MODE:
+		return SlideTool.drag_motion(host, self, pos, mods_)
 	if mode == "scrub":
 		scrub_t = ViewCuts.snap_scrub(self, host, maxf(_t_of(pos.x), 0.0))
 		return true
@@ -393,7 +429,7 @@ func motion(pos: Vector2, mods_: Dictionary) -> bool:
 		marquee = marquee_rect()
 		return true
 	if mode == "marker":
-		var mt: float = snap(maxf(float(origin.get("time", 0.0)) + (pos.x - press.x) / _pps(), 0.0))
+		var mt: float = snap(maxf(_moved(float(origin.get("time", 0.0)), pos.x - press.x), 0.0))
 		var times: Dictionary = origin.get("times", {})
 		var shift: float = mt - float(origin.get("time", 0.0))
 		var lowest: float = INF
@@ -417,13 +453,14 @@ func motion(pos: Vector2, mods_: Dictionary) -> bool:
 		return true
 	if mode == "track_reorder":
 		return true
+	if mode == "free_tr":
+		return _free_motion(seq, doc, pos)
 	var c: Clip = seq.clip_by_id(clip_id)
 	if c == null:
 		return false
 	if mode == "fade":
 		return _fade_motion(seq, doc, c, pos)
 	if mode == "move":
-		var raw: float = (pos.x - press.x) / _pps()
 		var min_start: float = INF
 		var offsets: PackedFloat64Array = PackedFloat64Array()
 		var starts: Dictionary = origin.get("starts", {})
@@ -435,7 +472,7 @@ func motion(pos: Vector2, mods_: Dictionary) -> bool:
 			offsets.append(f.start - c.start)
 			offsets.append(f.end() - c.start)
 		offsets.append_array(ViewCuts.move_offsets(host, seq, ids, c))
-		var want: float = float(origin.get("start", c.start)) + raw
+		var want: float = _moved(float(origin.get("start", c.start)), pos.x - press.x)
 		var snapped: float = snap(want, offsets)
 		delta_t = snapped - float(origin.get("start", c.start))
 		if min_start + delta_t < 0.0:
@@ -444,18 +481,18 @@ func motion(pos: Vector2, mods_: Dictionary) -> bool:
 		var dest: Track = hit.get("track", null)
 		track_delta = 0
 		var own: Track = seq.track_of(clip_id)
-		if dest != null and own != null and (dest.kind == own.kind or seq.free_tracks) and not bool(hit.get("nest", false)):
+		if dest != null and own != null and (dest.kind == own.kind or seq.free_tracks) and not bool(hit.get("nest", false)) and not MoveTool.owns(self):
 			var list: Array[Track] = seq.hop_list(own)
 			track_delta = list.find(dest) - list.find(own)
-		insert = bool(mods_.get("ctrl", false))
-		duplicate = bool(mods_.get("alt", false))
+		insert = bool(mods_.get("ctrl", false)) and not MoveTool.owns(self)
+		duplicate = bool(mods_.get("alt", false)) and not MoveTool.owns(self)
 		mods["ctrl"] = insert
 		mods["alt"] = duplicate
 		_update_doomed(seq)
 		return true
 	if mode == "trim" or mode == "ripple":
 		var edge0: float = float(origin.get("start", 0.0)) if side == "head" else float(origin.get("end", 0.0))
-		var want: float = snap(edge0 + (pos.x - press.x) / _pps())
+		var want: float = snap(_moved(edge0, pos.x - press.x))
 		var fam: PackedStringArray = Verbs.trim_family(seq, clip_id, side, solo_trim)
 		if fam.is_empty():
 			return true
@@ -465,13 +502,13 @@ func motion(pos: Vector2, mods_: Dictionary) -> bool:
 		return true
 	if mode == "rate":
 		var edge1: float = float(origin.get("start", 0.0)) if side == "head" else float(origin.get("end", 0.0))
-		var to: float = snap(edge1 + (pos.x - press.x) / _pps())
+		var to: float = snap(_moved(edge1, pos.x - press.x))
 		var stretch: Command = SpeedCmds.RateStretch.new(seq.id, PackedStringArray([clip_id]), side, to)
 		doc.undo.live(stretch)
 		live_key = stretch.live_key()
 		return true
 	if mode == "roll":
-		var want: float = snap(edit_t + (pos.x - press.x) / _pps())
+		var want: float = snap(_moved(edit_t, pos.x - press.x))
 		var tracks: PackedStringArray = PackedStringArray([track_id])
 		doc.undo.live(EditCmds.RollEdit.new(seq.id, edit_t, tracks, want))
 		live_key = "roll"
@@ -482,16 +519,16 @@ func motion(pos: Vector2, mods_: Dictionary) -> bool:
 		var cut: float = float(origin.get("cut", origin.get("start", 0.0)))
 		var lo: float = float(origin.get("lo", w0))
 		var hi: float = float(origin.get("hi", w1))
-		var dt: float = (pos.x - press.x) / _pps()
+		var dx: float = pos.x - press.x
 		var dur0: float = maxf(w1 - w0, Clip.MIN_TRANSITION)
 		if side == "head":
-			w0 = clampf(snap(w0 + dt), lo, minf(cut, w1 - Clip.MIN_TRANSITION))
+			w0 = clampf(snap(_moved(w0, dx)), lo, minf(cut, w1 - Clip.MIN_TRANSITION))
 		elif side == "tail":
-			w1 = clampf(snap(w1 + dt), maxf(cut, w0 + Clip.MIN_TRANSITION), hi)
+			w1 = clampf(snap(_moved(w1, dx)), maxf(cut, w0 + Clip.MIN_TRANSITION), hi)
 		else:
-			var want: float = snap(w0 + dt, PackedFloat64Array([dur0]))
+			var want: float = snap(_moved(w0, dx), PackedFloat64Array([dur0]))
 			for frac: float in [0.0, 0.5, 1.0]:
-				if absf(want - (cut - dur0 * frac)) * _pps() <= TR_SNAP_PX:
+				if absf(Fold.px_between(_fold(), cut - dur0 * frac, want, _pps())) <= TR_SNAP_PX:
 					want = cut - dur0 * frac
 			w0 = clampf(want, maxf(lo, cut - dur0), minf(hi - dur0, cut))
 			w1 = w0 + dur0
@@ -515,7 +552,7 @@ func motion(pos: Vector2, mods_: Dictionary) -> bool:
 		live_key = "slip"
 		return true
 	if mode == "slide":
-		var want: float = snap(float(origin.get("start", 0.0)) + (pos.x - press.x) / _pps())
+		var want: float = snap(_moved(float(origin.get("start", 0.0)), pos.x - press.x))
 		delta_t = want - float(origin.get("start", 0.0))
 		var fam: PackedStringArray = Verbs.MoveRule.slide_ids(seq, c.id)
 		doc.undo.live(EditCmds.SlideClip.new(seq.id, Verbs.unlocked(seq, fam), delta_t))
@@ -554,7 +591,7 @@ func _update_doomed(seq: Sequence) -> void:
 			if b <= a:
 				continue
 			var y: float = Hit.lane_screen_y(geom, l)
-			doomed.append(Rect2(Hit.x_of(geom, a), y, (b - a) * float(geom["pps"]), float(l["h"])))
+			doomed.append(Rect2(Hit.x_of(geom, a), y, Hit.x_of(geom, b) - Hit.x_of(geom, a), float(l["h"])))
 
 
 func overlapping(seq: Sequence) -> bool:
@@ -570,13 +607,13 @@ func slop_origin() -> Vector2:
 func marker_length_fields(pos: Vector2) -> Dictionary:
 	var t0: float = float(origin.get("time", 0.0))
 	var e0: float = maxf(float(origin.get("end", t0)), t0)
-	var moved: float = (pos.x - press.x) / _pps()
+	var dx: float = pos.x - press.x
 	if side == "head":
-		var head: float = clampf(snap(t0 + moved), 0.0, e0)
+		var head: float = clampf(snap(_moved(t0, dx)), 0.0, e0)
 		value_a = head
 		value_b = e0
 		return {"time": head, "duration": e0 - head}
-	var tail: float = maxf(snap(e0 + moved), t0)
+	var tail: float = maxf(snap(_moved(e0, dx)), t0)
 	value_a = t0
 	value_b = tail
 	return {"duration": tail - t0}
@@ -625,7 +662,7 @@ func release(pos: Vector2, mods_: Dictionary) -> bool:
 		clear()
 		return false
 	if not was_active:
-		if m == "move" and not clip_id.is_empty():
+		if m == "move" and not clip_id.is_empty() and not MoveTool.owns(self):
 			host.call("click_select", Stacks.alt_pick(host, clip_id, press, mods), mods)
 		if m == "marker_range":
 			host.call("marker_band_click", press, mods_)
@@ -670,6 +707,8 @@ func release(pos: Vector2, mods_: Dictionary) -> bool:
 		did = SpeedBand.drag_release(host, self, pos, mods_)
 	elif m == TrackerBand.DRAG_MODE:
 		did = TrackerBand.drag_release(host, self, pos, mods_)
+	elif m == SlideTool.DRAG_MODE:
+		did = SlideTool.drag_release(host, self, pos, mods_)
 	elif m == "range":
 		var anchor: Dictionary = origin.get("anchor", {})
 		var found: PackedStringArray = Marquee.selection(host, anchor, pos) if not anchor.is_empty() else host.call("clips_in_marquee", marquee)
@@ -687,7 +726,9 @@ func release(pos: Vector2, mods_: Dictionary) -> bool:
 			did = true
 	elif m == "move":
 		mods["shift"] = bool(mods_.get("shift", false))
-		if absf(delta_t) > 0.00001 or track_delta != 0:
+		if MoveTool.owns(self):
+			did = MoveTool.release(self, doc, seq, Verbs.place_mode(seq, false, bool(mods.get("shift", false))))
+		elif absf(delta_t) > 0.00001 or track_delta != 0:
 			if duplicate:
 				var place: String = Verbs.MODE_OVERLAP if overlapping(seq) else ("insert" if insert else "overwrite")
 				did = Verbs.duplicate_clips(doc, seq, ids, delta_t, track_delta, place, clip_id)
@@ -729,6 +770,14 @@ func release(pos: Vector2, mods_: Dictionary) -> bool:
 			did = Verbs.slide(doc, seq, clip_id, delta_t)
 	elif m == "level":
 		did = _level_release(doc, seq)
+	elif m == "free_tr":
+		var ftr: Track = seq.track_by_id(track_id)
+		var now: Dictionary = FreeTransition.by_id(ftr.free_transitions, free_id) if ftr != null else {}
+		var was: Dictionary = origin.get("free", {})
+		doc.undo.cancel_live()
+		var shifted: bool = not now.is_empty() and not was.is_empty() and (absf(FreeTransition.start_of(now) - FreeTransition.start_of(was)) > 0.000001 or absf(FreeTransition.duration_of(now) - FreeTransition.duration_of(was)) > 0.000001)
+		if shifted:
+			did = TrOps.span_free(doc, seq, track_id, free_id, FreeTransition.start_of(now), FreeTransition.duration_of(now), "Move transition" if side == "body" or side.is_empty() else "Trim transition")
 	elif m == "transition":
 		var c4: Clip = seq.clip_by_id(clip_id)
 		var final_tr: Dictionary = c4.transition_field(tr_field).duplicate(true) if c4 != null else {}
@@ -818,6 +867,35 @@ func cancel() -> void:
 		host.call("set_track_height_preview", track_id, -1.0)
 	clear()
 	host.call("gesture_ended")
+
+
+func _free_motion(seq: Sequence, doc: Project, pos: Vector2) -> bool:
+	var tr: Track = seq.track_by_id(track_id)
+	if tr == null or free_id.is_empty() or not origin.has("free"):
+		return false
+	var w0: float = float(origin.get("w0", 0.0))
+	var w1: float = float(origin.get("w1", 0.0))
+	var dur0: float = maxf(w1 - w0, FreeTransition.MIN_DURATION)
+	var dx: float = pos.x - press.x
+	if side == "head":
+		w0 = clampf(snap(_moved(w0, dx)), 0.0, w1 - FreeTransition.MIN_DURATION)
+	elif side == "tail":
+		w1 = maxf(snap(_moved(w1, dx)), w0 + FreeTransition.MIN_DURATION)
+	else:
+		w0 = maxf(snap(_moved(w0, dx), PackedFloat64Array([dur0])), 0.0)
+		w1 = w0 + dur0
+	if FreeTransition.overlaps(tr.free_transitions, w0, w1 - w0, free_id):
+		return true
+	var base: Dictionary = origin.get("free", {})
+	var next: Dictionary = FreeTransition.with_span(base, w0, maxf(w1 - w0, FreeTransition.MIN_DURATION))
+	if absf((w1 - w0) - dur0) > 0.000001:
+		next[FreeTransition.KEY_SPEC] = TrTiming.stretched(FreeTransition.spec_of(base), maxf(w1 - w0, FreeTransition.MIN_DURATION))
+	value_a = w0
+	value_b = w1
+	var list: Array[Dictionary] = FreeTransition.put(tr.free_transitions, next)
+	doc.undo.live(TrackCmds.SetTrackField.new(seq.id, track_id, FreeTransition.FIELD, list))
+	live_key = "free_tr"
+	return true
 
 
 func _fade_motion(seq: Sequence, doc: Project, c: Clip, pos: Vector2) -> bool:

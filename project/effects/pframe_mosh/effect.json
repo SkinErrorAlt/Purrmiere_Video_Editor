@@ -1,0 +1,21 @@
+{
+ "id": "pframe_mosh",
+ "label": "Motion Mosh",
+ "category": "Time",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "A real datamosh driven by the clip's own movement. Every frame is worked out the way a broken video file decodes it: the picture is cut into blocks, each block is found in the frame before, and with the key frame gone those block moves are piled onto an old picture. So the frozen frame melts and drags along with whatever really moves, a dancer pulls the street with her and a turning head smears the wall. Melt drops the key frame; Bloom repeats one frame's movement over and over so the picture pours out of everything that moves. It starts clean at each key frame and mangles further until the next one.",
+ "history": {"max": 62, "reach": ["hold"], "seconds": ["hold"]},
+ "params": [
+  {"key": "kind", "label": "Kind", "type": "enum", "choices": ["Melt (key frame dropped)", "Bloom (frame repeated)"], "default": 0},
+  {"key": "hold", "label": "Key frame every", "type": "float", "min": 0.2, "max": 2.0, "step": 0.01, "default": 1.6, "unit": " s"},
+  {"key": "clean", "label": "Clean time after each key frame", "type": "float", "min": 0.0, "max": 4.0, "step": 0.01, "default": 0.0, "unit": " s"},
+  {"key": "start", "label": "First key frame at", "type": "float", "min": 0.0, "max": 600.0, "step": 0.01, "default": 0.0, "unit": " s"},
+  {"key": "block", "label": "Block size", "type": "float", "min": 8.0, "max": 64.0, "step": 1.0, "default": 16.0, "unit": " px"},
+  {"key": "breakthrough", "label": "New picture breaks through", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45}
+ ],
+ "passes": [
+  {"shader": "vectors.gdshader", "scale": 1.0},
+  {"shader": "mosh.gdshader", "scale": 1.0}
+ ]
+}

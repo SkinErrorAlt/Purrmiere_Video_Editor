@@ -7,8 +7,10 @@ const MASK_MODE_KEY := "mask_mode"
 const MASK_SPILL := "spill"
 const Marker := preload("res://doc/marker.gd")
 const MaskShape := preload("res://doc/mask_shape.gd")
+const TextMaskPath := preload("res://doc/text_mask_path.gd")
 const AnimTime := preload("res://doc/anim_time.gd")
 const SpeedCurve := preload("res://doc/speed_curve.gd")
+const DepthFade := preload("res://doc/depth_fade.gd")
 const TABLE_RATE := 120.0
 const TABLE_MAX := 8192
 const LOOP_MIN := 0.001
@@ -782,7 +784,7 @@ func source_reach() -> Vector2:
 
 
 static func auto_loops(path: String) -> bool:
-	return AUTO_LOOP_EXT.has(path.get_extension().to_lower())
+	return AUTO_LOOP_EXT.has(path.get_extension().to_lower()) or bool(load("res://doc/animated_still.gd").call("plays", path))
 
 
 static func stamp_auto_loop(path: String, d: Dictionary) -> void:
@@ -958,6 +960,9 @@ func get_param(path: String) -> Dictionary:
 	if parts.size() == 2 and parts[0] == "motion_blur" and parts[1] in MOTION_BLUR_NUMERIC:
 		var mbv: Variant = motion_blur.get(parts[1], default_motion_blur().get(parts[1], 0.0))
 		return mbv if mbv is Dictionary else AnimProp.make(float(mbv))
+	if parts.size() == 4 and parts[0] == "effects" and parts[2] == DepthFade.KEY:
+		var dfe: Dictionary = effect_by_uid(parts[1])
+		return {} if dfe.is_empty() or not DepthFade.PROPS.has(parts[3]) else DepthFade.stored(dfe, parts[3])
 	if parts.size() == 3 and parts[0] == "effects":
 		var e: Dictionary = effect_by_uid(parts[1])
 		if e.is_empty():
@@ -1011,6 +1016,8 @@ func props_at(local_t: float, fps: float = 0.0) -> Dictionary:
 	var out: Dictionary = {}
 	for k: Variant in props.keys():
 		out[k] = prop_at(String(k), local_t, fps)
+	if out.has(TextMaskPath.KEY) and not masks.is_empty():
+		TextMaskPath.follow(out, masks, local_t, duration, fps)
 	return out
 
 
@@ -1068,6 +1075,9 @@ func set_param(path: String, anim: Dictionary) -> bool:
 	if parts.size() == 2 and parts[0] == "motion_blur" and parts[1] in MOTION_BLUR_NUMERIC:
 		motion_blur[parts[1]] = value
 		return true
+	if parts.size() == 4 and parts[0] == "effects" and parts[2] == DepthFade.KEY:
+		var dfe: Dictionary = effect_by_uid(parts[1])
+		return false if dfe.is_empty() else DepthFade.set_prop(dfe, parts[3], value)
 	if parts.size() == 3 and parts[0] == "effects":
 		var e: Dictionary = effect_by_uid(parts[1])
 		if e.is_empty():
@@ -1107,6 +1117,8 @@ func erase_param(path: String) -> void:
 	var parts: PackedStringArray = path.split(".")
 	if AnimTime.is_inner(path):
 		_inner_set(path, AnimProp.make(0.0 if AnimTime.is_start_path(path) else 1.0))
+	elif parts.size() == 4 and parts[0] == "effects" and parts[2] == DepthFade.KEY:
+		DepthFade.erase_prop(effect_by_uid(parts[1]), parts[3])
 	elif parts.size() == 3 and parts[0] == "effects":
 		var e: Dictionary = effect_by_uid(parts[1])
 		if e.has("params"):
@@ -1166,6 +1178,7 @@ func param_paths() -> PackedStringArray:
 	for e: Dictionary in effects:
 		if e.get(MIX_KEY) is Dictionary:
 			out.append("effects." + str(e.get("uid", "")) + "." + MIX_KEY)
+		out.append_array(DepthFade.paths(e))
 		var params: Dictionary = e.get("params", {})
 		for pk: String in params.keys():
 			out.append("effects." + str(e.get("uid", "")) + "." + pk)

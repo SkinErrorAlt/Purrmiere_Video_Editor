@@ -9,9 +9,12 @@ const Follow := preload("res://doc/marker_follow.gd")
 const Layers := preload("res://doc/marker_layers.gd")
 const LaneKind := preload("res://ui/timeline/marker_lane_kind.gd")
 const Lanes := preload("res://ui/timeline/timeline_lanes.gd")
+const FreeTransition := preload("res://doc/free_transition.gd")
 const Tracks := preload("res://ui/timeline/timeline_tracks.gd")
 const SpeedBand := preload("res://ui/timeline/timeline_speed_band.gd")
 const Paint := preload("res://ui/timeline/timeline_paint.gd")
+const Fold := preload("res://ui/timeline/timeline_fold.gd")
+const NO_FOLD: Dictionary = {}
 const EDGE_REACH := 6.0
 const MARKER_REACH := 6.0
 const MARKER_BAND := 12.0
@@ -28,7 +31,7 @@ const FADE_MIN_CLIP_W := 28.0
 
 
 static func empty() -> Dictionary:
-	return {"zone": "", "set": "", "lane": {}, "track": null, "clip": null, "edge": "", "t": 0.0, "x": 0.0, "y": 0.0, "button": "", "transition": false, "tr_edge": "", "tr_side": "", "level": false, "grip": false, "nest": false, "playhead": false, "marker": null, "marker_edge": "", "marker_band": false, "lane_y": 0.0, "fade": "", "layer": ""}
+	return {"zone": "", "set": "", "lane": {}, "track": null, "clip": null, "edge": "", "t": 0.0, "x": 0.0, "y": 0.0, "button": "", "transition": false, "tr_edge": "", "tr_side": "", "free": {}, "free_edge": "", "level": false, "grip": false, "nest": false, "playhead": false, "marker": null, "marker_edge": "", "marker_band": false, "lane_y": 0.0, "fade": "", "layer": ""}
 
 
 static func row_at(geom: Dictionary, y: float) -> Dictionary:
@@ -162,6 +165,15 @@ static func transition_spot(tr: Track, t: float) -> Dictionary:
 	return {}
 
 
+static func free_spot(tr: Track, t: float) -> Dictionary:
+	if tr == null or tr.free_transitions.is_empty():
+		return {}
+	var ft: Dictionary = FreeTransition.at_point(tr.free_transitions, t)
+	if ft.is_empty():
+		return {}
+	return {"free": ft, "span": FreeTransition.span(ft)}
+
+
 static func transition_at(tr: Track, t: float) -> Clip:
 	var i: int = tr.index_of_last_starting_before(t)
 	for k: int in [i, i + 1]:
@@ -177,11 +189,11 @@ static func transition_at(tr: Track, t: float) -> Clip:
 
 
 static func x_of(geom: Dictionary, t: float) -> float:
-	return float(geom["header_w"]) + t * float(geom["pps"]) - float(geom["scroll_x"])
+	return Fold.x_of(geom.get("fold", NO_FOLD), t, float(geom["header_w"]), float(geom["pps"]), float(geom["scroll_x"]))
 
 
 static func t_of(geom: Dictionary, x: float) -> float:
-	return (x - float(geom["header_w"]) + float(geom["scroll_x"])) / float(geom["pps"])
+	return Fold.t_of(geom.get("fold", NO_FOLD), x, float(geom["header_w"]), float(geom["pps"]), float(geom["scroll_x"]))
 
 
 static func lane_screen_y(geom: Dictionary, l: Dictionary) -> float:
@@ -302,6 +314,17 @@ static func test(geom: Dictionary, lanes: Dictionary, seq: Sequence, pos: Vector
 				out["tr_edge"] = "head"
 			elif sx1 - pos.x <= EDGE_REACH:
 				out["tr_edge"] = "tail"
+			return out
+		var fspot: Dictionary = free_spot(tr, t)
+		if not fspot.is_empty():
+			var fspan: Vector2 = fspot["span"]
+			var fx0: float = x_of(geom, fspan.x)
+			var fx1: float = x_of(geom, fspan.y)
+			out["free"] = fspot["free"]
+			if pos.x - fx0 <= EDGE_REACH:
+				out["free_edge"] = "head"
+			elif fx1 - pos.x <= EDGE_REACH:
+				out["free_edge"] = "tail"
 			return out
 	if c != null:
 		out["clip"] = c

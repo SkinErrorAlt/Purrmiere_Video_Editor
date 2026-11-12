@@ -1,6 +1,7 @@
 extends RefCounted
 
 const VERSION := 1
+const MoveInPlace := preload("res://doc/commands/move_in_place.gd")
 const Project := preload("res://doc/project.gd")
 const Sequence := preload("res://doc/sequence.gd")
 const Track := preload("res://doc/track.gd")
@@ -32,6 +33,7 @@ const CutLinks := preload("res://doc/cut_links.gd")
 const TrimToPlayhead := preload("res://doc/commands/trim_to_playhead.gd")
 const DropRule := preload("res://doc/drop_rule.gd")
 const MoveRule := preload("res://doc/move_rule.gd")
+const SyncAlign := preload("res://doc/sync_align.gd")
 const LinkAsOne := preload("res://doc/link_as_one.gd")
 const LinkCmds := preload("res://doc/commands/link_as_one_cmds.gd")
 const ViewTrims := preload("res://doc/view_trims.gd")
@@ -122,7 +124,7 @@ static func media_scaling_mode() -> String:
 static func frame_fit_scale(seq: Sequence, item: MediaItem) -> Vector2:
 	if seq == null or item == null or item.width <= 0 or item.height <= 0 or seq.width <= 0 or seq.height <= 0:
 		return Vector2.ONE
-	if not item.has_picture() or item.kind == "sequence":
+	if not item.has_picture() or item.kind == "sequence" or item.kind == "adjust":
 		return Vector2.ONE
 	var mode: String = media_scaling_mode()
 	if mode == "none":
@@ -142,6 +144,7 @@ static func stream_label(item: MediaItem, stream: int) -> String:
 
 
 const StreamOrdinals := preload("res://doc/stream_ordinals.gd")
+const SoundAdjust := preload("res://engine/sound_adjust.gd")
 
 
 static func audio_tracks_from(doc: Project, seq: Sequence, first: Track, count: int, cmds: Array[Command]) -> Array[Track]:
@@ -244,7 +247,7 @@ static func place_mode(seq: Sequence, insert: bool, flip: bool) -> String:
 	return "overwrite"
 
 
-static func new_title_clip(doc: Project, seq: Sequence, track_id: String, t: float, text: String = "", want: float = 5.0) -> String:
+static func new_title_clip(doc: Project, seq: Sequence, track_id: String, t: float, text: String = "", want: float = 5.0, extra_props: Dictionary = {}, transform: Dictionary = {}) -> String:
 	if doc == null or seq == null or t < 0.0:
 		return ""
 	var tr: Track = seq.track_by_id(track_id)
@@ -270,9 +273,14 @@ static func new_title_clip(doc: Project, seq: Sequence, track_id: String, t: flo
 			n += 1
 	var label: String = text if not text.is_empty() else "Title " + str(n)
 	var media_id: String = doc.mint_id("m")
-	cmds.append(MediaCmds.AddMedia.new({"id": media_id, "kind": "title", "label": label, "bin": "", "probed": true, "duration": want, "props": {"text": label}}))
+	var props: Dictionary = {"text": label}
+	for k: Variant in extra_props.keys():
+		props[k] = extra_props[k]
+	cmds.append(MediaCmds.AddMedia.new({"id": media_id, "kind": "title", "label": label, "bin": "", "probed": true, "duration": want, "props": props}))
 	var clip_id: String = doc.mint_id("c")
 	var title_dict: Dictionary = {"id": clip_id, "media_id": media_id, "label": label, "start": t, "duration": minf(want, room), "in_offset": 0.0}
+	if not transform.is_empty():
+		title_dict["transform"] = transform.duplicate(true)
 	if dest_id == tr.id:
 		stamp_place(tr, title_dict, "video", "overwrite")
 	cmds.append(ClipCmds.PlaceClip.new(seq.id, dest_id, title_dict))
@@ -316,6 +324,8 @@ static func place_media(doc: Project, seq: Sequence, media_id: String, track_id:
 		return false
 	if item.props.has("subclip_in"):
 		return bool(load("res://doc/commands/edit_tools.gd").call("place_subclip", doc, seq, media_id, track_id, t, mode))
+	if item.is_object_source():
+		return bool(load("res://modules/core_panels/object_ui.gd").call("place_object", doc, seq, media_id, track_id, t, mode))
 	var duration: float = doc.media_duration(item)
 	var placeholder: bool = false
 	if item.is_timed() and not item.probed and item.kind != "sequence":
@@ -326,12 +336,13 @@ static func place_media(doc: Project, seq: Sequence, media_id: String, track_id:
 			return false
 		duration = MediaItem.PLACEHOLDER_DURATION
 	var wants_video: bool = item.has_picture() and target.accepts("video")
-	var wants_audio: bool = (item.has_audio or item.kind == "audio" or item.audio_only or sequence_has_sound(doc, item)) and not StreamOrdinals.all_off(item)
+	var sound_adjust: bool = SoundAdjust.drops_on(item, target)
+	var wants_audio: bool = sound_adjust or ((item.has_audio or item.kind == "audio" or item.audio_only or sequence_has_sound(doc, item)) and not StreamOrdinals.all_off(item))
 	var cmds: Array[Command] = []
 	var audio_track: Track = sound_target(doc, seq, target, wants_video, cmds) if wants_audio else null
 	if not wants_video and audio_track == null:
 		return false
-	var streams: PackedInt32Array = selected_streams(item) if item.kind != "sequence" else PackedInt32Array([0])
+	var streams: PackedInt32Array = selected_streams(item) if item.kind != "sequence" and not sound_adjust else PackedInt32Array([0])
 	var audio_tracks: Array[Track] = audio_tracks_from(doc, seq, audio_track, streams.size(), cmds) if audio_track != null else ([] as Array[Track])
 	var seeds: PackedStringArray = PackedStringArray()
 	if wants_video:
@@ -412,6 +423,13 @@ static func move_selection(doc: Project, seq: Sequence, delta_t: float, track_de
 		delta_t = -min_start
 	if absf(delta_t) < EPS and track_delta == 0:
 		return false
+	var in_place: Array[Command] = MoveInPlace.commands(seq, rows, delta_t, mode, ids)
+	if not in_place.is_empty():
+		if not run(doc, "Move", in_place):
+			return false
+		select(doc, seq, original, "replace")
+		seq.picked_clip_ids = picked
+		return true
 	var cmds: Array[Command] = []
 	cmds.append(ClipCmds.RemoveClips.new(seq.id, ids))
 	var seeds: PackedStringArray = PackedStringArray()
@@ -851,7 +869,7 @@ static func nudge(doc: Project, seq: Sequence, frames: int) -> bool:
 	return move_selection(doc, seq, float(frames) / seq.fps, 0, "overwrite")
 
 
-static func replace_media(doc: Project, seq: Sequence, clip_ids: PackedStringArray, media_id: String) -> bool:
+static func replace_media(doc: Project, seq: Sequence, clip_ids: PackedStringArray, media_id: String, align: bool = false) -> bool:
 	var item: MediaItem = doc.media_by_id(media_id)
 	if item == null or seq == null or clip_ids.is_empty():
 		return false
@@ -871,7 +889,12 @@ static func replace_media(doc: Project, seq: Sequence, clip_ids: PackedStringArr
 		if speed == 0.0:
 			speed = 1.0
 		var used: float = c.duration * absf(speed)
-		var in_off: float = clampf(c.in_offset, 0.0, maxf(room - used, 0.0))
+		var want: float = c.in_offset
+		if align:
+			var lined: float = SyncAlign.aligned_in_offset(doc.media_by_id(c.media_id), item, c.in_offset)
+			if lined > SyncAlign.NONE:
+				want = lined
+		var in_off: float = clampf(want, 0.0, maxf(room - used, 0.0))
 		var dur: float = c.duration
 		if used > room:
 			dur = maxf(room / absf(speed), 1.0 / maxf(seq.fps, 1.0))
@@ -1243,7 +1266,52 @@ static func clear_in_out(doc: Project, seq: Sequence) -> bool:
 	return run(doc, "Clear in and out", [SequenceCmds.SetInOut.new(seq.id, -1.0, -1.0)])
 
 
+static func transition_side_of(c: Clip, side: String) -> Dictionary:
+	if c == null:
+		return {}
+	if side == "out":
+		return c.transition_out if c.has_transition_out() else {}
+	return c.transition_in if c.has_transition() else {}
+
+
+static func selected_transition(seq: Sequence) -> Dictionary:
+	if seq == null or seq.selected_transition.is_empty():
+		return {}
+	var held: Dictionary = seq.selected_transition
+	var c: Clip = seq.clip_by_id(String(held.get("clip_id", "")))
+	if transition_side_of(c, String(held.get("side", "in"))).is_empty():
+		seq.selected_transition = {}
+		return {}
+	return held
+
+
+static func select_transition(doc: Project, seq: Sequence, clip_id: String, side: String) -> bool:
+	if doc == null or seq == null:
+		return false
+	var c: Clip = seq.clip_by_id(clip_id)
+	if transition_side_of(c, side).is_empty():
+		return false
+	var want: Dictionary = {"clip_id": clip_id, "side": "out" if side == "out" else "in"}
+	if seq.selected_transition == want and seq.selected_clip_ids.is_empty():
+		return false
+	seq.selected_transition = want
+	seq.selected_clip_ids = PackedStringArray()
+	seq.picked_clip_ids = PackedStringArray()
+	doc.changed.emit("selection")
+	return true
+
+
+static func clear_transition(doc: Project, seq: Sequence) -> bool:
+	if doc == null or seq == null or seq.selected_transition.is_empty():
+		return false
+	seq.selected_transition = {}
+	doc.changed.emit("selection")
+	return true
+
+
 static func select(doc: Project, seq: Sequence, ids: PackedStringArray, mode: String = "replace", picked: PackedStringArray = PackedStringArray()) -> bool:
+	var dropped: bool = not seq.selected_transition.is_empty()
+	seq.selected_transition = {}
 	var before: PackedStringArray = seq.selected_clip_ids.duplicate()
 	var next: PackedStringArray = PackedStringArray()
 	if mode == "replace":
@@ -1267,7 +1335,9 @@ static func select(doc: Project, seq: Sequence, ids: PackedStringArray, mode: St
 		return false
 	seq.picked_clip_ids = picked.duplicate() if not picked.is_empty() else next.duplicate()
 	if next == before:
-		return false
+		if dropped:
+			doc.changed.emit("selection")
+		return dropped
 	seq.selected_clip_ids = next
 	doc.changed.emit("selection")
 	return true
@@ -1558,6 +1628,8 @@ static func effect_def_for_clip(doc: Project, seq: Sequence, c: Clip, def: Dicti
 static func add_effect(doc: Project, seq: Sequence, clip_ids: PackedStringArray, def: Dictionary, index: int = -1) -> bool:
 	var is_audio: bool = bool(def.get("audio", false))
 	var targets: PackedStringArray = audio_targets(seq, clip_ids) if is_audio else video_targets(seq, clip_ids)
+	if String(def.get("applies_to", "")) == "text":
+		targets = title_targets(doc, seq, targets)
 	var cmds: Array[Command] = []
 	for id: String in targets:
 		var c: Clip = seq.clip_by_id(id)
@@ -1567,6 +1639,18 @@ static func add_effect(doc: Project, seq: Sequence, clip_ids: PackedStringArray,
 	if cmds.is_empty():
 		return false
 	return run(doc, cmds[0].label, cmds)
+
+
+static func title_targets(doc: Project, seq: Sequence, clip_ids: PackedStringArray) -> PackedStringArray:
+	var out: PackedStringArray = PackedStringArray()
+	if doc == null or seq == null:
+		return out
+	for id: String in clip_ids:
+		var c: Clip = seq.clip_by_id(id)
+		var m: MediaItem = doc.media_by_id(c.media_id) if c != null else null
+		if m != null and m.kind == "title":
+			out.append(id)
+	return out
 
 
 static func carries_sound(_doc: Project, seq: Sequence, c: Clip) -> bool:
@@ -1635,6 +1719,14 @@ static func set_effect_param(doc: Project, seq: Sequence, clip_id: String, uid: 
 	if live:
 		doc.undo.live(cmd)
 		return cmd.ok
+	return run(doc, cmd.label, [cmd])
+
+
+static func set_piece_override(doc: Project, seq: Sequence, clip_id: String, uid: String, index: int, piece: Variant) -> bool:
+	var c: Clip = seq.clip_by_id(clip_id)
+	if c == null:
+		return false
+	var cmd: Command = EffectCmds.SetPieceOverride.new(seq.id, clip_id, uid, index, piece, c.is_audio_effect(uid))
 	return run(doc, cmd.label, [cmd])
 
 
@@ -1935,6 +2027,9 @@ static func drop_effect(doc: Project, seq: Sequence, clip_ids: PackedStringArray
 	var targets: PackedStringArray = effect_targets(seq, clip_ids, def)
 	if targets.is_empty():
 		return 0
+	if String(def.get("applies_to", "")) == "text":
+		var titles: PackedStringArray = title_targets(doc, seq, targets)
+		return titles.size() if add_effect(doc, seq, titles, def) else 0
 	var split: int = int(load("res://doc/commands/region_fx_cmds.gd").call("drop_split", doc, seq, targets, def, at_t))
 	if split >= 0:
 		return split

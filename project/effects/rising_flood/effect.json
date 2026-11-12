@@ -1,0 +1,205 @@
+{
+ "id": "rising_flood",
+ "label": "Rising Flood",
+ "category": "Stylize",
+ "tags": [
+  "look"
+ ],
+ "version": 1,
+ "blurb": "Floods the picture as if it were a landscape that slopes down to the bottom of the frame, with the dark parts of the shot as hollows and the bright parts as high ground. Water comes in from the bottom and climbs, filling the low places that join up first, then pouring over each rim and filling the hollow behind it from the deepest part up, so separate pools appear, grow and merge into one sheet while bright things stand clear of it longest. The water soaks up the light with depth, darker and greener where it is deep, with the world above mirrored in it and broken up by ripples, the picture beneath bent by them, caustics in the shallows, glints, foam on the shoreline and a band of wet ground just above it. Key the level, or let it rise on its own over a set time.",
+ "params": [
+  {
+   "key": "level",
+   "label": "Water level",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.005,
+   "default": 0.55
+  },
+  {
+   "key": "rise_time",
+   "label": "Rises over",
+   "type": "float",
+   "min": 0.0,
+   "max": 60.0,
+   "step": 0.1,
+   "default": 6.0,
+   "unit": " s"
+  },
+  {
+   "key": "low_ground",
+   "label": "Low ground",
+   "type": "enum",
+   "choices": [
+    "Dark parts",
+    "Bright parts"
+   ],
+   "default": 0
+  },
+  {
+   "key": "lie",
+   "label": "Picture shapes the ground",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.25
+  },
+  {
+   "key": "source",
+   "label": "Water comes from",
+   "type": "enum",
+   "choices": [
+    "The bottom",
+    "Every edge",
+    "Rain everywhere"
+   ],
+   "default": 0
+  },
+  {
+   "key": "water",
+   "label": "Water colour",
+   "type": "color",
+   "default": [
+    0.2,
+    0.24,
+    0.2,
+    1.0
+   ]
+  },
+  {
+   "key": "murk",
+   "label": "Murky",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.5
+  },
+  {
+   "key": "ripples",
+   "label": "Ripples",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.5
+  },
+  {
+   "key": "wind",
+   "label": "Wind",
+   "type": "float",
+   "min": -1.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.3
+  },
+  {
+   "key": "seed",
+   "label": "Seed",
+   "type": "int",
+   "min": 0,
+   "max": 9999,
+   "step": 1,
+   "default": 0
+  }
+ ],
+ "passes": [
+  {
+   "shader": "ground.gdshader",
+   "scale": 0.125
+  },
+  {
+   "shader": "spill.gdshader",
+   "set": {
+    "hop": 16.0
+   }
+  },
+  {
+   "shader": "spill.gdshader",
+   "set": {
+    "hop": 8.0
+   }
+  },
+  {
+   "shader": "spill.gdshader",
+   "set": {
+    "hop": 4.0
+   }
+  },
+  {
+   "shader": "spill.gdshader",
+   "set": {
+    "hop": 2.0
+   }
+  },
+  {
+   "shader": "spill.gdshader",
+   "set": {
+    "hop": 1.0
+   }
+  },
+  {
+   "shader": "spill.gdshader",
+   "set": {
+    "hop": 12.0
+   }
+  },
+  {
+   "shader": "spill.gdshader",
+   "set": {
+    "hop": 6.0
+   }
+  },
+  {
+   "shader": "spill.gdshader",
+   "set": {
+    "hop": 3.0
+   }
+  },
+  {
+   "shader": "spill.gdshader",
+   "set": {
+    "hop": 1.5
+   }
+  },
+  {
+   "shader": "spill.gdshader",
+   "set": {
+    "hop": 8.0
+   }
+  },
+  {
+   "shader": "spill.gdshader",
+   "set": {
+    "hop": 4.0
+   }
+  },
+  {
+   "shader": "spill.gdshader",
+   "set": {
+    "hop": 2.0
+   }
+  },
+  {
+   "shader": "spill.gdshader",
+   "set": {
+    "hop": 1.0
+   }
+  },
+  {
+   "shader": "spill.gdshader",
+   "set": {
+    "hop": 1.0
+   }
+  },
+  {
+   "shader": "compose.gdshader",
+   "scale": 8.0,
+   "inputs": {
+    "grid_tex": 14
+   }
+  }
+ ]
+}

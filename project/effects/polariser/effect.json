@@ -13,6 +13,7 @@
   {"key": "foliage", "label": "Foliage richness", "type": "float", "min": 0.0, "max": 100.0, "step": 1.0, "default": 50.0, "unit": " %"},
   {"key": "keep_skin", "label": "Keep skin natural", "type": "float", "min": 0.0, "max": 100.0, "step": 1.0, "default": 80.0, "unit": " %"}
  ],
+ "handles": [],
  "passes": [
   {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
   {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},

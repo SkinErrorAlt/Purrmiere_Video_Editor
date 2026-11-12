@@ -3,9 +3,9 @@
  "label": "Dither",
  "category": "Stylize",
  "version": 1,
- "blurb": "Cuts the picture down to a few levels per channel and fakes the tones in between with a pattern of dots.",
+ "blurb": "Cuts the picture down to a few levels per channel and fakes the tones in between with a pattern of dots. The Bayer patterns lay a fixed grid; Noise scatters it. The two error diffusion patterns carry each dot's rounding error on to the dots after it, the way Floyd and Steinberg and the early Macintosh (Atkinson) did, so tones come out as organic worm-like grain with no grid at all; Atkinson passes on only three quarters of the error, which keeps highlights and shadows cleaner and gives the classic high contrast look.",
  "params": [
-  {"key": "pattern", "label": "Pattern", "type": "enum", "choices": ["Bayer 2x2", "Bayer 4x4", "Bayer 8x8", "Noise"], "default": 1},
+  {"key": "pattern", "label": "Pattern", "type": "enum", "choices": ["Bayer 2x2", "Bayer 4x4", "Bayer 8x8", "Noise", "Error diffusion (Floyd and Steinberg)", "Error diffusion (Atkinson)"], "default": 1},
   {"key": "levels", "label": "Levels per channel", "type": "int", "min": 2, "max": 32, "step": 1, "default": 4},
   {"key": "pixel_size", "label": "Pixel size", "type": "float", "min": 1.0, "max": 32.0, "step": 1.0, "default": 2.0, "unit": " px"},
   {"key": "contrast", "label": "Contrast", "type": "float", "min": 0.0, "max": 3.0, "step": 0.01, "default": 1.0},

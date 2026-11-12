@@ -15,5 +15,6 @@
   {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
  ],
  "handles": [{"kind": "angle", "key": "light_angle", "zero": "right", "turn": "cw"}],
+ "panels": [{"kind": "light_ball", "bind": {"angle": "light_angle"}, "options": {"zero": "right", "turn": "cw"}}],
  "passes": "single"
 }

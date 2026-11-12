@@ -102,6 +102,117 @@ amount moves off it.
 - A shader path starting with `res://` reuses a shader from another effect folder.
 - `"passes": []` declares an effect the compositor handles itself (the frame rate limiter).
 
+## Earlier frames (frame history)
+
+An effect can read earlier frames of its own input, the picture entering the effect after
+every effect above it, by adding a `history` block to `effect.json` and including the
+engine's helper in its shader:
+
+```
+"history": {"max": 62, "reach": ["echoes", "echo_time"], "seconds": ["echo_time"]}
+```
+
+```
+#include "res://engine/history.gdshaderinc"
+...
+vec4 now = texture(TEXTURE, UV);
+vec4 back = history_between(age_in_frames, UV, now);
+```
+
+- `max` is the most frames the effect may ever look back (up to 62).
+- `reach` says how far it looks back right now: the product of the named params, in frames
+  of the sequence; a param listed in `seconds` is turned into frames first. Leave `reach` out
+  to always keep `max` frames.
+- `history_frame(age, uv, now)` reads the frame `age` sequence frames back (1 is the frame
+  before this one), `history_between(age, uv, now)` mixes the two frames around a fractional
+  age, and `history_has(age)` says whether that frame exists. `history_count` is how many
+  frames back can be read and `history_fps` the sequence frame rate. A frame that does not
+  exist returns `now`. Before the clip's first frame there are no earlier frames, so ages that
+  reach past the start read the first frame.
+- The frames are always the effect's input at the earlier frame times, never what happened
+  to be shown. Playing at 1x feeds them as it goes; a jump, a step, a pause after fast play or
+  an edit to anything above the effect rebuilds the missing frames from their times before the
+  picture is called finished, so export, stepping and playback show the same frame. While
+  playing with skipped frames the nearest kept frame stands in until playback stops.
+- Each kept frame costs a picture the size of the effect's input on the graphics card
+  (1080p: about 8 MB a frame), so keep `max` to what the look needs.
+
+## Listening to the clip's sound (reactive listen)
+
+An effect can react to sound with no keyframes by adding a `reactive` block to its
+`effect.json`. The older form (`drive`, `level`, `wave`, `spectrum`, `beats`, used by the
+`audio_*` effects) turns one band of the sound into one param. The `listen` form gives the
+shader a whole set of measurements of the sound at once, read by `engine/sound_features.gd`:
+
+```
+"reactive": {"listen": true}
+"reactive": {"listen": {"hits": 64, "past": "travel"}, "defaults": {"snd_threshold": 5.0}}
+```
+
+```
+#include "res://engine/sound.gdshaderinc"
+...
+float push = snd_bass * amount;
+```
+
+Where the sound comes from is the same as every reactive effect: the Sound well, which
+starts on the clip's own sound (a video clip's embedded audio, or its linked audio clip)
+and also takes another clip or a file from the bin. The time used is the sound clip's own
+source time, so its trim, its speed (keyframed speed too) and where the linked audio sits
+on the timeline are all respected, and the Offset setting nudges it. An effect with only a
+`listen` block shows Sound, By hand, Offset, Sensitivity (scales the levels and hit
+strengths), Threshold (levels under it read 0, weaker hits are ignored) and Hit decay.
+
+How it works: the first time a file is heard, the native envelope builder decodes it once
+to 48 kHz mono and measures seven bands (full, 30 to 120 Hz, 120 to 400, 400 to 1500, 1500
+to 4000, 4000 to 9000, 9000 to 16000) 200 times a second, and keeps that on disk beside the
+media cache. One pass in GDScript then turns it into a table at 100 rows a second plus a list
+of hits, kept in memory per file. Every value is looked up from that table at the frame's
+time, so playback, pause, scrubbing, stepping and export see exactly the same numbers. Until
+a new file has been read the values are all at rest and the compositor reports the sound as
+pending, which export waits for before it writes the frame. 60 seconds of sound costs about
+330 KB of envelope (in memory and on disk) and about 280 KB of table, and the feature pass
+takes about 55 ms on top of the native read.
+
+Levels are in decibels against the file's own loud parts (0 is 36 dB under them, 1 is about
+3 dB over), so they move evenly with what you hear rather than jumping only on the loudest
+peak. All of these are floats you read by declaring them, and the include declares them all:
+
+| uniform | meaning |
+|---|---|
+| `snd_level` | overall loudness, 0 to 1, quick to rise and quick to fall |
+| `snd_bass`, `snd_mid`, `snd_treble` | the same for 30 to 120 Hz, 400 to 4000 Hz, 4 to 16 kHz |
+| `snd_voice` | how much it sounds like someone talking, 0 to 1: speech has syllables, its energy in the voice range and little deep bass, so music, engines and gunfire stay low |
+| `snd_voice_slow` | the same, rising over about a second and falling over about three, for things that build while someone keeps talking |
+| `snd_bright` | where the sound's weight sits, 0 deep to 1 bright (held at the last value through silence) |
+| `snd_noise` | how harsh or noisy it is (flat spread of energy across the bands, such as explosions, static, wind, crowd hiss), only when it is also loud |
+| `snd_sustain` | how held the sound is: it climbs over half a second while a sound keeps going and drops as soon as the sound breaks, so short hits never raise it |
+| `snd_level_slow` | loudness rising over a second and falling over two and a half |
+| `snd_hit` | the latest hit, its strength fading over Hit decay |
+| `snd_hit_age` | seconds of timeline since the latest hit (1000 when there has been none) |
+| `snd_hit_strength`, `snd_hit_seed`, `snd_hit_low` | the latest hit's strength, a fixed random number for it, and how much of its rise was below 400 Hz (0 a sharp crack, 1 a deep boom) |
+| `snd_hits`, `snd_hit_sum` | how many hits, and their strengths added up, since the clip's sound began |
+| `snd_quiet` | seconds of silence so far (0 while there is sound) |
+| `snd_dose` | loud seconds heard since the clip began: the level added up over time, which never goes down within the clip |
+
+Hits are found from sudden rises across the bands at once (at least 70 ms apart), land
+within a few milliseconds of the sound, and syllables of speech count as weak hits.
+
+`"hits": N` (up to 64) also fills `snd_hits_tex`, N texels wide, newest first, each
+`(age in seconds, strength, seed, low)` with an age under 0 for an empty slot, and
+`snd_hits_n` with how many are filled. `snd_hit_at(i)` in the include reads one. Only hits
+since the clip's sound began are listed, so an effect can keep a record of all of them (the
+Hit Fracture effect cracks once per big hit).
+
+`"past": seconds` (a number or the key of a param) fills `snd_past_tex`, 64 texels covering
+the last that many seconds, `(level, bass, voice, treble)`, and `snd_past(back)` reads it,
+`back` 0 now and 1 the oldest. The Speaker Cone effect lays it out along the radius so a
+boom rolls outward.
+
+By hand sets every level to the Hand amount, with no hits. In the Effects panel preview card
+the values are a fixed lively set so the card shows the look. A mix or nested sequence as the
+source is not read by `listen` yet; the values stay at rest.
+
 ## Tags
 
 `"tags"` is an optional list of short words on the effect itself, beside
@@ -169,6 +280,7 @@ keyframing them like any other edit.
 | `quad` | four corners that move independently | `keys`, exactly four, ordered top left, top right, bottom right, bottom left |
 | `edges` | one handle per side of a box | `left`, `top`, `right`, `bottom`, each the key of a float param; any side may be left out and gets no handle |
 | `plane3d` | a 3D plane with corner and edge handles | `tilt`, `swivel`, `scale`, `distance`, `lens`, `skew_x`, `skew_y`, each the key of a float param |
+| `plane3d` with `"units": "frame"` | the same plane in the shared camera of PLANE_CONTRACT (frame heights, roll after swivel after tilt): corners scale, edge crosses tilt and swivel, the knob above the top edge rolls, dragging inside moves the offset | `tilt`, `swivel`, `roll`, `distance`, `fov`, `scale` (float params) and `offset` (a vec2 param), named like the effect's `depth` block |
 | `regions` | the Pair View region boxes, which the engine draws itself | no fields |
 
 A `point`, `line` or `quad` key names a `vec2` param read in UV, 0 at the top left
@@ -181,3 +293,26 @@ are the examples to copy.
 In a multi pass effect, `px_scale` is the scale of that pass's input, so in the last pass of a down and up chain it can be 1/8 or 1/16, and neither `textureSize(effect_tex, 0)` nor `SCREEN_PIXEL_SIZE` gives the layer size there. A final pass that draws something a set number of pixels wide should read the output size from `fwidth(UV)` and convert `px_scale` to output pixels (see `photo_snap` and `focus_area`).
 
 An effect that must draw over the whole frame, not only inside its clip's picture, adds `"canvas": "frame"` to its `effect.json` (see `blur_fill`, `pip_frame`, `split_screen`, `device_frame`). From its first pass on, the layer is drawn on a canvas of the frame's shape round the clip's fitted picture, the same canvas Pair View uses, so later effects, the monitor handles and clicks all work on the whole frame. Its passes get `source_box` (where the effect's input sits inside the canvas, in UV) and `canvas_px` (the canvas size). Every pass may also declare `seq_fps` to read the sequence frame rate.
+
+## Text only effects
+
+An effect that changes a title's characters rather than its picture declares
+`"applies_to": "text"` and a `"text_transform"` naming one of the transforms in
+`doc/text_fx/text_fx.gd` (`TRANSFORMS`), with `"passes": []` and
+`"category": "Text"`. The 34 shipped ones are the `text_*` folders: ciphers,
+encodings, hashes, AES and the horror and VHS helpers.
+
+- They go on titles only. Dropping, double clicking, pasting or dragging one onto
+  any other clip is refused with "Text effects go on titles only".
+- They run in stack order before the title is laid out, each on the text the one
+  above it made, so changing the order changes the result. A turned off one passes
+  the text on. Amount changes that share of the text from the start.
+- Their values are ordinary effect values: keyframes, presets and copy and paste
+  all work. A `string` param with `"keyable": true` (a key, a passphrase, a hidden
+  message) holds its value from key to key.
+- Styling runs and the letter rig's per letter values follow the characters to
+  where a transform moves them; when the length changes without a known map they
+  are spread along the new text in proportion.
+- Effect Controls shows, for each one, the text it gets, the text it gives and, in
+  plain words, whether it can work on that input. The Effects panel's info for it
+  shows a worked example.

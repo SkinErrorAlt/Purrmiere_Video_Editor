@@ -14,7 +14,7 @@ const TABS: Array = [["meters", "Meters"], ["mix", "Mix"], ["field", "Field"], [
 const BANDS := 22
 const TRAIL_SECONDS := 2.0
 const SQUASH := 0.42
-const POSITION_IDS: PackedStringArray = ["audio_position", "position", "panner"]
+const FieldPosition := preload("res://modules/core_panels/field_position.gd")
 const PREF_TARGET := "audio.loudness_target"
 const LOUDNESS_TARGETS: Array = [["YouTube, -14 LUFS", -14.0], ["Spotify, -14 LUFS", -14.0], ["Apple Podcasts, -16 LUFS", -16.0], ["EBU R128, -23 LUFS", -23.0], ["ATSC, -24 LUFS", -24.0], ["Netflix, -27 LUFS", -27.0]]
 const LOUDNESS_TOLERANCE := 1.0
@@ -806,15 +806,7 @@ func _on_sequence_changed(_id: String) -> void:
 
 
 func position_effect(c: Clip) -> Dictionary:
-	if c == null:
-		return {}
-	for e: Dictionary in c.effects:
-		if String(e.get("id", "")) in POSITION_IDS:
-			return {"entry": e, "audio": false}
-	for ae: Variant in c.audio.get("effects", []):
-		if ae is Dictionary and String((ae as Dictionary).get("id", "")) in POSITION_IDS:
-			return {"entry": ae, "audio": true}
-	return {}
+	return FieldPosition.find(c)
 
 
 func write_position(angle: float, distance: float) -> void:
@@ -828,11 +820,13 @@ func write_position(angle: float, distance: float) -> void:
 	var uid: String = String(entry.get("uid", ""))
 	var is_audio: bool = bool(pe["audio"])
 	var prefix: String = "audio_effects." if is_audio else "effects."
-	var key_a: float = bus().key_time_for(c, prefix + uid + ".angle", s.playhead)
-	var key_d: float = bus().key_time_for(c, prefix + uid + ".distance", s.playhead)
-	var tx: RefCounted = d.undo.begin("Audio position")
-	Verbs.run(d, "Angle", [EffectCmds.SetEffectParam.new(s.id, c.id, uid, "angle", angle, c.param_time(prefix + uid + ".angle", key_a - c.start) if key_a >= 0.0 else -1.0, is_audio)])
-	Verbs.run(d, "Distance", [EffectCmds.SetEffectParam.new(s.id, c.id, uid, "distance", distance, c.param_time(prefix + uid + ".distance", key_d - c.start) if key_d >= 0.0 else -1.0, is_audio)])
+	var a_path: String = prefix + uid + "." + FieldPosition.ANGLE_KEY
+	var d_path: String = prefix + uid + "." + FieldPosition.DISTANCE_KEY
+	var key_a: float = bus().key_time_for(c, a_path, s.playhead)
+	var key_d: float = bus().key_time_for(c, d_path, s.playhead)
+	var tx: RefCounted = d.undo.begin("Sound position")
+	Verbs.run(d, "Direction", [EffectCmds.SetEffectParam.new(s.id, c.id, uid, FieldPosition.ANGLE_KEY, FieldPosition.angle_of_ring(angle), c.param_time(a_path, key_a - c.start) if key_a >= 0.0 else -1.0, is_audio)])
+	Verbs.run(d, "Distance", [EffectCmds.SetEffectParam.new(s.id, c.id, uid, FieldPosition.DISTANCE_KEY, FieldPosition.metres_of_ring(distance), c.param_time(d_path, key_d - c.start) if key_d >= 0.0 else -1.0, is_audio)])
 	tx.commit()
 
 
@@ -844,7 +838,10 @@ func write_height(h: float) -> void:
 	if pe.is_empty() or d == null:
 		return
 	var entry: Dictionary = pe["entry"]
-	Verbs.run(d, "Height", [EffectCmds.SetEffectParam.new(s.id, c.id, String(entry.get("uid", "")), "height", h, -1.0, bool(pe["audio"]))])
+	var uid: String = String(entry.get("uid", ""))
+	var h_path: String = ("audio_effects." if bool(pe["audio"]) else "effects.") + uid + "." + FieldPosition.HEIGHT_KEY
+	var key_h: float = bus().key_time_for(c, h_path, s.playhead)
+	Verbs.run(d, "Height", [EffectCmds.SetEffectParam.new(s.id, c.id, uid, FieldPosition.HEIGHT_KEY, FieldPosition.height_of_slider(h), c.param_time(h_path, key_h - c.start) if key_h >= 0.0 else -1.0, bool(pe["audio"]))])
 
 
 func position_values() -> Dictionary:
@@ -856,12 +853,12 @@ func position_values() -> Dictionary:
 	var entry: Dictionary = pe["entry"]
 	var params: Dictionary = entry.get("params", {})
 	var lt: float = s.playhead - c.start
-	var out: Dictionary = {"label": c.label, "angle": 0.0, "distance": 0.5, "height": 0.0}
-	for k: String in ["angle", "distance", "height"]:
+	var got: Dictionary = {}
+	for k: String in [FieldPosition.ANGLE_KEY, FieldPosition.DISTANCE_KEY, FieldPosition.HEIGHT_KEY]:
 		var p: Variant = params.get(k, null)
-		if p is Dictionary:
-			out[k] = AnimProp.evaluate_float(p, c.fx_time(entry, k, lt), c.duration, s.fps)
-	return out
+		got[k] = AnimProp.evaluate_float(p, c.fx_time(entry, k, lt), c.duration, s.fps) if p is Dictionary else float(FieldPosition.DEFAULTS[k])
+	var metres: float = float(got[FieldPosition.DISTANCE_KEY])
+	return {"label": c.label, "angle": float(got[FieldPosition.ANGLE_KEY]), "distance": FieldPosition.ring_of_metres(metres), "metres": metres, "height": float(got[FieldPosition.HEIGHT_KEY])}
 
 
 func save_state() -> Dictionary:
@@ -1112,9 +1109,9 @@ class _Field:
 		mouse_filter = Control.MOUSE_FILTER_STOP
 		gui_input.connect(_on_input)
 		_slider = HSlider.new()
-		_slider.min_value = -1.0
-		_slider.max_value = 1.0
-		_slider.step = 0.01
+		_slider.min_value = FieldPosition.HEIGHT_LOW
+		_slider.max_value = FieldPosition.HEIGHT_HIGH
+		_slider.step = 1.0
 		_slider.focus_mode = Control.FOCUS_NONE
 		_slider.value_changed.connect(_on_slider)
 		add_child(_slider)
@@ -1284,12 +1281,12 @@ class _Field:
 		lines.append(PmLabelKit.draw_fit(self, f, Vector2(pad, y), verdict(), room, body_fs, Tk.c["text"]))
 		y += body_fs + 6.0
 		if not pv.is_empty():
-			lines.append(PmLabelKit.draw_fit(self, f, Vector2(pad, y), "Selected: " + String(pv["label"]) + " · Audio Position " + str(int(round(float(pv["angle"])))) + " ° " + String.num(float(pv["distance"]), 2), room, body_fs, Tk.c["text_dim"]))
+			lines.append(PmLabelKit.draw_fit(self, f, Vector2(pad, y), "Selected: " + String(pv["label"]) + " · " + FieldPosition.LABEL + " " + str(int(round(float(pv["angle"])))) + " ° " + String.num(float(pv["metres"]), 1) + " m", room, body_fs, Tk.c["text_dim"]))
 			y += body_fs + 6.0
 			draw_string(f, Vector2(pad, size.y - 34.0), "Height", HORIZONTAL_ALIGNMENT_LEFT, -1, body_fs, Tk.c["text_dim"])
-			PmLabelKit.draw_fit(self, f, Vector2(pad, size.y - 34.0), ("+" if float(pv["height"]) >= 0.0 else "") + String.num(float(pv["height"]), 2), room, body_fs, Tk.c["text"], HORIZONTAL_ALIGNMENT_RIGHT)
+			PmLabelKit.draw_fit(self, f, Vector2(pad, size.y - 34.0), ("+" if float(pv["height"]) >= 0.0 else "") + str(int(round(float(pv["height"])))) + " °", room, body_fs, Tk.c["text"], HORIZONTAL_ALIGNMENT_RIGHT)
 		else:
-			lines.append(PmLabelKit.draw_fit(self, f, Vector2(pad, y), "Select a clip with Audio Position to place it", room, body_fs, Tk.c["text_faint"]))
+			lines.append(PmLabelKit.draw_fit(self, f, Vector2(pad, y), "Select a clip with the 3D Panner effect to place it", room, body_fs, Tk.c["text_faint"]))
 		var held: String = String(panel.call("held_text"))
 		if not held.is_empty():
 			lines.append(PmLabelKit.draw_fit(self, Tk.font("mono"), Vector2(pad, size.y - 10.0), held, room, fs, Tk.c["text_dim"]))

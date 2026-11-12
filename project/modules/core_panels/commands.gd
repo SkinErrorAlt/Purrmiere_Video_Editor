@@ -21,7 +21,8 @@ const TOOLS: Dictionary = {
 	"tool.pen": "pen", "tool.hand": "hand", "tool.zoom": "zoom", "tool.type": "type",
 	"tool.realign": "realign",
 }
-const SHUTTLE_RATES: Array = [1.0, 2.0, 4.0, 8.0, 16.0, 32.0]
+const SHUTTLE_RATES: Array = [1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0, 100.0]
+const SHUTTLE_PATH := "res://modules/core_panels/shuttle.gd"
 
 static var _registered: bool = false
 
@@ -73,18 +74,24 @@ static func register_all() -> void:
 	for id: String in TOOLS.keys():
 		_cmd(id, Callable(script, "set_tool").bind(id), "global", Callable(script, "tool_is").bind(id))
 	_cmd("play.toggle", Callable(script, "play_toggle"))
+	_cmd("app.double_press_report", Callable(load("res://host/key_guard.gd"), "say"))
+	_cmd("bin.toggle_shelf", Callable(script, "toggle_bin_shelf"), "global", Callable(script, "bin_shelf_open"))
 	load("res://modules/core_panels/space_hold.gd").call("install")
+	load("res://modules/core_panels/spectro/hidden_sound_ui.gd").call("install")
+	load("res://modules/core_panels/captions_ui.gd").call("install")
 	_cmd("play.shuttle_left", Callable(script, "shuttle").bind(-1.0))
 	_cmd("play.shuttle_right", Callable(script, "shuttle").bind(1.0))
 	_cmd("play.shuttle_stop", Callable(script, "shuttle_stop"))
 	_cmd("play.shuttle_slow_left", Callable(script, "shuttle_slow").bind(-1.0))
 	_cmd("play.shuttle_slow_right", Callable(script, "shuttle_slow").bind(1.0))
+	load(SHUTTLE_PATH).call("register_prefs")
 	_cmd("play.around", Callable(script, "play_around"))
 	_cmd("play.in_to_out", Callable(script, "play_in_to_out"))
 	_cmd("play.in_to_out_roll", Callable(script, "play_in_to_out_roll"))
 	_cmd("play.to_out", Callable(script, "play_to_out"))
 	_cmd("play.loop", Callable(script, "loop_toggle"), "program", Callable(script, "loop_is"))
 	_cmd("play.full_quality", Callable(load("res://engine/full_quality.gd"), "toggle"), "global", Callable(load("res://engine/full_quality.gd"), "is_on"))
+	_cmd("play.scrub_audio", Callable(load("res://engine/scrub_audio.gd"), "toggle"), "global", Callable(load("res://engine/scrub_audio.gd"), "is_on"))
 	_cmd("nav.step_back", Callable(script, "step").bind(-1))
 	_cmd("nav.step_fwd", Callable(script, "step").bind(1))
 	_cmd("nav.step_back_5", Callable(script, "step").bind(-5))
@@ -172,6 +179,9 @@ static func register_all() -> void:
 	_cmd("clip.enable", Callable(script, "enable_toggle"), "timeline")
 	_cmd("clip.nest", Callable(script, "nest"), "timeline")
 	_cmd("clip.see_inside", Callable(script, "see_inside_toggle"), "timeline")
+	_cmd("clip.see_inside_all", Callable(script, "see_inside_all"), "timeline")
+	_cmd("seq.lock_in_out", Callable(script, "lock_in_out"))
+	_cmd("seq.unlock_all", Callable(script, "unlock_all"))
 	_cmd("clip.reveal_nested", Callable(script, "reveal_nested"), "timeline")
 	register_groups_and_nests(script)
 	_cmd("clip.speed", Callable(script, "speed_dialog"))
@@ -218,6 +228,7 @@ static func register_all() -> void:
 	load("res://modules/core_panels/views_commands.gd").call("register_all")
 	load("res://modules/core_panels/groups_commands.gd").call("register_all")
 	load("res://modules/core_panels/tracker_ui.gd").call("register_commands")
+	load("res://modules/core_panels/object_ui.gd").call("register_commands")
 	load("res://modules/core_panels/outline_commands.gd").call("register_all")
 	load("res://modules/core_panels/monitor_snap.gd").call("register_all")
 	load("res://modules/core_panels/pair_layouts.gd").call("register_all")
@@ -313,31 +324,22 @@ static func tool_is(id: String) -> bool:
 static func play_toggle() -> void:
 	if Session.playing and Session.rate != 1.0:
 		Session.set_rate(1.0)
+		load(SHUTTLE_PATH).call("set_pitch", false)
 	Session.toggle_play()
 
 
 static func shuttle(dir: float) -> void:
-	var rate: float = Session.rate
-	if Session.playing and signf(rate) == dir:
-		var mag: float = absf(rate)
-		var i: int = SHUTTLE_RATES.find(mag)
-		var next: float = float(SHUTTLE_RATES[mini(i + 1, SHUTTLE_RATES.size() - 1)]) if i >= 0 else 1.0
-		Session.set_rate(dir * next)
-		return
-	Session.set_rate(dir)
-	if not Session.playing:
-		Session.set_playing(true)
+	var sh: GDScript = load(SHUTTLE_PATH)
+	sh.call("apply", float(sh.call("next_fast", Session.rate, dir, Session.playing)))
 
 
 static func shuttle_slow(dir: float) -> void:
-	Session.set_rate(dir * 0.5)
-	if not Session.playing:
-		Session.set_playing(true)
+	var sh: GDScript = load(SHUTTLE_PATH)
+	sh.call("apply", float(sh.call("next_slow", Session.rate, dir, Session.playing)))
 
 
 static func shuttle_stop() -> void:
-	Session.set_playing(false)
-	Session.set_rate(1.0)
+	load(SHUTTLE_PATH).call("stop")
 
 
 static func play_around() -> void:
@@ -675,7 +677,29 @@ static func source_edit(mode: String) -> void:
 		src.call("edit_to_timeline", mode)
 
 
+static func delete_selected_transition() -> bool:
+	var s: Sequence = seq()
+	var held: Dictionary = Verbs.selected_transition(s)
+	if held.is_empty():
+		return false
+	var took: bool = bool(load("res://modules/core_panels/transition_ops.gd").call("remove", doc(), s, String(held.get("clip_id", "")), String(held.get("side", "in"))))
+	if took:
+		Verbs.clear_transition(doc(), s)
+	return took
+
+
+static func delete_selected_free_transition() -> bool:
+	var s: Sequence = seq()
+	if s == null or s.held_free().is_empty():
+		return false
+	return bool(load("res://modules/core_panels/transition_ops.gd").call("remove_selected_free", doc(), s))
+
+
 static func delete_selection(ripple: bool) -> void:
+	if delete_selected_transition():
+		return
+	if delete_selected_free_transition():
+		return
 	if bool(load("res://modules/core_panels/censor_commands.gd").call("delete_selected")):
 		return
 	if not ripple and bool(load("res://ui/timeline/timeline_keys.gd").call("delete_from_timeline")):
@@ -851,6 +875,43 @@ static func see_inside_toggle() -> void:
 		Events.toast("Select a nest first")
 		return
 	Verbs.run(d, "See inside", cmds)
+
+
+## Opens every nest in the sequence, or closes them all when every one is already open (one undo step).
+static func see_inside_all() -> void:
+	var d: Project = doc()
+	var s: Sequence = seq()
+	if d == null or s == null:
+		return
+	var nests: Array[Clip] = []
+	var all_open: bool = true
+	for tr: Track in s.all_tracks():
+		for c: Clip in tr.clips:
+			if c.is_nest():
+				nests.append(c)
+				all_open = all_open and bool(c.nest.get("see_inside", false))
+	if nests.is_empty():
+		Events.toast("There are no nests in this sequence")
+		return
+	var cmds: Array[Command] = []
+	for c2: Clip in nests:
+		if bool(c2.nest.get("see_inside", false)) == all_open:
+			cmds.append(ClipCmds.SetNestOption.new(s.id, c2.id, "see_inside", not all_open))
+	Verbs.run(d, "See inside every nest" if not all_open else "Close every nest", cmds)
+
+
+static func lock_in_out() -> void:
+	var s: Sequence = seq()
+	if s == null:
+		return
+	if s.in_point < 0.0 or s.out_point <= s.in_point:
+		Events.toast("Mark an in and an out first, then lock the region between them")
+		return
+	load("res://doc/fences.gd").call("add_in_out", doc(), s)
+
+
+static func unlock_all() -> void:
+	load("res://doc/fences.gd").call("clear", doc(), seq())
 
 
 static func reveal_nested() -> void:
@@ -1122,3 +1183,18 @@ static func audio_tab(tab: String) -> void:
 	var p: Object = Bus.instance().panel("audio")
 	if p != null and p.has_method("show_tab"):
 		p.call("show_tab", tab)
+
+
+static func _bin_panel() -> Object:
+	return Bus.instance().panel("bin")
+
+
+static func toggle_bin_shelf() -> void:
+	var p: Object = _bin_panel()
+	if p != null and p.has_method("toggle_shelf"):
+		p.call("toggle_shelf")
+
+
+static func bin_shelf_open() -> bool:
+	var p: Object = _bin_panel()
+	return p != null and p.has_method("shelf_open") and bool(p.call("shelf_open"))

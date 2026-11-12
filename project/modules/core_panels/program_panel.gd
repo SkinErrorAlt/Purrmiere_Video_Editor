@@ -24,6 +24,7 @@ const Parenting := preload("res://doc/parenting.gd")
 const ParentUi := preload("res://modules/core_panels/parent_ui.gd")
 const PuppetUi := preload("res://modules/core_panels/puppet_ui.gd")
 const OnionSkin := preload("res://modules/core_panels/onion_skin.gd")
+const MonitorPieces := preload("res://modules/core_panels/monitor_pieces.gd")
 const PREF_SCREEN := "program.screen"
 const PREF_DEVICE := "audio.output_device"
 const PREF_SCREEN_GUIDES := "program.screen_guides"
@@ -64,6 +65,8 @@ var _proxy_tag: Label = null
 var _full_tag: Label = null
 var _duration: Label = null
 var _transport: Container = null
+var _tc_row: Control = null
+var _transport_row: Control = null
 var _buttons: Dictionary = {}
 var _settle: float = -1.0
 var _gizmo: Dictionary = {}
@@ -123,8 +126,10 @@ func _build(root_: Control) -> void:
 	view.connect("picture_input", _on_picture_input)
 	_setup_tools()
 	col.add_child(view)
+	col.add_child(load("res://modules/core_panels/object_bar.gd").call("make"))
 	load("res://modules/core_panels/effect_drop.gd").call("attach", view, Callable(self, "effect_drop_pick"), Callable(self, "effect_drop_region"))
 	var bar: HBoxContainer = header_row(col)
+	_tc_row = bar.get_parent()
 	_tc = TimecodeField.make(fps())
 	_tc.connect("time_entered", _on_tc)
 	bar.add_child(_tc)
@@ -165,6 +170,8 @@ func _build(root_: Control) -> void:
 	_transport = PmToolbar.make()
 	_transport.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	trow.add_child(_transport)
+	_transport_row = trow.get_parent()
+	Session.hold_changed.connect(_on_hold_changed)
 	_offer_new_buttons()
 	_rebuild_transport()
 	_refresh_title()
@@ -456,6 +463,18 @@ func _refresh_title() -> void:
 		_duration.text = tc(s.duration())
 	else:
 		_duration.text = "00:00:00:00"
+	_sync_still()
+
+
+func _on_hold_changed(_id: String) -> void:
+	_sync_still()
+
+
+func _sync_still() -> void:
+	var still: bool = Session.is_still(Session.seq_id)
+	for row: Control in [_tc_row, _transport_row]:
+		if row != null and is_instance_valid(row):
+			row.visible = not still
 
 
 func _apply_compositor() -> void:
@@ -557,6 +576,8 @@ func tick(dt: float) -> void:
 			FrameJobs.note("program render", Time.get_ticks_usec() - t0)
 	_flush_live_edit()
 	_tools_tick()
+	if _monitor_text_edit != null:
+		_monitor_text_edit.call("tick", self)
 	if _screens != null:
 		_screens.call("tick", dt)
 	if _select != null:
@@ -915,6 +936,8 @@ func _setup_tools() -> void:
 	MonitorMask.ensure_prefs(Prefs)
 	PuppetUi.register_command()
 	TrackerUi.register_commands()
+	ObjectUi.register_commands()
+	MaskBrush.register_commands()
 	var run: Node = TrackerUi.runner()
 	if run != null and not run.is_connected("changed", _on_tracker_changed):
 		run.connect("changed", _on_tracker_changed)
@@ -1123,7 +1146,15 @@ func _tools_tick() -> void:
 func handle_key(e: InputEventKey) -> bool:
 	if not e.pressed:
 		return false
+	if bool(monitor_text_edit().call("handle_key", e, self)):
+		return true
+	if not text_editing() and bool(letter_pose().call("handle_key", e, self)):
+		return true
 	if _space_key(e):
+		return true
+	if bool(mask_brush().call("handle_key", e, self)):
+		return true
+	if bool(object_ui().call("handle_key", e, self)):
 		return true
 	if bool(tracker_ui().call("handle_key", e, self)):
 		return true
@@ -1136,6 +1167,8 @@ func handle_key(e: InputEventKey) -> bool:
 	if PuppetUi.key_input(e, self):
 		return true
 	if bool(monitor_mask().call("handle_key", e, self)):
+		return true
+	if bool(monitor_text_path().call("handle_key", e, self)):
 		return true
 	if e.keycode == KEY_F11 and not (e.ctrl_pressed or e.alt_pressed or e.shift_pressed or e.meta_pressed):
 		if not e.echo:
@@ -1469,17 +1502,34 @@ func _draw_overlay(ci: CanvasItem, pic: Rect2) -> void:
 	motion_path().call("draw", ci, pic, self)
 	_draw_snap(ci, pic)
 	monitor_handles().call("draw", ci, pic, self)
+	MonitorPieces.draw(ci, pic, self)
 	monitor_mask().call("draw", ci, pic, self)
+	monitor_text_path().call("draw", ci, pic, self)
 	ParentUi.draw(ci, pic, self)
 	PuppetUi.draw(ci, pic, self)
 	tracker_ui().call("draw", ci, pic, self)
+	object_ui().call("draw", ci, pic, self)
+	mask_brush().call("draw", ci, pic, self)
+	monitor_text_edit().call("draw", ci, pic, self)
 	var c: Clip = gizmo_clip()
 	_gizmo = {}
+	if text_editing():
+		view.call("hide_outline")
+		return
+	if MonitorLetterPose.on and MonitorLetterPose.is_title(doc(), c):
+		letter_pose().call("draw", ci, pic, self)
+		view.call("hide_outline")
+		return
 	if c == null or pic.size.x <= 0.0:
 		view.call("hide_outline")
 		return
 	var made: Dictionary = quad_for(c)
 	var src: PackedVector2Array = made.get("quad", PackedVector2Array())
+	var words: bool = _is_title(c)
+	if words:
+		var wq: PackedVector2Array = MonitorPick.words_quad_of_clip(c, seq(), doc(), seq().playhead)
+		if wq.size() == 4:
+			src = wq
 	if src.size() != 4:
 		view.call("hide_outline")
 		return
@@ -1497,22 +1547,116 @@ func _draw_overlay(ci: CanvasItem, pic: Rect2) -> void:
 		_gizmo = {"clip_id": c.id, "centre": centre, "corners": corners, "rotate": PackedVector2Array(), "pic": pic, "axis_x": axis_x, "axis_y": axis_y, "shown": false}
 		return
 	var ink: Color = _select.call("outline_colour") if _select != null else Tk.c["accent"]
+	if words:
+		ink = TEXT_BOX_INK
 	_draw_outlines(ci, pic, c, corners, ink)
-	var h: float = HANDLE
-	var ring: Color = Tk.c["accent_dim"] if _select == null or String(_select.call("colour_text")).is_empty() else Color(ink.r, ink.g, ink.b, ink.a * 0.6)
 	var rot_handles: PackedVector2Array = PackedVector2Array()
+	var edges: PackedVector2Array = PackedVector2Array()
 	for i: int in corners.size():
 		var p: Vector2 = corners[i]
-		ci.draw_rect(Rect2(p - Vector2(h, h) * 0.5, Vector2(h, h)), ink, true)
 		var dir: Vector2 = (p - middle).normalized()
 		if dir == Vector2.ZERO:
 			dir = Vector2.RIGHT
-		var rp: Vector2 = p + dir * ROTATE_REACH
-		ci.draw_arc(rp, 3.5, 0.0, TAU, 12, ring, 1.0, true)
-		rot_handles.append(rp)
+		rot_handles.append(p + dir * ROTATE_REACH)
+		edges.append((corners[i] + corners[(i + 1) % 4]) * 0.5)
+	for p2: Vector2 in corners:
+		_draw_handle(ci, p2, ink)
+	for p3: Vector2 in edges:
+		_draw_handle(ci, p3, ink)
 	_draw_anchor(ci, centre, ink)
-	_gizmo = {"clip_id": c.id, "centre": centre, "corners": corners, "rotate": rot_handles, "pic": pic, "axis_x": axis_x, "axis_y": axis_y, "shown": true}
+	_gizmo = {"clip_id": c.id, "centre": centre, "corners": corners, "edges": edges, "rotate": rot_handles, "pic": pic, "axis_x": axis_x, "axis_y": axis_y, "shown": true, "words": words, "box": words and _is_box_title(c)}
+	if _hover_handle == "rotate":
+		_draw_rotate_cue(ci, _hover_at)
 	pair_place().call("draw", ci, pic, self)
+
+
+const TEXT_BOX_INK := Color(0.2, 0.56, 1.0, 1.0)
+const HANDLE_FILL := Color(1.0, 1.0, 1.0, 1.0)
+const ROTATE_ZONE := 22.0
+
+var _hover_handle: String = ""
+var _hover_at: Vector2 = Vector2.ZERO
+
+
+func _draw_handle(ci: CanvasItem, p: Vector2, ink: Color) -> void:
+	var h: float = HANDLE
+	var r: Rect2 = Rect2((p - Vector2(h, h) * 0.5).round(), Vector2(h, h))
+	ci.draw_rect(r, HANDLE_FILL, true)
+	ci.draw_rect(r, ink, false, 1.0)
+
+
+func _draw_rotate_cue(ci: CanvasItem, at: Vector2) -> void:
+	var c0: Vector2 = at + Vector2(12.0, 12.0)
+	ci.draw_arc(c0, 6.0, -PI * 0.95, PI * 0.35, 14, Color(0.0, 0.0, 0.0, 0.6), 3.0, true)
+	ci.draw_arc(c0, 6.0, -PI * 0.95, PI * 0.35, 14, Color.WHITE, 1.5, true)
+	var tip: Vector2 = c0 + Vector2(cos(PI * 0.35), sin(PI * 0.35)) * 6.0
+	ci.draw_colored_polygon(PackedVector2Array([tip + Vector2(-4.0, -1.0), tip + Vector2(3.0, -3.0), tip + Vector2(0.0, 4.0)]), Color.WHITE)
+
+
+func _is_title(c: Clip) -> bool:
+	var d: Project = doc()
+	if d == null or c == null or c.is_nest():
+		return false
+	var m: MediaItem = d.media_by_id(c.media_id)
+	return m != null and m.kind == "title"
+
+
+func title_props_now(c: Clip) -> Dictionary:
+	var d: Project = doc()
+	var s: Sequence = seq()
+	if d == null or s == null or c == null:
+		return {}
+	var m: MediaItem = d.media_by_id(c.media_id)
+	if m == null or m.kind != "title":
+		return {}
+	var props: Dictionary = m.props.duplicate(true)
+	var now: Dictionary = c.props_at(s.playhead - c.start, s.fps)
+	for k: Variant in now.keys():
+		props[k] = now[k]
+	return TitleStyle.merged("title", {}, props, m.label)
+
+
+func _is_box_title(c: Clip) -> bool:
+	return TextFrame.is_box(title_props_now(c))
+
+
+func _cursor_for(handle: String, p: Vector2) -> Control.CursorShape:
+	if handle == "move":
+		return Control.CURSOR_MOVE
+	if handle == "rotate":
+		return Control.CURSOR_CROSS
+	if handle.begins_with("scale") and not _gizmo.is_empty():
+		var centre: Vector2 = _gizmo["centre"]
+		var v: Vector2 = p - centre
+		if handle == "scale_x":
+			v = _gizmo["axis_x"]
+		elif handle == "scale_y":
+			v = _gizmo["axis_y"]
+		var a: float = fposmod(rad_to_deg(v.angle()), 180.0)
+		if a < 22.5 or a >= 157.5:
+			return Control.CURSOR_HSIZE
+		if a < 67.5:
+			return Control.CURSOR_FDIAGSIZE
+		if a < 112.5:
+			return Control.CURSOR_VSIZE
+		return Control.CURSOR_BDIAGSIZE
+	return Control.CURSOR_ARROW
+
+
+func _hover(p: Vector2) -> void:
+	if view == null:
+		return
+	var h: String = "" if text_editing() else _handle_at(p)
+	if Session.tool_id == "type":
+		h = ""
+		view.mouse_default_cursor_shape = Control.CURSOR_IBEAM
+	elif Session.tool_id == "select" or Session.tool_id.is_empty():
+		view.mouse_default_cursor_shape = _cursor_for(h, p)
+	var redraw: bool = (h == "rotate") != (_hover_handle == "rotate") or (h == "rotate" and p.distance_to(_hover_at) > 0.5)
+	_hover_handle = h
+	_hover_at = p
+	if redraw:
+		view.call("redraw_overlay")
 
 
 func outline_shown() -> bool:
@@ -1561,21 +1705,30 @@ func _handle_at(p: Vector2) -> String:
 		return ""
 	var corners: PackedVector2Array = _gizmo["corners"]
 	var rots: PackedVector2Array = _gizmo["rotate"]
+	var edges: PackedVector2Array = _gizmo.get("edges", PackedVector2Array())
+	var inside: bool = Geometry2D.is_point_in_polygon(p, corners)
 	if bool(_gizmo.get("shown", true)):
-		for i: int in rots.size():
-			if p.distance_to(rots[i]) <= 8.0:
-				return "rotate"
 		for i: int in corners.size():
 			if p.distance_to(corners[i]) <= HANDLE:
 				return "scale"
-	if Geometry2D.is_point_in_polygon(p, corners):
+		for i: int in edges.size():
+			if p.distance_to(edges[i]) <= HANDLE:
+				return "scale_x" if i % 2 == 1 else "scale_y"
+		for i: int in rots.size():
+			if p.distance_to(rots[i]) <= 8.0:
+				return "rotate"
+		if not inside:
+			for i: int in corners.size():
+				if p.distance_to(corners[i]) <= ROTATE_ZONE:
+					return "rotate"
+	if inside:
 		return "move"
 	return ""
 
 
 func _grab_handle_at(p: Vector2) -> bool:
 	var h: String = _handle_at(p)
-	return h == "scale" or h == "rotate"
+	return h.begins_with("scale") or h == "rotate"
 
 
 func open_sample_menu(at: Vector2) -> Control:
@@ -1596,6 +1749,16 @@ func _on_picture_input(event: InputEvent, pic: Rect2) -> void:
 	if not _region.is_empty():
 		_region_input(event, pic)
 		return
+	if _gizmo_drag.is_empty() and not text_editing() and bool(letter_pose().call("input", event, pic, self)):
+		view.accept_event()
+		return
+	if _gizmo_drag.is_empty() and bool(monitor_text_edit().call("input", event, pic, self)):
+		view.accept_event()
+		return
+	if _gizmo_drag.is_empty() and bool(mask_brush().call("input", event, pic, self)):
+		return
+	if _gizmo_drag.is_empty() and bool(object_ui().call("input", event, pic, self)):
+		return
 	if _gizmo_drag.is_empty() and bool(tracker_ui().call("input", event, pic, self)):
 		return
 	if _gizmo_drag.is_empty() and _motion_path_input(event, pic):
@@ -1606,9 +1769,13 @@ func _on_picture_input(event: InputEvent, pic: Rect2) -> void:
 		return
 	if _gizmo_drag.is_empty() and bool(monitor_mask().call("pen_input", event, pic, self)):
 		return
+	if _gizmo_drag.is_empty() and MonitorPieces.input(event, pic, self):
+		return
 	if _gizmo_drag.is_empty() and bool(monitor_handles().call("input", event, pic, self)):
 		return
 	if _gizmo_drag.is_empty() and bool(monitor_mask().call("input", event, pic, self)):
+		return
+	if _gizmo_drag.is_empty() and bool(monitor_text_path().call("input", event, pic, self)):
 		return
 	if _gizmo_drag.is_empty() and bool(pair_place().call("input", event, pic, self)):
 		return
@@ -1621,24 +1788,6 @@ func _on_picture_input(event: InputEvent, pic: Rect2) -> void:
 		if mb.button_index != MOUSE_BUTTON_LEFT:
 			return
 		if mb.pressed and Session.tool_id == "type":
-			if mb.double_click:
-				return
-			var target: Track = null
-			for tr: Track in s.video_tracks:
-				if tr.targeted and not tr.locked:
-					target = tr
-					break
-			var made: String = Verbs.new_title_clip(d, s, target.id if target != null else "", s.playhead)
-			if made.is_empty():
-				Events.toast("No room for a title at the playhead")
-			else:
-				var ec: Object = bus().panel("effect_controls")
-				if ec != null and ec.has_method("focus_text"):
-					ec.call("focus_text")
-				var pos: Vector2 = (mb.position - pic.position) / pic.size - Vector2(0.5, 0.5)
-				var c_new: Clip = s.clip_by_id(made)
-				if c_new != null and pic.size.x > 0.0:
-					Verbs.set_clip_param(d, s, made, "transform.pos", [pos.x * float(s.width), pos.y * float(s.height)], -1.0)
 			return
 		if mb.pressed and mb.double_click and not _grab_handle_at(mb.position) and _title_double_click(mb, pic):
 			return
@@ -1651,6 +1800,8 @@ func _on_picture_input(event: InputEvent, pic: Rect2) -> void:
 				return
 			if not _start_gizmo_drag(String(_gizmo["clip_id"]), handle, mb.position, pic):
 				return
+			if handle.begins_with("scale") and bool(_gizmo.get("box", false)):
+				_begin_box_resize(mb.position, pic)
 			if handle == "move" and _clicking():
 				_gizmo_drag["click"] = _click_info(mb)
 			view.accept_event()
@@ -1665,6 +1816,7 @@ func _on_picture_input(event: InputEvent, pic: Rect2) -> void:
 			view.call("redraw_overlay")
 		return
 	if event is InputEventMouseMotion and _gizmo_drag.is_empty():
+		_hover((event as InputEventMouseMotion).position)
 		_warm_pick()
 		return
 	if event is InputEventMouseMotion and not _gizmo_drag.is_empty():
@@ -1698,7 +1850,12 @@ func _on_picture_input(event: InputEvent, pic: Rect2) -> void:
 			path = "transform.pos"
 			value = [np.x, np.y]
 			key_at = float(_gizmo_drag["key_pos"])
-		elif handle == "scale":
+		elif handle.begins_with("scale") and _gizmo_drag.has("box_drag"):
+			_drag_box(d, s, c, mm.position, pic)
+			view.call("redraw_overlay")
+			view.accept_event()
+			return
+		elif handle.begins_with("scale"):
 			var s0: Vector2 = _gizmo_drag["scale"]
 			var ax: Vector2 = _gizmo_drag["axis_x"]
 			var ay: Vector2 = _gizmo_drag["axis_y"]
@@ -1708,9 +1865,17 @@ func _on_picture_input(event: InputEvent, pic: Rect2) -> void:
 			var fy: float = _pull(to_pivot.dot(ay), from_pivot.dot(ay))
 			var linked: bool = bool(c.transform.get("scale_linked", true))
 			var lead: float = fx if absf(from_pivot.dot(ax)) >= absf(from_pivot.dot(ay)) else fy
+			if handle == "scale_x":
+				lead = fx
+			elif handle == "scale_y":
+				lead = fy
 			var ns: Vector2 = Vector2(s0.x * fx, s0.y * fy)
 			if linked:
 				ns = s0 * lead
+			elif handle == "scale_x":
+				ns = Vector2(s0.x * fx, s0.y)
+			elif handle == "scale_y":
+				ns = Vector2(s0.x, s0.y * fy)
 			elif mm.shift_pressed:
 				ns = Vector2(s0.x * lead, s0.y)
 			ns = _snap_scale(ns, s0, linked, mm)
@@ -1796,7 +1961,85 @@ func _on_whole_view() -> void:
 
 const RecordCmds := preload("res://doc/commands/record_cmds.gd")
 const RecordButton := preload("res://modules/core_panels/record_button.gd")
-const GIZMO_LABELS: Dictionary = {"transform.pos": "Move", "transform.scale": "Scale", "transform.rotation": "Rotate", "transform.anchor": "Move anchor point"}
+const GIZMO_LABELS: Dictionary = {"transform.pos": "Move", "transform.scale": "Scale", "transform.rotation": "Rotate", "transform.anchor": "Move anchor point", "props.box_w": "Resize text box"}
+
+
+func _begin_box_resize(press: Vector2, pic: Rect2) -> void:
+	var s: Sequence = seq()
+	var c: Clip = s.clip_by_id(String(_gizmo_drag.get("clip_id", ""))) if s != null else null
+	if c == null:
+		return
+	var props: Dictionary = title_props_now(c)
+	var d: Project = doc()
+	var m: MediaItem = d.media_by_id(c.media_id)
+	var size: Vector2 = MonitorPick.layer_size(c, m, s, d)
+	var made: Dictionary = quad_for(c)
+	var q: Variant = made.get("quad", PackedVector2Array())
+	if not (q is PackedVector2Array) or (q as PackedVector2Array).size() != 4 or size.x < 2.0:
+		return
+	var qq: PackedVector2Array = q
+	var xf: Transform2D = Transform2D(qq[1] - qq[0], qq[3] - qq[0], qq[0])
+	if absf(xf.determinant()) < 0.000001:
+		return
+	var box: Rect2 = TextFrame.box_rect(props, size)
+	var lp: Vector2 = _seq_to_layer(xf, size, press, pic)
+	var side: Vector2i = Vector2i.ZERO
+	var rel: Vector2 = (lp - box.get_center()) / (box.size * 0.5)
+	var handle: String = String(_gizmo_drag["handle"])
+	if handle != "scale_y":
+		side.x = 1 if rel.x >= 0.0 else -1
+	if handle != "scale_x":
+		side.y = 1 if rel.y >= 0.0 else -1
+	var lt: float = c.anim_time(s.playhead - c.start)
+	_gizmo_drag["box_drag"] = {
+		"xf": xf, "size": size, "box": box, "press": lp, "side": side,
+		"k": TextFrame.scale_of(size),
+		"key_w": bus().key_time_for(c, "props.box_w", s.playhead),
+		"key_h": bus().key_time_for(c, "props.box_h", s.playhead),
+		"pos": AnimProp.evaluate_vec2(c.transform["pos"], c.inner_time("transform.pos", lt), c.duration, s.fps),
+	}
+
+
+func _seq_to_layer(xf: Transform2D, size: Vector2, at: Vector2, pic: Rect2) -> Vector2:
+	var s: Sequence = seq()
+	var k: float = pic.size.x / maxf(float(s.width), 1.0)
+	var seq_p: Vector2 = (at - pic.position) / maxf(k, 0.0001)
+	return (xf.affine_inverse() * seq_p) * size
+
+
+func _drag_box(d: Project, s: Sequence, c: Clip, at: Vector2, pic: Rect2) -> void:
+	var bd: Dictionary = _gizmo_drag["box_drag"]
+	var xf: Transform2D = bd["xf"]
+	var size: Vector2 = bd["size"]
+	var box: Rect2 = bd["box"]
+	var side: Vector2i = bd["side"]
+	var delta: Vector2 = _seq_to_layer(xf, size, at, pic) - (bd["press"] as Vector2)
+	var lo: Vector2 = box.position
+	var hi: Vector2 = box.end
+	var floor_px: float = TextFrame.MIN_BOX * 2.0 * float(bd["k"])
+	if side.x > 0:
+		hi.x = maxf(box.end.x + delta.x, lo.x + floor_px)
+	elif side.x < 0:
+		lo.x = minf(box.position.x + delta.x, hi.x - floor_px)
+	if side.y > 0:
+		hi.y = maxf(box.end.y + delta.y, lo.y + floor_px)
+	elif side.y < 0:
+		lo.y = minf(box.position.y + delta.y, hi.y - floor_px)
+	var k: float = maxf(float(bd["k"]), 0.0001)
+	var shift: Vector2 = lo - box.position
+	var into: Transform2D = _gizmo_drag["into"]
+	var world: Vector2 = xf.basis_xform(shift / size)
+	var np: Vector2 = (bd["pos"] as Vector2) + into.basis_xform(world)
+	_gizmo_drag["path"] = "props.box_w"
+	var writes: Array = [["props.box_w", (hi.x - lo.x) / k, float(bd["key_w"])], ["props.box_h", (hi.y - lo.y) / k, float(bd["key_h"])]]
+	if not shift.is_zero_approx():
+		writes.append(["transform.pos", [np.x, np.y], float(_gizmo_drag["key_pos"])])
+	for w: Array in writes:
+		var path: String = w[0]
+		var key_at: float = w[2]
+		var current: Dictionary = c.get_param(path)
+		var next: Dictionary = AnimProp.make(w[1]) if key_at < 0.0 else AnimProp.set_key(current if not current.is_empty() else AnimProp.make(w[1]), c.param_time(path, key_at - c.start), w[1])
+		d.undo.live(ClipCmds.SetClipParam.new(s.id, c.id, path, next))
 const ANCHOR_REACH := 5.0
 const ANCHOR_ARM := 6.0
 
@@ -1974,6 +2217,22 @@ func title_at(pos: Vector2, pic: Rect2) -> String:
 	return c.id
 
 
+func edit_title_in_place(clip_id: String, at: Vector2, pic: Rect2) -> bool:
+	var s: Sequence = seq()
+	var c: Clip = s.clip_by_id(clip_id) if s != null else null
+	var te: RefCounted = monitor_text_edit()
+	if c == null or not bool(te.call("can_edit", self, c)):
+		return false
+	var t: Dictionary = te.call("target_of", self, c)
+	var idx: int = -1
+	if not t.is_empty():
+		idx = TextGlyphs.caret_at_point(t["layout"], te.call("_layer_at", self, pic, t, at))
+	if not bool(te.call("begin", self, clip_id, idx)):
+		return false
+	_gizmo_drag = {}
+	return true
+
+
 func open_title_editor(clip_id: String) -> bool:
 	var s: Sequence = seq()
 	if s == null or clip_id.is_empty():
@@ -1995,7 +2254,7 @@ func _title_double_click(mb: InputEventMouseButton, pic: Rect2) -> bool:
 	var id: String = title_at(mb.position, pic)
 	if id.is_empty():
 		return false
-	if not open_title_editor(id):
+	if not edit_title_in_place(id, mb.position, pic) and not open_title_editor(id):
 		return false
 	if view != null:
 		view.accept_event()
@@ -2160,9 +2419,65 @@ func monitor_mask() -> RefCounted:
 	return _monitor_mask
 
 
+const MonitorTextPath := preload("res://modules/core_panels/monitor_text_path.gd")
+
+var _monitor_text_path: RefCounted = null
+
+
+const MonitorTextEdit := preload("res://modules/core_panels/monitor_text_edit.gd")
+const TextGlyphs := preload("res://engine/text_glyphs.gd")
+const TitleStyle := preload("res://doc/title_style.gd")
+const TextFrame := preload("res://doc/text_frame.gd")
+
+var _monitor_text_edit: RefCounted = null
+
+
+func monitor_text_edit() -> RefCounted:
+	if _monitor_text_edit == null:
+		_monitor_text_edit = MonitorTextEdit.new()
+	return _monitor_text_edit
+
+
+const MonitorLetterPose := preload("res://modules/core_panels/monitor_letter_pose.gd")
+
+var _letter_pose: RefCounted = null
+
+
+func letter_pose() -> RefCounted:
+	if _letter_pose == null:
+		_letter_pose = MonitorLetterPose.new()
+	return _letter_pose
+
+
+func text_editing() -> bool:
+	return _monitor_text_edit != null and bool(_monitor_text_edit.call("editing"))
+
+
+func monitor_text_path() -> RefCounted:
+	if _monitor_text_path == null:
+		_monitor_text_path = MonitorTextPath.new()
+	return _monitor_text_path
+
+
 const TrackerUi := preload("res://modules/core_panels/tracker_ui.gd")
+const ObjectUi := preload("res://modules/core_panels/object_ui.gd")
+const MaskBrush := preload("res://modules/core_panels/mask_brush.gd")
 
 var _tracker_ui: RefCounted = null
+var _object_ui: RefCounted = null
+var _mask_brush: RefCounted = null
+
+
+func object_ui() -> RefCounted:
+	if _object_ui == null:
+		_object_ui = ObjectUi.new()
+	return _object_ui
+
+
+func mask_brush() -> RefCounted:
+	if _mask_brush == null:
+		_mask_brush = MaskBrush.new()
+	return _mask_brush
 
 
 func tracker_ui() -> RefCounted:

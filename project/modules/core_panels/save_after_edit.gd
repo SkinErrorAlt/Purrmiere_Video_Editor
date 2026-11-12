@@ -122,12 +122,18 @@ func pending() -> bool:
 func target_path() -> String:
 	if doc == null:
 		return ""
-	if not doc.path.is_empty():
+	if not _file_path().is_empty():
 		return doc.path
 	if recovery_path.is_empty():
 		recovery_path = Io.new_recovery_path(doc)
 		Io.own_recovery(recovery_path)
 	return recovery_path
+
+
+func _file_path() -> String:
+	if doc == null or Io.NewerFiles.is_held(doc.path):
+		return ""
+	return doc.path
 
 
 func _walk_done() -> void:
@@ -176,7 +182,7 @@ func _poll_write() -> void:
 
 
 func _tidy_recovery() -> void:
-	if recovery_path.is_empty() or doc == null or doc.path.is_empty() or writing:
+	if recovery_path.is_empty() or doc == null or _file_path().is_empty() or writing:
 		return
 	Io.remove_recovery(recovery_path)
 	recovery_path = ""
@@ -223,7 +229,7 @@ func flush() -> bool:
 	_tidy_recovery()
 	if not pending():
 		return true
-	if not doc.path.is_empty():
+	if not _file_path().is_empty():
 		var err: Error = Io.save_quiet(doc, doc.path)
 		if err != OK:
 			last_error = Io.last_error

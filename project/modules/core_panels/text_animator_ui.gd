@@ -15,6 +15,7 @@ const PmButton := preload("res://ui/kit/pm_button.gd")
 const PmDrop := preload("res://ui/kit/pm_drop.gd")
 const PmField := preload("res://ui/kit/pm_field.gd")
 const PmMenu := preload("res://ui/kit/pm_menu.gd")
+const SHEET_PATH := "res://modules/core_panels/text_presets_sheet.gd"
 const LIVE_LABEL := "Letter animation"
 const NUMBERS: Array = [
 	["start", "Start", 0.0, 100.0, 1.0, " %"],
@@ -39,6 +40,7 @@ var _doc: Project = null
 var _shape: String = ""
 var _list: VBoxContainer = null
 var _add_btn: Button = null
+var _browse_btn: Button = null
 var _fields: Dictionary = {}
 var _folded: Dictionary = {}
 
@@ -50,6 +52,12 @@ func _init() -> void:
 	var title: Label = PmLabel.trim("Letter animation", "text_bright")
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	head.add_child(title)
+	_browse_btn = PmButton.make("Presets", "type")
+	_browse_btn.name = "BrowsePresets"
+	_browse_btn.set("quiet", true)
+	PmUI.tip(_browse_btn, "Open the text presets: finished looks and your own saved ones, each with a picture of what it does")
+	_browse_btn.pressed.connect(_on_browse_pressed)
+	head.add_child(_browse_btn)
 	_add_btn = PmButton.make("Add", "plus")
 	_add_btn.name = "AddAnimator"
 	_add_btn.set("quiet", true)
@@ -389,6 +397,19 @@ func _on_add_pressed() -> void:
 	var menu: Control = PmMenu.open(_add_btn, add_items())
 	if menu != null and menu.is_inside_tree():
 		menu.connect("picked", _on_add_picked)
+
+
+func open_browser() -> Node:
+	if _doc == null or target() == null:
+		return null
+	var script: GDScript = load(SHEET_PATH)
+	if script == null:
+		return null
+	return script.call("open", self, _doc, seq_id, clip_id)
+
+
+func _on_browse_pressed() -> void:
+	open_browser()
 
 
 func _on_add_picked(id: String) -> void:

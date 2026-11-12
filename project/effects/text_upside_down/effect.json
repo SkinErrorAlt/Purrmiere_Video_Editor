@@ -1,0 +1,26 @@
+{
+ "id": "text_upside_down",
+ "label": "Upside Down",
+ "category": "Text",
+ "version": 1,
+ "applies_to": "text",
+ "text_transform": "upside_down",
+ "tags": [
+  "text",
+  "cipher"
+ ],
+ "blurb": "Turns the text over with upside down letters and reverses it, so it reads when the picture is turned round.",
+ "params": [
+  {
+   "key": "direction",
+   "label": "Direction",
+   "type": "enum",
+   "choices": [
+    "Flip",
+    "Flip back"
+   ],
+   "default": 0
+  }
+ ],
+ "passes": []
+}

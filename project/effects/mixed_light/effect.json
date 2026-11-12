@@ -1,0 +1,30 @@
+{
+ "id": "mixed_light",
+ "label": "Mixed Lighting",
+ "category": "Light & Shadow",
+ "tags": ["light"],
+ "version": 1,
+ "blurb": "The cinematographer's tungsten against moonlight look, worked out from the lamps in the shot: whatever a lamp in frame is lighting turns warm, falling off with distance from it, and everything the lamps do not reach turns cool, however bright it is. A pale wall far from any lamp goes blue while a dim corner beside a lamp goes amber, which a grade by brightness cannot do. Warm reach sets how far the lamp light carries; Show the lamp light shows where it lands.",
+ "params": [
+  {"key": "threshold", "label": "Lamp brightness", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.75},
+  {"key": "reach", "label": "Softness", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "warm_reach", "label": "Warm reach", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "practical_colour", "label": "Lamp colour", "type": "color", "default": [1.0, 0.72, 0.42, 1.0]},
+  {"key": "ambient_colour", "label": "Ambient colour", "type": "color", "default": [0.55, 0.72, 1.0, 1.0]},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.7},
+  {"key": "keep_brightness", "label": "Keep brightness", "type": "bool", "default": true},
+  {"key": "show_light", "label": "Show the lamp light", "type": "bool", "default": false}
+ ],
+ "passes": [
+  {"shader": "lamps.gdshader", "scale": 0.5},
+  {"shader": "down.gdshader", "scale": 0.5},
+  {"shader": "down.gdshader", "scale": 0.5},
+  {"shader": "down.gdshader", "scale": 0.5},
+  {"shader": "down.gdshader", "scale": 0.5},
+  {"shader": "up.gdshader", "scale": 2.0, "inputs": {"level_tex": 3}},
+  {"shader": "up.gdshader", "scale": 2.0, "inputs": {"level_tex": 2}},
+  {"shader": "up.gdshader", "scale": 2.0, "inputs": {"level_tex": 1}},
+  {"shader": "up.gdshader", "scale": 2.0, "inputs": {"level_tex": 0}},
+  {"shader": "compose.gdshader", "scale": 2.0}
+ ]
+}

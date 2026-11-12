@@ -1,0 +1,36 @@
+{
+ "id": "text_bacon",
+ "label": "Bacon",
+ "category": "Text",
+ "version": 1,
+ "applies_to": "text",
+ "text_transform": "bacon",
+ "tags": [
+  "text",
+  "cipher"
+ ],
+ "blurb": "Writes each letter as five A or B, the code Francis Bacon used to hide messages in two kinds of type.",
+ "params": [
+  {
+   "key": "alphabet",
+   "label": "Alphabet",
+   "type": "enum",
+   "choices": [
+    "26 letters, each its own code",
+    "24 letters, Bacon's own (I=J, U=V)"
+   ],
+   "default": 0
+  },
+  {
+   "key": "direction",
+   "label": "Direction",
+   "type": "enum",
+   "choices": [
+    "Encode",
+    "Decode"
+   ],
+   "default": 0
+  }
+ ],
+ "passes": []
+}

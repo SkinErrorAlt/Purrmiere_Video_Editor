@@ -1,0 +1,24 @@
+{
+ "id": "cut_burn",
+ "label": "Burn at Every Cut",
+ "category": "Time",
+ "tags": ["look", "light"],
+ "version": 1,
+ "blurb": "Finds every cut inside the clip by itself and burns the film at each one: the first frame of the new shot is white hot, and the burn eats back with a ragged, boiling orange edge towards the brightest part of the new shot, leaving it behind. Harder cuts burn hotter. Light leak washes coloured light in from the side instead, and Flash frames overexposes the first frames of each shot like a film camera coming up to speed. Put it on a whole edit, a nested sequence or a long recording: no keyframes and no splitting needed.",
+ "history": {"max": 62, "reach": ["burn_length", 1.15], "seconds": ["burn_length"]},
+ "params": [
+  {"key": "look", "label": "Look", "type": "enum", "choices": ["Burn", "Light leak", "Flash frames"], "default": 0},
+  {"key": "burn_length", "label": "Burn length", "type": "float", "min": 0.2, "max": 1.8, "step": 0.01, "default": 0.8, "unit": " s"},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "sensitivity", "label": "Cut sensitivity", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "burn_colour", "label": "Burn colour", "type": "color", "default": [1.0, 0.36, 0.06, 1.0]},
+  {"key": "hot_colour", "label": "Hot colour", "type": "color", "default": [1.0, 0.78, 0.42, 1.0]},
+  {"key": "ragged", "label": "Ragged edge", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.65}
+ ],
+ "passes": [
+  {"shader": "res://effects/_events/thumbs.gdshader", "scale": 0.125},
+  {"shader": "res://effects/_events/stats_change.gdshader", "scale": 0.25},
+  {"shader": "res://effects/_events/track_cut.gdshader", "scale": 1.0, "inputs": {"thumb_tex": 0}, "map": {"look_back": "burn_length"}},
+  {"shader": "apply.gdshader", "scale": 32.0}
+ ]
+}

@@ -1,0 +1,47 @@
+{
+ "id": "text_hmac",
+ "label": "HMAC",
+ "category": "Text",
+ "version": 1,
+ "applies_to": "text",
+ "text_transform": "hmac",
+ "tags": [
+  "text",
+  "crypto",
+  "hash"
+ ],
+ "blurb": "A keyed fingerprint of the text (RFC 2104): only someone with the key can make or check it. One way.",
+ "params": [
+  {
+   "key": "algorithm",
+   "label": "Algorithm",
+   "type": "enum",
+   "choices": [
+    "MD5",
+    "SHA-1",
+    "SHA-256",
+    "SHA-512"
+   ],
+   "default": 2
+  },
+  {
+   "key": "key",
+   "label": "Key",
+   "type": "string",
+   "default": "",
+   "keyable": true
+  },
+  {
+   "key": "output",
+   "label": "Written as",
+   "type": "enum",
+   "choices": [
+    "Hex",
+    "Hex, capitals",
+    "Base64"
+   ],
+   "default": 0
+  }
+ ],
+ "passes": []
+}

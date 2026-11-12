@@ -11,5 +11,8 @@
   {"key": "start_angle", "label": "Starts at", "type": "float", "min": 0, "max": 360, "step": 1, "default": 270, "unit": " deg"},
   {"key": "softness", "label": "Soft edge", "type": "float", "min": 0, "max": 0.5, "step": 0.01, "default": 0.16},
   {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 0}
+ ],
+ "handles": [
+  {"kind": "angle", "key": "start_angle", "space": "uv"}
  ]
 }

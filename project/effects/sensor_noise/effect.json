@@ -1,0 +1,22 @@
+{
+ "id": "sensor_noise",
+ "label": "Sensor Noise",
+ "category": "Noise & Grain",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "The noise of a digital camera pushed past its base ISO, worked out from the light each pixel caught: it rises in the shadows the way photon noise does, is strongest in the red and blue channels that white balance amplifies, comes out coarser in colour than in brightness because of the colour filter, clips at black so the deepest shadows lift and go grainy, and carries the faults of a real sensor: blotches of colour, column stripes that stay put, row banding that changes every frame and the odd hot pixel.",
+ "params": [
+  {"key": "gain", "label": "Gain above base ISO", "type": "float", "min": 0.0, "max": 9.0, "step": 0.05, "default": 5.5, "unit": " stops"},
+  {"key": "sensor", "label": "Sensor", "type": "enum", "choices": ["Full frame", "Super 35", "Phone"], "default": 1},
+  {"key": "balance", "label": "White balance", "type": "enum", "choices": ["Daylight", "Tungsten"], "default": 0},
+  {"key": "colour_noise", "label": "Colour noise", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.55},
+  {"key": "blotches", "label": "Colour blotches", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "blotch_size", "label": "Blotch size", "type": "float", "min": 4.0, "max": 60.0, "step": 0.5, "default": 16.0, "unit": " px"},
+  {"key": "columns", "label": "Column stripes", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "banding", "label": "Row banding", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "hot_pixels", "label": "Hot pixels", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.1},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0},
+  {"key": "animate", "label": "Moves each frame", "type": "bool", "default": true}
+ ],
+ "passes": "single"
+}

@@ -1,0 +1,17 @@
+{
+ "id": "ink_in_water",
+ "label": "Ink in Water",
+ "group": "Distort",
+ "space": "2D",
+ "from": ["ink diffusion / dye-in-water dissolve"],
+ "blurb": "A billowing cloud of ink blooms out from the middle of the frame, its edge feathering and curling like real pigment spreading through water, and the next shot forms inside the ink. A dark, pigment-heavy fringe rides the advancing front. Set how big the swirls are, how far the edge billows, how soft it feathers, and the ink's colour.",
+ "default_duration": 1.1,
+ "params": [
+  {"key": "timing", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth", "Strong", "Slow end", "Overshoot", "Bounce"], "default": 1},
+  {"key": "scale", "label": "Swirl size", "type": "float", "min": 2.0, "max": 14.0, "step": 0.1, "default": 5.0},
+  {"key": "warp_amt", "label": "Billow", "type": "float", "min": 0.0, "max": 1.2, "step": 0.01, "default": 0.45},
+  {"key": "feather", "label": "Softness", "type": "float", "min": 0.02, "max": 0.3, "step": 0.01, "default": 0.12},
+  {"key": "fringe", "label": "Ink fringe", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.55},
+  {"key": "ink_tint", "label": "Ink colour", "type": "color", "default": [0.08, 0.04, 0.07, 1.0]}
+ ]
+}

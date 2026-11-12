@@ -18,6 +18,6 @@
   {"key": "vary", "label": "New shape every shot", "type": "bool", "default": true},
   {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
  ],
- "handles": [{"kind": "point", "key": "position"}, {"kind": "angle", "key": "angle", "about": "position", "zero": "right", "turn": "cw"}],
+ "handles": [{"kind": "point", "key": "position"}, {"kind": "angle", "key": "angle", "about": "position", "zero": "right", "turn": "cw", "length": "size", "length_unit": "px"}],
  "passes": "single"
 }

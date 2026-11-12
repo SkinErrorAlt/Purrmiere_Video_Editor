@@ -40,7 +40,7 @@ const PRESET_LABELS: Dictionary = {
 	"24": "15:07",
 	"24s": "15:07:09",
 }
-const TOKENS: PackedStringArray = ["date", "time", "clock", "end", "today", "length", "into", "file", "name", "clips", "cuts", "edit_time", "project", "fps", "size"]
+const TOKENS: PackedStringArray = ["date", "time", "clock", "end", "today", "length", "into", "file", "name", "clips", "cuts", "edit_time", "project", "fps", "size", "sequence", "track", "folder", "timecode", "clip_timecode", "clip_no", "seq_size", "seq_fps", "marker", "marker_note", "file_date"]
 const TOKEN_LABELS: Dictionary = {
 	"date": "Date the clip under the text was recorded",
 	"time": "Time the recording started",
@@ -57,9 +57,21 @@ const TOKEN_LABELS: Dictionary = {
 	"project": "The project's name",
 	"fps": "The recording's frame rate",
 	"size": "The recording's size",
+	"sequence": "The sequence's name",
+	"track": "The track the clip under the text is on",
+	"folder": "The folder the file sits in",
+	"timecode": "The sequence timecode at this frame",
+	"clip_timecode": "How far into its own file the clip is, as timecode",
+	"clip_no": "Which clip this is in the sequence",
+	"seq_size": "The sequence's size",
+	"seq_fps": "The sequence's frame rate",
+	"marker": "The nearest marker's name",
+	"marker_note": "The nearest marker's note",
+	"file_date": "The date on the media file itself",
 }
-const NEED_DATE: PackedStringArray = ["date", "time", "clock", "end"]
+const NEED_DATE: PackedStringArray = ["date", "time", "clock", "end", "file_date"]
 const CAPTURE_TIME := "res://modules/core_panels/bin_views/capture_time.gd"
+const MoreTokens := preload("res://doc/data_text_tokens.gd")
 
 
 static func has_tokens(text: String) -> bool:
@@ -205,11 +217,12 @@ static func token_value(name: String, arg: String, ctx: Dictionary) -> String:
 		return duration_text(float(ctx.get("into", 0.0)), arg)
 	if name == "edit_time":
 		return duration_text(float(ctx.get("edit_seconds", 0.0)), arg if not arg.is_empty() else "words")
-	if name == "clips" or name == "cuts":
-		return str(int(ctx.get(name, 0)))
+	if name == "file_date":
+		return format(float(ctx.get("file_date", -1.0)), pattern_for(arg, "MMMM D, YYYY"))
+	if MoreTokens.is_number_token(name):
+		return MoreTokens.number_text(int(ctx.get(name, 0)), arg)
 	if name == "fps":
-		var f: float = float(ctx.get("fps", 0.0))
-		return str(int(round(f))) if absf(f - round(f)) < 0.005 else String.num(f, 2)
+		return MoreTokens.rate_text(float(ctx.get("fps", 0.0)))
 	return String(ctx.get(name, ""))
 
 
@@ -264,6 +277,7 @@ static func context(doc: Object, seq: Object, title: Object, t: float) -> Dictio
 		clips += (tr2.get("clips") as Array).size()
 	ctx["clips"] = clips
 	ctx["cuts"] = cuts_in(seq)
+	ctx.merge(MoreTokens.sequence_context(seq, t), true)
 	ctx["project"] = String(doc.get("name"))
 	ctx["edit_seconds"] = float(doc.call("edit_seconds")) if doc.has_method("edit_seconds") else 0.0
 	var c: Object = clip_under(seq, title, t)
@@ -274,8 +288,9 @@ static func context(doc: Object, seq: Object, title: Object, t: float) -> Dictio
 		return ctx
 	var path: String = String(m.get("path"))
 	var dur: float = float(m.get("duration"))
+	var stamp: int = file_time(path)
 	var CaptureTime: GDScript = load(CAPTURE_TIME)
-	var rec: Dictionary = CaptureTime.call("recorded", String(m.get("label")), path, file_time(path), dur, true, float(m.get("recorded_at")))
+	var rec: Dictionary = CaptureTime.call("recorded", String(m.get("label")), path, stamp, dur, true, float(m.get("recorded_at")))
 	ctx["rec_start"] = float(rec.get("start", -1.0))
 	ctx["rec_end"] = float(rec.get("end", -1.0))
 	ctx["length"] = dur
@@ -283,5 +298,6 @@ static func context(doc: Object, seq: Object, title: Object, t: float) -> Dictio
 	ctx["file"] = path.get_file()
 	ctx["name"] = String(c.get("label")) if not String(c.get("label")).is_empty() else String(m.get("label"))
 	ctx["fps"] = float(m.get("fps"))
-	ctx["size"] = str(int(m.get("width"))) + " x " + str(int(m.get("height")))
+	ctx["size"] = MoreTokens.size_text(int(m.get("width")), int(m.get("height")))
+	ctx.merge(MoreTokens.clip_context(seq, c, m, path, float(ctx["into"]), stamp), true)
 	return ctx

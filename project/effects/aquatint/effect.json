@@ -1,0 +1,23 @@
+{
+ "id": "aquatint",
+ "label": "Aquatint",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Prints the picture as an aquatint etching. The plate was dusted with rosin and bitten in acid a few times, stopping out the lighter tones between bites, so each tone is a flat step of the same reticulated grain: a web of etched channels holding ink around tiny clear islands, open and pale after one bite and almost solid after the last. Etched lines firm up the drawing, a film of plate tone is left where the plate was wiped by hand, darker towards the corners, and the print sits on soft damp rag paper. Plate mark presses the edge of the plate into the paper.",
+ "params": [
+  {"key": "bites", "label": "Bites", "type": "int", "min": 2, "max": 8, "step": 1, "default": 5},
+  {"key": "contrast", "label": "Contrast", "type": "float", "min": 0.5, "max": 2.5, "step": 0.01, "default": 1.15},
+  {"key": "grain", "label": "Rosin grain", "type": "float", "min": 1.0, "max": 10.0, "step": 0.1, "default": 2.6, "unit": " px"},
+  {"key": "lines", "label": "Etched lines", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "plate_tone", "label": "Plate tone", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45},
+  {"key": "plate_mark", "label": "Plate mark margin", "type": "float", "min": 0.0, "max": 0.2, "step": 0.005, "default": 0.0},
+  {"key": "ink", "label": "Ink", "type": "color", "default": [0.17, 0.11, 0.08, 1.0]},
+  {"key": "paper", "label": "Paper", "type": "color", "default": [0.95, 0.92, 0.85, 1.0]},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": [
+  {"shader": "res://effects/batik/soften.gdshader", "scale": 0.5},
+  {"shader": "etch.gdshader", "scale": 2.0}
+ ]
+}

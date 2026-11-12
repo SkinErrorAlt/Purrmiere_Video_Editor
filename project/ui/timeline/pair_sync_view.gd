@@ -1113,8 +1113,7 @@ class _Overlay:
 		var ph: float = Session.playhead()
 		var x: float = float(view.call("x_of", ph))
 		if x >= HEAD_W and x <= size.x:
-			draw_rect(Rect2(x, top - 22.0, 1.0, size.y - top + 22.0), Tk.c["sol"], true)
-			var head: PackedVector2Array = PackedVector2Array([Vector2(x - 5.0, top - 22.0), Vector2(x + 6.0, top - 22.0), Vector2(x + 6.0, top - 12.0), Vector2(x + 0.5, top - 6.0), Vector2(x - 5.0, top - 12.0)])
-			draw_colored_polygon(head, Tk.c["sol"])
+			var fps: float = Session.seq().fps if Session.seq() != null and Session.seq().fps > 0.0 else 30.0
+			load("res://ui/timeline/playhead_look.gd").call("draw", self, x, top - 22.0, size.y, {"frame_px": float(view.call("x_of", ph + 1.0 / fps)) - x, "band_top": top})
 		var tint: Color = Color(0.85, 0.1, 0.1, 0.1) if Tk.is_light() else Color(0.86, 0.14, 0.14, 0.14)
 		draw_rect(Rect2(Vector2.ZERO, size), tint, true)

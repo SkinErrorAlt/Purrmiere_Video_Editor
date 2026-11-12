@@ -10,6 +10,7 @@ const PAIR_VIEW_ID := "pair_view"
 const KIND_MIX := "mix"
 const KIND_VIEWS := "views"
 const KIND_VIEW := "view"
+const KIND_NEST := "nest"
 const GRID := 10
 const SETS_MAX := 64
 const SIGS_MAX := 16
@@ -29,7 +30,7 @@ static func forget() -> void:
 
 
 static func is_mix_kind(kind: String) -> bool:
-	return kind == KIND_MIX or kind == KIND_VIEWS or kind == KIND_VIEW
+	return kind == KIND_MIX or kind == KIND_VIEWS or kind == KIND_VIEW or kind == KIND_NEST
 
 
 static func _has_sound(doc: Object, c: Object) -> bool:
@@ -164,6 +165,11 @@ static func label_of(doc: Object, seq: Object, own: Object, src: Dictionary) -> 
 		return "Everything you hear here"
 	if kind == KIND_VIEWS:
 		return "Pair View: the view on screen"
+	if kind == KIND_NEST:
+		var nc: Object = doc.call("clip_by_id", String(src.get("clip", ""))) if doc != null else null
+		if nc == null:
+			return "The nested sequence is gone"
+		return "Nest: " + (String(nc.get("label")) if not String(nc.get("label")).is_empty() else String(nc.get("id")))
 	var n: int = int(src.get("view", 0))
 	var names: PackedStringArray = PackedStringArray()
 	var pc: Object = _chosen_pair(doc, seq, own, src)
@@ -418,6 +424,8 @@ static func part_set(doc: Object, seq: Object, own: Object, src: Dictionary, edg
 	var sources: Array[Dictionary] = pair_sources(seq)
 	if kind == KIND_MIX:
 		_heard_parts(doc, seq, edges, _span(-INF, INF), [], PackedStringArray([String(seq.get("id"))]), [], sources, parts)
+	elif kind == KIND_NEST:
+		_nest_parts(doc, seq, String(src.get("clip", "")), edges, parts)
 	else:
 		var audible: Array = _audible_tracks(seq)
 		var videos: Array = []
@@ -467,6 +475,17 @@ static func part_set(doc: Object, seq: Object, own: Object, src: Dictionary, edg
 		_sets = {}
 	_sets[key] = out
 	return out
+
+
+static func _nest_parts(doc: Object, seq: Object, clip_id: String, edges: PackedFloat64Array, out: Array) -> void:
+	var n: Object = seq.call("clip_by_id", clip_id) if seq != null else null
+	if n == null or not bool(n.get("enabled")):
+		return
+	var sid: String = nest_sid(doc, n)
+	var tr: Object = seq.call("track_of", clip_id)
+	if sid.is_empty() or tr == null:
+		return
+	_nest_into(doc, seq, tr, n, sid, edges, _span(-INF, INF), [], PackedStringArray([String(seq.get("id"))]), out)
 
 
 static func state(pset: Dictionary) -> Dictionary:

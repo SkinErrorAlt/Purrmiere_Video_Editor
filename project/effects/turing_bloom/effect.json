@@ -1,0 +1,251 @@
+{
+ "id": "turing_bloom",
+ "label": "Turing Bloom",
+ "category": "Stylize",
+ "tags": [
+  "look"
+ ],
+ "version": 1,
+ "blurb": "Grows living animal markings out of the picture. A reaction diffusion pattern, the chemistry behind a zebra's stripes, a leopard's spots and the maze of brain coral, starts on the strong edges in the shot and spreads outwards from them over time, and the picture's own detail decides where each stripe and spot falls, so the markings hug faces, follow outlines and curve round shapes. Choose a maze, spots, stripes that run along the picture's contours like a fingerprint, or holes, and lay them into the picture's own colour, in two colours, or as raised coral. Key Growth, or let it grow over a set time.",
+ "params": [
+  {
+   "key": "growth",
+   "label": "Growth",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.7
+  },
+  {
+   "key": "grow_time",
+   "label": "Grows over",
+   "type": "float",
+   "min": 0.0,
+   "max": 30.0,
+   "step": 0.1,
+   "default": 6.0,
+   "unit": " s"
+  },
+  {
+   "key": "style",
+   "label": "Pattern",
+   "type": "enum",
+   "choices": [
+    "Maze",
+    "Spots",
+    "Stripes along the picture",
+    "Holes"
+   ],
+   "default": 0
+  },
+  {
+   "key": "size",
+   "label": "Pattern size",
+   "type": "float",
+   "min": 6.0,
+   "max": 120.0,
+   "step": 0.5,
+   "default": 40.0,
+   "unit": " px"
+  },
+  {
+   "key": "follow",
+   "label": "Follows the picture",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.6
+  },
+  {
+   "key": "grows_from",
+   "label": "Grows from",
+   "type": "enum",
+   "choices": [
+    "Edges",
+    "Dark parts",
+    "Everywhere"
+   ],
+   "default": 0
+  },
+  {
+   "key": "edge_level",
+   "label": "Edges that start it",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.35
+  },
+  {
+   "key": "look",
+   "label": "Look",
+   "type": "enum",
+   "choices": [
+    "In the picture's colour",
+    "Two colours",
+    "Coral"
+   ],
+   "default": 0
+  },
+  {
+   "key": "ink",
+   "label": "Marking colour",
+   "type": "color",
+   "default": [
+    0.12,
+    0.06,
+    0.03,
+    1.0
+   ]
+  },
+  {
+   "key": "paper",
+   "label": "Ground colour",
+   "type": "color",
+   "default": [
+    0.96,
+    0.9,
+    0.78,
+    1.0
+   ]
+  },
+  {
+   "key": "strength",
+   "label": "Strength",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.75
+  },
+  {
+   "key": "relief",
+   "label": "Relief",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.4
+  },
+  {
+   "key": "seed",
+   "label": "Seed",
+   "type": "int",
+   "min": 0,
+   "max": 9999,
+   "step": 1,
+   "default": 0
+  }
+ ],
+ "passes": [
+  {
+   "shader": "seed.gdshader",
+   "scale": 0.5
+  },
+  {
+   "shader": "reach.gdshader",
+   "set": {
+    "hop": 16.0
+   }
+  },
+  {
+   "shader": "reach.gdshader",
+   "set": {
+    "hop": 8.0
+   }
+  },
+  {
+   "shader": "reach.gdshader",
+   "set": {
+    "hop": 4.0
+   }
+  },
+  {
+   "shader": "reach.gdshader",
+   "set": {
+    "hop": 2.0
+   }
+  },
+  {
+   "shader": "reach.gdshader",
+   "set": {
+    "hop": 1.0
+   }
+  },
+  {
+   "shader": "reach.gdshader",
+   "set": {
+    "hop": 6.0
+   }
+  },
+  {
+   "shader": "reach.gdshader",
+   "set": {
+    "hop": 3.0
+   }
+  },
+  {
+   "shader": "reach.gdshader",
+   "set": {
+    "hop": 1.5
+   }
+  },
+  {
+   "shader": "reach.gdshader",
+   "set": {
+    "hop": 1.0
+   }
+  },
+  {
+   "shader": "turing.gdshader"
+  },
+  {
+   "shader": "turing.gdshader"
+  },
+  {
+   "shader": "turing.gdshader"
+  },
+  {
+   "shader": "turing.gdshader"
+  },
+  {
+   "shader": "turing.gdshader"
+  },
+  {
+   "shader": "turing.gdshader"
+  },
+  {
+   "shader": "turing.gdshader"
+  },
+  {
+   "shader": "turing.gdshader"
+  },
+  {
+   "shader": "turing.gdshader"
+  },
+  {
+   "shader": "turing.gdshader"
+  },
+  {
+   "shader": "turing.gdshader"
+  },
+  {
+   "shader": "turing.gdshader"
+  },
+  {
+   "shader": "turing.gdshader"
+  },
+  {
+   "shader": "turing.gdshader"
+  },
+  {
+   "shader": "compose.gdshader",
+   "scale": 2.0,
+   "inputs": {
+    "grid_tex": 9
+   }
+  }
+ ]
+}

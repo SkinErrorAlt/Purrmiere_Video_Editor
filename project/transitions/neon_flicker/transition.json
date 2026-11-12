@@ -1,0 +1,17 @@
+{
+ "id": "neon_flicker",
+ "label": "Neon Flicker",
+ "group": "Glitch",
+ "space": "2D",
+ "from": ["Failing neon sign", "Motion Tube Flicker"],
+ "blurb": "The outgoing shot is a neon tube on its last legs. It stutters, drops out for a beat, comes back half lit with the gas glowing cold along the glass, and goes out. Then the incoming shot strikes: a hard flash, two or three false starts, and it holds. While a tube is struggling its bright parts bloom and bleed colour into the glass around them and everything else sinks to almost nothing, so the picture reads as light rather than as a picture. Set how badly it stutters, how far the glow bleeds and the colour of the gas.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "stutter", "label": "Stutter", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "bloom", "label": "Glow bleed", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "gas", "label": "Gas colour", "type": "color", "default": [0.45, 0.85, 1.0, 1.0]},
+  {"key": "gas_amount", "label": "Gas tint", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45},
+  {"key": "strike", "label": "Strike flash", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.9},
+  {"key": "floor_level", "label": "Dark level", "type": "float", "min": 0.0, "max": 0.4, "step": 0.01, "default": 0.04}
+ ]
+}

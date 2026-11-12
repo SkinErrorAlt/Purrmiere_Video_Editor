@@ -1,0 +1,41 @@
+{
+ "id": "roll_up",
+ "label": "Roll Up",
+ "category": "Distort",
+ "version": 1,
+ "blurb": "Rolls the picture up from one edge into a tight scroll of paper: every turn of the roll is there, lit and shadowed, the back of the paper shows on the outside, the paper's edges trace the spiral when you look at the end, and the roll casts its shadow on the picture and on whatever lies beneath. Search words: 3D, roll, scroll, poster, tube, blind, rolled up, paper, unroll, reveal.",
+ "params": [
+  {"key": "rolled", "label": "Rolled up", "type": "float", "min": 0, "max": 1, "step": 0.001, "default": 0.45, "group": "Roll"},
+  {"key": "edge", "label": "Rolls from", "type": "enum", "choices": ["The bottom edge", "The top edge", "The left edge", "The right edge"], "default": 0, "group": "Roll"},
+  {"key": "core", "label": "Core radius", "type": "float", "min": 0.002, "max": 0.3, "step": 0.001, "default": 0.03, "group": "Roll"},
+  {"key": "thickness", "label": "Paper thickness", "type": "float", "min": 1, "max": 40, "step": 0.1, "default": 6, "unit": " px", "group": "Roll"},
+  {"key": "tilt", "label": "Tilt (top away)", "type": "float", "min": -89, "max": 89, "step": 0.5, "default": 0, "unit": " °", "group": "Place"},
+  {"key": "swivel", "label": "Swivel (right side away)", "type": "float", "min": -89, "max": 89, "step": 0.5, "default": 0, "unit": " °", "group": "Place"},
+  {"key": "rotation", "label": "Rotation", "type": "float", "min": -180, "max": 180, "step": 0.5, "default": 0, "unit": " °", "group": "Place"},
+  {"key": "offset", "label": "Offset", "type": "vec2", "min": -2, "max": 2, "step": 0.001, "default": [0.0, 0.0], "group": "Place"},
+  {"key": "scale", "label": "Scale", "type": "float", "min": 0.05, "max": 4, "step": 0.01, "default": 1, "group": "Place"},
+  {"key": "distance", "label": "Camera distance", "type": "float", "min": 0.3, "max": 20, "step": 0.01, "default": 1.3737, "group": "Camera"},
+  {"key": "fov", "label": "Field of view", "type": "float", "min": 5, "max": 120, "step": 0.5, "default": 40, "unit": " °", "group": "Camera"},
+  {"key": "focus", "label": "Focus distance", "type": "float", "min": 0.05, "max": 40, "step": 0.01, "default": 1.3737, "group": "Camera"},
+  {"key": "lens_blur", "label": "Lens blur (at twice the focus distance)", "type": "float", "min": 0, "max": 60, "step": 0.1, "default": 0, "unit": " px", "group": "Camera"},
+  {"key": "light_angle", "label": "Light from", "type": "float", "min": -180, "max": 180, "step": 0.5, "default": -40, "unit": " °", "group": "Light"},
+  {"key": "light_height", "label": "Light height", "type": "float", "min": -90, "max": 90, "step": 0.5, "default": 40, "unit": " °", "group": "Light"},
+  {"key": "ambient", "label": "Ambient light", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 0.35, "group": "Light"},
+  {"key": "diffuse", "label": "Direct light", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 0.8, "group": "Light"},
+  {"key": "specular", "label": "Shine", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 0.12, "group": "Light"},
+  {"key": "gloss", "label": "Shine sharpness", "type": "float", "min": 1, "max": 256, "step": 0.5, "default": 18, "group": "Light"},
+  {"key": "shadows", "label": "Shadows on the paper", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.85, "group": "Light"},
+  {"key": "occlusion", "label": "Darken inside the roll", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.8, "group": "Light"},
+  {"key": "floor_shadow", "label": "Shadow on what lies beneath", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6, "group": "Light"},
+  {"key": "back_mode", "label": "Back of the paper shows", "type": "enum", "choices": ["The mirrored picture", "A colour", "Paper with the picture showing through"], "default": 2, "group": "Back of the paper"},
+  {"key": "back_colour", "label": "Paper colour", "type": "color", "default": [0.93, 0.91, 0.86, 1.0], "group": "Back of the paper"}
+ ],
+ "handles": [{"kind": "angle", "key": "light_angle"}],
+ "hidden_uniforms": ["out_depth", "colour_tex", "depth_tex"],
+ "passes": [
+  {"shader": "effect.gdshader"},
+  {"shader": "effect.gdshader", "scale": 0.5, "set": {"out_depth": true}, "when": {"param": "lens_blur", "gt": 0}},
+  {"shader": "res://effects/shape_morph/dof.gdshader", "inputs": {"colour_tex": 0}, "when": {"param": "lens_blur", "gt": 0}},
+  {"shader": "res://effects/shape_morph/dof_mix.gdshader", "scale": 2.0, "inputs": {"colour_tex": 0, "depth_tex": 1}, "when": {"param": "lens_blur", "gt": 0}}
+ ]
+}

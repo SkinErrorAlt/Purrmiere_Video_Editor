@@ -29,6 +29,7 @@ const LoopAudio := preload("res://engine/loop_audio.gd")
 const FxChains := preload("res://engine/audio_fx_chains.gd")
 const VeryLoud := preload("res://engine/very_loud.gd")
 const DriveBake := preload("res://engine/drive_bake.gd")
+const SoundAdjust := preload("res://engine/sound_adjust.gd")
 const STACK_LANE_SUFFIX := "_lane"
 const LANE_COUNT_KEY := "_lanes"
 const FEED_KEY := "feed"
@@ -191,6 +192,9 @@ static func prepare_graph(graph: Dictionary, fps: float) -> void:
 				prepare_entry(ce as Dictionary, CLIP_PROP_KEYS, fps)
 	if graph.get("master", null) is Dictionary:
 		prepare_entry(graph["master"] as Dictionary, TRACK_PROP_KEYS, fps)
+	for ad: Variant in graph.get(SoundAdjust.GRAPH_KEY, []):
+		if ad is Dictionary:
+			prepare_entry(ad as Dictionary, TRACK_PROP_KEYS, fps)
 	prepare_stats["usec"] = int(prepare_stats["usec"]) + (Time.get_ticks_usec() - started)
 
 
@@ -574,15 +578,20 @@ static func clip_entry(c: Clip, m: MediaItem, handles: Dictionary, seq: Sequence
 	var media_handle: int = handle_for(m, handles)
 	var stream: int = int(c.audio.get("stream", 0.0))
 	var render_path: String = ""
+	var rendered: bool = false
 	var render: String = str(c.audio.get("render", ""))
 	if not render.is_empty() and FileAccess.file_exists(render) and not StreamOff.is_off(m, stream):
 		media_handle = -1
 		stream = 0
 		render_path = render
+		rendered = true
+	elif media_handle < 0 and m != null and not m.path.is_empty() and FileAccess.file_exists(m.path):
+		render_path = m.path
 	return LoopAudio.tag(AnimTime.warp_audio_entry(c, {
 		"id": c.id,
 		"media": media_handle,
 		"path": render_path,
+		"rendered": rendered,
 		"stream": stream,
 		"start": c.start,
 		"duration": c.duration,
@@ -1013,6 +1022,7 @@ static func _build_stages(st: Dictionary, t_start: int, budget_usec: int) -> boo
 		"tracks": tracks,
 		"master": {"volume": seq.master_volume.duplicate(true) if seq != null else AnimProp.make(1.0), "effects": []},
 	}
+	SoundAdjust.stamp(doc, seq, graph)
 	VeryLoud.stamp(graph)
 	prepare_graph(graph, seq.fps if seq != null else 0.0)
 	st["graph"] = graph
@@ -1033,6 +1043,8 @@ static func live_entries(doc: Project, seq: Sequence, handles: Dictionary, clip_
 		for one: Clip in t.clips:
 			if one.id != clip_id:
 				continue
+			if SoundAdjust.is_sound_adjust(doc, t, one):
+				return out
 			found += 1
 			var heard: MediaItem = sounding_media(doc, t, one)
 			if heard != null:
@@ -1390,12 +1402,23 @@ static func crossfade_read(doc: Project, tr: Track, c: Clip, entry: Dictionary) 
 	apply_crossfades(tr, list, doc)
 
 
+static func live_gain_db(views: PackedInt32Array, sync: RefCounted) -> float:
+	var chosen: PackedInt32Array = sync.call("chosen_list")
+	for v: int in views:
+		if bool(sync.call("is_hidden", v)):
+			continue
+		if chosen.is_empty() or chosen.has(v):
+			return 0.0
+	return SILENT_DB
+
+
 static func sync_entry(entry: Dictionary, video: Clip, c: Clip, views: PackedInt32Array, sync: RefCounted, stream: int = -1) -> void:
 	var gain_uid: String = view_gain_uid(video, c, stream)
 	var kept: Array = []
 	for fx: Variant in entry.get("effects", []):
 		if String((fx as Dictionary).get("uid", "")) != gain_uid:
 			kept.append(fx)
+	kept.append({"id": VIEW_GAIN_ID, "uid": gain_uid, "enabled": true, "params": {"db": AnimProp.make(live_gain_db(views, sync))}})
 	entry["effects"] = kept
 	var all_hidden: bool = true
 	for v: int in views:

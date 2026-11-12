@@ -12,6 +12,10 @@ const PmLabel := preload("res://ui/kit/pm_label.gd")
 const SELF_PATH := "res://modules/core_panels/linked_sound.gd"
 const TITLE := "Linked sound: "
 const FOLD_KEY := "linked_sound"
+const AnimProp := preload("res://doc/anim_prop.gd")
+const StreamRoles := preload("res://doc/stream_roles.gd")
+const PmDrop := preload("res://ui/kit/pm_drop.gd")
+const LINKED_TAG := "@linked."
 
 
 static func sounds(s: Sequence, c: Clip) -> Array[Clip]:
@@ -62,10 +66,12 @@ static func build(panel: Object, c: Clip) -> void:
 	line.add_child(PmLabel.dim("Track " + track_name + ", stream " + name))
 	var pick: Button = PmButton.make("Show its own controls", "audio")
 	pick.set("quiet", true)
-	PmUI.tip(pick, "Select only this sound clip, to see its volume, pan and stream too")
+	PmUI.tip(pick, "Select only this sound clip, to see everything about it on its own")
 	pick.pressed.connect(Callable(load(SELF_PATH), "select_only").bind(c.id))
 	line.add_child(pick)
 	body.add_child(line)
+	for spec: Dictionary in row_specs(d, c):
+		panel.call("_add_row", body, spec)
 	var groups: Array[Dictionary] = panel.call("effect_groups", [c] as Array[Clip], true)
 	if groups.is_empty():
 		var none: HBoxContainer = PmUI.hbox(Tk.px(6.0))
@@ -90,3 +96,46 @@ static func select_only(clip_id: String) -> void:
 		return
 	var verbs: GDScript = load("res://doc/verbs.gd")
 	verbs.call("select", Session.doc, s, PackedStringArray([clip_id]), "replace", PackedStringArray([clip_id]))
+
+
+static func row_specs(d: Project, c: Clip) -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	if c == null:
+		return out
+	var tag: String = LINKED_TAG + c.id
+	out.append({"path": "audio.volume" + tag, "label": "Volume", "kind": "float", "min": 0.0, "max": 2.0, "step": 0.01, "suffix": " dB", "keyable": true, "db": true, "members": {c.id: "audio.volume"}})
+	out.append({"path": "audio.pan" + tag, "label": "Pan", "kind": "float", "min": -1.0, "max": 1.0, "step": 0.01, "keyable": true, "members": {c.id: "audio.pan"}})
+	var m: MediaItem = d.media_by_id(c.media_id) if d != null else null
+	if m != null and m.audio_streams.size() > 1:
+		var choices: Array = []
+		for i: int in m.audio_streams.size():
+			choices.append(PmDrop.choice(str(i), StreamRoles.menu_label(m, i)))
+		out.append({"path": "audio.stream" + tag, "label": "Stream", "kind": "enum", "field": "audio", "key": "stream", "choices": choices, "numeric": true, "members": {c.id: "audio.stream"}})
+	return out
+
+
+static func refresh_keys(panel: Object, r: Dictionary, ph: float) -> void:
+	var s: Sequence = panel.call("seq")
+	if s == null:
+		return
+	var members: Dictionary = (r["spec"] as Dictionary).get("members", {})
+	var bus: Object = panel.call("bus")
+	var animated: bool = false
+	var armed: bool = false
+	var keyed: bool = true
+	for cid: Variant in members.keys():
+		var c: Clip = s.clip_by_id(String(cid))
+		if c == null:
+			continue
+		var real: String = String(members[cid])
+		var p: Dictionary = c.get_param(real)
+		if AnimProp.is_animated(p):
+			animated = true
+			if not AnimProp.has_key_at(p, c.param_time(real, ph - c.start)):
+				keyed = false
+		if bus != null and bool(bus.call("is_armed", c.id, real)):
+			armed = true
+	(r["stopwatch"] as Button).set("active", animated or armed)
+	(r["nav"] as Control).modulate.a = 1.0 if animated else 0.35
+	if animated:
+		(r["diamond"] as Button).set("icon_name", "diamond" if keyed else "diamond_o")

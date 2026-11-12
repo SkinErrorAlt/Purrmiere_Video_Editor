@@ -1,0 +1,19 @@
+{
+ "id": "waterfall",
+ "label": "Waterfall",
+ "group": "Distort",
+ "space": "2D",
+ "from": ["Motion Water Pour", "Filmora Water Fall"],
+ "blurb": "Water comes over a lip at the top of the frame and falls down it, and the incoming shot arrives in the fall. It does not come over level: the edge breaks at different moments across the width, the way water does over a real rock shelf, with a bright line of white along the lip where it goes over. The sheet holds together near the top and comes apart as it drops. Lower down the threads stretch, the picture behind them smears along the fall, and the water turns to white where the air has got into it, so the top of the fall is clear and the bottom is churned. The leading edge is a lumpy roll of foam throwing spray out in front of it, and once the fall reaches the floor a soft plume of mist hangs across the bottom of the frame. When the water runs out it settles and clears to leave the new shot still. Set which way it runs, how many threads it breaks into, how hard they bend the picture, how far the fall stretches it, and how much foam, spray and mist it throws.",
+ "default_duration": 1.4,
+ "params": [
+  {"key": "run", "label": "Runs", "type": "enum", "choices": ["Downward", "Upward"], "default": 0},
+  {"key": "threads", "label": "Threads", "type": "float", "min": 4.0, "max": 90.0, "step": 1.0, "default": 26.0},
+  {"key": "bend", "label": "Water bend", "type": "float", "min": 0.0, "max": 0.1, "step": 0.001, "default": 0.026},
+  {"key": "smear", "label": "Stretch", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "foam", "label": "Foam", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.65},
+  {"key": "spray", "label": "Spray", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45},
+  {"key": "mist", "label": "Mist at the foot", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.55},
+  {"key": "uneven", "label": "Uneven lip", "type": "float", "min": 0.0, "max": 0.4, "step": 0.005, "default": 0.12}
+ ]
+}

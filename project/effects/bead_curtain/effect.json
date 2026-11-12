@@ -1,0 +1,152 @@
+{
+ "id": "bead_curtain",
+ "label": "Bead Curtain",
+ "category": "Physics",
+ "tags": [
+  "look"
+ ],
+ "version": 1,
+ "blurb": "The picture printed across a curtain of hanging bead strings, like the photo bead curtains hung in doorways. Whatever moves in the shot pushes through it: the strings it touches swing aside, carrying their beads and their bit of the picture with them, and sway back and forth until they hang still and the picture comes together again. A camera move sets the whole curtain swaying.",
+ "history": {
+  "max": 61,
+  "reach": [
+   "settle"
+  ],
+  "seconds": [
+   "settle"
+  ]
+ },
+ "params": [
+  {
+   "key": "strings",
+   "label": "Strings across",
+   "type": "int",
+   "min": 20,
+   "max": 240,
+   "step": 1,
+   "default": 96
+  },
+  {
+   "key": "drag",
+   "label": "Push",
+   "type": "float",
+   "min": 0.0,
+   "max": 4.0,
+   "step": 0.01,
+   "default": 1.6
+  },
+  {
+   "key": "camera",
+   "label": "Sway with the camera",
+   "type": "float",
+   "min": 0.0,
+   "max": 3.0,
+   "step": 0.01,
+   "default": 1.0
+  },
+  {
+   "key": "bounce",
+   "label": "Swings per second",
+   "type": "float",
+   "min": 0.3,
+   "max": 3.0,
+   "step": 0.01,
+   "default": 0.9
+  },
+  {
+   "key": "settle",
+   "label": "Settle time",
+   "type": "float",
+   "min": 0.5,
+   "max": 2.0,
+   "step": 0.01,
+   "default": 2.0,
+   "unit": " s"
+  },
+  {
+   "key": "gloss",
+   "label": "Bead gloss",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.6
+  },
+  {
+   "key": "behind",
+   "label": "Behind the curtain",
+   "type": "color",
+   "default": [
+    0.04,
+    0.035,
+    0.03,
+    1.0
+   ]
+  }
+ ],
+ "passes": [
+  {
+   "shader": "res://effects/_frame_physics/atlas.gdshader",
+   "scale": 1.0
+  },
+  {
+   "shader": "res://effects/_frame_physics/prof.gdshader",
+   "scale": 1.0,
+   "inputs": {
+    "atlas_tex": 0
+   }
+  },
+  {
+   "shader": "res://effects/_frame_physics/match.gdshader",
+   "scale": 1.0,
+   "inputs": {
+    "atlas_tex": 0,
+    "prof_tex": 1
+   }
+  },
+  {
+   "shader": "res://effects/_frame_physics/global.gdshader",
+   "scale": 0.25,
+   "inputs": {
+    "atlas_tex": 0,
+    "prof_tex": 1
+   }
+  },
+  {
+   "shader": "res://effects/_frame_physics/flow.gdshader",
+   "scale": 1.0,
+   "inputs": {
+    "atlas_tex": 0
+   }
+  },
+  {
+   "shader": "res://effects/_frame_physics/resid.gdshader",
+   "scale": 1.0,
+   "inputs": {
+    "atlas_tex": 0,
+    "glob_tex": 3
+   }
+  },
+  {
+   "shader": "res://effects/_frame_physics/local.gdshader",
+   "scale": 1.0,
+   "inputs": {
+    "glob_tex": 3,
+    "atlas_tex": 0,
+    "flow_tex": 4,
+    "resid_tex": 5
+   }
+  },
+  {
+   "shader": "swing.gdshader",
+   "scale": 4.0,
+   "inputs": {
+    "atlas_tex": 0
+   }
+  },
+  {
+   "shader": "beads.gdshader",
+   "scale": 1.0
+  }
+ ]
+}

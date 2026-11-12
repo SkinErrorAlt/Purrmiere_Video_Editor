@@ -1,0 +1,25 @@
+{
+ "id": "tooled_leather",
+ "label": "Tooled Leather",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Carves the picture into vegetable tanned leather the way a saddler tools it: the shapes are cut with a swivel knife, the leather beside each cut is bevelled down so the shapes stand up in relief, the deepest background is beaten with a pebbled backgrounder stamp, and an antique stain is rubbed in and wiped back so it stays dark in the cuts and hollows and the raised surfaces come up light and burnished. The grain and creases of the hide show all over, and Light turns the relief.",
+ "params": [
+  {"key": "hide", "label": "Leather", "type": "enum", "choices": ["Natural tan", "Antique brown", "Oxblood", "Black"], "default": 0},
+  {"key": "layers", "label": "Levels", "type": "int", "min": 2, "max": 5, "step": 1, "default": 3},
+  {"key": "contrast", "label": "Contrast", "type": "float", "min": 0.5, "max": 2.5, "step": 0.01, "default": 1.2},
+  {"key": "bevel", "label": "Bevel width", "type": "float", "min": 1.0, "max": 24.0, "step": 0.1, "default": 7.0, "unit": " px"},
+  {"key": "depth", "label": "Depth", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "antique", "label": "Antique stain", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.65},
+  {"key": "stamp", "label": "Background stamping", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "light_angle", "label": "Light", "type": "float", "min": -180.0, "max": 180.0, "step": 1.0, "default": -135.0, "unit": " deg"},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "handles": [{"kind": "angle", "key": "light_angle"}],
+ "passes": [
+  {"shader": "res://effects/batik/soften.gdshader", "scale": 0.25},
+  {"shader": "res://effects/batik/soften.gdshader", "scale": 1.0},
+  {"shader": "carve.gdshader", "scale": 4.0}
+ ]
+}

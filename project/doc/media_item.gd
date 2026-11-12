@@ -4,6 +4,7 @@ const SELF := preload("res://doc/media_item.gd")
 const Marker := preload("res://doc/marker.gd")
 const KINDS := ["video", "audio", "image", "sequence", "title", "shape", "adjust", "generator"]
 const PLACEHOLDER_DURATION := 5.0
+const OBJECT_PROP := "object_of"
 
 var id: String = ""
 var path: String = ""
@@ -34,6 +35,15 @@ var handle: int = -1
 
 func is_timed() -> bool:
 	return kind == "video" or kind == "audio" or kind == "sequence"
+
+
+func is_object_source() -> bool:
+	return props.get(OBJECT_PROP) is Dictionary
+
+
+func object_of() -> Dictionary:
+	var v: Variant = props.get(OBJECT_PROP, null)
+	return v if v is Dictionary else {}
 
 
 func has_picture() -> bool:

@@ -13,5 +13,8 @@
   {"key": "drift", "label": "Drift distance", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 0.7},
   {"key": "turbulence", "label": "Swirl", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
   {"key": "spread", "label": "Sweep length", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6}
+ ],
+ "handles": [
+  {"kind": "angle", "key": "drift_angle", "zero": "right", "turn": "ccw"}
  ]
 }

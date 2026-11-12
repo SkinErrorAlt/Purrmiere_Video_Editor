@@ -1,0 +1,27 @@
+{
+ "id": "clone_heal",
+ "label": "Clone and Heal",
+ "category": "Image Control",
+ "tags": ["repair"],
+ "version": 1,
+ "blurb": "Covers something unwanted with a clean piece of the same picture, the way a photo retoucher's healing brush does: a cable across a wall, a sticker on a desk, a sensor speck in the sky, a passer by, a mark on a backdrop. Drag the patch over the thing to hide and the source onto clean texture. The real grain, fabric, grass or brick of the source is kept, and its brightness and colour are healed into the surroundings of the patch, worked out from all round its edge, so a source from a darker or warmer part of the frame still sits in without a seam. Mirror the source to stop a repeat being noticed.",
+ "params": [
+  {"key": "target_centre", "label": "Patch centre", "type": "vec2", "default": [0.6, 0.5]},
+  {"key": "width", "label": "Patch width", "type": "float", "min": 0.01, "max": 1.0, "step": 0.002, "default": 0.12},
+  {"key": "height", "label": "Patch height", "type": "float", "min": 0.01, "max": 1.0, "step": 0.002, "default": 0.16},
+  {"key": "source_centre", "label": "Copy from", "type": "vec2", "default": [0.42, 0.5]},
+  {"key": "shape", "label": "Shape", "type": "enum", "choices": ["Oval", "Box"], "default": 0},
+  {"key": "feather", "label": "Soft edge", "type": "float", "min": 0.0, "max": 0.1, "step": 0.001, "default": 0.015},
+  {"key": "heal", "label": "Heal into the surroundings", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "mirror", "label": "Mirror the source", "type": "enum", "choices": ["No", "Sideways", "Upside down"], "default": 0}
+ ],
+ "handles": [
+  {"kind": "point", "key": "target_centre"},
+  {"kind": "ring", "key": "width", "key_y": "height", "about": "target_centre", "unit": "uv", "scale": 2.0, "shape": "box"},
+  {"kind": "point", "key": "source_centre"}
+ ],
+ "passes": [
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "heal.gdshader", "scale": 2.0}
+ ]
+}

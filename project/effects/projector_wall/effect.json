@@ -1,0 +1,29 @@
+{
+ "id": "projector_wall",
+ "label": "Projected on a Wall",
+ "category": "Stylize",
+ "tags": ["look", "light"],
+ "version": 1,
+ "blurb": "Throws the picture from a projector onto a painted wall: a bright hotspot in the middle, keystone set by dragging the four corners with the stretched side dimmer, soft focus and colour fringes toward the corners, grey projector blacks, the bumpy paint of the wall showing through and dust glinting in the beam.",
+ "params": [
+  {"key": "top_left", "label": "Top left", "type": "vec2", "default": [0.07, 0.06]},
+  {"key": "top_right", "label": "Top right", "type": "vec2", "default": [0.93, 0.07]},
+  {"key": "bottom_right", "label": "Bottom right", "type": "vec2", "default": [0.885, 0.9]},
+  {"key": "bottom_left", "label": "Bottom left", "type": "vec2", "default": [0.115, 0.895]},
+  {"key": "brightness", "label": "Lamp", "type": "float", "min": 0.0, "max": 3.0, "step": 0.01, "default": 1.15},
+  {"key": "hotspot", "label": "Hotspot", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45},
+  {"key": "focus", "label": "Lens softness", "type": "float", "min": 0.0, "max": 20.0, "step": 0.1, "default": 1.5, "unit": " px"},
+  {"key": "fringe", "label": "Colour fringing", "type": "float", "min": 0.0, "max": 12.0, "step": 0.1, "default": 2.0, "unit": " px"},
+  {"key": "black_level", "label": "Projector black", "type": "float", "min": 0.0, "max": 0.3, "step": 0.001, "default": 0.04},
+  {"key": "ambient", "label": "Room light", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.16},
+  {"key": "wall_colour", "label": "Wall colour", "type": "color", "default": [0.86, 0.84, 0.8, 1.0]},
+  {"key": "wall_texture", "label": "Wall texture", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.55},
+  {"key": "texture_size", "label": "Texture size", "type": "float", "min": 0.3, "max": 4.0, "step": 0.01, "default": 1.0},
+  {"key": "spill", "label": "Light spill", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "dust", "label": "Dust in the beam", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "dust_speed", "label": "Dust speed", "type": "float", "min": 0.0, "max": 3.0, "step": 0.01, "default": 0.4},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "handles": [{"kind": "quad", "keys": ["top_left", "top_right", "bottom_right", "bottom_left"]}],
+ "passes": "single"
+}

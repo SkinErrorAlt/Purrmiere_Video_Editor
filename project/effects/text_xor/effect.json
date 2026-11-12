@@ -1,0 +1,45 @@
+{
+ "id": "text_xor",
+ "label": "XOR with a Key",
+ "category": "Text",
+ "version": 1,
+ "applies_to": "text",
+ "text_transform": "xor",
+ "tags": [
+  "text",
+  "cipher",
+  "crypto"
+ ],
+ "blurb": "XORs the bytes of the text with a repeating key and writes the result as base64 or hex. The same key turns it back.",
+ "params": [
+  {
+   "key": "key",
+   "label": "Key",
+   "type": "string",
+   "default": "tape",
+   "keyable": true
+  },
+  {
+   "key": "direction",
+   "label": "Direction",
+   "type": "enum",
+   "choices": [
+    "Encrypt",
+    "Decrypt"
+   ],
+   "default": 0
+  },
+  {
+   "key": "format",
+   "label": "Written as",
+   "type": "enum",
+   "choices": [
+    "Base64",
+    "Hex",
+    "Hex, capitals"
+   ],
+   "default": 0
+  }
+ ],
+ "passes": []
+}

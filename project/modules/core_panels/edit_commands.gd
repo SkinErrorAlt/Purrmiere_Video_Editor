@@ -5,6 +5,7 @@ const Project := preload("res://doc/project.gd")
 const Sequence := preload("res://doc/sequence.gd")
 const Track := preload("res://doc/track.gd")
 const Clip := preload("res://doc/clip.gd")
+const SyncAlign := preload("res://doc/sync_align.gd")
 const MediaItem := preload("res://doc/media_item.gd")
 const Verbs := preload("res://doc/verbs.gd")
 const Timecode := preload("res://doc/timecode.gd")
@@ -39,6 +40,7 @@ static func register_all() -> void:
 	Tools.register_prefs()
 	var script: GDScript = _script()
 	_cmd("clip.freeze_frame", Callable(script, "freeze_frame_dialog"))
+	_cmd("clip.rewind_buildup", Callable(script, "rewind_buildup_dialog"))
 	_cmd("clip.hold_to_end", Callable(script, "hold_to_end"))
 	_cmd("clip.match_frame", Callable(script, "match_frame"))
 	_cmd("clip.reverse_match_frame", Callable(script, "reverse_match_frame"))
@@ -138,6 +140,54 @@ static func freeze_now(clip_id: String, t: float, secs: float, ripple: bool) -> 
 	if hold.is_empty():
 		Events.toast("That frame could not be frozen, check the track is not locked")
 	return hold
+
+
+static func rewind_buildup_dialog() -> void:
+	var s: Sequence = _seq()
+	if s == null:
+		return
+	var c: Clip = Tools.clip_under(s, s.playhead, "video")
+	if c == null:
+		Events.toast("Put the playhead over a video clip first")
+		return
+	open_rewind_form(c.id)
+
+
+static func open_rewind_form(clip_id: String) -> void:
+	var d: Project = _doc()
+	var s: Sequence = _seq()
+	var c: Clip = s.clip_by_id(clip_id) if s != null else null
+	if d == null or c == null:
+		return
+	var item: MediaItem = d.media_by_id(c.media_id)
+	var name_: String = c.label if not c.label.is_empty() else (item.label if item != null else "the clip")
+	var fields: Array[Dictionary] = []
+	fields.append({"key": "window", "label": "Rewind back (seconds)", "type": "float", "default": float(Tools.pref(Tools.PREF_REWIND_WINDOW, 6.0))})
+	fields.append({"key": "length", "label": "Over how long (seconds)", "type": "float", "default": float(Tools.pref(Tools.PREF_REWIND_LEN, 2.0))})
+	fields.append({"key": "slow", "label": "Start speed (0.1 slow, 1 even)", "type": "float", "default": float(Tools.pref(Tools.PREF_REWIND_SLOW, 0.7))})
+	fields.append({"key": "note", "type": "note", "default": "Duplicates " + name_ + ", pushes the clips after it along, and plays the copy in reverse from the cut back through the look-back, starting slow and speeding up, before cutting on. For a plain rewind without the copy, use the Rewind transition instead."})
+	var answered: Signal = _form("Rewind build-up", fields, "Add rewind")
+	answered.connect(Callable(_script(), "_on_rewind_answer").bind(clip_id))
+
+
+static func _on_rewind_answer(result: Variant, clip_id: String) -> void:
+	if typeof(result) != TYPE_DICTIONARY or (result as Dictionary).is_empty():
+		return
+	var r: Dictionary = result
+	var window: float = clampf(float(r.get("window", 6.0)), 0.2, 120.0)
+	var length: float = clampf(float(r.get("length", 2.0)), 0.1, 60.0)
+	var slow: float = clampf(float(r.get("slow", 0.5)), 0.05, 1.0)
+	Prefs.set_value(Tools.PREF_REWIND_WINDOW, window)
+	Prefs.set_value(Tools.PREF_REWIND_LEN, length)
+	Prefs.set_value(Tools.PREF_REWIND_SLOW, slow)
+	rewind_now(clip_id, window, length, slow)
+
+
+static func rewind_now(clip_id: String, window: float, length: float, slow: float) -> String:
+	var copy: String = Tools.rewind_buildup(_doc(), _seq(), clip_id, window, length, slow)
+	if copy.is_empty():
+		Events.toast("That clip could not get a rewind build-up, check the track is not locked")
+	return copy
 
 
 static func hold_to_end() -> void:
@@ -264,14 +314,29 @@ static func replace_footage() -> void:
 	replace_clip_with_bin(c.id)
 
 
-static func replace_clip_with_bin(clip_id: String) -> bool:
+static func replace_clip_with_bin(clip_id: String, align: bool = false) -> bool:
 	var media_id: String = bin_choice()
 	if media_id.is_empty():
 		Events.toast("Select the new footage in the bin first")
 		return false
-	if not Tools.replace_with(_doc(), _seq(), clip_id, media_id):
+	var d: Project = _doc()
+	var s: Sequence = _seq()
+	var c: Clip = s.clip_by_id(clip_id) if s != null else null
+	if align and d != null and c != null:
+		var why: String = SyncAlign.reason(d.media_by_id(c.media_id), d.media_by_id(media_id))
+		if not why.is_empty():
+			Events.toast(why)
+			return false
+	if not Tools.replace_with(d, s, clip_id, media_id, align):
 		Events.toast("That bin item cannot replace this clip")
 		return false
+	if align and d != null and c != null:
+		var speed: float = c.static_speed()
+		if speed == 0.0:
+			speed = 1.0
+		var off: float = SyncAlign.drift_of(d.media_by_id(c.media_id), d.media_by_id(media_id), c.in_offset, c.duration * absf(speed))
+		if off > 0.0:
+			Events.toast("Lined up as far as the new footage reaches, %.2f s short of the mark" % off)
 	return true
 
 

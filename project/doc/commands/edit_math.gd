@@ -108,8 +108,49 @@ static func ripple_tracks(s: Sequence, seed_track_ids: PackedStringArray) -> Arr
 	return out
 
 
+## Where a ripple from `from_t` stops because of a locked region (doc/fences.gd): the start of the first fence that
+## ends after it, `from_t` itself when it is inside one (nothing moves), INF with no fence in the way.
+static func fence_stop(s: Sequence, from_t: float) -> float:
+	if s == null or s.fences.is_empty():
+		return INF
+	var stop: float = INF
+	for f: Variant in s.fences:
+		if not (f is Dictionary):
+			continue
+		var a: float = float((f as Dictionary).get("start", 0.0))
+		var b: float = float((f as Dictionary).get("end", 0.0))
+		if b <= from_t + EPS:
+			continue
+		if a <= from_t + EPS:
+			return from_t - EPS * 2.0
+		stop = minf(stop, a)
+	return stop
+
+
+## How far right the clips a ripple moves can go before they would run into what a fence holds still.
+static func fence_ahead(s: Sequence, tracks: Array[Track], from_t: float, exclude: PackedStringArray) -> float:
+	var stop: float = fence_stop(s, from_t)
+	if stop == INF:
+		return INF
+	var ahead: float = INF
+	for t: Track in tracks:
+		var moving_end: float = -INF
+		var held_start: float = INF
+		for c: Clip in t.clips:
+			if exclude.has(c.id) or c.start < from_t - EPS:
+				continue
+			if c.start < stop:
+				moving_end = maxf(moving_end, c.end())
+			else:
+				held_start = minf(held_start, c.start)
+		if moving_end > -INF:
+			ahead = minf(ahead, minf(held_start, maxf(stop, moving_end)) - moving_end)
+	return maxf(ahead, 0.0)
+
+
 static func ripple_limit(s: Sequence, tracks: Array[Track], from_t: float, exclude: PackedStringArray) -> float:
 	var limit: float = INF
+	var stop: float = fence_stop(s, from_t)
 	for t: Track in tracks:
 		var prev_end: float = 0.0
 		var first_start: float = -1.0
@@ -120,18 +161,19 @@ static func ripple_limit(s: Sequence, tracks: Array[Track], from_t: float, exclu
 				first_start = c.start
 				break
 			prev_end = maxf(prev_end, c.end())
-		if first_start >= 0.0:
+		if first_start >= 0.0 and first_start < stop:
 			limit = minf(limit, first_start - prev_end)
 	return maxf(limit, 0.0)
 
 
 static func shift_moves(s: Sequence, tracks: Array[Track], from_t: float, delta: float, exclude: PackedStringArray) -> Array[Dictionary]:
 	var moves: Array[Dictionary] = []
+	var stop: float = fence_stop(s, from_t)
 	for t: Track in tracks:
 		for c: Clip in t.clips:
 			if exclude.has(c.id):
 				continue
-			if c.start >= from_t - EPS:
+			if c.start >= from_t - EPS and c.start < stop:
 				moves.append({"id": c.id, "start": c.start + delta, "track_id": t.id})
 	return moves
 
@@ -163,13 +205,15 @@ static func ripple_plan(s: Sequence, tracks: Array[Track], from_t: float, exclud
 	var plan: Dictionary = {"s": s, "tracks": tracks, "from": from_t, "exclude": exclude, "stacked": false, "spans": [], "back": 0.0, "ahead": INF}
 	if not has_stacks(tracks):
 		plan["back"] = ripple_limit(s, tracks, from_t, exclude)
+		plan["ahead"] = fence_ahead(s, tracks, from_t, exclude)
 		return plan
+	var stop: float = fence_stop(s, from_t)
 	plan["stacked"] = true
 	var per_track: Array = []
 	for t: Track in tracks:
 		var spans: Array[Dictionary] = spans_of(t, exclude)
 		for sp: Dictionary in spans:
-			sp["moves"] = float(sp["t0"]) >= from_t - EPS
+			sp["moves"] = float(sp["t0"]) >= from_t - EPS and float(sp["t0"]) < stop
 		per_track.append(spans)
 	_hold_linked(per_track, from_t)
 	var back: float = INF
@@ -190,7 +234,7 @@ static func ripple_plan(s: Sequence, tracks: Array[Track], from_t: float, exclud
 				stay_start = minf(stay_start, float(sp2["t0"]))
 	plan["spans"] = per_track
 	plan["back"] = maxf(back, 0.0)
-	plan["ahead"] = maxf(ahead, 0.0)
+	plan["ahead"] = minf(maxf(ahead, 0.0), fence_ahead(s, tracks, from_t, exclude))
 	return plan
 
 

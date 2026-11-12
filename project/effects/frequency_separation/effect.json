@@ -1,0 +1,25 @@
+{
+ "id": "frequency_separation",
+ "label": "Frequency Separation",
+ "category": "Blur & Sharpen",
+ "tags": ["retouch", "beauty", "skin"],
+ "version": 1,
+ "blurb": "The retoucher's trick, done for you: the picture is split into a soft low layer that holds the colour and tone and a fine high layer that holds the texture and pores, so skin can be evened out without going plastic. Even the tone, keep as much texture as you like, and heal blemishes by softening only the strongest spots in the texture layer. Limit it to skin tones so hair, eyes and edges stay sharp. Show the low or high layer to set it up.",
+ "params": [
+  {"key": "radius", "label": "Detail size", "type": "float", "min": 2.0, "max": 120.0, "step": 0.5, "default": 16.0, "unit": " px"},
+  {"key": "strength", "label": "Amount", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.8},
+  {"key": "texture_keep", "label": "Keep texture", "type": "float", "min": 0.0, "max": 1.5, "step": 0.01, "default": 0.6},
+  {"key": "heal", "label": "Heal blemishes", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "heal_threshold", "label": "Blemish strength", "type": "float", "min": 0.02, "max": 0.3, "step": 0.005, "default": 0.08},
+  {"key": "skin_only", "label": "Skin only", "type": "bool", "default": false},
+  {"key": "skin_tolerance", "label": "Skin range", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "show", "label": "Show", "type": "enum", "choices": ["Result", "Low layer (tone)", "High layer (texture)"], "default": 0}
+ ],
+ "passes": [
+  {"shader": "res://effects/blur_gaussian/down.gdshader", "scale": 0.5, "when": {"param": "radius", "gt": 48}},
+  {"shader": "res://effects/blur_gaussian/gauss.gdshader", "set": {"direction": [1.0, 0.0]}},
+  {"shader": "res://effects/blur_gaussian/gauss.gdshader", "set": {"direction": [0.0, 1.0]}},
+  {"shader": "res://effects/blur_gaussian/up.gdshader", "scale": 2.0, "when": {"param": "radius", "gt": 48}},
+  {"shader": "freq_sep.gdshader"}
+ ]
+}

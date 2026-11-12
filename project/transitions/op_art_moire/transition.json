@@ -1,0 +1,3 @@
+{"id":"op_art_moire","label":"Moire","group":"Distort","space":"2D","from":["op-art moire interference"],
+"blurb":"Two fine line patterns slide over each other and beat into a rippling op-art moire that crawls across the frame, and the next shot forms inside the interference. Set how fine the lines are and how much they churn.","default_duration":0.9,
+"params":[{"key":"scale","label":"Fineness","type":"float","min":40.0,"max":260.0,"step":1.0,"default":130.0},{"key":"churn","label":"Churn","type":"float","min":0.0,"max":1.0,"step":0.01,"default":0.5}]}

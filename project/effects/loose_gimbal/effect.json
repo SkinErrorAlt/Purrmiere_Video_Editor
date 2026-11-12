@@ -1,0 +1,120 @@
+{
+ "id": "loose_gimbal",
+ "label": "Loose Gimbal",
+ "category": "Physics",
+ "tags": [
+  "look"
+ ],
+ "version": 1,
+ "blurb": "Makes the shot behave as if the camera hung on a loose, heavy gimbal. It works out how the camera really moved and plays that through a weight on a spring: when a pan starts the view drags behind, when it stops the view swings past and comes back, and turns tip the horizon into the curve before it rolls level again. A still shot stays exactly as it was.",
+ "history": {
+  "max": 61,
+  "reach": [
+   "settle"
+  ],
+  "seconds": [
+   "settle"
+  ]
+ },
+ "params": [
+  {
+   "key": "strength",
+   "label": "Weight",
+   "type": "float",
+   "min": 0.0,
+   "max": 3.0,
+   "step": 0.01,
+   "default": 1.4
+  },
+  {
+   "key": "bounce",
+   "label": "Swings per second",
+   "type": "float",
+   "min": 0.2,
+   "max": 4.0,
+   "step": 0.01,
+   "default": 0.8
+  },
+  {
+   "key": "settle",
+   "label": "Settle time",
+   "type": "float",
+   "min": 0.4,
+   "max": 2.0,
+   "step": 0.01,
+   "default": 1.6,
+   "unit": " s"
+  },
+  {
+   "key": "roll",
+   "label": "Roll into turns",
+   "type": "float",
+   "min": 0.0,
+   "max": 20.0,
+   "step": 0.1,
+   "default": 6.0,
+   "unit": " deg"
+  },
+  {
+   "key": "fill",
+   "label": "Edges",
+   "type": "enum",
+   "choices": [
+    "Zoom in to fill",
+    "Mirror"
+   ],
+   "default": 0
+  }
+ ],
+ "passes": [
+  {
+   "shader": "res://effects/_frame_physics/atlas.gdshader",
+   "scale": 1.0
+  },
+  {
+   "shader": "res://effects/_frame_physics/prof.gdshader",
+   "scale": 1.0,
+   "inputs": {
+    "atlas_tex": 0
+   }
+  },
+  {
+   "shader": "res://effects/_frame_physics/match.gdshader",
+   "scale": 1.0,
+   "inputs": {
+    "atlas_tex": 0,
+    "prof_tex": 1
+   }
+  },
+  {
+   "shader": "res://effects/_frame_physics/global.gdshader",
+   "scale": 0.25,
+   "inputs": {
+    "atlas_tex": 0,
+    "prof_tex": 1
+   }
+  },
+  {
+   "shader": "res://effects/_frame_physics/spring.gdshader",
+   "scale": 1.0,
+   "set": {
+    "ratios": [
+     1.0,
+     0.75,
+     2.0,
+     1.0
+    ],
+    "settles": [
+     1.0,
+     1.15,
+     0.6,
+     1.0
+    ]
+   }
+  },
+  {
+   "shader": "gimbal.gdshader",
+   "scale": 4.0
+  }
+ ]
+}

@@ -73,6 +73,9 @@ func build(holder: VBoxContainer, secs: Array) -> void:
 		var defs: Array = section["defs"]
 		var fold: VBoxContainer = panel.call("section_fold", String(section["title"]), defs.size(), String(section["key"]))
 		var body: VBoxContainer = fold.get("body")
+		var folder_id: String = String(section.get("folder", ""))
+		if not folder_id.is_empty():
+			panel.call("_dress_folder", fold, folder_id)
 		if defs.is_empty():
 			var hint: String = String(section.get("hint", ""))
 			if not hint.is_empty():
@@ -80,8 +83,15 @@ func build(holder: VBoxContainer, secs: Array) -> void:
 			continue
 		var flow: HFlowContainer = PmUI.flow(Tk.px(6.0), Tk.px(8.0))
 		flow.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var mine: bool = String(panel.get("sort_by")) == "mine"
 		for d: Variant in defs:
-			flow.add_child(panel.call("make_tile", d, side))
+			var tile: Control = panel.call("make_tile", d, side)
+			if not folder_id.is_empty():
+				tile.set_meta("folder_id", folder_id)
+				panel.call("_add_row_slot", tile, folder_id)
+			elif mine:
+				panel.call("_add_row_slot", tile, "")
+			flow.add_child(tile)
 			tiles += 1
 		var pad: MarginContainer = MarginContainer.new()
 		pad.add_theme_constant_override("margin_left", Tk.px(6.0))

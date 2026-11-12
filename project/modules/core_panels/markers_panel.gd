@@ -266,7 +266,7 @@ func rebuild() -> void:
 		if m.label.is_empty() and m.comment.is_empty():
 			PmLabel.set_colour(label, "text_dim")
 		row.add_child(label)
-		var kind: Label = PmLabel.faint(Marker.kind_label(m.kind) + (" follows" if m.follows() else "") + ("" if idx.is_empty() else "  " + MarkerLayers.name_of(s_now, lane)))
+		var kind: Label = PmLabel.faint(Marker.kind_label(m.kind) + (" follows" if m.follows() else "") + ("" if idx.is_empty() else "  " + MarkerLayers.name_of(s_now, lane)) + ("" if m.run.is_empty() else "  " + m.run))
 		row.add_child(kind)
 		var edit: Button = quiet_icon("more", "Edit marker")
 		edit.pressed.connect(_on_edit.bind(m.id))

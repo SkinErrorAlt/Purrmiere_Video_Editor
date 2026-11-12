@@ -1,0 +1,18 @@
+{
+ "id": "snd_timbre_grade",
+ "label": "Timbre Grade",
+ "category": "Audio Reactive",
+ "tags": ["audio", "reactive", "colour", "grade"],
+ "version": 1,
+ "blurb": "Grades the picture by what the sound is made of, not how loud it is. Deep, heavy sound (engines, rumble, bass, a low voice) sinks the shadows into warm ember; bright, thin sound (cymbals, hiss, glass, a high voice) chills the highlights to cold steel and lifts the air. It reads the balance of low and high frequencies every moment, and fades out in the quiet so silence stays natural.",
+ "params": [
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.75},
+  {"key": "deep_colour", "label": "Deep sound colour", "type": "color", "default": [1.0, 0.42, 0.12, 1.0]},
+  {"key": "bright_colour", "label": "Bright sound colour", "type": "color", "default": [0.32, 0.66, 1.0, 1.0]},
+  {"key": "follow", "label": "Fade when quiet", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.8},
+  {"key": "contrast", "label": "Weight", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "balance", "label": "Middle pitch", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45}
+ ],
+ "passes": [{"shader": "effect.gdshader"}],
+ "reactive": {"listen": true, "defaults": {"snd_threshold": 0.0}}
+}

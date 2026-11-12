@@ -61,6 +61,7 @@ var _comp: Node = null
 var _last_pic: Rect2 = Rect2()
 var _last_size: Vector2 = Vector2.ZERO
 var _last_quality: int = -1
+var _last_seq_px: Vector2i = Vector2i.ZERO
 var _pending_overscan: bool = true
 var _reveal_need: Vector2 = Vector2.ZERO
 var _reveal_count: int = 0
@@ -149,10 +150,13 @@ func tick(_dt: float) -> void:
 		return
 	var pic: Rect2 = v.call("picture_rect")
 	var q: int = int(comp.get("quality")) if comp != null and is_instance_valid(comp) else 0
-	if _pending_overscan or pic != _last_pic or v.size != _last_size or q != _last_quality:
+	var s: Object = Session.seq()
+	var seq_px: Vector2i = Vector2i(int(s.get("width")), int(s.get("height"))) if s != null else Vector2i.ZERO
+	if _pending_overscan or pic != _last_pic or v.size != _last_size or q != _last_quality or seq_px != _last_seq_px:
 		_last_pic = pic
 		_last_size = v.size
 		_last_quality = q
+		_last_seq_px = seq_px
 		_pending_overscan = false
 		update_overscan()
 	if popout != null and not is_instance_valid(popout):

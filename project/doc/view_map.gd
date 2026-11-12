@@ -73,7 +73,7 @@ static func members_of(text: String, count: int) -> Array[PackedInt32Array]:
 				list.append(ri)
 			if not list.is_empty():
 				out.append(list)
-	if out.size() < 2:
+	if out.is_empty() or (out.size() == 1 and out[0].size() >= mini(maxi(count, 1), REGION_MAX)):
 		out = every_region(count)
 	if _groups_cache.size() > 256:
 		_groups_cache.clear()
@@ -89,7 +89,28 @@ static func grouped(e: Dictionary) -> bool:
 	var text: String = groups_text(e)
 	if text.is_empty():
 		return false
-	return members_of(text, crop_count(e)).size() >= 2
+	return limited(members_of(text, crop_count(e)), crop_count(e))
+
+
+static func limited(m: Array[PackedInt32Array], count: int) -> bool:
+	if m.size() >= 2:
+		return true
+	return m.size() == 1 and m[0].size() < mini(maxi(count, 1), REGION_MAX)
+
+
+static func left_out(e: Dictionary) -> PackedInt32Array:
+	var out: PackedInt32Array = PackedInt32Array()
+	var count: int = mini(maxi(crop_count(e), 1), REGION_MAX)
+	var m: Array[PackedInt32Array] = members(e)
+	for i: int in count:
+		var found: bool = false
+		for g: PackedInt32Array in m:
+			if g.has(i):
+				found = true
+				break
+		if not found:
+			out.append(i)
+	return out
 
 
 static func view_key_for(group: int) -> String:
@@ -113,7 +134,7 @@ static func resolve_in(m: Array[PackedInt32Array], group_value: float, view_valu
 static func resolve_values(values: Dictionary, count: int) -> int:
 	var m: Array[PackedInt32Array] = members_of(String(values.get(GROUPS_KEY, "")) if values.get(GROUPS_KEY, "") is String else "", count)
 	var mode: int = int(round(_num(values.get(MODE_KEY, 0.0))))
-	if m.size() < 2:
+	if not limited(m, count):
 		return index_at(_num(values.get(VIEW_KEY, 0.0)), mode, count)
 	var vals: Array[float] = []
 	for g: int in m.size():
@@ -132,7 +153,7 @@ static func place_of(e: Dictionary, region: int) -> Vector2i:
 
 static func remap_groups(text: String, old_count: int, remap: Dictionary, new_count: int) -> String:
 	var m: Array[PackedInt32Array] = members_of(text, old_count)
-	if m.size() < 2:
+	if not limited(m, old_count):
 		return text
 	var out: Array = []
 	var seen: Dictionary = {}
@@ -173,18 +194,32 @@ static func moved_to(text: String, count: int, region: int, group: int) -> Strin
 			if r != region:
 				list.append(r)
 		out.append(list)
-	while out.size() <= group:
-		out.append([])
-	var target: Array = out[group]
-	target.append(region)
-	target.sort()
+	if group >= 0:
+		while out.size() <= mini(group, GROUP_MAX - 1):
+			out.append([])
+		var target: Array = out[mini(group, GROUP_MAX - 1)]
+		target.append(region)
+		target.sort()
 	var kept: Array = []
 	for l: Variant in out:
 		if not (l as Array).is_empty():
 			kept.append(l)
-	if kept.size() < 2:
+	if kept.is_empty() or (kept.size() == 1 and (kept[0] as Array).size() >= mini(maxi(count, 1), REGION_MAX)):
 		return ""
 	return groups_json(kept)
+
+
+static func split_in(count: int, parts: int) -> String:
+	var n: int = mini(maxi(count, 1), REGION_MAX)
+	var k: int = clampi(parts, 2, mini(GROUP_MAX, n))
+	if n < 2:
+		return ""
+	var out: Array = []
+	for g: int in k:
+		out.append([])
+	for i: int in n:
+		(out[mini(i * k / n, k - 1)] as Array).append(i)
+	return groups_json(out)
 
 
 static func groups_json(m: Array) -> String:
@@ -298,7 +333,7 @@ static func changes(e: Dictionary, video: Clip) -> Array[Dictionary]:
 	if text.is_empty():
 		return _single(e, video, VIEW_KEY, MODE_KEY, crop_count(e))
 	var m: Array[PackedInt32Array] = members_of(text, crop_count(e))
-	if m.size() < 2:
+	if not limited(m, crop_count(e)):
 		return _single(e, video, VIEW_KEY, MODE_KEY, crop_count(e))
 	return _grouped_changes(e, video, m)
 
@@ -881,6 +916,72 @@ static func colour_for(map: Dictionary, index: int) -> int:
 	if index < 0:
 		return -1
 	return COLOURS[index % COLOURS.size()]
+
+
+static func picked_colour(map: Dictionary, index: int) -> int:
+	var views: Array = map.get("views", [])
+	if index < 0 or index >= views.size():
+		return -1
+	return int((views[index] as Dictionary).get("colour", -1))
+
+
+static func with_colour(map: Dictionary, index: int, colour: int, count: int = 0) -> Dictionary:
+	if index < 0 or index >= REGION_MAX:
+		return {}
+	var out: Dictionary = map.duplicate(true) if not map.is_empty() else {"views": []}
+	var views: Array = out.get("views", [])
+	if not (views is Array):
+		views = []
+	var want: int = maxi(index + 1, count)
+	while views.size() < want:
+		views.append({"tracks": [], "clips": [], "colour": -1})
+	var one: Dictionary = views[index]
+	var set_to: int = -1 if colour < 0 else clampi(colour, 0, 15)
+	if int(one.get("colour", -1)) == set_to:
+		return {}
+	one["colour"] = set_to
+	views[index] = one
+	out["views"] = views
+	return out
+
+
+static func clip_in_view(map: Dictionary, index: int, clip_id: String) -> bool:
+	var views: Array = map.get("views", [])
+	if index < 0 or index >= views.size():
+		return false
+	for cid: Variant in (views[index] as Dictionary).get("clips", []):
+		if String(cid) == clip_id:
+			return true
+	return false
+
+
+static func with_clip(map: Dictionary, index: int, clip_id: String, on: bool, count: int = 0) -> Dictionary:
+	if index < 0 or index >= REGION_MAX or clip_id.is_empty():
+		return {}
+	var out: Dictionary = map.duplicate(true) if not map.is_empty() else {"views": []}
+	var views: Array = out.get("views", [])
+	if not (views is Array):
+		views = []
+	var want: int = maxi(index + 1, count)
+	while views.size() < want:
+		views.append({"tracks": [], "clips": [], "colour": -1})
+	var one: Dictionary = views[index]
+	var clips: Array = one.get("clips", [])
+	if not (clips is Array):
+		clips = []
+	var at: int = clips.find(clip_id)
+	if on and at >= 0:
+		return {}
+	if not on and at < 0:
+		return {}
+	if on:
+		clips.append(clip_id)
+	else:
+		clips.remove_at(at)
+	one["clips"] = clips
+	views[index] = one
+	out["views"] = views
+	return out
 
 
 static func track_order(map: Dictionary) -> PackedStringArray:

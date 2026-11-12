@@ -2,9 +2,11 @@ extends Node
 
 const AnimProp := preload("res://doc/anim_prop.gd")
 const Clip := preload("res://doc/clip.gd")
+const ObjectMask := preload("res://doc/object_mask.gd")
 const MediaItem := preload("res://doc/media_item.gd")
 const FrameSource := preload("res://engine/frame_source.gd")
 const EffectPass := preload("res://engine/effect_pass.gd")
+const FloatPasses := preload("res://engine/float_passes.gd")
 const MaskPass := preload("res://engine/mask_pass.gd")
 const PlaybackClock := preload("res://engine/playback_clock.gd")
 const EffectRegistry := preload("res://engine/effect_registry.gd")
@@ -15,10 +17,16 @@ const RegionBlocks := preload("res://engine/region_blocks.gd")
 const MaskShape := preload("res://doc/mask_shape.gd")
 const Parenting := preload("res://doc/parenting.gd")
 const PuppetStage := preload("res://engine/puppet_stage.gd")
+const CrumbleStage := preload("res://engine/crumble_stage.gd")
+const CrumblePass := preload("res://engine/crumble_pass.gd")
+const GlassStage := preload("res://engine/glass_stage.gd")
+const GlassPass := preload("res://engine/glass_pass.gd")
 const Sequence := preload("res://doc/sequence.gd")
 const Project := preload("res://doc/project.gd")
 const AudioReact := preload("res://engine/audio_react.gd")
 const TrackingEval := preload("res://engine/tracking_eval.gd")
+const DepthFade := preload("res://doc/depth_fade.gd")
+const DepthFadeEval := preload("res://doc/depth_fade_eval.gd")
 const OWNER_WALK := 8
 const TRANSFORM_SHADER := "res://engine/transform.gdshader"
 const ACCUM_SHADER := "res://engine/accum.gdshader"
@@ -26,6 +34,8 @@ const MOTION_BLUR_SHADER := "res://engine/motion_blur.gdshader"
 const COPY_SHADER := "res://engine/copy.gdshader"
 const MASK_APPLY_SHADER := "res://engine/mask_apply.gdshader"
 const MASK_MIX_SHADER := "res://engine/mask_mix.gdshader"
+const DEPTH_MIX_SHADER := "res://engine/depth_mix.gdshader"
+const DepthCanvas := preload("res://engine/depth_canvas.gd")
 const MIX_MODE_KEEP := 0
 const MIX_MODE_ISOLATE := 1
 const MIX_MODE_SPILL := 2
@@ -114,6 +124,8 @@ static func texture_from_path(path: String) -> Texture2D:
 	var tex: Texture2D = null
 	if CubeLut.is_cube_path(real):
 		tex = CubeLut.load_texture(real)
+	elif PairLayout.ViewBorder.BorderReel.is_moving(real):
+		tex = PairLayout.ViewBorder.BorderReel.poster(real)
 	elif img.load(real) == OK:
 		tex = ImageTexture.create_from_image(img)
 	_texture_cache[path] = tex
@@ -211,16 +223,38 @@ static func effect_mask_ids(c: Clip) -> PackedStringArray:
 	return out
 
 
+static func spill_mask_ids(c: Clip) -> PackedStringArray:
+	var out: PackedStringArray = PackedStringArray()
+	for e: Dictionary in c.effects:
+		var mid: String = str(e.get("mask", ""))
+		if mid.is_empty() or not bool(e.get("enabled", true)) or not Clip.mask_spills(e):
+			continue
+		if not out.has(mid):
+			out.append(mid)
+	return out
+
+
+static func cut_and_spills(c: Clip, mask_id: String) -> bool:
+	if mask_id.is_empty() or not spill_mask_ids(c).has(mask_id):
+		return false
+	for m: Dictionary in c.masks:
+		if str(m.get("id", "")) == mask_id:
+			return ObjectMask.is_object(m) and bool(m.get("cuts", true)) and bool(m.get("enabled", true))
+	return false
+
+
 func structure_signature() -> String:
 	var parts: PackedStringArray = PackedStringArray()
 	parts.append(source.kind)
 	parts.append(str(source.native_size))
 	parts.append(str(quality_scale))
 	parts.append("src:" + str(source.texture() != null))
-	for e: Dictionary in clip.effects:
-		parts.append(str(e.get("uid", "")) + "/" + str(e.get("id", "")) + "/" + str(bool(e.get("enabled", true))) + "/" + str(e.get("mask", "")) + "/" + str(mixes_back(e)) + ("/spill" if Clip.mask_spills(e) else ""))
+	for ei: int in clip.effects.size():
+		var e: Dictionary = clip.effects[ei]
+		var fade_src: String = DepthFade.source_uid(clip.effects, ei, registry)
+		parts.append(str(e.get("uid", "")) + "/" + str(e.get("id", "")) + "/" + str(bool(e.get("enabled", true))) + "/" + str(e.get("mask", "")) + "/" + str(mixes_back(e)) + ("/spill" if Clip.mask_spills(e) else "") + ("/cutspill" if cut_and_spills(clip, str(e.get("mask", ""))) else "") + ("" if fade_src.is_empty() else "/df:" + fade_src))
 	var region_parts: Array = RegionBlocks.structure(clip)
-	parts.append("m:" + MaskPass.signature(region_parts[0], effect_mask_ids(clip)))
+	parts.append("m:" + MaskPass.signature(region_parts[0], effect_mask_ids(clip), spill_mask_ids(clip)))
 	parts.append("rg:" + String(region_parts[1]))
 	parts.append("t:" + str(clip.transition_in.get("kind", "")))
 	parts.append("mb:" + str(bool(clip.motion_blur.get("on", false))) + "/" + blur_mode() + "/" + str(copies_limit()))
@@ -318,7 +352,7 @@ func _mask_apply_pass(prev_node: Node, prev_tex: Texture2D, abs_scale: float) ->
 func rebuild() -> void:
 	_tear_down_passes()
 	source.set_quality_scale(quality_scale)
-	mask.rebuild(RegionBlocks.chain_masks(clip), effect_mask_ids(clip), chain_size(), true)
+	mask.rebuild(RegionBlocks.chain_masks(clip), effect_mask_ids(clip), chain_size(), true, spill_mask_ids(clip))
 	disabled_effects = PackedStringArray()
 	regions.begin()
 	var prev_tex: Texture2D = source.texture()
@@ -350,6 +384,28 @@ func rebuild() -> void:
 		var def: Dictionary = registry.get_def(eid) if registry != null else {}
 		if def.is_empty():
 			continue
+		if eid == CrumbleStage.EFFECT_ID:
+			var cp: EffectPass = CrumbleStage.build(self, prev_node, prev_tex)
+			cp.effect_uid = uid
+			cp.set_meta("bypass_mat", material_for(COPY_SHADER))
+			cp.set_meta("copy_types", copy_types)
+			var cpasses: Array[Dictionary] = [{"pass": cp, "uid": uid, "effect_id": eid, "effect_index": effect_index - 1, "pass_index": 0, "repeat_index": 0, "spec": {}, "scale_in": abs_scale, "scale_out": abs_scale, "kind": "effect", "effect_in_tex": prev_tex}]
+			RegionBlocks.tag(cpasses, step)
+			passes.append_array(cpasses)
+			prev_node = cp
+			prev_tex = cp.output()
+			continue
+		if eid == GlassStage.EFFECT_ID:
+			var gp: EffectPass = GlassStage.build(self, prev_node, prev_tex)
+			gp.effect_uid = uid
+			gp.set_meta("bypass_mat", material_for(COPY_SHADER))
+			gp.set_meta("copy_types", copy_types)
+			var gpasses: Array[Dictionary] = [{"pass": gp, "uid": uid, "effect_id": eid, "effect_index": effect_index - 1, "pass_index": 0, "repeat_index": 0, "spec": {}, "scale_in": abs_scale, "scale_out": abs_scale, "kind": "effect", "effect_in_tex": prev_tex}]
+			RegionBlocks.tag(gpasses, step)
+			passes.append_array(gpasses)
+			prev_node = gp
+			prev_tex = gp.output()
+			continue
 		var specs: Array = def.get("passes", [])
 		if specs.is_empty():
 			continue
@@ -372,6 +428,7 @@ func rebuild() -> void:
 		var has_mask: bool = not mid.is_empty() and mask.unit_root(mid) != null
 		var spill: bool = has_mask and Clip.mask_spills(e)
 		var before_tex: Texture2D = prev_tex
+		var cut_spill: bool = spill and cut_and_spills(clip, mid)
 		if spill:
 			var iso_mat: ShaderMaterial = material_for(MASK_MIX_SHADER)
 			var iso: EffectPass = _make_pass(iso_mat, types_of(iso_mat.shader), prev_node, prev_tex, "mask_isolate_" + uid)
@@ -383,6 +440,8 @@ func rebuild() -> void:
 			effect_passes.append({"pass": iso, "uid": uid, "effect_id": eid, "effect_index": effect_index - 1, "pass_index": -1, "repeat_index": 0, "spec": {}, "scale_in": abs_scale, "scale_out": abs_scale, "kind": "mask_isolate", "effect_in_tex": null})
 			prev_node = iso
 			prev_tex = iso.output()
+			if cut_spill:
+				before_tex = iso.output()
 		var effect_in_tex: Texture2D = prev_tex
 		var pass_outputs: Array = []
 		for j: int in specs.size():
@@ -392,14 +451,17 @@ func rebuild() -> void:
 			if not rep.is_empty():
 				repeat_max = clampi(int(rep.get("max", 1)), 1, MAX_REPEAT)
 			for r: int in repeat_max:
-				var mat: ShaderMaterial = registry.make_material(eid, j)
-				var types: Dictionary = registry.uniform_types(eid, j)
+				var fmat: ShaderMaterial = registry.call("make_float_material", eid, j) if FloatPasses.on() and FloatPasses.allowed(eid) else null
+				var mat: ShaderMaterial = fmat if fmat != null else registry.make_material(eid, j)
+				var types: Dictionary = types_of(fmat.shader) if fmat != null else registry.uniform_types(eid, j)
 				var p: EffectPass = _make_pass(mat, types, prev_node, prev_tex, eid + "_" + str(j) + "_" + str(r))
 				p.effect_uid = uid
 				if eid == PuppetStage.EFFECT_ID:
 					PuppetStage.attach(p, prev_tex)
 				p.index = j
 				p.set_meta("bypass_mat", material_for(COPY_SHADER))
+				if fmat != null:
+					p.use_float(FloatPasses.copy_material())
 				p.set_meta("copy_types", copy_types)
 				for uname: Variant in (spec.get("inputs", {}) as Dictionary).keys():
 					var src_index: int = int(spec["inputs"][uname])
@@ -421,8 +483,9 @@ func rebuild() -> void:
 				prev_tex = p.output()
 				if r == repeat_max - 1:
 					pass_outputs.append(prev_tex)
-		if has_mask or mixes_back(e):
-			var mix_mat: ShaderMaterial = material_for(MASK_MIX_SHADER)
+		var fade_src: String = DepthFade.source_uid(clip.effects, effect_index - 1, registry)
+		if has_mask or mixes_back(e) or not fade_src.is_empty():
+			var mix_mat: ShaderMaterial = material_for(MASK_MIX_SHADER if fade_src.is_empty() else DEPTH_MIX_SHADER)
 			var mix: EffectPass = _make_pass(mix_mat, types_of(mix_mat.shader), prev_node, prev_tex, "mask_mix_" + uid)
 			mix.set_param("mode", MIX_MODE_SPILL if spill else MIX_MODE_KEEP)
 			if has_mask and not spill:
@@ -432,7 +495,7 @@ func rebuild() -> void:
 			mix.set_param("have_effect_tex", before_tex != null)
 			if before_tex != null:
 				mix.set_param("effect_tex", before_tex)
-			effect_passes.append({"pass": mix, "uid": uid, "effect_id": eid, "effect_index": effect_index - 1, "pass_index": -1, "repeat_index": 0, "spec": {}, "scale_in": abs_scale, "scale_out": start_scale, "kind": "mask_mix", "effect_in_tex": before_tex})
+			effect_passes.append({"pass": mix, "uid": uid, "effect_id": eid, "effect_index": effect_index - 1, "pass_index": -1, "repeat_index": 0, "spec": {}, "scale_in": abs_scale, "scale_out": start_scale, "kind": "mask_mix", "effect_in_tex": before_tex, "depth_src": fade_src})
 			abs_scale = start_scale
 			prev_node = mix
 			prev_tex = mix.output()
@@ -509,6 +572,7 @@ func rebuild() -> void:
 			add_child(outer_node)
 		quad.visible = true
 	quad.texture = outer_tex
+	_history_wire()
 	_mark_canvas()
 	_apply_sizes()
 	_structure_sig = structure_signature()
@@ -796,6 +860,8 @@ static func expand_crops(values: Dictionary) -> void:
 
 
 func update_passes(t: float) -> void:
+	if history != null:
+		t = history.time_for(t)
 	var local_t: float = t - clip.start
 	var pick_t: float = PlaybackClock.clip_local(t, clip.start, seq_fps)
 	var eval_cache: Dictionary = {}
@@ -805,6 +871,8 @@ func update_passes(t: float) -> void:
 	_room_shift = Vector2.ZERO
 	_room_uid = ""
 	_in_room = false
+	_fx_canvas = {}
+	_room_after_canvas = false
 	for pd: Dictionary in passes:
 		var p: EffectPass = pd["pass"]
 		var kind: String = String(pd["kind"])
@@ -812,6 +880,7 @@ func update_passes(t: float) -> void:
 			eff = regions.update_marker(clip, pd, eff, chain_size())
 			continue
 		var in_size: Vector2 = Vector2(_size_in(out_canvas, eff))
+		var was_canvas: bool = out_canvas
 		out_canvas = bool(pd.get("canvas", false))
 		if kind != "effect":
 			p.set_size_px(_size_in(out_canvas, eff))
@@ -820,6 +889,9 @@ func update_passes(t: float) -> void:
 				var mi: int = int(pd["effect_index"])
 				if mi >= 0 and mi < clip.effects.size():
 					p.set_param("mix_amount", mix_at(clip.effects[mi], local_t))
+					if not String(pd.get("depth_src", "")).is_empty():
+						_depth_look(p, clip.effects[mi], String(pd["depth_src"]), local_t)
+						DepthCanvas.fill(p, _depth_plan(String(pd["depth_src"]), out_canvas, t, in_size))
 				var in_tex: Variant = pd.get("effect_in_tex", null)
 				p.set_param("have_effect_tex", in_tex != null)
 				var inner: Vector4 = room_box() if _in_room else FULL_BOX
@@ -834,6 +906,8 @@ func update_passes(t: float) -> void:
 		if ei < 0 or ei >= clip.effects.size():
 			continue
 		var e: Dictionary = clip.effects[ei]
+		if int(pd.get("pass_index", -1)) == 0 and int(pd.get("repeat_index", 0)) == 0:
+			_fx_canvas[String(pd["uid"])] = {"canvas": was_canvas, "room": _in_room, "size": in_size}
 		var def: Dictionary = registry.get_def(String(pd["effect_id"]))
 		var cache_key: String = String(pd["uid"])
 		var values: Dictionary = {}
@@ -849,6 +923,7 @@ func update_passes(t: float) -> void:
 			if not pairs.is_empty():
 				_inject_pair(values, pairs, ei, pick_t)
 			if String(pd["effect_id"]) == PairLayout.PAIR_VIEW_ID:
+				values[PairLayout.ViewBorder.TIME_KEY] = local_t
 				PairLayout.fill_uniforms(values, source.native_size, canvas_size(), seq_size)
 			if def.has("reactive"):
 				AudioReact.fill(values, def, e, self, t)
@@ -883,6 +958,7 @@ func update_passes(t: float) -> void:
 			_room_shift = room_box_now.get_center()
 			_room_uid = String(pd["uid"])
 			_in_room = true
+			_room_after_canvas = out_canvas
 		p.set_size_px(_size_in(out_canvas, out_scale))
 		p.set_param("tex_size", in_size)
 		p.set_param("seq_size", Vector2(seq_size))
@@ -905,7 +981,64 @@ func update_passes(t: float) -> void:
 		p.set_param("seq_fps", seq_fps)
 		if String(pd["effect_id"]) == PuppetStage.EFFECT_ID:
 			PuppetStage.update(p, clip, e, t, seq_fps, bend_base, Vector2(picture_size()), _room_shift)
+		if String(pd["effect_id"]) == CrumbleStage.EFFECT_ID:
+			CrumbleStage.update(p as CrumblePass, clip, e, values, local_t, clip.duration, Vector2(picture_size()))
+		if String(pd["effect_id"]) == GlassStage.EFFECT_ID:
+			GlassStage.update(p as GlassPass, clip, e, values, local_t, clip.duration, Vector2(picture_size()))
 		eff = out_scale
+	if history != null:
+		history.after_update()
+
+
+func _depth_look(p: EffectPass, e: Dictionary, src_uid: String, local_t: float) -> void:
+	var si: int = clip.effect_index(src_uid)
+	var def: Dictionary = registry.get_def(String(clip.effects[si].get("id", ""))) if si >= 0 and registry != null else {}
+	var plane: Dictionary = DepthFadeEval.plane_of(clip, clip.effects[si], def, local_t, seq_fps) if not def.is_empty() else {}
+	if plane.is_empty():
+		p.set_param("fade_near", 0.0)
+		p.set_param("fade_far", 0.0)
+		p.set_param("fade_softness", 0.0)
+		p.set_param("fade_reverse", true)
+		return
+	var vals: Dictionary = DepthFadeEval.uniforms(plane, DepthFadeEval.fade_at(clip, e, local_t, seq_fps))
+	for k: Variant in vals.keys():
+		p.set_param(String(k), vals[k])
+
+
+func _depth_plan(src_uid: String, now_canvas: bool, t: float, size_now: Vector2) -> Dictionary:
+	var src: Dictionary = _fx_canvas.get(src_uid, {})
+	var regions: Array[Dictionary] = []
+	if now_canvas and not src.is_empty() and not bool(src.get("canvas", false)):
+		var first: String = ""
+		var first_uid: String = ""
+		for pd: Dictionary in passes:
+			if bool(pd.get("canvas_first", false)):
+				first = String(pd.get("effect_id", ""))
+				first_uid = String(pd.get("uid", ""))
+				break
+		if first == PairLayout.PAIR_VIEW_ID:
+			regions = DepthCanvas.pair_regions(PairLayout.region_boxes(clip, PairLayout.pair_entry(clip), t, seq_size, source.native_size, seq_fps))
+		else:
+			var place: Dictionary = _canvas_place(first, first_uid, t - clip.start)
+			regions = DepthCanvas.frame_regions(source.native_size, canvas_size(), float(place.get("size", 1.0)), place.get("at", Vector2(0.5, 0.5)))
+	return DepthCanvas.plan(src, now_canvas, _in_room, room_box(), _room_after_canvas, regions, size_now)
+
+
+func _canvas_place(eid: String, uid: String, local_t: float) -> Dictionary:
+	var def: Dictionary = registry.get_def(eid) if registry != null else {}
+	var decl: Variant = def.get(DepthCanvas.PLACE_KEY, null)
+	var ei: int = clip.effect_index(uid)
+	if not (decl is Dictionary) or ei < 0:
+		return {}
+	var out: Dictionary = {}
+	for p: Variant in def.get("params", []):
+		var spec: Dictionary = p
+		var key: String = String(spec.get("key", ""))
+		if key == String((decl as Dictionary).get("size", "")):
+			out["size"] = EffectPass._to_float(_eval_param(clip.effects[ei], spec, local_t))
+		elif key == String((decl as Dictionary).get("at", "")):
+			out["at"] = EffectPass.coerce(TYPE_VECTOR2, _eval_param(clip.effects[ei], spec, local_t))
+	return out
 
 
 func _mask_look(p: EffectPass, pd: Dictionary, t: float) -> void:
@@ -924,6 +1057,8 @@ func _mask_look(p: EffectPass, pd: Dictionary, t: float) -> void:
 
 
 func update_masks(t: float) -> void:
+	if history != null:
+		t = history.time_for(t)
 	if mask.units.is_empty():
 		return
 	var masks: Array = RegionBlocks.chain_masks(clip)
@@ -1190,6 +1325,8 @@ func source_time(t: float) -> float:
 
 
 func request_source(t: float, quality: int, hint: int) -> void:
+	if history != null:
+		t = history.begin(t, hint)
 	if _interp_request(t, quality, hint):
 		return
 	if hint != PACE_HINT_PLAY or source.kind != FrameSource.KIND_NATIVE or not PlayPace.fast(clip, t):
@@ -1260,6 +1397,8 @@ func _end_plan() -> void:
 
 
 func state() -> String:
+	if history != null and history.holds():
+		return "pending"
 	if interp != null and interp.active():
 		return interp.state_of(source.state, _interp_hint)
 	return source.state
@@ -1289,6 +1428,8 @@ var _room: Vector2i = Vector2i.ZERO
 var _room_shift: Vector2 = Vector2.ZERO
 var _room_uid: String = ""
 var _in_room: bool = false
+var _fx_canvas: Dictionary = {}
+var _room_after_canvas: bool = false
 const FULL_BOX := Vector4(0.0, 0.0, 1.0, 1.0)
 
 
@@ -1381,3 +1522,32 @@ func _interp_request(t: float, quality: int, hint: int) -> bool:
 	_interp_hint = hint
 	interp.request(source, source_time(t), media_fps, media_duration, quality, hint)
 	return true
+
+
+const FrameHistory := preload("res://engine/frame_history.gd")
+
+var history: FrameHistory = null
+
+
+func _history_wire() -> void:
+	var any: bool = false
+	for pd: Dictionary in passes:
+		if String(pd.get("kind", "")) == "effect" and registry != null and FrameHistory.wants(registry.get_def(String(pd.get("effect_id", "")))):
+			any = true
+			break
+	if not any:
+		if history != null:
+			_free_node(history)
+			history = null
+		return
+	if history == null:
+		history = FrameHistory.new()
+		history.chain = self
+		add_child(history)
+	history.wire(passes, registry)
+
+
+func history_lead(t: float, hint: int) -> float:
+	if history == null:
+		return t
+	return history.begin(t, hint)

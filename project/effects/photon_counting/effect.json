@@ -1,0 +1,18 @@
+{
+ "id": "photon_counting",
+ "label": "Photon Counting",
+ "category": "Noise & Grain",
+ "tags": ["light", "look"],
+ "version": 1,
+ "blurb": "Shows the shot the way it arrives in very dim light: one photon at a time. Light is not a smooth flow but a rain of separate packets, and each pixel catches a random whole number of them drawn from the Poisson statistics real detectors follow. At a fraction of a photon per pixel the picture is a scatter of single bright specks in the dark; as Photons rises the specks crowd together and the picture condenses out of them until, at a few hundred, it is back to normal. Every frame catches a fresh set. Photon size turns each catch into a soft splash as in an intensified or single photon camera, Monochrome counts like a detector without a colour filter, and dark counts add the stray thermal hits every sensor has. Keyframe Photons for a shot that gathers itself out of darkness.",
+ "params": [
+  {"key": "photons", "label": "Photons per pixel", "type": "float", "min": 0.01, "max": 1000.0, "step": 0.01, "default": 1.5},
+  {"key": "sensor", "label": "Detector", "type": "enum", "choices": ["Colour", "Monochrome"], "default": 1},
+  {"key": "photon_size", "label": "Photon size", "type": "float", "min": 1.0, "max": 16.0, "step": 0.1, "default": 4.0, "unit": " px"},
+  {"key": "dark_counts", "label": "Dark counts", "type": "float", "min": 0.0, "max": 1.0, "step": 0.001, "default": 0.01},
+  {"key": "gain", "label": "Gain", "type": "float", "min": 0.1, "max": 4.0, "step": 0.01, "default": 1.0},
+  {"key": "animate", "label": "New photons every frame", "type": "bool", "default": true},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

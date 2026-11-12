@@ -1,0 +1,147 @@
+{
+ "id": "stirred_smoke",
+ "label": "Stirred Smoke",
+ "category": "Stylize",
+ "tags": [
+  "look"
+ ],
+ "version": 1,
+ "blurb": "The picture gives off smoke, and its own movement stirs the air. Bright parts smoulder, or anything that moves sheds a vapour of its own colour, or dark parts bleed downwards like ink dropped in water. The smoke rises, curls and thins out over the last second or so of the clip, and every movement in the shot whips up swirls in it: a hand waved through it leaves eddies, a passing car drags it along, a dancer spins it into curls. It is worked out again from the clip's own recent frames for every frame, so it looks the same playing, paused, stepped or exported.",
+ "history": {
+  "max": 48,
+  "reach": [
+   "memory"
+  ],
+  "seconds": [
+   "memory"
+  ]
+ },
+ "params": [
+  {
+   "key": "source",
+   "label": "Smoke comes from",
+   "type": "enum",
+   "choices": [
+    "Bright parts",
+    "Things that move",
+    "Dark parts, as ink"
+   ],
+   "default": 0
+  },
+  {
+   "key": "memory",
+   "label": "Lingers for",
+   "type": "float",
+   "min": 0.3,
+   "max": 1.6,
+   "step": 0.01,
+   "default": 1.0,
+   "unit": " s"
+  },
+  {
+   "key": "amount",
+   "label": "Amount",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.6
+  },
+  {
+   "key": "threshold",
+   "label": "How bright or dark",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.6
+  },
+  {
+   "key": "rise",
+   "label": "Rises",
+   "type": "float",
+   "min": -1.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.35
+  },
+  {
+   "key": "swirl",
+   "label": "Curls",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.5
+  },
+  {
+   "key": "stir",
+   "label": "Stirred by movement",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.6
+  },
+  {
+   "key": "colourful",
+   "label": "Takes the picture's colour",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.35
+  },
+  {
+   "key": "tint",
+   "label": "Smoke colour",
+   "type": "color",
+   "default": [
+    0.82,
+    0.82,
+    0.84,
+    1.0
+   ]
+  },
+  {
+   "key": "opacity",
+   "label": "Opacity",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.85
+  },
+  {
+   "key": "seed",
+   "label": "Seed",
+   "type": "int",
+   "min": 0,
+   "max": 9999,
+   "step": 1,
+   "default": 0
+  }
+ ],
+ "passes": [
+  {
+   "shader": "trace.gdshader",
+   "scale": 0.25
+  },
+  {
+   "shader": "soften.gdshader",
+   "set": {
+    "spread": 1.0
+   }
+  },
+  {
+   "shader": "soften.gdshader",
+   "set": {
+    "spread": 2.2
+   }
+  },
+  {
+   "shader": "compose.gdshader",
+   "scale": 4.0
+  }
+ ]
+}

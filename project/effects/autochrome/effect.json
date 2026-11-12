@@ -1,0 +1,19 @@
+{
+ "id": "autochrome",
+ "label": "Autochrome",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "The first colour photographs, made on glass behind a screen of potato starch grains dyed orange red, green and violet: each grain lets through only its own colour, so up close the picture is a shimmering mosaic of three dyes with black carbon packed between them, and from further back it melts into soft, dim, pastel colour with blotches where grains of one dye clumped.",
+ "params": [
+  {"key": "grain", "label": "Grain size", "type": "float", "min": 1.0, "max": 12.0, "step": 0.1, "default": 3.0, "unit": " px"},
+  {"key": "clumping", "label": "Clumping", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "softness", "label": "Softness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.72},
+  {"key": "exposure", "label": "Exposure", "type": "float", "min": -2.0, "max": 2.0, "step": 0.01, "default": 0.2, "unit": " stops"},
+  {"key": "colour", "label": "Colour", "type": "float", "min": 0.0, "max": 1.5, "step": 0.01, "default": 1.0},
+  {"key": "carbon", "label": "Carbon fill", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "falloff", "label": "Plate fall off", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 999, "step": 1, "default": 7}
+ ],
+ "passes": "single"
+}

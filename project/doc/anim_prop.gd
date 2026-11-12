@@ -39,6 +39,11 @@ const SPATIAL_CONTINUOUS := "continuous"
 const SPATIAL_KINDS: PackedStringArray = ["linear", "smooth", "bezier", "continuous"]
 const ARC_STEPS := 48
 const ARC_CACHE_MAX := 1024
+const CSPACE_KEY := "cspace"
+const COLOUR_SPACES: PackedStringArray = ["rgb", "linear", "hsv", "hsv_long", "hsl", "oklab", "oklch"]
+const COLOUR_SPACE_LABELS: PackedStringArray = ["RGB, straight between the two", "Linear light, as real light mixes", "Hue, the short way round the wheel", "Hue, the long way round the wheel", "Hue, lightness and saturation", "Perceptual (OKLab), even steps to the eye", "Perceptual hue (OKLCH), vivid in between"]
+const CSPACE_CACHE_MAX := 256
+static var _cspace_cache: Dictionary = {}
 
 static var session_salt: int = 0
 static var driver: Callable = Callable()
@@ -71,6 +76,39 @@ static func norm(v: Variant) -> Variant:
 
 static func make(value: Variant) -> Dictionary:
 	return {"v": norm(value)}
+
+
+static func make_range(lo: float, hi: float, seed: int) -> Dictionary:
+	var a: float = minf(lo, hi)
+	var b: float = maxf(lo, hi)
+	var u: float = unit(seed, 0) * 0.5 + 0.5
+	return {"v": a + (b - a) * u, "rng": [a, b], "seed": seed}
+
+
+static func is_range(p: Dictionary) -> bool:
+	return not bool(p.get("a", false)) and p.has("rng")
+
+
+static func range_of(p: Dictionary) -> Array:
+	var r: Variant = p.get("rng", null)
+	if r is Array and (r as Array).size() >= 2:
+		return [float((r as Array)[0]), float((r as Array)[1])]
+	return []
+
+
+static func range_seed(p: Dictionary) -> int:
+	return int(p.get("seed", 0))
+
+
+static func rebake_range(p: Dictionary, new_seed: int) -> Dictionary:
+	var r: Array = range_of(p)
+	if r.is_empty():
+		return p.duplicate(true)
+	return make_range(r[0], r[1], new_seed)
+
+
+static func set_range_bounds(p: Dictionary, lo: float, hi: float) -> Dictionary:
+	return make_range(lo, hi, range_seed(p))
 
 
 static func values_equal(a: Variant, b: Variant) -> bool:
@@ -446,6 +484,20 @@ static func _evaluate(p: Dictionary, t: float, dur: float, fps: float) -> Varian
 	var n: int = _component_count(p)
 	if n == 0:
 		return _eval_scalar(p, t, dur, fps, -1)
+	if n >= 3 and n <= 4 and p.has(CSPACE_KEY):
+		var cs: String = String(p[CSPACE_KEY])
+		if cs == "rgb" or not COLOUR_SPACES.has(cs):
+			cs = ""
+		if cs.is_empty():
+			var plain_out: Array = []
+			for c3: int in n:
+				plain_out.append(_eval_scalar(p, t, dur, fps, c3))
+			return plain_out
+		var q: Dictionary = _in_space(p, cs)
+		var mixed: Array = []
+		for c2: int in n:
+			mixed.append(_eval_scalar(q, t, dur, fps, c2))
+		return from_space(mixed, cs)
 	var out: Array = []
 	for c: int in n:
 		out.append(_eval_scalar(p, t, dur, fps, c))
@@ -1925,3 +1977,199 @@ static func _fit_run(times: PackedFloat64Array, samples: Array, i: int, n: int, 
 					hi[c4] = -INF
 		j += 1
 	return best
+
+
+static func colour_space(p: Dictionary) -> String:
+	var cs: String = String(p.get(CSPACE_KEY, "rgb"))
+	return cs if COLOUR_SPACES.has(cs) else "rgb"
+
+
+static func with_colour_space(p: Dictionary, cs: String) -> Dictionary:
+	var out: Dictionary = p.duplicate(true)
+	if cs == "rgb" or not COLOUR_SPACES.has(cs):
+		out.erase(CSPACE_KEY)
+	else:
+		out[CSPACE_KEY] = cs
+	return out
+
+
+static func _in_space(p: Dictionary, cs: String) -> Dictionary:
+	var ck: String = cs + ":" + str(p.hash())
+	if _cspace_cache.has(ck):
+		return _cspace_cache[ck]
+	var q: Dictionary = p.duplicate(true)
+	q.erase(CSPACE_KEY)
+	if q.get("base", null) is Array:
+		q["base"] = to_space(q["base"], cs)
+	var li: int = keys_layer_index(q)
+	if li >= 0:
+		var ks: Array = (q["layers"][li] as Dictionary).get("keys", [])
+		var prev_h: float = INF
+		var conv: Array = []
+		for k: Variant in ks:
+			var kd: Dictionary = (k as Dictionary).duplicate(true)
+			if kd.get("v", null) is Array:
+				kd["v"] = to_space(kd["v"], cs)
+			conv.append(kd)
+		_fix_hues(conv, cs)
+		q["layers"][li]["keys"] = conv
+	if _cspace_cache.size() >= CSPACE_CACHE_MAX:
+		_cspace_cache.clear()
+	_cspace_cache[ck] = q
+	return q
+
+
+static func _hue_slot(cs: String) -> int:
+	if cs == "hsv" or cs == "hsv_long" or cs == "hsl":
+		return 0
+	if cs == "oklch":
+		return 2
+	return -1
+
+
+static func _chroma_slot(cs: String) -> int:
+	if cs == "oklch":
+		return 1
+	if _hue_slot(cs) == 0:
+		return 1
+	return -1
+
+
+static func _fix_hues(keys_: Array, cs: String) -> void:
+	var hs: int = _hue_slot(cs)
+	if hs < 0 or keys_.is_empty():
+		return
+	var cs_slot: int = _chroma_slot(cs)
+	var vals: Array = []
+	for k: Variant in keys_:
+		vals.append((k as Dictionary).get("v", null))
+	var known: float = INF
+	for v: Variant in vals:
+		if v is Array and float((v as Array)[cs_slot]) > 0.0001:
+			known = float((v as Array)[hs])
+			break
+	if known == INF:
+		return
+	for v2: Variant in vals:
+		if v2 is Array and float((v2 as Array)[cs_slot]) <= 0.0001:
+			(v2 as Array)[hs] = known
+		elif v2 is Array:
+			known = float((v2 as Array)[hs])
+	var long_way: bool = cs == "hsv_long"
+	for i: int in range(1, vals.size()):
+		if not (vals[i] is Array) or not (vals[i - 1] is Array):
+			continue
+		var a: float = float((vals[i - 1] as Array)[hs])
+		var b: float = float((vals[i] as Array)[hs])
+		var d: float = b - a
+		if long_way:
+			if absf(d) < 0.5 and absf(d) > 0.0001:
+				b += -1.0 if d > 0.0 else 1.0
+		else:
+			while d > 0.5:
+				b -= 1.0
+				d -= 1.0
+			while d < -0.5:
+				b += 1.0
+				d += 1.0
+		(vals[i] as Array)[hs] = b
+
+
+static func _lin(c: float) -> float:
+	return c / 12.92 if c <= 0.04045 else pow((c + 0.055) / 1.055, 2.4)
+
+
+static func _gam(c: float) -> float:
+	var x: float = maxf(c, 0.0)
+	return x * 12.92 if x <= 0.0031308 else 1.055 * pow(x, 1.0 / 2.4) - 0.055
+
+
+static func to_space(v: Variant, cs: String) -> Array:
+	var a: Array = v
+	var r: float = float(a[0])
+	var g: float = float(a[1])
+	var b: float = float(a[2])
+	var out: Array = []
+	if cs == "linear":
+		out = [_lin(r), _lin(g), _lin(b)]
+	elif cs == "hsv" or cs == "hsv_long":
+		var col: Color = Color(r, g, b)
+		out = [col.h, col.s, col.v]
+	elif cs == "hsl":
+		var mx: float = maxf(r, maxf(g, b))
+		var mn: float = minf(r, minf(g, b))
+		var l: float = (mx + mn) * 0.5
+		var dd: float = mx - mn
+		var sat: float = 0.0 if dd < 0.000001 else dd / (1.0 - absf(2.0 * l - 1.0) + 0.000001)
+		out = [Color(r, g, b).h, clampf(sat, 0.0, 1.0), l]
+	elif cs == "oklab" or cs == "oklch":
+		var lab: Vector3 = _oklab(Vector3(_lin(r), _lin(g), _lin(b)))
+		if cs == "oklab":
+			out = [lab.x, lab.y, lab.z]
+		else:
+			out = [lab.x, sqrt(lab.y * lab.y + lab.z * lab.z), fposmod(atan2(lab.z, lab.y) / TAU, 1.0)]
+	else:
+		out = [r, g, b]
+	if a.size() > 3:
+		out.append(float(a[3]))
+	return out
+
+
+static func from_space(v: Array, cs: String) -> Array:
+	var x: float = float(v[0])
+	var y: float = float(v[1])
+	var z: float = float(v[2])
+	var out: Array = []
+	if cs == "linear":
+		out = [_gam(x), _gam(y), _gam(z)]
+	elif cs == "hsv" or cs == "hsv_long":
+		var col: Color = Color.from_hsv(fposmod(x, 1.0), clampf(y, 0.0, 1.0), clampf(z, 0.0, 1.0))
+		out = [col.r, col.g, col.b]
+	elif cs == "hsl":
+		var h: float = fposmod(x, 1.0)
+		var s2: float = clampf(y, 0.0, 1.0)
+		var l: float = clampf(z, 0.0, 1.0)
+		var c: float = (1.0 - absf(2.0 * l - 1.0)) * s2
+		var vv: float = l + c * 0.5
+		var sv: float = 0.0 if vv <= 0.000001 else 2.0 * (1.0 - l / vv)
+		var col2: Color = Color.from_hsv(h, clampf(sv, 0.0, 1.0), clampf(vv, 0.0, 1.0))
+		out = [col2.r, col2.g, col2.b]
+	elif cs == "oklab" or cs == "oklch":
+		var lab: Vector3 = Vector3(x, y, z)
+		if cs == "oklch":
+			var ang: float = z * TAU
+			lab = Vector3(x, y * cos(ang), y * sin(ang))
+		var rgb: Vector3 = _oklab_to_linear(lab)
+		out = [clampf(_gam(rgb.x), 0.0, 1.0), clampf(_gam(rgb.y), 0.0, 1.0), clampf(_gam(rgb.z), 0.0, 1.0)]
+	else:
+		out = [x, y, z]
+	if v.size() > 3:
+		out.append(float(v[3]))
+	return out
+
+
+static func _oklab(c: Vector3) -> Vector3:
+	var l: float = 0.4122214708 * c.x + 0.5363325363 * c.y + 0.0514459929 * c.z
+	var m: float = 0.2119034982 * c.x + 0.6806995451 * c.y + 0.1073969566 * c.z
+	var s3: float = 0.0883024619 * c.x + 0.2817188376 * c.y + 0.6299787005 * c.z
+	var l_: float = sign(l) * pow(absf(l), 1.0 / 3.0)
+	var m_: float = sign(m) * pow(absf(m), 1.0 / 3.0)
+	var s_: float = sign(s3) * pow(absf(s3), 1.0 / 3.0)
+	return Vector3(
+		0.2104542553 * l_ + 0.7936177850 * m_ - 0.0040720468 * s_,
+		1.9779984951 * l_ - 2.4285922050 * m_ + 0.4505937099 * s_,
+		0.0259040371 * l_ + 0.7827717662 * m_ - 0.8086757660 * s_)
+
+
+static func _oklab_to_linear(c: Vector3) -> Vector3:
+	var l_: float = c.x + 0.3963377774 * c.y + 0.2158037573 * c.z
+	var m_: float = c.x - 0.1055613458 * c.y - 0.0638541728 * c.z
+	var s_: float = c.x - 0.0894841775 * c.y - 1.2914855480 * c.z
+	var l: float = l_ * l_ * l_
+	var m: float = m_ * m_ * m_
+	var s3: float = s_ * s_ * s_
+	return Vector3(
+		4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s3,
+		-1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s3,
+		-0.0041960863 * l - 0.7034296019 * m + 1.7076956695 * s3)
+

@@ -1,0 +1,26 @@
+{
+ "id": "text_morse",
+ "label": "Morse Code",
+ "category": "Text",
+ "version": 1,
+ "applies_to": "text",
+ "text_transform": "morse",
+ "tags": [
+  "text",
+  "encoding"
+ ],
+ "blurb": "Dots and dashes for letters, digits and common marks; letters split by spaces and words by /.",
+ "params": [
+  {
+   "key": "direction",
+   "label": "Direction",
+   "type": "enum",
+   "choices": [
+    "Encode",
+    "Decode"
+   ],
+   "default": 0
+  }
+ ],
+ "passes": []
+}

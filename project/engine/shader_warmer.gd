@@ -1,6 +1,7 @@
 extends Node
 
 const EffectRegistry := preload("res://engine/effect_registry.gd")
+const TransitionWarm := preload("res://engine/transition_warm.gd")
 
 const WARM_SIZE := 16
 const IDLE_PER_FRAME := 1
@@ -15,14 +16,22 @@ var _queued: Dictionary = {}
 var _warmed: Dictionary = {}
 var _urgent: int = 0
 var _enabled: bool = true
+var _transitions: Node = null
 
 
 func _ready() -> void:
 	process_priority = 500
 	set_process(true)
 	if not Prefs.is_registered("playback.warm_shaders"):
-		Prefs.register("playback.warm_shaders", true, {"label": "Compile effect shaders ahead of time so adding an effect does not stutter", "type": "bool"})
+		Prefs.register("playback.warm_shaders", true, {"label": "Compile effect and transition shaders ahead of time so adding an effect or playing a transition does not stutter", "type": "bool"})
 	_enabled = bool(Prefs.get_value("playback.warm_shaders"))
+	if _enabled:
+		_transitions = TransitionWarm.new()
+		add_child(_transitions)
+
+
+func transitions() -> Node:
+	return _transitions
 
 
 func _build() -> void:
@@ -85,6 +94,8 @@ func warm_all() -> void:
 		if String(e.get("domain", "picture")) == "audio":
 			continue
 		queue_effect(String(e.get("id", "")), false)
+	if _transitions != null:
+		_transitions.call("queue_library")
 
 
 func _user_busy() -> bool:
@@ -94,7 +105,14 @@ func _user_busy() -> bool:
 	return Time.get_ticks_msec() - int(cap.get("active_ms")) < IDLE_AFTER_MS
 
 
+func _in_app() -> bool:
+	var cap: GDScript = load(FRAME_CAP_PATH)
+	return cap != null and int(cap.get("ours")) >= 0
+
+
 func _process(_dt: float) -> void:
+	if _transitions != null and bool(_transitions.call("step", _in_app() and not _user_busy())):
+		return
 	if _pending.is_empty():
 		return
 	if _urgent <= 0 and _user_busy():

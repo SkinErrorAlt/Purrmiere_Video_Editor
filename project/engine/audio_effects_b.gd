@@ -33,6 +33,7 @@ const DEFS: Array[Dictionary] = [
 		"label": "Auto Pan",
 		"group": "Modulation",
 		"blurb": "Moves the sound from speaker to speaker on its own, smoothly or in steps.",
+		"panels": [{"kind": "stereo_field", "bind": {"sweep": "depth", "start": "phase", "shape": "shape", "rate": "rate_hz"}}],
 		"params": [
 			{"key": "rate_hz", "label": "Rate", "default": 0.5, "min": 0.02, "max": 20.0, "step": 0.01, "unit": " Hz"},
 			{"key": "depth", "label": "Depth", "default": 0.8, "min": 0.0, "max": 1.0, "step": 0.01},
@@ -201,6 +202,7 @@ const DEFS: Array[Dictionary] = [
 		"label": "Room",
 		"group": "Delay and Reverb",
 		"blurb": "A small to medium room, with early reflections off the nearby walls.",
+		"panels": [{"kind": "room_box", "bind": {"size": "size", "decay": "decay_s", "damp": "damp_hz", "early": "early"}, "options": {"shape": [6.0, 7.5, 3.0]}}],
 		"params": [
 			{"key": "size", "label": "Room size", "default": 0.4, "min": 0.0, "max": 1.0, "step": 0.01},
 			{"key": "decay_s", "label": "Decay", "default": 0.7, "min": 0.1, "max": 3.0, "step": 0.01, "unit": " s"},
@@ -245,6 +247,7 @@ const DEFS: Array[Dictionary] = [
 		"label": "Cathedral",
 		"group": "Delay and Reverb",
 		"blurb": "A huge stone space with a long, dark tail.",
+		"panels": [{"kind": "room_box", "bind": {"size": "size", "decay": "decay_s", "damp": "damp_hz", "early": "early"}, "options": {"shape": [9.0, 18.0, 11.0]}}],
 		"params": [
 			{"key": "decay_s", "label": "Decay", "default": 6.5, "min": 1.0, "max": 20.0, "step": 0.1, "unit": " s"},
 			{"key": "predelay_ms", "label": "Pre delay", "default": 45.0, "min": 0.0, "max": 250.0, "step": 0.5, "unit": " ms"},
@@ -260,6 +263,7 @@ const DEFS: Array[Dictionary] = [
 		"label": "Gated Reverb",
 		"group": "Delay and Reverb",
 		"blurb": "A big reverb that is cut off short after each hit, the 1980s drum sound.",
+		"panels": [{"kind": "room_box", "bind": {"size": "size", "damp": "damp_hz"}}],
 		"params": [
 			{"key": "gate_ms", "label": "Gate time", "default": 300.0, "min": 50.0, "max": 1000.0, "step": 1.0, "unit": " ms"},
 			{"key": "threshold_db", "label": "Opens above", "default": -30.0, "min": -60.0, "max": 0.0, "step": 0.5, "unit": " dB"},
@@ -304,19 +308,17 @@ const DEFS: Array[Dictionary] = [
 			{"key": "low_hz", "label": "Low cut", "default": 300.0, "min": 100.0, "max": 900.0, "step": 5.0, "unit": " Hz"},
 			{"key": "high_hz", "label": "High cut", "default": 3400.0, "min": 1500.0, "max": 6000.0, "step": 50.0, "unit": " Hz"},
 			{"key": "grit", "label": "Grit", "default": 0.3, "min": 0.0, "max": 1.0, "step": 0.01},
-			{"key": "line_noise", "label": "Line noise", "default": 0.1, "min": 0.0, "max": 1.0, "step": 0.01},
 		],
 	},
 	{
 		"id": "radio",
 		"label": "Radio",
 		"group": "Character",
-		"blurb": "An old AM radio: a small speaker, mono, some static and slow fading.",
+		"blurb": "An old AM radio: a small speaker, mono, a little driven, with slow fading.",
 		"params": [
 			{"key": "low_hz", "label": "Low cut", "default": 180.0, "min": 60.0, "max": 600.0, "step": 5.0, "unit": " Hz"},
 			{"key": "high_hz", "label": "High cut", "default": 4800.0, "min": 2000.0, "max": 9000.0, "step": 50.0, "unit": " Hz"},
 			{"key": "drive", "label": "Drive", "default": 0.35, "min": 0.0, "max": 1.0, "step": 0.01},
-			{"key": "static", "label": "Static", "default": 0.15, "min": 0.0, "max": 1.0, "step": 0.01},
 			{"key": "fading", "label": "Fading", "default": 0.1, "min": 0.0, "max": 1.0, "step": 0.01},
 		],
 	},
@@ -336,12 +338,10 @@ const DEFS: Array[Dictionary] = [
 		"id": "walkie_talkie",
 		"label": "Walkie Talkie",
 		"group": "Character",
-		"blurb": "A two way radio: narrow and crunchy, with a burst of squelch when someone starts and stops talking.",
+		"blurb": "A two way radio: narrow and crunchy, and the channel shuts between transmissions so only talking gets through.",
 		"params": [
-			{"key": "squelch", "label": "Squelch", "default": 0.5, "min": 0.0, "max": 1.0, "step": 0.01},
 			{"key": "threshold_db", "label": "Counts as talking above", "default": -45.0, "min": -70.0, "max": -10.0, "step": 0.5, "unit": " dB"},
 			{"key": "drive", "label": "Drive", "default": 0.5, "min": 0.0, "max": 1.0, "step": 0.01},
-			{"key": "static", "label": "Static", "default": 0.1, "min": 0.0, "max": 1.0, "step": 0.01},
 			{"key": "low_hz", "label": "Low cut", "default": 450.0, "min": 200.0, "max": 900.0, "step": 5.0, "unit": " Hz"},
 			{"key": "high_hz", "label": "High cut", "default": 2600.0, "min": 1500.0, "max": 4000.0, "step": 50.0, "unit": " Hz"},
 		],

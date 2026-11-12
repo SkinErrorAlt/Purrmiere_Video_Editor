@@ -15,6 +15,7 @@ const DEFS: Array[Dictionary] = [
 		"label": "Hall Reverb",
 		"group": GROUP_SPACE,
 		"blurb": "A concert hall with real early reflections worked out from the shape of the hall, then a smooth, gently moving tail. Unlike Cathedral, the bass, middle and treble each decay at their own rate, the early reflections and the tail have their own levels, the pre delay can follow a tempo, and the tail can duck under the sound so words stay clear.",
+		"panels": [{"kind": "room_box", "bind": {"size": "size", "decay": "decay_s", "early": "early"}, "options": {"shape": [12.0, 18.0, 7.0]}}],
 		"params": [
 			{"key": "size", "label": "Size", "default": 0.6, "min": 0.0, "max": 1.0, "step": 0.01},
 			{"key": "decay_s", "label": "Decay", "default": 2.4, "min": 0.4, "max": 20.0, "step": 0.05, "unit": " s"},
@@ -58,6 +59,7 @@ const DEFS: Array[Dictionary] = [
 		"label": "Echo Chamber",
 		"group": GROUP_SPACE,
 		"blurb": "The old studio echo chamber: the sound plays from a speaker into a bare room and a pair of microphones picks it up. The speaker's limited range, the hard walls and a dense, bright build up give it a sound no room or hall has. Move the microphones nearer for a tighter sound or further for more room.",
+		"panels": [{"kind": "room_box", "bind": {"size": "size", "decay": "decay_s", "walls": "walls"}, "options": {"shape": [4.0, 6.0, 3.0], "wall_looks": ["tile", "plaster", "concrete"], "wall_absorb": [0.013, 0.05, 0.037]}}],
 		"params": [
 			{"key": "decay_s", "label": "Decay", "default": 1.4, "min": 0.3, "max": 5.0, "step": 0.05, "unit": " s"},
 			{"key": "size", "label": "Size", "default": 0.5, "min": 0.0, "max": 1.0, "step": 0.01},
@@ -78,6 +80,7 @@ const DEFS: Array[Dictionary] = [
 		"label": "Room Builder",
 		"group": GROUP_SPACE,
 		"blurb": "Builds a real room from its size in metres and what its walls are made of, then places the sound in it: across from left to right and at a distance from you. The reflections come off the actual walls and the tail lasts as long as that room would ring, so a voice can be put in the same room as the game footage. The sound always stays inside the room, and it is placed at one point, so stereo is folded to one point first.",
+		"panels": [{"kind": "room_box", "bind": {"width": "width_m", "depth": "depth_m", "height": "height_m", "walls": "walls", "furnished": "furnished", "across": "across", "distance": "distance_m"}, "options": {"wall_looks": ["soft", "wood", "plaster", "tile", "concrete", "studio"], "wall_absorb": [0.30, 0.13, 0.05, 0.013, 0.037, 0.62]}}],
 		"params": [
 			{"key": "width_m", "label": "Room width", "default": 5.0, "min": 1.5, "max": 40.0, "step": 0.1, "unit": " m"},
 			{"key": "depth_m", "label": "Room depth", "default": 6.0, "min": 1.5, "max": 60.0, "step": 0.1, "unit": " m"},
@@ -95,6 +98,7 @@ const DEFS: Array[Dictionary] = [
 		"label": "Modulated Reverb",
 		"group": GROUP_SPACE,
 		"blurb": "A lush, chorused wash where the movement is the point: every path through the reverb drifts slowly, so long tails shimmer instead of ringing. Freeze holds the tail for ever as a pad under whatever comes next, and Era gives the grainy sound of early digital reverbs.",
+		"panels": [{"kind": "room_box", "bind": {"size": "size", "decay": "decay_s"}}],
 		"params": [
 			{"key": "size", "label": "Size", "default": 0.5, "min": 0.0, "max": 1.0, "step": 0.01},
 			{"key": "decay_s", "label": "Decay", "default": 3.0, "min": 0.3, "max": 30.0, "step": 0.05, "unit": " s"},

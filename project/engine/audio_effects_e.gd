@@ -198,6 +198,7 @@ const DEFS: Array[Dictionary] = [
 		"label": "3D Panner",
 		"group": GROUP_STEREO,
 		"blurb": "Places the sound around your head, in front, behind, to one side or above, from the timing and shading between the ears. Best on headphones. Circle around spins it round you.",
+		"panels": [{"kind": "space3d", "bind": {"angle": "angle", "height": "height", "distance": "distance_m", "spin": "spin"}}],
 		"params": [
 			{"key": "angle", "label": "Direction, 0 is in front", "default": 45.0, "min": -180.0, "max": 180.0, "step": 1.0, "unit": " degrees"},
 			{"key": "height", "label": "Height", "default": 0.0, "min": -40.0, "max": 80.0, "step": 1.0, "unit": " degrees"},

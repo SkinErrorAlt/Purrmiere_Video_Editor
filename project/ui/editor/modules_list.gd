@@ -98,6 +98,13 @@ static func build_rows(parent: Container) -> Array[CheckBox]:
 		var note: Label = PmLabel.dim(note_for(r))
 		note.name = "Note"
 		row.add_child(note)
+		if not bool(r.get("official", true)):
+			var info: Button = PmButton.make("Details")
+			info.name = "Details"
+			info.set("quiet", true)
+			info.focus_mode = Control.FOCUS_NONE
+			info.pressed.connect(func() -> void: (load("res://ui/editor/module_card.gd") as GDScript).call("open", parent, String(r["id"])))
+			row.add_child(info)
 		parent.add_child(row)
 		boxes.append(cb)
 	return boxes

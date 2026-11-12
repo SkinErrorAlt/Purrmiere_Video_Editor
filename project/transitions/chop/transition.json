@@ -12,5 +12,8 @@
   {"key": "timing", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth", "Strong", "Slow end", "Speed up"], "default": 2},
   {"key": "stagger", "label": "Stagger", "type": "float", "min": 0, "max": 0.8, "step": 0.01, "default": 0},
   {"key": "edge_shade", "label": "Cut shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0}
+ ],
+ "handles": [
+  {"kind": "angle", "key": "angle", "zero": "right", "turn": "ccw"}
  ]
 }

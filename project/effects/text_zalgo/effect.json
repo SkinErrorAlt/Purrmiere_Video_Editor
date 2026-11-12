@@ -1,0 +1,54 @@
+{
+ "id": "text_zalgo",
+ "label": "Zalgo",
+ "category": "Text",
+ "version": 1,
+ "applies_to": "text",
+ "text_transform": "zalgo",
+ "tags": [
+  "text",
+  "horror"
+ ],
+ "blurb": "Stacks combining marks above, through and below every letter, the cursed text look. The marks stay with their letter.",
+ "params": [
+  {
+   "key": "amount",
+   "label": "Marks per letter",
+   "type": "int",
+   "min": 0,
+   "max": 40,
+   "step": 1,
+   "default": 4
+  },
+  {
+   "key": "where",
+   "label": "Where",
+   "type": "enum",
+   "choices": [
+    "Above",
+    "Above and below",
+    "Above, through and below"
+   ],
+   "default": 1
+  },
+  {
+   "key": "rate",
+   "label": "Changes per second",
+   "type": "float",
+   "min": 0,
+   "max": 30,
+   "step": 0.1,
+   "default": 0
+  },
+  {
+   "key": "seed",
+   "label": "Seed",
+   "type": "int",
+   "min": 0,
+   "max": 9999,
+   "step": 1,
+   "default": 0
+  }
+ ],
+ "passes": []
+}

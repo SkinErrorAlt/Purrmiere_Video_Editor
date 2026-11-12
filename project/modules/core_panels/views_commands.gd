@@ -1,6 +1,13 @@
 extends RefCounted
 
 const Bus := preload("res://modules/core_panels/panel_bus.gd")
+const Project := preload("res://doc/project.gd")
+const Sequence := preload("res://doc/sequence.gd")
+const Clip := preload("res://doc/clip.gd")
+const Command := preload("res://doc/commands/command.gd")
+const EffectCmds := preload("res://doc/commands/effect_cmds.gd")
+const Verbs := preload("res://doc/verbs.gd")
+const ViewMap := preload("res://doc/view_map.gd")
 const SELF_PATH := "res://modules/core_panels/views_commands.gd"
 const OWNER := "core_panels"
 const PANEL_ID := "views"
@@ -16,6 +23,8 @@ static func register_all() -> void:
 	_reg(OPEN_ID, OPEN_LABEL, "global", Callable(script, "open_panel"), Callable(Bus, "has_doc_static"))
 	for i: int in VIEW_COUNT:
 		_reg(VIEW_PREFIX + str(i + 1), "Switch to view " + str(i + 1), "program", Callable(script, "switch_key").bind(i), Callable(script, "keys_live"))
+	var solo: GDScript = load("res://ui/timeline/timeline_view_solo.gd")
+	_reg("views.solo_next_overlap", "Go to the next overlap in the soloed view", "timeline", Callable(solo, "jump_next_overlap"), Callable(solo, "soloing_now"))
 
 
 static func _reg(id: String, label: String, scope: String, handler: Callable, enabled: Callable) -> void:
@@ -65,3 +74,22 @@ static func open_panel() -> void:
 	if not placed and bool(dock.call("is_docked", "effect_controls")):
 		dock.call("focus_panel", "effect_controls")
 	dock.call("show_panel", PANEL_ID)
+
+
+static func set_view_colour(clip_id: String, uid: String, index: int, colour: int) -> bool:
+	var d: Project = Session.doc
+	var s: Sequence = Session.seq()
+	if d == null or s == null:
+		return false
+	var c: Clip = s.clip_by_id(clip_id)
+	if c == null:
+		return false
+	var e: Dictionary = c.effect_by_uid(uid)
+	if e.is_empty() or String(e.get("id", "")) != ViewMap.PAIR_VIEW_ID:
+		return false
+	var next: Dictionary = ViewMap.with_colour(ViewMap.of(e), index, colour, ViewMap.crop_count(e))
+	if next.is_empty():
+		return false
+	var label: String = "Colour a view" if colour >= 0 else "Let a view pick its own colour"
+	var cmds: Array[Command] = [EffectCmds.SetEffectParam.new(s.id, clip_id, uid, "view_audio", JSON.stringify(next), -1.0)]
+	return Verbs.run(d, label, cmds)

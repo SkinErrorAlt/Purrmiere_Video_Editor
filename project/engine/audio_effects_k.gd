@@ -590,10 +590,10 @@ const DEFS: Array[Dictionary] = [
 	},
 	{
 		"id": "drive_thru_speaker", "group": G_VOICE, "label": "Drive Through Speaker",
-		"blurb": "A crackly order speaker: narrow, crunchy and a bit broken.",
+		"blurb": "An order speaker: narrow, crunchy and a bit broken.",
 		"params": [{"key": "crunch", "label": "Crunch", "default": 0.5, "min": 0.0, "max": 1.0, "step": 0.01}],
 		"chain": [
-			{"id": "telephone", "p": {"low_hz": 500.0, "high_hz": 3000.0, "grit": "crunch", "line_noise": 0.2}},
+			{"id": "telephone", "p": {"low_hz": 500.0, "high_hz": 3000.0, "grit": "crunch"}},
 			{"id": "bitcrush", "p": {"bits": 10.0, "rate_hz": 16000.0, "wet": "crunch"}},
 		],
 	},
@@ -608,11 +608,10 @@ const DEFS: Array[Dictionary] = [
 	},
 	{
 		"id": "old_radio_broadcast", "group": G_VOICE, "label": "Old Radio Broadcast",
-		"blurb": "A 1940s wireless: narrow, warm, mono and crackling.",
-		"params": [{"key": "crackle", "label": "Crackle", "default": 0.3, "min": 0.0, "max": 1.0, "step": 0.01}],
+		"blurb": "A 1940s wireless: narrow, warm, mono and a little driven.",
+		"params": [{"key": "drive", "label": "Valve warmth", "default": 0.35, "min": 0.0, "max": 1.0, "step": 0.01}],
 		"chain": [
-			{"id": "radio", "p": {"low_hz": 250.0, "high_hz": 4000.0, "static": 0.1}},
-			{"id": "vinyl", "p": {"crackle": "crackle", "pops": 0.1}},
+			{"id": "radio", "p": {"low_hz": 250.0, "high_hz": 4000.0, "drive": "drive"}},
 			{"id": "mono", "p": {"source": 0.0}},
 		],
 	},
@@ -705,10 +704,10 @@ const DEFS: Array[Dictionary] = [
 	},
 	{
 		"id": "mission_control_radio", "group": G_VOICE, "label": "Mission Control Radio",
-		"blurb": "A space radio link with a squelch beep at each end and soft static.",
-		"params": [{"key": "static", "label": "Static", "default": 0.2, "min": 0.0, "max": 1.0, "step": 0.01}],
+		"blurb": "A space radio link: the helmet radio voice, squeezed harder by the link's compression.",
+		"params": [{"key": "visor", "label": "Helmet", "default": 0.5, "min": 0.0, "max": 1.0, "step": 0.01}],
 		"chain": [
-			{"id": "helmet_comms", "p": {"beeps": 0.6, "static": "static"}},
+			{"id": "helmet_comms", "p": {"visor": "visor"}},
 			{"id": "compressor", "p": {"threshold_db": -26.0, "ratio": 5.0, "attack_ms": 3.0, "release_ms": 90.0}},
 		],
 	},

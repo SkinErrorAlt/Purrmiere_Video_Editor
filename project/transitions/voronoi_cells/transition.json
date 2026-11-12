@@ -1,0 +1,17 @@
+{
+ "id": "voronoi_cells",
+ "label": "Voronoi Cells",
+ "group": "Shape",
+ "space": "2D",
+ "from": ["Fusion Voronoi", "Sapphire Cell Wipe"],
+ "blurb": "The frame is broken into irregular many sided cells, the shape a crystal or a dried riverbed takes, and the incoming shot claims them one at a time. The cells can turn over in order from a point outward, at random, or in a sweep across the frame, and each one gives a small pop as it lands. A thin line of light runs along every seam so the pattern reads as leaded glass rather than a blur. Nothing falls and nothing breaks: the panes simply change hands.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "cells", "label": "Cells across", "type": "float", "min": 3.0, "max": 40.0, "step": 0.5, "default": 11.0},
+  {"key": "order", "label": "Order", "type": "enum", "choices": ["From the middle", "In from the edges", "Random", "Left to right"], "default": 0},
+  {"key": "pop", "label": "Pop", "type": "float", "min": 0.0, "max": 0.5, "step": 0.01, "default": 0.12},
+  {"key": "seam", "label": "Seam light", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "wander", "label": "Cell wander", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.85},
+  {"key": "overlap", "label": "Overlap", "type": "float", "min": 0.02, "max": 0.9, "step": 0.01, "default": 0.22}
+ ]
+}

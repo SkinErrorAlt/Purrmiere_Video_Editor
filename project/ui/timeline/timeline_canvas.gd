@@ -9,6 +9,7 @@ const Project := preload("res://doc/project.gd")
 const Sequence := preload("res://doc/sequence.gd")
 const Track := preload("res://doc/track.gd")
 const Clip := preload("res://doc/clip.gd")
+const FreeTransition := preload("res://doc/free_transition.gd")
 const MediaItem := preload("res://doc/media_item.gd")
 const Marker := preload("res://doc/marker.gd")
 const AnimProp := preload("res://doc/anim_prop.gd")
@@ -48,16 +49,24 @@ const Stacks := preload("res://ui/timeline/timeline_stacks.gd")
 const Censor := preload("res://ui/timeline/timeline_censor.gd")
 const RealignTool := preload("res://ui/timeline/timeline_realign.gd")
 const ViewCuts := preload("res://ui/timeline/timeline_view_cuts.gd")
+const ObjectSnap := preload("res://ui/timeline/timeline_object_snap.gd")
 const Razor := preload("res://ui/timeline/timeline_razor.gd")
 const Keys := preload("res://ui/timeline/timeline_keys.gd")
 const SpeedBand := preload("res://ui/timeline/timeline_speed_band.gd")
+const MoveTool := preload("res://ui/timeline/timeline_move_tool.gd")
+const SlideTool := preload("res://ui/timeline/timeline_slide_tool.gd")
 const TrackerBand := preload("res://ui/timeline/timeline_tracker_band.gd")
+const ObjectBand := preload("res://ui/timeline/timeline_object_band.gd")
 const Marquee := preload("res://ui/timeline/timeline_marquee.gd")
 const Warn := preload("res://ui/timeline/timeline_warnings.gd")
 const MarkerLanes := preload("res://ui/timeline/timeline_marker_lanes.gd")
 const Filter := preload("res://ui/timeline/timeline_filter.gd")
+const Solo := preload("res://ui/timeline/timeline_view_solo.gd")
+const Fold := preload("res://ui/timeline/timeline_fold.gd")
 const Dup := preload("res://ui/timeline/timeline_dup.gd")
 const ToolCursors := preload("res://ui/kit/tool_cursors.gd")
+const Minimap := preload("res://ui/timeline/timeline_minimap.gd")
+const FenceLook := preload("res://ui/timeline/timeline_fences.gd")
 const TOOL_POINTER_SHAPES: Array[Control.CursorShape] = [Control.CURSOR_ARROW, Control.CURSOR_POINTING_HAND, Control.CURSOR_HSPLIT, Control.CURSOR_CROSS, Control.CURSOR_DRAG, Control.CURSOR_IBEAM]
 const HSCROLL_H := 11.0
 const DIVIDER_H := 14.0
@@ -157,6 +166,14 @@ var _auto_fit: bool = true
 var selected_gap: Dictionary = {}
 var selected_marker_ids: PackedStringArray = PackedStringArray()
 var trim_anim: Node = null
+var _fold: Dictionary = {}
+var _fold_serial: int = -1
+var _fold_pps: float = -1.0
+var _fold_seq: int = 0
+var _fold_holding: bool = false
+var fold_builds: int = 0
+var _paint_fold: Dictionary = {}
+var _in_paint: bool = false
 
 
 func _init() -> void:
@@ -201,8 +218,10 @@ func _ready() -> void:
 		if not Prefs.is_registered(String(spec[0])):
 			Prefs.register(String(spec[0]), spec[1], spec[2])
 	PlayheadGlide.register_prefs()
+	load("res://ui/timeline/playhead_look.gd").call("register_prefs")
 	MarkerFollow.register_prefs()
 	WaveLook.register_prefs()
+	Minimap.register_prefs()
 	header_w = float(Tk.px(float(Prefs.get_value(PREF_HEADER_W))))
 	wave_log = bool(Prefs.get_value(PREF_WAVE_LOG))
 	wave_gain = float(Prefs.get_value(PREF_WAVE_GAIN))
@@ -375,11 +394,77 @@ func playhead() -> float:
 
 
 func x_of(t: float) -> float:
-	return header_w + t * pps - scroll_x
+	var f: Dictionary = _paint_fold if _in_paint else fold()
+	if f.is_empty():
+		return header_w + t * pps - scroll_x
+	return header_w + Fold.shown(f, t) * pps - scroll_x
 
 
 func t_of(x: float) -> float:
-	return (x - header_w + scroll_x) / pps
+	var f: Dictionary = _paint_fold if _in_paint else fold()
+	if f.is_empty():
+		return (x - header_w + scroll_x) / pps
+	return Fold.real(f, (x - header_w + scroll_x) / pps)
+
+
+func fold() -> Dictionary:
+	if drag != null and bool(drag.get("active")):
+		if not _fold_holding:
+			_fold_holding = true
+			if _fold_serial < 0 or _fold_pps != pps:
+				_refresh_fold()
+		elif _fold_pps != pps:
+			_refresh_fold()
+		return _fold
+	_fold_holding = false
+	var d: Project = doc()
+	var s: Sequence = seq()
+	var serial: int = d.serial if d != null else 0
+	var sid: int = s.get_instance_id() if s != null else 0
+	if serial != _fold_serial or pps != _fold_pps or sid != _fold_seq:
+		_refresh_fold()
+	return _fold
+
+
+func _refresh_fold() -> void:
+	var d: Project = doc()
+	var s: Sequence = seq()
+	var was: float = Fold.hidden_time(_fold)
+	_fold_serial = d.serial if d != null else 0
+	_fold_pps = pps
+	_fold_seq = s.get_instance_id() if s != null else 0
+	_fold = Fold.for_pps(Solo.fold_spans(d, s), pps) if s != null and Solo.folds(s) else {}
+	fold_builds += 1
+	if Fold.hidden_time(_fold) != was:
+		_sync_scroll_content.call_deferred()
+		view_changed.emit.call_deferred()
+
+
+func shown_duration() -> float:
+	return Fold.shown(fold(), duration())
+
+
+func px_between(t0: float, t1: float) -> float:
+	return Fold.px_between(fold(), t0, t1, pps)
+
+
+func snap_near(targets: PackedFloat64Array, t: float) -> float:
+	var f: Dictionary = fold()
+	var best: float = t
+	if f.is_empty():
+		var best_d: float = Drag.SNAP_PX / pps
+		for v: float in targets:
+			if absf(v - t) < best_d:
+				best_d = absf(v - t)
+				best = v
+		return best
+	var best_px: float = Drag.SNAP_PX
+	for v: float in targets:
+		var dpx: float = absf(Fold.px_between(f, t, v, pps))
+		if dpx < best_px:
+			best_px = dpx
+			best = v
+	return best
 
 
 func ruler_h() -> float:
@@ -476,23 +561,25 @@ func geometry() -> Dictionary:
 	var div_h: float = float(Tk.px(DIVIDER_H)) if has_band else 0.0
 	var band_h: float = 0.0
 	if has_band and not band_collapsed():
-		band_h = minf(band_height(), maxf(h - top - div_h - HSCROLL_H - 40.0, 0.0))
-	var hs: Rect2 = Rect2(header_w, h - HSCROLL_H, maxf(w - header_w, 0.0), HSCROLL_H)
+		band_h = minf(band_height(), maxf(h - top - div_h - Minimap.strip_h(HSCROLL_H) - 40.0, 0.0))
+	var hsh: float = Minimap.strip_h(HSCROLL_H)
+	var hs: Rect2 = Rect2(header_w, h - hsh, maxf(w - header_w, 0.0), hsh)
 	var main_rect: Rect2
 	var band_rect: Rect2
 	var div_rect: Rect2
 	if band_at_bottom():
-		main_rect = Rect2(0.0, top, w, maxf(h - top - HSCROLL_H - div_h - band_h, 0.0))
+		main_rect = Rect2(0.0, top, w, maxf(h - top - hsh - div_h - band_h, 0.0))
 		div_rect = Rect2(0.0, main_rect.end.y, w, div_h)
 		band_rect = Rect2(0.0, div_rect.end.y, w, band_h)
 	else:
 		band_rect = Rect2(0.0, top, w, band_h)
 		div_rect = Rect2(0.0, band_rect.end.y, w, div_h)
-		main_rect = Rect2(0.0, div_rect.end.y, w, maxf(h - div_rect.end.y - HSCROLL_H, 0.0))
+		main_rect = Rect2(0.0, div_rect.end.y, w, maxf(h - div_rect.end.y - hsh, 0.0))
 	_geom = {
 		"header_w": header_w, "ruler_h": rh, "marker_rows": marker_rows, "scroll_x": scroll_x, "scroll_y": scroll_y, "band_scroll_y": band_scroll_y,
 		"pps": pps, "width": w, "height": h, "main_rect": main_rect, "band_rect": band_rect, "divider_rect": div_rect,
 		"hscroll_rect": hs, "main_h": float(ln["main_h"]), "band_h": float(ln["band_h"]), "has_band": has_band,
+		"fold": fold(),
 	}
 	return _geom
 
@@ -508,7 +595,7 @@ func accepts_global(global_pos: Vector2) -> bool:
 
 
 func min_pps() -> float:
-	var d: float = maxf(duration(), 1.0)
+	var d: float = maxf(Fold.shown(_fold, duration()), 1.0)
 	return maxf(view_w() / (d * 1.04 + 0.5), 0.00005)
 
 
@@ -517,7 +604,7 @@ func set_pps(v: float, about_x: float = -INF) -> void:
 	var t_at: float = t_of(about_x if about_x > -INF else header_w)
 	var ax: float = about_x if about_x > -INF else header_w
 	pps = clampf(v, min_pps(), PPS_MAX)
-	var want: float = t_at * pps - (ax - header_w)
+	var want: float = Fold.shown(fold(), t_at) * pps - (ax - header_w)
 	_sync_scroll_content()
 	_scroll.call("scroll_to", maxf(want, 0.0), scroll_y, false)
 	scroll_x = float(_scroll.get("scroll_x"))
@@ -536,7 +623,7 @@ func zoom_out(about_x: float = -INF) -> void:
 
 
 func zoom_fit() -> void:
-	var d: float = maxf(duration(), 1.0)
+	var d: float = maxf(shown_duration(), 1.0)
 	_fit_pending = size.x <= header_w + 2.0
 	pps = clampf(view_w() / (d * 1.04 + 0.5), 0.00005, PPS_MAX)
 	_sync_scroll_content()
@@ -562,9 +649,10 @@ func zoom_to_selection() -> void:
 			t1 = maxf(t1, c.end())
 	if t1 <= t0:
 		return
-	pps = clampf(view_w() / ((t1 - t0) * 1.1), min_pps(), PPS_MAX)
+	var f0: Dictionary = fold()
+	pps = clampf(view_w() / ((Fold.shown(f0, t1) - Fold.shown(f0, t0)) * 1.1), min_pps(), PPS_MAX)
 	_sync_scroll_content()
-	_scroll.call("scroll_to", maxf(t0 * pps - view_w() * 0.05, 0.0), scroll_y, false)
+	_scroll.call("scroll_to", maxf(Fold.shown(fold(), t0) * pps - view_w() * 0.05, 0.0), scroll_y, false)
 	scroll_x = float(_scroll.get("scroll_x"))
 	_dense_cache.clear()
 	view_changed.emit()
@@ -572,7 +660,7 @@ func zoom_to_selection() -> void:
 
 
 func reveal_time(t: float, page: bool) -> void:
-	var x: float = t * pps
+	var x: float = Fold.shown(fold(), t) * pps
 	var left: float = scroll_x
 	var right: float = scroll_x + view_w()
 	if x >= left + 4.0 and x <= right - view_w() * 0.08:
@@ -591,7 +679,7 @@ func _sync_scroll_content() -> void:
 	_scroll.call("set_view", view_w(), main_rect.size.y)
 	_scroll.set("tail_x", view_w() * 0.5)
 	_scroll.set("tail_y", 0.0)
-	_scroll.call("set_content", duration() * pps, float(g["main_h"]))
+	_scroll.call("set_content", Fold.shown(g["fold"], duration()) * pps, float(g["main_h"]))
 	var band_rect: Rect2 = g["band_rect"]
 	_band_scroll.call("set_view", 1.0, band_rect.size.y)
 	_band_scroll.call("set_content", 1.0, float(g["band_h"]))
@@ -768,8 +856,45 @@ func band_scroll_thumb(dy: float, origin: Dictionary) -> void:
 	_band_scroll.call("scroll_to", 0.0, float(origin.get("band_scroll_y", 0.0)) + dy * ratio, false)
 
 
+## A click on the minimap outside the window centres the view there; a click on the window just grabs it.
+func minimap_jump(x: float) -> bool:
+	if not Minimap.on():
+		return false
+	var g: Dictionary = geometry()
+	var win: Rect2 = Minimap.window_rect(self, g, g["hscroll_rect"])
+	if x >= win.position.x and x <= win.end.x:
+		return false
+	_auto_fit = false
+	_scroll.call("scroll_to", Minimap.scroll_for(self, g, g["hscroll_rect"], x), scroll_y, false)
+	scroll_x = float(_scroll.get("scroll_x"))
+	_dense_cache.clear()
+	view_changed.emit()
+	queue_redraw()
+	return true
+
+
+var _nest_uses: Dictionary = {}
+var _nest_uses_paint: int = -1
+
+
+## How many nest clips in the whole project show the sequence `seq_id`, counted once a paint. Shown on a nest as
+## "nest ×3" so it is clear that changing inside it changes every copy.
+func nest_uses(seq_id: String) -> int:
+	if _nest_uses_paint != paint_count:
+		_nest_uses_paint = paint_count
+		_nest_uses = {}
+		var d: Project = doc()
+		if d != null:
+			for sq: Sequence in d.sequences:
+				for tr: Track in sq.all_tracks():
+					for c: Clip in tr.clips:
+						if not c.sequence_id.is_empty():
+							_nest_uses[c.sequence_id] = int(_nest_uses.get(c.sequence_id, 0)) + 1
+	return int(_nest_uses.get(seq_id, 0))
+
+
 func hscroll_thumb(dx: float, origin: Dictionary) -> void:
-	var ratio: float = (duration() * pps + view_w() * 0.5) / maxf(view_w(), 1.0)
+	var ratio: float = (shown_duration() * pps + view_w() * 0.5) / maxf(view_w(), 1.0)
 	_scroll.call("scroll_to", float(origin.get("scroll_x", 0.0)) + dx * ratio, scroll_y, false)
 
 
@@ -779,8 +904,9 @@ func snap_targets(exclude: PackedStringArray) -> PackedFloat64Array:
 	if s == null:
 		return out
 	var span: float = view_w() / pps
-	var t0: float = maxf(scroll_x / pps - span, 0.0)
-	var t1: float = scroll_x / pps + span * 2.0
+	var f: Dictionary = fold()
+	var t0: float = maxf(Fold.real(f, scroll_x / pps - span), 0.0)
+	var t1: float = Fold.real(f, scroll_x / pps + span * 2.0)
 	out.append(0.0)
 	out.append(s.playhead)
 	if s.in_point >= 0.0:
@@ -804,6 +930,7 @@ func snap_targets(exclude: PackedStringArray) -> PackedFloat64Array:
 			i += 1
 			n += 1
 	out.append_array(ViewCuts.snap_times(self, s, t0, t1, excluded))
+	out.append_array(ObjectSnap.snap_times(self, s, t0, t1, excluded))
 	out.sort()
 	return out
 
@@ -864,6 +991,7 @@ func click_select(clip_id: String, mods: Dictionary) -> void:
 
 func gesture_ended() -> void:
 	_pressed_button = ""
+	Solo.after_gesture(self, doc(), seq())
 	_update_cursor()
 	queue_redraw()
 	_overlay.queue_redraw()
@@ -906,8 +1034,10 @@ func _cursor_for_tool(tool: String, h: Dictionary) -> Control.CursorShape:
 			return Control.CURSOR_HSIZE
 		if bool(h.get("level", false)):
 			return Control.CURSOR_HSIZE if bool(h.get("band_key", false)) else Control.CURSOR_VSIZE
-		if String(h.get("tr_edge", "")) != "":
+		if String(h.get("tr_edge", "")) != "" or String(h.get("free_edge", "")) != "":
 			return Control.CURSOR_HSIZE
+		if not (h.get("free", {}) as Dictionary).is_empty():
+			return Control.CURSOR_POINTING_HAND
 		if String(h.get("edge", "")) != "":
 			return Control.CURSOR_HSPLIT
 		if h.get("clip", null) != null:
@@ -950,7 +1080,7 @@ func _on_input(event: InputEvent) -> void:
 		Censor.hover(self, mm.position)
 		RealignTool.hover(self, mm.position)
 		var h: Dictionary = hit_at(mm.position)
-		var changed: bool = String(h.get("zone", "")) != String(hover.get("zone", "")) or h.get("clip", null) != hover.get("clip", null) or String(h.get("edge", "")) != String(hover.get("edge", "")) or String(h.get("button", "")) != String(hover.get("button", "")) or h.get("track", null) != hover.get("track", null) or bool(h.get("level", false)) != bool(hover.get("level", false)) or bool(h.get("band_key", false)) != bool(hover.get("band_key", false)) or bool(h.get("transition", false)) != bool(hover.get("transition", false)) or String(h.get("tr_edge", "")) != String(hover.get("tr_edge", "")) or String(h.get("fade", "")) != String(hover.get("fade", "")) or h.get("marker", null) != hover.get("marker", null) or String(h.get("marker_edge", "")) != String(hover.get("marker_edge", ""))
+		var changed: bool = String(h.get("zone", "")) != String(hover.get("zone", "")) or h.get("clip", null) != hover.get("clip", null) or String(h.get("edge", "")) != String(hover.get("edge", "")) or String(h.get("button", "")) != String(hover.get("button", "")) or h.get("track", null) != hover.get("track", null) or bool(h.get("level", false)) != bool(hover.get("level", false)) or bool(h.get("band_key", false)) != bool(hover.get("band_key", false)) or bool(h.get("transition", false)) != bool(hover.get("transition", false)) or String(h.get("tr_edge", "")) != String(hover.get("tr_edge", "")) or FreeTransition.id_of(h.get("free", {})) != FreeTransition.id_of(hover.get("free", {})) or String(h.get("free_edge", "")) != String(hover.get("free_edge", "")) or String(h.get("fade", "")) != String(hover.get("fade", "")) or h.get("marker", null) != hover.get("marker", null) or String(h.get("marker_edge", "")) != String(hover.get("marker_edge", ""))
 		hover = h
 		if changed:
 			_update_cursor()
@@ -1062,6 +1192,7 @@ func _on_press(mb: InputEventMouseButton) -> void:
 		drag.call("begin", "divider", h, mb.position, mods)
 		return
 	if zone == "hscroll":
+		minimap_jump(mb.position.x)
 		drag.call("begin", "hscroll", h, mb.position, mods)
 		return
 	if zone == "marker_lane" and MarkerLanes.press(self, h, mb):
@@ -1152,15 +1283,17 @@ func _on_press(mb: InputEventMouseButton) -> void:
 				ec.call("focus_text")
 		return
 	if tool == "track_select":
-		if t2 != null:
-			var ids: PackedStringArray = PackedStringArray()
-			var t: float = float(h.get("t", 0.0))
-			var tracks: Array[Track] = [t2] if bool(mods.get("ctrl", false)) else s.all_tracks()
-			for tr: Track in tracks:
-				for cl: Clip in tr.clips:
-					if (cl.end() > t and not bool(mods.get("shift", false))) or (cl.start < t and bool(mods.get("shift", false))):
-						ids.append(cl.id)
-			Verbs.select(d, s, ids, "add" if bool(mods.get("shift", false)) else "replace")
+		MoveTool.press(self, h, mb.position, mods)
+		return
+	var ft_hit: Dictionary = h.get("free", {})
+	if not ft_hit.is_empty() and tool == "select" and t2 != null and not t2.locked:
+		if mb.double_click:
+			open_free_picker(t2.id, FreeTransition.id_of(ft_hit))
+			return
+		TrOps.select_free(d, s, t2.id, FreeTransition.id_of(ft_hit))
+		var fe: String = String(h.get("free_edge", ""))
+		h["edge"] = fe if not fe.is_empty() else "body"
+		drag.call("begin", "free_tr", h, mb.position, mods)
 		return
 	if c == null:
 		if bool(h.get("playhead", false)):
@@ -1179,8 +1312,7 @@ func _on_press(mb: InputEventMouseButton) -> void:
 			h["edge"] = tr_edge
 			drag.call("begin", "transition", h, mb.position, mods)
 			return
-		if not s.selected_clip_ids.has(c.id):
-			Verbs.select(d, s, PackedStringArray([c.id]), "replace")
+		Verbs.select_transition(d, s, c.id, String(h.get("tr_side", "in")))
 		load("res://modules/core_panels/monitor_handles.gd").call("focus_transition", c.id, s)
 		h["edge"] = "body"
 		drag.call("begin", "transition", h, mb.position, mods)
@@ -1211,7 +1343,7 @@ func _on_press(mb: InputEventMouseButton) -> void:
 		drag.call("begin", "slip", h, mb.position, mods)
 		return
 	if tool == "slide":
-		drag.call("begin", "slide", h, mb.position, mods)
+		SlideTool.press(self, h, mb.position, mods)
 		return
 	if not edge.is_empty() and t2 != null and not t2.locked:
 		if tool == "roll":
@@ -1228,6 +1360,10 @@ func _on_press(mb: InputEventMouseButton) -> void:
 	if t2 != null and t2.locked:
 		click_select(c.id, mods)
 		return
+	if Solo.locks_clip(d, s, c):
+		click_select(c.id, mods)
+		Events.toast(Solo.LOCK_TEXT)
+		return
 	drag.call("begin", "move", h, mb.position, mods)
 
 
@@ -1235,15 +1371,7 @@ func _snapped_click_time(h: Dictionary) -> float:
 	var t: float = float(h.get("t", 0.0))
 	if not snapping:
 		return t
-	var targets: PackedFloat64Array = snap_targets(PackedStringArray())
-	var reach: float = Drag.SNAP_PX / pps
-	var best: float = t
-	var best_d: float = reach
-	for v: float in targets:
-		if absf(v - t) < best_d:
-			best_d = absf(v - t)
-			best = v
-	return best
+	return snap_near(snap_targets(PackedStringArray()), t)
 
 
 func _pen_click(c: Clip, t: Track, h: Dictionary, mods: Dictionary) -> void:
@@ -1329,7 +1457,8 @@ func _on_right(mb: InputEventMouseButton) -> void:
 			if m3 != null and m3.is_inside_tree():
 				m3.connect("picked", _on_marker_menu.bind(mk.id))
 			return
-		var items3: Array = [PmMenu.item("add_marker", "Add marker here", Cmd.keys_text("marker.add")), PmMenu.item("mark_in", "Mark in here", Cmd.keys_text("mark.in")), PmMenu.item("mark_out", "Mark out here", Cmd.keys_text("mark.out")), PmMenu.item("clear_in_out", "Clear in and out", Cmd.keys_text("mark.clear_both")), PmMenu.separator(), PmMenu.item("tag_range", "Tag in to out..."), PmMenu.item("new_marker_lane", "New marker lane", "", "marker")]
+		var items3: Array = [PmMenu.item("add_marker", "Add marker here", Cmd.keys_text("marker.add")), PmMenu.item("mark_in", "Mark in here", Cmd.keys_text("mark.in")), PmMenu.item("mark_out", "Mark out here", Cmd.keys_text("mark.out")), PmMenu.item("clear_in_out", "Clear in and out", Cmd.keys_text("mark.clear_both")), PmMenu.separator(), PmMenu.item("tag_range", "Tag in to out..."), PmMenu.item("new_marker_lane", "New marker lane", "", "marker"), PmMenu.separator()]
+		items3.append_array(FenceLook.menu_items(seq(), float(h.get("t", 0.0))))
 		var m4: Control = PmMenu.open(self, items3, at)
 		if m4 != null and m4.is_inside_tree():
 			m4.connect("picked", _on_ruler_menu.bind(float(h.get("t", 0.0))))
@@ -1796,6 +1925,41 @@ func _on_transition_form(result: Variant, clip_id: String, kinds: Array) -> void
 	Verbs.set_transition(d, s, clip_id, next)
 
 
+func open_free_picker(track_id: String, ft_id: String) -> Control:
+	var s: Sequence = seq()
+	var tr: Track = s.track_by_id(track_id) if s != null else null
+	if tr == null or tr.locked:
+		return null
+	var ft: Dictionary = FreeTransition.by_id(tr.free_transitions, ft_id)
+	if ft.is_empty():
+		return null
+	return TrPicker.open(self, "Change transition", TrOps.kind_of_free(ft), Callable(self, "_free_picked").bind(track_id, ft_id))
+
+
+func _free_picked(id: String, track_id: String, ft_id: String) -> void:
+	TrOps.change_free(doc(), seq(), track_id, ft_id, id)
+
+
+func default_transition_length() -> float:
+	return float(Prefs.get_value(PREF_TRANSITION_SECONDS)) if Prefs.is_registered(PREF_TRANSITION_SECONDS) else 1.0
+
+
+func free_drop_wanted(tr: Track, t: float, dur: float) -> bool:
+	if tr == null or tr.locked or not tr.makes_picture():
+		return false
+	if not FreeTransition.at_point(tr.free_transitions, t).is_empty():
+		return false
+	var reach: float = maxf(dur * 0.5, Clip.MIN_TRANSITION)
+	var i: int = tr.index_of_last_starting_before(t)
+	for k: int in [i, i + 1]:
+		if k < 0 or k >= tr.clips.size():
+			continue
+		var c: Clip = tr.clips[k]
+		if absf(t - c.start) <= reach or absf(t - c.end()) <= reach:
+			return false
+	return true
+
+
 func transition_spot(tr: Track, t: float, clip_hint: Clip = null) -> Dictionary:
 	if tr == null:
 		return {}
@@ -1828,6 +1992,9 @@ func apply_transition_at(kind: String, track_id: String, t: float, clip_hint: Cl
 	var tr: Track = s.track_by_id(track_id)
 	if tr == null or tr.locked:
 		return false
+	var want: float = default_transition_length()
+	if free_drop_wanted(tr, t, want):
+		return not TrOps.place_free(d, s, tr.id, kind, maxf(t - want * 0.5, 0.0), want, preset_id).is_empty()
 	var spot: Dictionary = transition_spot(tr, t, clip_hint)
 	if spot.is_empty():
 		return false
@@ -1858,6 +2025,7 @@ func apply_transition_at(kind: String, track_id: String, t: float, clip_hint: Cl
 
 const TrRegistry := preload("res://engine/transition_registry.gd")
 const TrOps := preload("res://modules/core_panels/transition_ops.gd")
+const TrPicker := preload("res://modules/core_panels/transition_picker.gd")
 const TR_PICK_ID := "transition_pick"
 
 
@@ -2234,6 +2402,8 @@ func _on_ruler_menu(id: String, t: float) -> void:
 		MarkerLanes.open_lane_form(self, "")
 	elif id == "tag_range":
 		MarkerLanes.open_tag_form(self, "")
+	elif id.begins_with("fence_"):
+		FenceLook.on_menu(id, d, s, t)
 
 
 func _on_empty_menu(id: String, track_id: String, t: float) -> void:
@@ -2520,13 +2690,7 @@ func _update_media_preview(payload: Dictionary, h: Dictionary, local: Vector2) -
 		pass
 	var raw_t: float = t
 	if snapping:
-		var targets: PackedFloat64Array = snap_targets(PackedStringArray())
-		var reach: float = Drag.SNAP_PX / pps
-		var best_d: float = reach
-		for v: float in targets:
-			if absf(v - raw_t) < best_d:
-				best_d = absf(v - raw_t)
-				t = v
+		t = snap_near(snap_targets(PackedStringArray()), raw_t)
 	t = maxf(t, 0.0)
 	var total: float = 0.0
 	var spans: Array[float] = []
@@ -2548,6 +2712,8 @@ func _update_media_preview(payload: Dictionary, h: Dictionary, local: Vector2) -
 	var track: Track = h.get("track", null)
 	var wants_video: bool = item.has_picture() and part != "audio"
 	var wants_audio: bool = (item.has_audio or item.kind == "audio" or item.audio_only or Verbs.sequence_has_sound(d, item)) and part != "video" and not StreamOff.all_off(item)
+	if Verbs.SoundAdjust.drops_on(item, track):
+		wants_audio = true
 	var video_lane: Dictionary = {}
 	var audio_lane: Dictionary = {}
 	if not new_track and track != null and not bool(lane.get("nest", false)):
@@ -3395,6 +3561,8 @@ func _draw_lane_clips(l: Dictionary, region: Rect2, set_scroll: float) -> void:
 	var i: int = t.index_of_first_visible(t0)
 	var j: int = t.index_of_last_starting_before(t1)
 	if j < i:
+		if not is_nest_lane:
+			_draw_free_transitions(s, t, lane_y, lane_h, scale_t, offset_t)
 		return
 	var far_lane: bool = Far.dense(self, j - i + 1, DENSE_LIMIT) and not is_nest_lane
 	var far_wide: PackedInt32Array = Far.draw_dense(self, t, lane_y, lane_h) if far_lane else PackedInt32Array()
@@ -3424,8 +3592,12 @@ func _draw_lane_clips(l: Dictionary, region: Rect2, set_scroll: float) -> void:
 			_deferred_moves.append(Dup.ghost(self, s, t, c, x0, x1, lane_y, lane_h, move_steps))
 			moving = false
 		if moving:
-			x0 += drag.delta_t * pps
-			x1 += drag.delta_t * pps
+			if _fold.is_empty():
+				x0 += drag.delta_t * pps
+				x1 += drag.delta_t * pps
+			else:
+				x0 = x_of(cs + drag.delta_t)
+				x1 = x_of(ce + drag.delta_t)
 			if move_steps != 0 and s.was_picked(c.id):
 				own_steps = s.visual_track_delta(t.kind, move_steps)
 			if own_steps != 0:
@@ -3488,7 +3660,8 @@ func _draw_lane_clips(l: Dictionary, region: Rect2, set_scroll: float) -> void:
 			elif absf(sp - 1.0) > 0.001:
 				right += (" " if not right.is_empty() else "") + str(int(round(sp * 100.0))) + "%"
 			if c.is_nest():
-				right += (" " if not right.is_empty() else "") + "nest"
+				var uses: int = nest_uses(c.sequence_id)
+				right += (" " if not right.is_empty() else "") + ("nest" if uses <= 1 else "nest ×" + str(uses))
 			if not c.link_id.is_empty() and r.size.x > 40.0:
 				Icons.draw(self, "link", Rect2(r.position.x + 3.0, r.end.y - 13.0, 10.0, 10.0), Tk.c["text_faint"])
 			if c.is_nest() and r.size.x > 24.0:
@@ -3514,6 +3687,7 @@ func _draw_lane_clips(l: Dictionary, region: Rect2, set_scroll: float) -> void:
 			transitions.append({"clip": c, "y": r.position.y, "h": r.size.y, "side": "out"})
 	if not is_nest_lane:
 		Stacks.draw_lane_marks(self, s, t, lane_y, lane_h, t0, t1)
+		Solo.draw_lane(self, d, s, t, lane_y, lane_h)
 	for tdef: Dictionary in transitions:
 		var tc: Clip = tdef["clip"]
 		var out_side: bool = String(tdef.get("side", "in")) == "out"
@@ -3525,7 +3699,30 @@ func _draw_lane_clips(l: Dictionary, region: Rect2, set_scroll: float) -> void:
 		if tr_rect.size.x < 1.0:
 			continue
 		var hot: bool = hover_clip == tc and bool(hover.get("transition", false)) and String(hover.get("tr_side", "in")) == String(tdef.get("side", "in")) and not drag.in_progress()
-		Paint.draw_transition(self, tr_rect, tx1 - tx0, hot, String(TrRegistry.shared().call("label_for", tc.transition_out if out_side else tc.transition_in)), _font, _fs_small)
+		var picked_tr: Dictionary = Verbs.selected_transition(s)
+		var chosen: bool = String(picked_tr.get("clip_id", "")) == tc.id and String(picked_tr.get("side", "in")) == String(tdef.get("side", "in"))
+		Paint.draw_transition(self, tr_rect, tx1 - tx0, hot, String(TrRegistry.shared().call("label_for", tc.transition_out if out_side else tc.transition_in)), _font, _fs_small, chosen)
+	if not is_nest_lane:
+		_draw_free_transitions(s, t, lane_y, lane_h, scale_t, offset_t)
+
+
+func _draw_free_transitions(s: Sequence, t: Track, lane_y: float, lane_h: float, scale_t: float, offset_t: float) -> void:
+	if t.free_transitions.is_empty():
+		return
+	var hover_free: String = FreeTransition.id_of(hover.get("free", {}))
+	var held: Dictionary = s.held_free()
+	var picked: String = String(held.get("id", "")) if String(held.get("track_id", "")) == t.id else ""
+	var dragging: bool = drag.in_progress() and String(drag.get("mode")) == "free_tr"
+	for ft: Dictionary in t.free_transitions:
+		var span: Vector2 = FreeTransition.span(ft)
+		var fx0: float = x_of(span.x * scale_t + offset_t)
+		var fx1: float = x_of(span.y * scale_t + offset_t)
+		var r: Rect2 = Rect2(maxf(fx0, header_w), lane_y, minf(fx1, size.x) - maxf(fx0, header_w), lane_h)
+		if r.size.x < 1.0:
+			continue
+		var ft_id: String = FreeTransition.id_of(ft)
+		var hot: bool = hover_free == ft_id and not dragging
+		Paint.draw_free_transition(self, r, fx1 - fx0, hot, String(TrRegistry.shared().call("label_for", FreeTransition.spec_of(ft))), _font, _fs_small, picked == ft_id)
 
 
 func _draw_transition_limits(tc: Clip, out_side: bool, y: float, h: float, scale_t: float, offset_t: float) -> void:
@@ -3652,6 +3849,8 @@ func _draw() -> void:
 		return
 	var g: Dictionary = geometry()
 	var ln: Dictionary = lanes()
+	_paint_fold = g["fold"]
+	_in_paint = true
 	profile["geometry"] = Time.get_ticks_usec() - t0
 	if trim_anim != null:
 		trim_anim.call("pose")
@@ -3663,10 +3862,12 @@ func _draw() -> void:
 	_deferred_moves.clear()
 	PmText.keep_out(self, Groups.tag_rects(self))
 	_draw_set("main", main_rect, scroll_y, ln["main"], Tk.c["bg_lane_video"])
+	Paint.draw_fold_seams(self, g["fold"], header_w, pps, scroll_x, main_rect.position.y, main_rect.end.y, size.x)
 	profile["main_set"] = Time.get_ticks_usec() - t_sets
 	profile["before_sets"] = t_sets - t0
 	if band_rect.size.y > 0.0:
 		_draw_set("band", band_rect, band_scroll_y, ln["band"], Tk.c["bg_pinned"])
+		Paint.draw_fold_seams(self, g["fold"], header_w, pps, scroll_x, band_rect.position.y, band_rect.end.y, size.x)
 		var vs: Rect2 = Rect2(size.x - VSCROLL_W, band_rect.position.y, VSCROLL_W, band_rect.size.y)
 		Paint.draw_scrollbar(self, vs, band_scroll_y, float(ln["band_h"]), band_rect.size.y, true)
 	for dm: Dictionary in _deferred_moves:
@@ -3677,8 +3878,10 @@ func _draw() -> void:
 			Dup.draw_mark(self, mr)
 	_deferred_moves.clear()
 	Groups.draw(self)
+	FenceLook.draw(self, self, g)
 	Censor.draw(self)
 	TrackerBand.draw(self)
+	ObjectBand.draw(self)
 	Keys.draw(self)
 	SpeedBand.draw_drag(self)
 	var top_of_sets: float = main_rect.position.y
@@ -3701,7 +3904,7 @@ func _draw() -> void:
 	var rh: float = ruler_h()
 	var ruler: Rect2 = Rect2(header_w, 0.0, size.x - header_w, rh)
 	var t_ruler: int = Time.get_ticks_usec()
-	Paint.draw_ruler(self, ruler, scroll_x, pps, fps(), _font, Tk.fs(Tk.sz("font_tiny")))
+	Paint.draw_ruler(self, ruler, scroll_x, pps, fps(), _font, Tk.fs(Tk.sz("font_tiny")), g["fold"])
 	profile["ruler"] = Time.get_ticks_usec() - t_ruler
 	_draw_render_bar(ruler)
 	_draw_loading_bar(ruler)
@@ -3715,13 +3918,17 @@ func _draw() -> void:
 	draw_rect(Rect2(0.0, rh - 1.0, size.x, 1.0), Tk.c["border"], true)
 	var hs: Rect2 = g["hscroll_rect"]
 	profile["ruler_extras"] = Time.get_ticks_usec() - t_ruler
-	Paint.draw_scrollbar(self, hs, scroll_x, duration() * pps + view_w() * 0.5, view_w(), false)
+	if Minimap.on():
+		Minimap.draw(self, self, g)
+	else:
+		Paint.draw_scrollbar(self, hs, scroll_x, Fold.shown(g["fold"], duration()) * pps + view_w() * 0.5, view_w(), false)
 	_wave_end_frame()
 	if _wave_more:
 		queue_redraw()
 	profile["tail"] = Time.get_ticks_usec() - t_ruler
 	if trim_anim != null:
 		trim_anim.call("unpose")
+	_in_paint = false
 	last_draw_usec = Time.get_ticks_usec() - t0
 
 
@@ -3907,6 +4114,10 @@ class _Overlay:
 					audio_index += 1
 		if px >= header_w - 1.0 and px <= size.x:
 			MarkerLanesKit.draw_playhead(self, canvas, px, 0.0, size.y - float((g["hscroll_rect"] as Rect2).size.y), ph)
+		if Minimap.on():
+			var mhs: Rect2 = g["hscroll_rect"]
+			var mpx: float = Minimap.x_of(canvas, g, mhs, ph)
+			draw_rect(Rect2(mpx, mhs.position.y + 1.0, 1.0, mhs.size.y - 2.0), Tk.c["accent"], true)
 		var snap_x: float = float(drag.get("snap_x"))
 		if snap_x > -INF and drag.get("active"):
 			draw_rect(Rect2(snap_x, rh, 1.0, size.y - rh), Tk.c["accent_dim"], true)
@@ -3955,6 +4166,14 @@ class _Overlay:
 				var track_p: Track = lane.get("track", null)
 				var cid: String = String(dp.get("clip_id", ""))
 				var target: Clip = seq_p.clip_by_id(cid) if seq_p != null and not cid.is_empty() else null
+				var want_len: float = float(canvas.call("default_transition_length"))
+				if track_p != null and bool(canvas.call("free_drop_wanted", track_p, float(dp.get("t", 0.0)), want_len)):
+					var ft0: float = maxf(float(dp.get("t", 0.0)) - want_len * 0.5, 0.0)
+					var fx: float = float(canvas.call("x_of", ft0))
+					var fw: float = float(canvas.call("px_between", ft0, ft0 + want_len))
+					draw_rect(Rect2(fx, y, fw, float(lane["h"])), Color(Tk.c["accent"], 0.25), true)
+					draw_rect(Rect2(fx, y, fw, float(lane["h"])), Tk.c["accent"], false, 1.0)
+					return
 				if target != null and track_p != null:
 					var spot: Dictionary = canvas.call("transition_spot", track_p, float(dp.get("t", 0.0)), target)
 					var sc: Clip = spot.get("clip", target)
@@ -3977,7 +4196,7 @@ class _Overlay:
 		var x: float = float(canvas.call("x_of", t))
 		var spans: Array = dp.get("spans", [])
 		var total: float = float(dp.get("total", 0.0))
-		var w: float = maxf(total * pps, 4.0)
+		var w: float = maxf(float(canvas.call("px_between", t, t + total)), 4.0)
 		var col: Color = Color(Tk.c["accent"], 0.28)
 		var video_lane: Dictionary = dp.get("video_lane", {})
 		var audio_lane: Dictionary = dp.get("audio_lane", {})
@@ -4006,9 +4225,10 @@ class _Overlay:
 			if not insert:
 				PaintKit.hatch(self, r, Tk.c["hatch"], 6.0)
 			draw_rect(r, Tk.c["accent"], false, 1.5)
-			var sx: float = r.position.x
+			var st: float = t
 			for sp: Variant in spans:
-				sx += float(sp) * pps
+				st += float(sp)
+				var sx: float = r.position.x + float(canvas.call("px_between", t, st))
 				if sx < r.end.x - 1.0:
 					draw_rect(Rect2(sx, r.position.y, 1.0, r.size.y), Tk.c["accent"], true)
 			PmText.draw(self, f, r, String(dp.get("label", "")), fs, Tk.c["text_dim"] if not refused.is_empty() else Tk.c["text_bright"], HORIZONTAL_ALIGNMENT_LEFT, PmText.pad(), r.position.y + 2.0 + f.get_ascent(fs))

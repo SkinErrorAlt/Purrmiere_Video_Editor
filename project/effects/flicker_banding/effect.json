@@ -1,0 +1,19 @@
+{
+ "id": "flicker_banding",
+ "label": "Flicker Banding",
+ "category": "Stylize",
+ "tags": ["look", "light"],
+ "version": 1,
+ "blurb": "The dark bands that roll through footage shot under mains lighting with a rolling shutter: the light pulses at twice the mains frequency while the sensor reads its rows top to bottom, so each row catches a different part of the pulse. The bands follow the real sums: soft for a fluorescent tube with a colour shift in the troughs, deep for a cheap LED, many thin stripes for a dimmed LED, gone when the shutter matches the flicker, standing still or rolling depending on the frame rate against 50 or 60 Hz, and burnt out lamps stay white through them.",
+ "params": [
+  {"key": "light", "label": "Light", "type": "enum", "choices": ["Fluorescent tube", "Cheap LED", "LED dimmed by PWM", "Incandescent bulb"], "default": 1},
+  {"key": "mains", "label": "Mains", "type": "enum", "choices": ["50 Hz", "60 Hz"], "default": 0},
+  {"key": "shutter", "label": "Shutter speed (1/x second)", "type": "float", "min": 25.0, "max": 4000.0, "step": 1.0, "default": 400.0},
+  {"key": "readout", "label": "Sensor readout", "type": "float", "min": 2.0, "max": 40.0, "step": 0.1, "default": 24.0, "unit": " ms"},
+  {"key": "depth", "label": "Flickering share of the light", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.75},
+  {"key": "pwm", "label": "PWM frequency", "type": "float", "min": 200.0, "max": 4000.0, "step": 10.0, "default": 1000.0, "unit": " Hz"},
+  {"key": "duty", "label": "PWM on time", "type": "float", "min": 0.05, "max": 0.95, "step": 0.01, "default": 0.35},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

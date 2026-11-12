@@ -1,0 +1,16 @@
+{
+ "id": "luma_warp",
+ "label": "Luma Warp",
+ "group": "Distort",
+ "space": "2D",
+ "from": ["After Effects CC WarpoMatic"],
+ "blurb": "The first shot melts into the next along the difference in brightness between them: edges swim and warp as they cross over, and the reveal follows the picture itself, so the brightest parts (or the most different, or the strongest edges) turn over first and bleed organically into the rest. Pick which field drives the reveal, how far it warps, and how soft the melt is.",
+ "default_duration": 0.9,
+ "params": [
+  {"key": "timing", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth", "Strong", "Slow end", "Overshoot", "Bounce"], "default": 1},
+  {"key": "reveal_mode", "label": "Reveal by", "type": "enum", "choices": ["Brightness", "Difference", "Edges"], "default": 1},
+  {"key": "warp", "label": "Warp amount", "type": "float", "min": 0.0, "max": 0.3, "step": 0.005, "default": 0.09},
+  {"key": "smoothness", "label": "Softness", "type": "float", "min": 0.01, "max": 0.5, "step": 0.01, "default": 0.16},
+  {"key": "bias", "label": "Threshold bias", "type": "float", "min": -0.5, "max": 0.5, "step": 0.01, "default": 0.0}
+ ]
+}

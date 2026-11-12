@@ -1,0 +1,18 @@
+{
+ "id": "scatterize",
+ "label": "Scatterize",
+ "category": "Stylize",
+ "version": 1,
+ "blurb": "The picture comes apart into loose grains that drift away from where they belong. Each small square of the frame is thrown off in its own direction and drawn as a soft round grain, so the shot reads as a cloud of coloured specks that still holds its shape when the throw is small and falls apart completely when it is large. Gravity pulls the grains one way if you want them falling, the grains shrink as they travel, and the throw can be strongest at the edges of the frame or even across it. Wind it back to nothing and the picture is whole again.",
+ "params": [
+  {"key": "amount", "label": "Throw", "type": "float", "min": 0.0, "max": 0.5, "step": 0.005, "default": 0.03},
+  {"key": "grain", "label": "Grain size", "type": "float", "min": 1.0, "max": 40.0, "step": 0.5, "default": 5.0, "unit": " px"},
+  {"key": "dot_size", "label": "Dot roundness", "type": "float", "min": 0.3, "max": 1.4, "step": 0.01, "default": 1.15},
+  {"key": "gravity", "label": "Gravity", "type": "float", "min": -1.0, "max": 1.0, "step": 0.01, "default": 0.0},
+  {"key": "shrink", "label": "Shrink as they go", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "edges", "label": "Edges throw more", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.0},
+  {"key": "backdrop", "label": "Behind", "type": "color", "default": [0.0, 0.0, 0.0, 0.0]},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0}
+ ],
+ "passes": "single"
+}

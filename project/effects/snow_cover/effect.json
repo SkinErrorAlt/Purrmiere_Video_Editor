@@ -1,0 +1,24 @@
+{
+ "id": "snow_cover",
+ "label": "Snow Cover",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Lets snow settle on whatever is in the shot. Every level edge in the picture that could hold snow, the top of a head, a branch, a ledge, a roof line, gets a lumpy white cap that is bright on top and blue in the hollow, fine detail like fur, grass and bark gets a dusting of flakes, the odd crystal sparkles, and the whole picture turns colder and flatter like winter light. Key Snow, or set Settles over to watch it build up.",
+ "params": [
+  {"key": "snow", "label": "Snow", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "grow_time", "label": "Settles over", "type": "float", "min": 0.0, "max": 30.0, "step": 0.1, "default": 0.0, "unit": " s"},
+  {"key": "depth", "label": "Depth of snow", "type": "float", "min": 2.0, "max": 120.0, "step": 0.5, "default": 26.0, "unit": " px"},
+  {"key": "lumpiness", "label": "Lumpy", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "dusting", "label": "Dusting", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.25},
+  {"key": "chill", "label": "Winter light", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "sparkle", "label": "Sparkle", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": [
+  {"shader": "res://effects/blur_gaussian/down.gdshader", "scale": 0.5},
+  {"shader": "ledge.gdshader", "scale": 0.5},
+  {"shader": "cap.gdshader"},
+  {"shader": "compose.gdshader", "scale": 4.0}
+ ]
+}

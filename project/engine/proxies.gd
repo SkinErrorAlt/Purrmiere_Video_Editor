@@ -28,6 +28,21 @@ static var _known: Dictionary = {}
 static var _plant_skew_frames: int = 0
 static var _lists: Dictionary = {}
 const FRAMES_EXT := ".frames"
+const PREF_SIZE := "media.proxy_size"
+const SIZE_AUTO := "Half, or a quarter for footage wider than 2560"
+const SIZE_HALF := "Half size"
+const SIZE_QUARTER := "Quarter size"
+const SIZE_WIDTH := "The width set below"
+const SIZE_CHOICES: PackedStringArray = [SIZE_AUTO, SIZE_HALF, SIZE_QUARTER, SIZE_WIDTH]
+const WIDE_SOURCE := 2560
+const PREF_DRIVES := "media.proxy_drives"
+const DRIVES_FILE := "proxy_drives.json"
+const DRIVES_DIALOG := "res://modules/core_panels/proxy_drives_dialog.gd"
+const ALL_INTRA_GOP := 1
+static var _route_size: String = SIZE_AUTO
+static var _drives: Dictionary = {}
+static var _drives_read: bool = false
+static var plant_long_gop: bool = false
 
 
 static func register(prefs: Node) -> void:
@@ -41,6 +56,10 @@ static func register(prefs: Node) -> void:
 		prefs.call("register", PREF_WHERE, WHERE_CACHE, {"label": "Where proxies are kept", "type": "enum", "choices": Array(WHERE_CHOICES)})
 	if not bool(prefs.call("is_registered", PREF_QUALITY)):
 		prefs.call("register", PREF_QUALITY, 26, {"label": "Proxy quality (CRF, lower is better and bigger)", "type": "int", "min": 14, "max": 40})
+	if not bool(prefs.call("is_registered", PREF_SIZE)):
+		prefs.call("register", PREF_SIZE, SIZE_AUTO, {"label": "How big a proxy is", "type": "enum", "choices": Array(SIZE_CHOICES)})
+	if not bool(prefs.call("is_registered", PREF_DRIVES)):
+		prefs.call("register", PREF_DRIVES, 0, {"label": "Proxy folder for each drive", "type": "action", "button": "Choose", "run": Callable(load(DRIVES_DIALOG), "open"), "note": "Footage on another drive can keep its proxies in a folder on that drive instead of this computer's cache folder."})
 	if not bool(prefs.call("is_registered", PREF_PLAY)):
 		prefs.call("register", PREF_PLAY, true, {"label": "Play from proxies where they are built (export always reads the original)", "type": "bool"})
 
@@ -70,7 +89,83 @@ static func key_for(media_path: String, width: int) -> String:
 	return stem + "_" + str(width) + "_" + str(media_path.hash())
 
 
+static func size_for(prefs: Node) -> String:
+	if prefs == null or not bool(prefs.call("is_registered", PREF_SIZE)):
+		return SIZE_AUTO
+	var v: String = String(prefs.call("get_value", PREF_SIZE))
+	return v if SIZE_CHOICES.has(v) else SIZE_AUTO
+
+
+static func wanted_width(size_choice: String, set_width: int, source_w: int) -> int:
+	if source_w <= 0 or size_choice == SIZE_WIDTH:
+		return set_width
+	if size_choice == SIZE_HALF:
+		return maxi(source_w >> 1, 2)
+	if size_choice == SIZE_QUARTER:
+		return maxi(source_w >> 2, 2)
+	return maxi(source_w >> (2 if source_w > WIDE_SOURCE else 1), 2)
+
+
+static func key_width(size_choice: String, set_width: int, source_w: int) -> int:
+	var want: int = wanted_width(size_choice, set_width, source_w)
+	if source_w <= 0:
+		return want
+	return proxy_size(source_w, maxi(source_w * 9 / 16, 2), want).x
+
+
+static func drive_of(path: String) -> String:
+	var p: String = path.replace("\\", "/")
+	if p.length() >= 2 and p[1] == ":":
+		return p.substr(0, 2).to_upper()
+	if p.begins_with("//"):
+		var parts: PackedStringArray = p.substr(2).split("/", false)
+		if parts.size() >= 2:
+			return "//" + parts[0] + "/" + parts[1]
+	return "/"
+
+
+static func drives_path() -> String:
+	var prefs: Node = _prefs_node()
+	if prefs == null or not prefs.has_method("data_path"):
+		return ""
+	return String(prefs.call("data_path", DRIVES_FILE))
+
+
+static func drive_folders() -> Dictionary:
+	if _drives_read:
+		return _drives
+	_drives_read = true
+	_drives = {}
+	var p: String = drives_path()
+	if p.is_empty() or not FileAccess.file_exists(p):
+		return _drives
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(p))
+	if parsed is Dictionary:
+		for k: Variant in (parsed as Dictionary).keys():
+			var v: String = String((parsed as Dictionary)[k]).strip_edges()
+			if not v.is_empty():
+				_drives[String(k).to_upper() if String(k).length() == 2 else String(k)] = v
+	return _drives
+
+
+static func set_drive_folders(map: Dictionary) -> bool:
+	var p: String = drives_path()
+	if p.is_empty():
+		return false
+	var f: FileAccess = FileAccess.open(p, FileAccess.WRITE)
+	if f == null:
+		return false
+	f.store_string(JSON.stringify(map, " "))
+	f.close()
+	_drives_read = false
+	forget_known()
+	return true
+
+
 static func root_for(media_path: String, width: int, cache_dir: String, beside: bool) -> String:
+	var own: String = String(drive_folders().get(drive_of(media_path), "")) if not media_path.is_empty() else ""
+	if not own.is_empty():
+		return own.path_join(key_for(media_path, width))
 	if beside and not media_path.is_empty():
 		return media_path.get_base_dir().path_join(FOLDER).path_join(key_for(media_path, width))
 	return cache_dir.path_join(FOLDER).path_join(key_for(media_path, width))
@@ -234,10 +329,10 @@ static func cache_for(prefs: Node) -> String:
 	return String(prefs.call("cache_dir"))
 
 
-static func root_now(prefs: Node, media_path: String) -> String:
+static func root_now(prefs: Node, media_path: String, source_w: int = 0) -> String:
 	if prefs == null or media_path.is_empty():
 		return ""
-	return root_for(media_path, width_for(prefs), cache_for(prefs), beside_for(prefs))
+	return root_for(media_path, key_width(size_for(prefs), width_for(prefs), source_w), cache_for(prefs), beside_for(prefs))
 
 
 static func refresh_route(force: bool = false) -> void:
@@ -249,9 +344,11 @@ static func refresh_route(force: bool = false) -> void:
 	var width: int = width_for(prefs)
 	var beside: bool = beside_for(prefs)
 	var cache: String = cache_for(prefs)
-	if width != _route_width or beside != _route_beside or cache != _route_cache:
+	var size_choice: String = size_for(prefs)
+	if width != _route_width or beside != _route_beside or cache != _route_cache or size_choice != _route_size:
 		_roots = {}
 		_known = {}
+	_route_size = size_choice
 	_route_play = playback_on(prefs) and FullQuality.proxies_allowed(prefs)
 	_route_width = width
 	_route_beside = beside
@@ -263,14 +360,15 @@ static func playing_from_proxies() -> bool:
 	return _route_play
 
 
-static func playback_root(media_path: String) -> String:
+static func playback_root(media_path: String, source_w: int = 0) -> String:
 	refresh_route()
-	if media_path.is_empty() or (_route_cache.is_empty() and not _route_beside):
+	if media_path.is_empty() or (_route_cache.is_empty() and not _route_beside and drive_folders().is_empty()):
 		return ""
-	if _roots.has(media_path):
-		return String(_roots[media_path])
-	var r: String = root_for(media_path, _route_width, _route_cache, _route_beside)
-	_roots[media_path] = r
+	var key: String = media_path + "|" + str(source_w)
+	if _roots.has(key):
+		return String(_roots[key])
+	var r: String = root_for(media_path, key_width(_route_size, _route_width, source_w), _route_cache, _route_beside)
+	_roots[key] = r
 	return r
 
 
@@ -303,10 +401,10 @@ static func forget_known() -> void:
 	_route_ms = -1000000
 
 
-static func playback_segment(media_path: String, fps: float, seconds: float) -> Dictionary:
+static func playback_segment(media_path: String, fps: float, seconds: float, source_w: int = 0) -> Dictionary:
 	if fps <= 0.0 or not playing_from_proxies():
 		return {}
-	var r: String = playback_root(media_path)
+	var r: String = playback_root(media_path, source_w)
 	if r.is_empty():
 		return {}
 	var idx: int = segment_index_for(seconds, fps)
@@ -333,6 +431,7 @@ static func job_for(path: String, width: int, height: int, fps: float, frames: i
 		"thumbnail": {"path": "", "embed": false},
 		"metadata": {"title": "", "comment": ""},
 		"chapters": [],
+		"gop": 0 if plant_long_gop else ALL_INTRA_GOP,
 	}
 
 

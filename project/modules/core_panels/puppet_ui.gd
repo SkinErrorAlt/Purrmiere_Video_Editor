@@ -16,6 +16,28 @@ const PmUI := preload("res://ui/kit/pm_ui.gd")
 const PmLabel := preload("res://ui/kit/pm_label.gd")
 const PmField := preload("res://ui/kit/pm_field.gd")
 const PuppetShape := preload("res://modules/core_panels/puppet_shape.gd")
+const PuppetLocks := preload("res://doc/puppet_locks.gd")
+const PuppetLockUi := preload("res://modules/core_panels/puppet_lock_ui.gd")
+const PuppetRecord := preload("res://modules/core_panels/puppet_record.gd")
+const PuppetPresets := preload("res://modules/core_panels/puppet_presets.gd")
+const PuppetOverlapUi := preload("res://modules/core_panels/puppet_overlap_ui.gd")
+const PmMenu := preload("res://ui/kit/pm_menu.gd")
+const MODE_PINS := "pins"
+const MODE_LOCKS := "locks"
+const TURN_RING := 26.0
+const TURN_REACH := 6.0
+const SCALE_HALF := 4.0
+const BEND_INK := Color(1.0, 0.55, 0.15, 1.0)
+const ADV_INK := Color(0.45, 0.8, 1.0, 1.0)
+const GIZMO_INK := Color(1.0, 1.0, 1.0, 0.9)
+const RECORD_INK := Color(1.0, 0.2, 0.2, 0.95)
+const MARQUEE_INK := Color(1.0, 1.0, 1.0, 0.8)
+const MARQUEE_FILL := Color(1.0, 1.0, 1.0, 0.08)
+const MARQUEE_LEAST := 3.0
+const NUDGE := 1.0
+const NUDGE_BIG := 10.0
+const XF_PROBE := 1024.0
+const LOCK_TIP := "Lock brush: paint on the picture to lock that part. At full strength it holds still, at lower strength it stays stiff but follows the pins. Alt paints the lock off, Shift drag draws a round lock area, [ and ] change the size, Esc goes back to pins"
 const SELF_PATH := "res://modules/core_panels/puppet_ui.gd"
 const TOOL_ID := "puppet"
 const COMMAND_ID := "tool.puppet"
@@ -40,7 +62,7 @@ const DASH := 5.0
 const SYNC_SECONDS := 0.2
 const HOLD_SHARE := 0.15
 const HOLD_MIN_RADIUS := 12.0
-const TOOL_TIP := "Puppet tool: click the picture to add a pin and drag a pin to bend it. Ctrl click adds a hold pin, Ctrl Shift click adds an overlap pin, Ctrl drag from one pin to another links them, Shift click picks more pins, Alt click or Delete removes pins"
+const TOOL_TIP := "Puppet tool: click the picture to add a pin and drag a pin to bend it. Shift click picks more pins and Shift drag picks with a box, arrows nudge, Ctrl A picks all. Ctrl click adds a hold pin, Ctrl Shift click an overlap pin, Ctrl drag from pin to pin links them, Alt click or Delete removes pins. Bend and Advanced pins show a ring to turn and a square to scale"
 
 static var _registered: bool = false
 static var _drag: Dictionary = {}
@@ -48,6 +70,18 @@ static var sel_clip: String = ""
 static var sel_pins: PackedInt32Array = PackedInt32Array()
 static var sel_holds: PackedInt32Array = PackedInt32Array()
 static var sel_overs: PackedInt32Array = PackedInt32Array()
+static var mode: String = MODE_PINS
+static var show_mesh: bool = true
+static var show_locks: bool = true
+static var new_kind: int = Puppet.KIND_POSITION
+static var draw_ms: float = 0.0
+static var _poke_due: bool = false
+static var _poke_gen: int = 0
+static var plant_no_poke: bool = false
+static var _memo_key: String = ""
+static var _memo: Dictionary = {}
+static var _edges_key: String = ""
+static var _edges: PackedInt32Array = PackedInt32Array()
 
 
 static func _script() -> GDScript:
@@ -127,10 +161,32 @@ static func clear_selection() -> void:
 
 
 static func select(clip_id: String, pins: PackedInt32Array, holds: PackedInt32Array, overs: PackedInt32Array = PackedInt32Array()) -> void:
+	var changed: bool = sel_clip != clip_id or sel_pins != pins or sel_holds != holds or sel_overs != overs
 	sel_clip = clip_id
 	sel_pins = pins
 	sel_holds = holds
 	sel_overs = overs
+	if changed:
+		poke_controls()
+
+
+static func poke_controls() -> void:
+	if _poke_due or plant_no_poke:
+		return
+	_poke_gen += 1
+	var tree: SceneTree = Engine.get_main_loop() as SceneTree
+	if tree == null:
+		return
+	_poke_due = true
+	tree.process_frame.connect(_script()._poke_now, CONNECT_ONE_SHOT)
+
+
+static func _poke_now() -> void:
+	_poke_due = false
+	var bus: Object = (load("res://modules/core_panels/panel_bus.gd") as GDScript).call("instance")
+	var ec: Object = bus.call("panel", "effect_controls") if bus != null else null
+	if ec != null and ec.has_method("rebuild"):
+		ec.call("rebuild")
 
 
 static func selected_pins(c: Clip) -> PackedInt32Array:
@@ -170,7 +226,7 @@ static func new_entry(d: Project, s: Sequence, c: Clip, q: Vector2, hold: bool =
 	var size: Vector2 = layer_size(d, s, c)
 	var entry: Dictionary = {
 		"id": Puppet.EFFECT_ID, "enabled": true, "group": "", "mask": "", "mix": AnimProp.make(1.0),
-		"params": {Puppet.KEY_DENSITY: AnimProp.make(Puppet.DENSITY_DEFAULT)},
+		"params": {Puppet.KEY_DENSITY: AnimProp.make(Puppet.DENSITY_DEFAULT), Puppet.KEY_EXPANSION: AnimProp.make(0.0), PuppetLocks.KEY_AMOUNT: AnimProp.make(PuppetLocks.AMOUNT_DEFAULT)},
 		Puppet.MESH_FIELD: PuppetShape.first_info(d, s, c, size, alpha_path(d, c)),
 	}
 	var params: Dictionary = entry["params"]
@@ -199,14 +255,23 @@ static func hold_radius_for(size: Vector2) -> float:
 
 
 static func _bent(d: Project, s: Sequence, c: Clip, e: Dictionary) -> Dictionary:
-	return Puppet.deformed_at(c, e, s.playhead, s.fps, Puppet.size_of(e, layer_size(d, s, c)))
+	var key: String = c.id + "|" + str(s.playhead) + "|" + str(s.fps) + "|" + str(c.start) + "|" + str(c.duration) + "|" + str(hash(e)) + "|" + str(Puppet.draft_ok)
+	if key == _memo_key and not _memo.is_empty():
+		return _memo
+	_memo = Puppet.deformed_at(c, e, s.playhead, s.fps, Puppet.size_of(e, layer_size(d, s, c)))
+	_memo_key = key
+	return _memo
 
 
-static func add_pin(d: Project, s: Sequence, c: Clip, q: Vector2) -> int:
+static func add_pin(d: Project, s: Sequence, c: Clip, q: Vector2, kind: int = -1) -> int:
+	var kd: int = new_kind if kind < 0 else clampi(kind, Puppet.KIND_POSITION, Puppet.KIND_ADVANCED)
 	var e: Dictionary = Puppet.any_effect_of(c)
 	if e.is_empty():
 		var uid: String = d.mint_id("e")
-		var cmd: EffectCmds.InsertEffectEntry = EffectCmds.InsertEffectEntry.new(s.id, c.id, new_entry(d, s, c, q), uid)
+		var entry: Dictionary = new_entry(d, s, c, q)
+		if kd != Puppet.KIND_POSITION:
+			(entry["params"] as Dictionary)[Puppet.KEY_KINDS] = AnimProp.make([kd])
+		var cmd: EffectCmds.InsertEffectEntry = EffectCmds.InsertEffectEntry.new(s.id, c.id, entry, uid)
 		cmd.label = "Add puppet pin"
 		var first: Array[Command] = [cmd]
 		_run(d, "Add puppet pin", first)
@@ -229,8 +294,34 @@ static func add_pin(d: Project, s: Sequence, c: Clip, q: Vector2) -> int:
 		ClipCmds.SetClipParam.new(s.id, c.id, path_of(e, Puppet.KEY_REST), AnimProp.make(Puppet.flat(new_rest))),
 		ClipCmds.SetClipParam.new(s.id, c.id, path_of(e, Puppet.KEY_PINS), grown),
 	]
+	var kinds: PackedInt32Array = Puppet.kinds_of(e)
+	var params0: Dictionary = e.get("params", {})
+	if kd != Puppet.KIND_POSITION or params0.has(Puppet.KEY_KINDS):
+		var grown_kinds: Array = Array(kinds)
+		grown_kinds.append(kd)
+		cmds.append(ClipCmds.SetClipParam.new(s.id, c.id, path_of(e, Puppet.KEY_KINDS), AnimProp.make(grown_kinds)))
+	if params0.has(Puppet.KEY_TURNS):
+		cmds.append(ClipCmds.SetClipParam.new(s.id, c.id, path_of(e, Puppet.KEY_TURNS), Parenting.map_prop(params0[Puppet.KEY_TURNS], _script().grow_turns.bind(rest.size()))))
 	_run(d, "Add puppet pin", cmds)
 	return new_rest.size() - 1
+
+
+static func grow_turns(v: Variant, n: int) -> Variant:
+	var turns: PackedVector2Array = Puppet.flat_of(v)
+	while turns.size() < n:
+		turns.append(Puppet.TURN_REST)
+	if turns.size() > n:
+		turns.resize(n)
+	turns.append(Puppet.TURN_REST)
+	return Puppet.flat(turns)
+
+
+static func pick_turns(v: Variant, keep: PackedInt32Array) -> Variant:
+	var turns: PackedVector2Array = Puppet.flat_of(v)
+	var out: PackedVector2Array = PackedVector2Array()
+	for i: int in keep:
+		out.append(turns[i] if i < turns.size() else Puppet.TURN_REST)
+	return Puppet.flat(out)
 
 
 static func grow_pins(v: Variant, mesh: Dictionary, rest: PackedVector2Array, rest_q: Vector2, gains: PackedFloat64Array = PackedFloat64Array(), holds: Dictionary = {}) -> Variant:
@@ -330,6 +421,20 @@ static func params_without(e: Dictionary, pins_gone: PackedInt32Array, holds_gon
 	params[Puppet.KEY_REST] = AnimProp.make(Puppet.flat(new_rest))
 	var pins_prop: Dictionary = params.get(Puppet.KEY_PINS, AnimProp.make(Puppet.flat(rest)))
 	params[Puppet.KEY_PINS] = Parenting.map_prop(pins_prop, _script().pick_pins.bind(keep_pins, rest))
+	if params.has(Puppet.KEY_KINDS):
+		var kinds: PackedInt32Array = Puppet.kinds_of(e)
+		var kept_kinds: Array = []
+		var any_kind: bool = false
+		for i4: int in keep_pins:
+			kept_kinds.append(kinds[i4] if i4 < kinds.size() else Puppet.KIND_POSITION)
+			if int(kept_kinds[kept_kinds.size() - 1]) != Puppet.KIND_POSITION:
+				any_kind = true
+		if any_kind:
+			params[Puppet.KEY_KINDS] = AnimProp.make(kept_kinds)
+		else:
+			params.erase(Puppet.KEY_KINDS)
+	if params.has(Puppet.KEY_TURNS):
+		params[Puppet.KEY_TURNS] = Parenting.map_prop(params[Puppet.KEY_TURNS], _script().pick_turns.bind(keep_pins))
 	var links: PackedInt32Array = Puppet.links_of(e)
 	var kept_links: Array = []
 	var link_props: Array = []
@@ -645,7 +750,7 @@ static func _pin_near(panel: Object, pic: Rect2, c: Clip, screen: Vector2) -> in
 	var e: Dictionary = Puppet.any_effect_of(c)
 	if e.is_empty():
 		return -1
-	var pins: PackedVector2Array = Puppet.pins_at(c, e, s.playhead, s.fps)
+	var pins: PackedVector2Array = _bent(panel.call("doc"), s, c, e)["pins"] if Puppet.any_bend(e) else Puppet.linked_pins_at(c, e, s.playhead, s.fps)
 	var best: int = -1
 	var best_d: float = PIN_REACH
 	for i: int in pins.size():
@@ -660,8 +765,8 @@ static func hold_spots(d: Project, s: Sequence, c: Clip, e: Dictionary) -> Packe
 	return spots_of(d, s, c, e, Puppet.holds_of(e))
 
 
-static func over_spots(d: Project, s: Sequence, c: Clip, e: Dictionary) -> PackedVector2Array:
-	return spots_of(d, s, c, e, Puppet.overlaps_of(e))
+static func over_spots(_d: Project, _s: Sequence, _c: Clip, e: Dictionary) -> PackedVector2Array:
+	return Puppet.overlaps_of(e)
 
 
 static func spots_of(d: Project, s: Sequence, c: Clip, e: Dictionary, holds: PackedVector2Array) -> PackedVector2Array:
@@ -700,6 +805,9 @@ static func hit_at(panel: Object, pic: Rect2, c: Clip, screen: Vector2) -> Dicti
 	var pin: int = _pin_near(panel, pic, c, screen)
 	if pin >= 0:
 		return {"kind": "pin", "index": pin}
+	var giz: Dictionary = gizmo_hit(panel, pic, c, screen)
+	if not giz.is_empty():
+		return giz
 	var spots: PackedVector2Array = hold_spots(d, s, c, e)
 	var best: int = -1
 	var best_d: float = PIN_REACH
@@ -739,32 +847,6 @@ static func hit_at(panel: Object, pic: Rect2, c: Clip, screen: Vector2) -> Dicti
 	return {}
 
 
-static func key_input(e: InputEventKey, panel: Object) -> bool:
-	if not tool_on() or not e.pressed or e.echo:
-		return false
-	var s: Sequence = panel.call("seq")
-	var d: Project = panel.call("doc")
-	if s == null or d == null:
-		return false
-	var c: Clip = s.clip_by_id(sel_clip)
-	if c == null:
-		return false
-	if e.keycode == KEY_ESCAPE and (not selected_pins(c).is_empty() or not selected_holds(c).is_empty() or not selected_overs(c).is_empty()):
-		clear_selection()
-		_redraw(panel)
-		return true
-	if e.keycode != KEY_DELETE and e.keycode != KEY_BACKSPACE:
-		return false
-	var pins: PackedInt32Array = selected_pins(c)
-	var holds: PackedInt32Array = selected_holds(c)
-	var overs: PackedInt32Array = selected_overs(c)
-	if pins.is_empty() and holds.is_empty() and overs.is_empty():
-		return false
-	drop_many(d, s, c, pins, holds, overs)
-	_redraw(panel)
-	return true
-
-
 static func _pick(c: Clip, kind: String, index: int, add: bool) -> void:
 	var pins: PackedInt32Array = selected_pins(c)
 	var holds: PackedInt32Array = selected_holds(c)
@@ -789,14 +871,209 @@ static func _pick(c: Clip, kind: String, index: int, add: bool) -> void:
 		select(c.id, pins, list, overs)
 
 
+static func layer_xf(panel: Object, pic: Rect2, c: Clip) -> Transform2D:
+	var o: Vector2 = _pin_screen(panel, pic, c, Vector2.ZERO)
+	var x: Vector2 = (_pin_screen(panel, pic, c, Vector2(XF_PROBE, 0.0)) - o) / XF_PROBE
+	var y: Vector2 = (_pin_screen(panel, pic, c, Vector2(0.0, XF_PROBE)) - o) / XF_PROBE
+	return Transform2D(x, y, o)
+
+
+static func screen_to_layer(panel: Object, pic: Rect2, c: Clip, screen: Vector2) -> Vector2:
+	var s: Sequence = panel.call("seq")
+	var k: float = pic.size.x / maxf(float(s.width), 1.0)
+	return to_layer(s, c, (screen - pic.position) / maxf(k, 0.0001))
+
+
+static func set_mode(m: String) -> void:
+	mode = MODE_LOCKS if m == MODE_LOCKS else MODE_PINS
+	_drag = {}
+	PuppetLockUi.clear()
+	if mode == MODE_LOCKS and not tool_on():
+		Session.set_tool(TOOL_ID)
+	Events.toast(LOCK_TIP if mode == MODE_LOCKS else TOOL_TIP)
+	redraw_program()
+	poke_controls()
+
+
+static func turn_key_at(panel: Object, c: Clip, e: Dictionary, s: Sequence) -> float:
+	var bus: Object = panel.call("bus") if panel != null else null
+	var at: float = float(bus.call("key_time_for", c, path_of(e, Puppet.KEY_TURNS), s.playhead)) if bus != null else -1.0
+	if at < 0.0 and AnimProp.is_animated((e.get("params", {}) as Dictionary).get(Puppet.KEY_PINS, {})):
+		at = s.playhead
+	return at
+
+
+static func turns_live(d: Project, s: Sequence, c: Clip, index: int, turn: Vector2, key_at: float) -> void:
+	var e: Dictionary = Puppet.any_effect_of(c)
+	if e.is_empty():
+		return
+	var cur: PackedVector2Array = Puppet.turns_at(c, e, s.playhead, s.fps)
+	if index < 0 or index >= cur.size():
+		return
+	cur[index] = Vector2(turn.x, clampf(turn.y, Puppet.SCALE_MIN, Puppet.SCALE_MAX))
+	var value: Array = Puppet.flat(cur)
+	var path: String = path_of(e, Puppet.KEY_TURNS)
+	var current: Dictionary = c.get_param(path)
+	var next: Dictionary = AnimProp.make(value)
+	if key_at >= 0.0 or AnimProp.is_animated(current):
+		var t: float = key_at if key_at >= 0.0 else s.playhead
+		next = AnimProp.set_key(current if not current.is_empty() else AnimProp.make(value), Puppet.key_time(c, e, Puppet.KEY_TURNS, t), value)
+	d.undo.live(ClipCmds.SetClipParam.new(s.id, c.id, path, next))
+
+
+static func set_turn(d: Project, s: Sequence, c: Clip, index: int, turn: Vector2, key_at: float, label: String) -> bool:
+	turns_live(d, s, c, index, turn, key_at)
+	d.undo.commit_live(label)
+	return true
+
+
+static func replace_pin(v: Variant, index: int, at: Vector2) -> Variant:
+	var pins: PackedVector2Array = Puppet.flat_of(v)
+	if index >= 0 and index < pins.size():
+		pins[index] = at
+	return Puppet.flat(pins)
+
+
+static func set_kind(d: Project, s: Sequence, c: Clip, picked: PackedInt32Array, kind: int) -> bool:
+	var e: Dictionary = Puppet.any_effect_of(c)
+	if e.is_empty() or picked.is_empty():
+		return false
+	var kinds: PackedInt32Array = Puppet.kinds_of(e)
+	var made: Dictionary = _bent(d, s, c, e)
+	var shown: PackedVector2Array = made["pins"]
+	var params: Dictionary = (e.get("params", {}) as Dictionary).duplicate(true)
+	var changed: bool = false
+	for i: int in picked:
+		if i < 0 or i >= kinds.size() or kinds[i] == kind:
+			continue
+		if kinds[i] == Puppet.KIND_BEND and i < shown.size():
+			var pins_prop: Dictionary = params.get(Puppet.KEY_PINS, AnimProp.make(Puppet.flat(Puppet.rest_of(e))))
+			params[Puppet.KEY_PINS] = Parenting.map_prop(pins_prop, _script().replace_pin.bind(i, shown[i]))
+		kinds[i] = kind
+		changed = true
+	if not changed:
+		return false
+	var any: bool = false
+	for k: int in kinds:
+		if k != Puppet.KIND_POSITION:
+			any = true
+	if any:
+		params[Puppet.KEY_KINDS] = AnimProp.make(Array(kinds))
+	else:
+		params.erase(Puppet.KEY_KINDS)
+	return _set_params(d, s, c, e, params, "Make " + ("pin " if picked.size() == 1 else "pins ") + Puppet.KIND_NAMES[kind].to_lower())
+
+
+static func move_group_live(d: Project, s: Sequence, c: Clip, group: PackedInt32Array, delta: Vector2, start_keyed: PackedVector2Array, start_shown: PackedVector2Array, start_rest: PackedVector2Array, key_at: float) -> void:
+	var e: Dictionary = Puppet.any_effect_of(c)
+	if e.is_empty():
+		return
+	var kinds: PackedInt32Array = Puppet.kinds_of(e)
+	var keyed: PackedVector2Array = start_keyed.duplicate()
+	var rest: PackedVector2Array = start_rest.duplicate()
+	var linked: bool = Puppet.link_count(e) > 0
+	var gains: PackedFloat64Array = Puppet.gains_at(c, e, s.playhead, s.fps) if linked else PackedFloat64Array()
+	var moved_rest: bool = false
+	var moved_pins: bool = false
+	var made: Dictionary = {}
+	for i: int in group:
+		if i < 0 or i >= keyed.size() or i >= start_shown.size():
+			continue
+		var target: Vector2 = start_shown[i] + delta
+		if i < kinds.size() and kinds[i] == Puppet.KIND_BEND:
+			if made.is_empty():
+				made = _bent(d, s, c, e)
+			rest[i] = Puppet.rest_point(made["mesh"], made["verts"], target, made["drawn"])
+			keyed[i] = rest[i]
+			moved_rest = true
+		else:
+			keyed[i] = Puppet.keyed_for(start_rest, keyed, gains, i, target) if linked else target
+			moved_pins = true
+	if moved_pins or moved_rest:
+		var path: String = path_of(e, Puppet.KEY_PINS)
+		var value: Array = Puppet.flat(keyed)
+		var current: Dictionary = c.get_param(path)
+		var next: Dictionary = AnimProp.make(value) if key_at < 0.0 else AnimProp.set_key(current if not current.is_empty() else AnimProp.make(value), key_time(c, e, key_at), value)
+		d.undo.live(ClipCmds.SetClipParam.new(s.id, c.id, path, next))
+	if moved_rest:
+		d.undo.live(ClipCmds.SetClipParam.new(s.id, c.id, path_of(e, Puppet.KEY_REST), AnimProp.make(Puppet.flat(rest))))
+
+
+static func nudge(d: Project, s: Sequence, c: Clip, panel: Object, delta: Vector2) -> bool:
+	var e: Dictionary = Puppet.any_effect_of(c)
+	var group: PackedInt32Array = selected_pins(c)
+	if e.is_empty() or group.is_empty():
+		return false
+	var made: Dictionary = _bent(d, s, c, e)
+	var bus: Object = panel.call("bus") if panel != null else null
+	var key_at: float = float(bus.call("key_time_for", c, path_of(e, Puppet.KEY_PINS), s.playhead)) if bus != null else -1.0
+	move_group_live(d, s, c, group, delta, Puppet.keyed_pins_at(c, e, s.playhead, s.fps), made["pins"], Puppet.rest_of(e), key_at)
+	d.undo.commit_live("Nudge puppet pin" if group.size() == 1 else "Nudge puppet pins")
+	return true
+
+
+static func select_all(c: Clip) -> void:
+	var all: PackedInt32Array = PackedInt32Array()
+	for i: int in Puppet.rest_of(Puppet.any_effect_of(c)).size():
+		all.append(i)
+	select(c.id, all, PackedInt32Array(), PackedInt32Array())
+
+
+static func gizmo_hit(panel: Object, pic: Rect2, c: Clip, screen: Vector2) -> Dictionary:
+	var e: Dictionary = Puppet.any_effect_of(c)
+	if e.is_empty():
+		return {}
+	var s: Sequence = panel.call("seq")
+	var d: Project = panel.call("doc")
+	var kinds: PackedInt32Array = Puppet.kinds_of(e)
+	var picked: PackedInt32Array = selected_pins(c)
+	if picked.is_empty():
+		return {}
+	var made: Dictionary = _bent(d, s, c, e)
+	var shown: PackedVector2Array = made["pins"]
+	var turns: PackedVector2Array = Puppet.turns_at(c, e, s.playhead, s.fps)
+	var xf: Transform2D = layer_xf(panel, pic, c)
+	for i: int in picked:
+		if i >= kinds.size() or kinds[i] == Puppet.KIND_POSITION or i >= shown.size():
+			continue
+		var centre: Vector2 = xf * shown[i]
+		var g: Dictionary = gizmo_shape(xf, centre, shown_turn(made, i, turns[i] if i < turns.size() else Puppet.TURN_REST))
+		if screen.distance_to(g["handle"]) <= SCALE_HALF + 3.0:
+			return {"kind": "scale", "index": i}
+		if absf(screen.distance_to(centre) - TURN_RING) <= TURN_REACH:
+			return {"kind": "turn", "index": i}
+	return {}
+
+
+static func shown_turn(made: Dictionary, i: int, turn: Vector2) -> Vector2:
+	var rest: PackedVector2Array = made.get("rest", PackedVector2Array())
+	if i < 0 or i >= rest.size():
+		return turn
+	return Vector2(rad_to_deg(Puppet.rotation_at(made["mesh"], made["verts"], rest[i])), turn.y)
+
+
+static func gizmo_shape(xf: Transform2D, centre: Vector2, turn: Vector2) -> Dictionary:
+	var dir: Vector2 = xf.basis_xform(Vector2.from_angle(deg_to_rad(turn.x)))
+	dir = dir.normalized() if dir.length() > 0.000001 else Vector2.RIGHT
+	var reach: float = TURN_RING * clampf(turn.y / 100.0, 0.35, 2.6)
+	return {"dir": dir, "handle": centre + dir * reach, "reach": reach}
+
+
+static func _angle_deg(v: Vector2) -> float:
+	return rad_to_deg(atan2(v.y, v.x))
+
+
 static func input(event: InputEvent, pic: Rect2, panel: Object) -> bool:
 	if not tool_on():
 		_drag = {}
+		Puppet.draft_ok = false
 		return false
 	var d: Project = panel.call("doc")
 	var s: Sequence = panel.call("seq")
 	if d == null or s == null or pic.size.x <= 0.0:
 		return false
+	if mode == MODE_LOCKS:
+		return PuppetLockUi.input(event, pic, panel)
 	var k: float = pic.size.x / maxf(float(s.width), 1.0)
 	if event is InputEventMouseButton:
 		var mb: InputEventMouseButton = event
@@ -804,6 +1081,7 @@ static func input(event: InputEvent, pic: Rect2, panel: Object) -> bool:
 			return false
 		if not mb.pressed:
 			_release(d, s, panel, pic, mb.position)
+			Puppet.draft_ok = false
 			_redraw(panel)
 			return true
 		var at_seq: Vector2 = (mb.position - pic.position) / maxf(k, 0.0001)
@@ -816,21 +1094,28 @@ static func input(event: InputEvent, pic: Rect2, panel: Object) -> bool:
 		var kind: String = String(hit.get("kind", ""))
 		var index: int = int(hit.get("index", -1))
 		var ctrl: bool = mb.ctrl_pressed or mb.meta_pressed
+		Puppet.draft_ok = true
 		if mb.alt_pressed:
-			if kind == "pin":
+			if kind == "pin" or kind == "turn" or kind == "scale":
 				drop_pin(d, s, c, index)
 			elif kind == "hold" or kind == "ring":
 				drop_hold(d, s, c, index)
 			elif kind == "over" or kind == "over_ring":
 				drop_overlap(d, s, c, index)
+		elif kind == "turn" or kind == "scale":
+			var e0: Dictionary = Puppet.any_effect_of(c)
+			var made0: Dictionary = _bent(d, s, c, e0)
+			var centre: Vector2 = layer_xf(panel, pic, c) * (made0["pins"] as PackedVector2Array)[index]
+			_drag = {"clip_id": c.id, "kind": kind, "pin": index, "centre": centre, "from": mb.position, "start": Puppet.turns_at(c, e0, s.playhead, s.fps)[index], "key_at": turn_key_at(panel, c, e0, s)}
 		elif kind == "pin" and ctrl:
 			_drag = {"clip_id": c.id, "kind": "link", "pin": index, "to": mb.position}
+		elif kind == "pin" and PuppetRecord.on and Puppet.kind_of(Puppet.any_effect_of(c), index) != Puppet.KIND_BEND:
+			select(c.id, PackedInt32Array([index]), PackedInt32Array())
+			if PuppetRecord.begin(d, s, c, index, screen_to_layer(panel, pic, c, mb.position)):
+				_drag = {"clip_id": c.id, "kind": "record", "pin": index}
 		elif kind == "pin":
 			_pick(c, "pin", index, mb.shift_pressed)
-			var e: Dictionary = Puppet.any_effect_of(c)
-			var bus: Object = panel.call("bus")
-			var key_at: float = float(bus.call("key_time_for", c, path_of(e, Puppet.KEY_PINS), s.playhead)) if bus != null else -1.0
-			_drag = {"clip_id": c.id, "kind": "pin", "pin": index, "key_at": key_at}
+			_drag = _group_drag(d, s, c, panel, pic, index, mb.position, false)
 		elif kind == "hold":
 			_pick(c, "hold", index, mb.shift_pressed)
 			_drag = {"clip_id": c.id, "kind": "hold", "hold": index}
@@ -849,11 +1134,10 @@ static func input(event: InputEvent, pic: Rect2, panel: Object) -> bool:
 			var made_h: int = add_hold(d, s, c, to_layer(s, c, at_seq))
 			select(c.id, PackedInt32Array(), PackedInt32Array([made_h]))
 			s.selected_clip_ids = PackedStringArray([c.id])
+		elif mb.shift_pressed and not Puppet.any_effect_of(c).is_empty():
+			_drag = {"clip_id": c.id, "kind": "marquee", "from": mb.position, "to": mb.position, "at_seq": at_seq}
 		else:
-			var made: int = add_pin(d, s, c, to_layer(s, c, at_seq))
-			select(c.id, PackedInt32Array([made]), PackedInt32Array())
-			_drag = {"clip_id": c.id, "kind": "pin", "pin": made, "key_at": -1.0, "fresh": true}
-			s.selected_clip_ids = PackedStringArray([c.id])
+			_add_and_grab(d, s, c, panel, pic, to_layer(s, c, at_seq), mb.position)
 		_redraw(panel)
 		return true
 	if event is InputEventMouseMotion and not _drag.is_empty():
@@ -866,14 +1150,32 @@ static func input(event: InputEvent, pic: Rect2, panel: Object) -> bool:
 		var dkind: String = String(_drag.get("kind", "pin"))
 		if dkind == "link":
 			_drag["to"] = mm.position
+		elif dkind == "marquee":
+			_drag["to"] = mm.position
+		elif dkind == "record":
+			PuppetRecord.move(to_layer(s, dc, seq_p))
+		elif dkind == "turn":
+			var cen: Vector2 = _drag["centre"]
+			var a0: float = _angle_deg(Vector2(_drag["from"]) - cen)
+			var a1: float = _angle_deg(mm.position - cen)
+			var st: Vector2 = _drag["start"]
+			var turned: float = wrapf(a1 - a0, -180.0, 180.0)
+			var step: float = st.x + turned
+			if mm.shift_pressed:
+				step = snappedf(step, 15.0)
+			turns_live(d, s, dc, int(_drag["pin"]), Vector2(step, st.y), float(_drag["key_at"]))
+		elif dkind == "scale":
+			var cen2: Vector2 = _drag["centre"]
+			var st2: Vector2 = _drag["start"]
+			var d0: float = maxf(Vector2(_drag["from"]).distance_to(cen2), 1.0)
+			var sc: float = st2.y * mm.position.distance_to(cen2) / d0
+			turns_live(d, s, dc, int(_drag["pin"]), Vector2(st2.x, snappedf(sc, 0.1)), float(_drag["key_at"]))
 		elif dkind == "hold":
 			var e3: Dictionary = Puppet.any_effect_of(dc)
 			var made3: Dictionary = _bent(d, s, dc, e3)
 			move_hold_live(d, s, dc, int(_drag["hold"]), Puppet.rest_point(made3["mesh"], made3["verts"], to_layer(s, dc, seq_p), made3["drawn"]))
 		elif dkind == "over":
-			var e5: Dictionary = Puppet.any_effect_of(dc)
-			var made5: Dictionary = _bent(d, s, dc, e5)
-			move_over_live(d, s, dc, int(_drag["over"]), Puppet.rest_point(made5["mesh"], made5["verts"], to_layer(s, dc, seq_p), made5["drawn"]))
+			move_over_live(d, s, dc, int(_drag["over"]), to_layer(s, dc, seq_p))
 		elif dkind == "over_ring":
 			var e6: Dictionary = Puppet.any_effect_of(dc)
 			var ospots: PackedVector2Array = over_spots(d, s, dc, e6)
@@ -894,10 +1196,31 @@ static func input(event: InputEvent, pic: Rect2, panel: Object) -> bool:
 				var bus2: Object = panel.call("bus")
 				_drag["key_at"] = float(bus2.call("key_time_for", dc, path_of(e2, Puppet.KEY_PINS), s.playhead)) if bus2 != null else -1.0
 				_drag.erase("fresh")
-			move_pin_live(d, s, dc, int(_drag["pin"]), to_layer(s, dc, seq_p), float(_drag["key_at"]))
+			var now_layer: Vector2 = to_layer(s, dc, seq_p)
+			move_group_live(d, s, dc, _drag["group"], now_layer - Vector2(_drag["from_layer"]), _drag["keyed"], _drag["shown"], _drag["rest"], float(_drag["key_at"]))
 		_redraw(panel)
 		return true
 	return false
+
+
+static func _group_drag(d: Project, s: Sequence, c: Clip, panel: Object, pic: Rect2, index: int, at: Vector2, fresh: bool) -> Dictionary:
+	var e: Dictionary = Puppet.any_effect_of(c)
+	var picked: PackedInt32Array = selected_pins(c)
+	var group: PackedInt32Array = picked if picked.has(index) else PackedInt32Array([index])
+	var made: Dictionary = _bent(d, s, c, e)
+	var bus: Object = panel.call("bus")
+	var key_at: float = float(bus.call("key_time_for", c, path_of(e, Puppet.KEY_PINS), s.playhead)) if bus != null and not fresh else -1.0
+	var out: Dictionary = {"clip_id": c.id, "kind": "pin", "pin": index, "group": group, "key_at": key_at, "from_layer": screen_to_layer(panel, pic, c, at), "keyed": Puppet.keyed_pins_at(c, e, s.playhead, s.fps), "shown": (made["pins"] as PackedVector2Array).duplicate(), "rest": Puppet.rest_of(e)}
+	if fresh:
+		out["fresh"] = true
+	return out
+
+
+static func _add_and_grab(d: Project, s: Sequence, c: Clip, panel: Object, pic: Rect2, q: Vector2, at: Vector2) -> void:
+	var made: int = add_pin(d, s, c, q)
+	select(c.id, PackedInt32Array([made]), PackedInt32Array())
+	s.selected_clip_ids = PackedStringArray([c.id])
+	_drag = _group_drag(d, s, c, panel, pic, made, at, true)
 
 
 static func _release(d: Project, s: Sequence, panel: Object, pic: Rect2, at: Vector2) -> void:
@@ -906,6 +1229,9 @@ static func _release(d: Project, s: Sequence, panel: Object, pic: Rect2, at: Vec
 	var was: Dictionary = _drag
 	_drag = {}
 	var kind: String = String(was.get("kind", "pin"))
+	if kind == "record":
+		PuppetRecord.end()
+		return
 	if kind == "link":
 		var c: Clip = s.clip_by_id(String(was["clip_id"]))
 		if c == null:
@@ -917,7 +1243,27 @@ static func _release(d: Project, s: Sequence, panel: Object, pic: Rect2, at: Vec
 		if not why.is_empty():
 			Events.toast(why)
 		else:
-			select(c.id, PackedInt32Array([int(was["pin"]), other]), PackedInt32Array())
+			select(c.id, PackedInt32Array([other]), PackedInt32Array())
+		return
+	if kind == "marquee":
+		var mc: Clip = s.clip_by_id(String(was["clip_id"]))
+		if mc == null:
+			return
+		var from: Vector2 = was["from"]
+		if from.distance_to(at) < MARQUEE_LEAST:
+			_add_and_grab(d, s, mc, panel, pic, to_layer(s, mc, Vector2(was["at_seq"])), at)
+			_drag = {}
+			return
+		var box: Rect2 = Rect2(from, Vector2.ZERO).expand(at)
+		var me: Dictionary = Puppet.any_effect_of(mc)
+		var made: Dictionary = _bent(d, s, mc, me)
+		var xf: Transform2D = layer_xf(panel, pic, mc)
+		var picked: PackedInt32Array = selected_pins(mc)
+		var shown: PackedVector2Array = made["pins"]
+		for i: int in shown.size():
+			if box.has_point(xf * shown[i]) and not picked.has(i):
+				picked.append(i)
+		select(mc.id, picked, selected_holds(mc), selected_overs(mc))
 		return
 	if kind == "hold":
 		d.undo.commit_live("Move hold pin")
@@ -927,14 +1273,102 @@ static func _release(d: Project, s: Sequence, panel: Object, pic: Rect2, at: Vec
 		d.undo.commit_live("Move overlap pin")
 	elif kind == "over_ring":
 		d.undo.commit_live("Change overlap extent")
+	elif kind == "turn":
+		d.undo.commit_live("Turn puppet pin")
+	elif kind == "scale":
+		d.undo.commit_live("Scale puppet pin")
 	else:
-		d.undo.commit_live("Move puppet pin")
+		var group: PackedInt32Array = was.get("group", PackedInt32Array())
+		d.undo.commit_live("Move puppet pin" if group.size() <= 1 else "Move puppet pins")
 
 
-static func _redraw(panel: Object) -> void:
-	var v: Variant = panel.get("view")
-	if v is Control:
-		(v as Control).call("redraw_overlay")
+
+static func key_input(e: InputEventKey, panel: Object) -> bool:
+	if not tool_on() or not e.pressed:
+		return false
+	var s: Sequence = panel.call("seq")
+	var d: Project = panel.call("doc")
+	if s == null or d == null:
+		return false
+	var ctrl: bool = e.ctrl_pressed or e.meta_pressed
+	if mode == MODE_LOCKS:
+		if e.keycode == KEY_BRACKETLEFT or e.keycode == KEY_BRACKETRIGHT:
+			PuppetLockUi.grow_brush(e.keycode == KEY_BRACKETRIGHT)
+			_redraw(panel)
+			return true
+		if e.echo:
+			return false
+		if e.keycode == KEY_ESCAPE:
+			if PuppetLockUi.sel_areas.is_empty():
+				set_mode(MODE_PINS)
+			PuppetLockUi.sel_areas = PackedInt32Array()
+			_redraw(panel)
+			return true
+		var lc: Clip = panel.call("gizmo_clip")
+		if (e.keycode == KEY_DELETE or e.keycode == KEY_BACKSPACE) and lc != null and not PuppetLockUi.sel_areas.is_empty():
+			var gone: PackedInt32Array = PuppetLockUi.sel_areas.duplicate()
+			gone.sort()
+			for i: int in range(gone.size() - 1, -1, -1):
+				PuppetLockUi.drop_area(d, s, lc, gone[i])
+			_redraw(panel)
+			return true
+		return false
+	var c: Clip = s.clip_by_id(sel_clip)
+	if c == null:
+		var gc: Clip = panel.call("gizmo_clip")
+		if gc != null and ctrl and e.keycode == KEY_A and not Puppet.any_effect_of(gc).is_empty():
+			select_all(gc)
+			_redraw(panel)
+			return true
+		return false
+	var arrows: Dictionary = {KEY_LEFT: Vector2.LEFT, KEY_RIGHT: Vector2.RIGHT, KEY_UP: Vector2.UP, KEY_DOWN: Vector2.DOWN}
+	if arrows.has(e.keycode) and not selected_pins(c).is_empty() and not ctrl and not e.alt_pressed:
+		nudge(d, s, c, panel, Vector2(arrows[e.keycode]) * (NUDGE_BIG if e.shift_pressed else NUDGE))
+		_redraw(panel)
+		return true
+	if e.echo:
+		return false
+	if ctrl and e.keycode == KEY_A and not Puppet.any_effect_of(c).is_empty():
+		select_all(c)
+		_redraw(panel)
+		return true
+	if e.keycode == KEY_ESCAPE and (not selected_pins(c).is_empty() or not selected_holds(c).is_empty() or not selected_overs(c).is_empty()):
+		clear_selection()
+		_redraw(panel)
+		return true
+	if e.keycode != KEY_DELETE and e.keycode != KEY_BACKSPACE:
+		return false
+	var pins: PackedInt32Array = selected_pins(c)
+	var holds: PackedInt32Array = selected_holds(c)
+	var overs: PackedInt32Array = selected_overs(c)
+	if pins.is_empty() and holds.is_empty() and overs.is_empty():
+		return false
+	drop_many(d, s, c, pins, holds, overs)
+	_redraw(panel)
+	return true
+
+
+static func mesh_edges(mesh: Dictionary) -> PackedInt32Array:
+	var key: String = String(mesh.get("key", ""))
+	if key == _edges_key and not _edges.is_empty():
+		return _edges
+	var tris: PackedInt32Array = mesh["tris"]
+	var n: int = (mesh["verts"] as PackedVector2Array).size()
+	var seen: Dictionary = {}
+	var out: PackedInt32Array = PackedInt32Array()
+	for t: int in tris.size() / 3:
+		for k: int in 3:
+			var a: int = tris[t * 3 + k]
+			var b: int = tris[t * 3 + (k + 1) % 3]
+			var ek: int = mini(a, b) * n + maxi(a, b)
+			if seen.has(ek):
+				continue
+			seen[ek] = true
+			out.append(a)
+			out.append(b)
+	_edges_key = key
+	_edges = out
+	return out
 
 
 static func draw(ci: CanvasItem, pic: Rect2, panel: Object) -> void:
@@ -948,34 +1382,52 @@ static func draw(ci: CanvasItem, pic: Rect2, panel: Object) -> void:
 	var e: Dictionary = Puppet.any_effect_of(c)
 	if e.is_empty() or not tool_on():
 		return
+	var t0: int = Time.get_ticks_usec()
 	var made: Dictionary = _bent(d, s, c, e)
+	var xf: Transform2D = layer_xf(panel, pic, c)
 	var verts: PackedVector2Array = made["verts"]
-	var tris: PackedInt32Array = (made["mesh"] as Dictionary)["tris"]
-	var screen: PackedVector2Array = PackedVector2Array()
-	screen.resize(verts.size())
-	for i: int in verts.size():
-		screen[i] = _pin_screen(panel, pic, c, verts[i])
-	var lines: PackedVector2Array = PackedVector2Array()
-	for t: int in tris.size() / 3:
-		var a: Vector2 = screen[tris[t * 3]]
-		var b: Vector2 = screen[tris[t * 3 + 1]]
-		var cc: Vector2 = screen[tris[t * 3 + 2]]
-		lines.append_array(PackedVector2Array([a, b, b, cc]))
-	if not lines.is_empty():
-		ci.draw_multiline(lines, MESH_INK, 1.0)
+	var screen: PackedVector2Array = xf * verts
+	var locks_mode: bool = mode == MODE_LOCKS
+	if locks_mode or show_locks:
+		PuppetLockUi.draw_overlay(ci, c, e, made, screen)
+	if show_mesh or locks_mode:
+		var edges: PackedInt32Array = mesh_edges(made["mesh"])
+		var lines: PackedVector2Array = PackedVector2Array()
+		lines.resize(edges.size())
+		for i: int in edges.size():
+			lines[i] = screen[edges[i]]
+		if not lines.is_empty():
+			ci.draw_multiline(lines, MESH_INK, 1.0)
+	if locks_mode or PuppetLocks.area_count(e) > 0:
+		PuppetLockUi.draw_marks(ci, panel, pic, d, s, c, e, xf, locks_mode)
 	var pins: PackedVector2Array = made["pins"]
-	var pin_px: PackedVector2Array = PackedVector2Array()
-	for p: Vector2 in pins:
-		pin_px.append(_pin_screen(panel, pic, c, p))
+	var pin_px: PackedVector2Array = xf * pins
 	_draw_links(ci, e, Puppet.strengths_at(c, e, s.playhead, s.fps), pin_px)
 	_draw_holds(ci, panel, pic, d, s, c, e)
+	if Puppet.overlap_count(e) > 0:
+		PuppetOverlapUi.draw_outline(ci, xf, made["mesh"])
 	_draw_overs(ci, panel, pic, d, s, c, e)
-	var active: int = int(_drag.get("pin", -1)) if String(_drag.get("clip_id", "")) == c.id and String(_drag.get("kind", "pin")) == "pin" else -1
+	var active: int = int(_drag.get("pin", -1)) if String(_drag.get("clip_id", "")) == c.id and String(_drag.get("kind", "pin")) in ["pin", "record", "turn", "scale"] else -1
 	var picked: PackedInt32Array = selected_pins(c)
+	var kinds: PackedInt32Array = Puppet.kinds_of(e)
+	var turns: PackedVector2Array = Puppet.turns_at(c, e, s.playhead, s.fps) if Puppet.any_bend(e) else PackedVector2Array()
 	for j: int in pin_px.size():
 		var p2: Vector2 = pin_px[j]
-		ci.draw_circle(p2, PIN_RADIUS + 1.5, PIN_RIM)
-		ci.draw_circle(p2, PIN_RADIUS, PIN_ACTIVE if j == active else PIN_INK)
+		var kd: int = kinds[j] if j < kinds.size() else Puppet.KIND_POSITION
+		var ink: Color = PIN_ACTIVE if j == active else (PIN_INK if kd == Puppet.KIND_POSITION else (BEND_INK if kd == Puppet.KIND_BEND else ADV_INK))
+		if kd == Puppet.KIND_BEND:
+			ci.draw_circle(p2, PIN_RADIUS + 1.5, PIN_RIM)
+			ci.draw_arc(p2, PIN_RADIUS - 0.5, 0.0, TAU, 16, ink, 2.5, true)
+		else:
+			ci.draw_circle(p2, PIN_RADIUS + 1.5, PIN_RIM)
+			ci.draw_circle(p2, PIN_RADIUS, ink)
+		if kd != Puppet.KIND_POSITION and j < turns.size():
+			var g: Dictionary = gizmo_shape(xf, p2, shown_turn(made, j, turns[j]))
+			var dir: Vector2 = g["dir"]
+			ci.draw_line(p2, p2 + dir * (PIN_RADIUS + 5.0), PIN_RIM, 3.0, true)
+			ci.draw_line(p2, p2 + dir * (PIN_RADIUS + 4.0), ink, 1.5, true)
+			if picked.has(j):
+				_draw_gizmo(ci, p2, g, ink)
 		if picked.has(j):
 			ci.draw_arc(p2, PIN_RADIUS + 3.0, 0.0, TAU, 20, PICK_INK, 1.5, true)
 	if String(_drag.get("kind", "")) == "link" and String(_drag.get("clip_id", "")) == c.id:
@@ -984,6 +1436,40 @@ static func draw(ci: CanvasItem, pic: Rect2, panel: Object) -> void:
 			var to: Vector2 = _drag.get("to", pin_px[from])
 			ci.draw_dashed_line(pin_px[from] + Vector2.ONE, to + Vector2.ONE, LINK_SHADOW, 2.0, DASH)
 			ci.draw_dashed_line(pin_px[from], to, LINK_INK, 2.0, DASH)
+	if String(_drag.get("kind", "")) == "marquee" and String(_drag.get("clip_id", "")) == c.id:
+		var box: Rect2 = Rect2(Vector2(_drag["from"]), Vector2.ZERO).expand(Vector2(_drag["to"]))
+		ci.draw_rect(box, MARQUEE_FILL, true)
+		ci.draw_rect(box, MARQUEE_INK, false, 1.0)
+	if PuppetRecord.active() and PuppetRecord.clip_id() == c.id:
+		var rp: int = PuppetRecord.pin()
+		if rp >= 0 and rp < pin_px.size():
+			ci.draw_arc(pin_px[rp], PIN_RADIUS + 7.0, 0.0, TAU, 24, RECORD_INK, 2.0, true)
+	draw_ms = float(Time.get_ticks_usec() - t0) / 1000.0
+
+
+static func _draw_gizmo(ci: CanvasItem, centre: Vector2, g: Dictionary, ink: Color) -> void:
+	ci.draw_arc(centre, TURN_RING, 0.0, TAU, 48, LINK_SHADOW, 3.0, true)
+	ci.draw_arc(centre, TURN_RING, 0.0, TAU, 48, GIZMO_INK, 1.5, true)
+	var handle: Vector2 = g["handle"]
+	ci.draw_line(centre, handle, LINK_SHADOW, 3.0, true)
+	ci.draw_line(centre, handle, Color(ink, 0.9), 1.5, true)
+	var h: float = SCALE_HALF
+	ci.draw_rect(Rect2(handle - Vector2(h + 1.5, h + 1.5), Vector2(h + 1.5, h + 1.5) * 2.0), PIN_RIM)
+	ci.draw_rect(Rect2(handle - Vector2(h, h), Vector2(h, h) * 2.0), ink)
+
+
+static func redraw_program() -> void:
+	var bus_script: GDScript = load("res://modules/core_panels/panel_bus.gd")
+	var bus: Object = bus_script.call("instance") if bus_script != null else null
+	var pp: Object = bus.call("panel", "program") if bus != null else null
+	if pp != null:
+		_redraw(pp)
+
+
+static func _redraw(panel: Object) -> void:
+	var v: Variant = panel.get("view")
+	if v is Control:
+		(v as Control).call("redraw_overlay")
 
 
 static func _draw_links(ci: CanvasItem, e: Dictionary, strengths: PackedFloat64Array, pin_px: PackedVector2Array) -> void:
@@ -1074,7 +1560,253 @@ static func key(c: Clip, e: Dictionary) -> String:
 	animated.sort()
 	var info: Dictionary = Puppet.mesh_info(e)
 	var mesh_sig: String = str(hash(Puppet.shape_code(info))) + "@" + str(info.get("from", "")) + String(info.get("alpha", ""))
-	return str(Puppet.rest_of(e).size()) + ":" + str(Puppet.hold_count(e)) + ":" + str(Puppet.overlap_count(e)) + ":" + str(Puppet.links_of(e)) + ":" + ",".join(animated) + ":" + str(tool_on()) + ":" + mesh_sig
+	var tool_sig: String = mode + str(new_kind) + str(show_mesh) + str(show_locks) + str(PuppetRecord.on) + str(selected_pins(c)) + str(Puppet.kinds_of(e)) + str(PuppetLocks.area_count(e)) + str(not PuppetLocks.info_of(e).is_empty()) + "#" + str(_poke_gen)
+	return str(Puppet.rest_of(e).size()) + ":" + str(Puppet.hold_count(e)) + ":" + str(Puppet.overlap_count(e)) + ":" + str(Puppet.links_of(e)) + ":" + ",".join(animated) + ":" + str(tool_on()) + ":" + mesh_sig + ":" + tool_sig
+
+
+static func _toggle(text: String, icon: String, on: bool, tip: String, cb: Callable) -> Button:
+	var b: Button = PmButton.make(text, icon, true)
+	b.set("quiet", true)
+	b.button_pressed = on
+	PmUI.tip(b, tip)
+	b.toggled.connect(cb)
+	return b
+
+
+static func _button(text: String, icon: String, tip: String, cb: Callable) -> Button:
+	var b: Button = PmButton.make(text, icon)
+	b.set("quiet", true)
+	PmUI.tip(b, tip)
+	b.pressed.connect(cb)
+	return b
+
+
+static func _line(lead: float, label_w: float, title: String) -> HBoxContainer:
+	var line: HBoxContainer = PmUI.hbox(Tk.px(4.0))
+	line.add_child(_gap(lead))
+	var label: Label = PmLabel.trim(title)
+	label.custom_minimum_size = Vector2(label_w, 0.0)
+	line.add_child(label)
+	return line
+
+
+static func _tool_field(v: float, lo: float, hi: float, step: float, suffix: String, tip: String, cb: Callable) -> Control:
+	var f: Control = PmField.make(v, lo, hi, step, suffix)
+	f.custom_minimum_size = Vector2(float(Tk.px(58.0)), 0.0)
+	PmUI.tip(f, tip)
+	f.connect("value_changed", cb)
+	return f
+
+
+static func _extra_rows(box: VBoxContainer, c: Clip, e: Dictionary, lead: float, label_w: float, fields: Array[Control]) -> void:
+	var modes: HBoxContainer = _line(lead, label_w, "Tool")
+	modes.add_child(_toggle("Pins", "pin", mode == MODE_PINS, "Place, pick and drag pins", _script()._on_mode.bind(MODE_PINS)))
+	modes.add_child(_toggle("Lock brush", "lock", mode == MODE_LOCKS, LOCK_TIP, _script()._on_mode.bind(MODE_LOCKS)))
+	modes.add_child(_toggle("Show mesh", "grid", show_mesh, "Show the triangles of the mesh on the Program monitor while the Puppet tool is on", _script()._on_show_mesh))
+	modes.add_child(_toggle("Show locks", "eye", show_locks, "Show the locked parts as a coloured overlay on the mesh: red is locked still, amber is stiff but free to move", _script()._on_show_locks))
+	box.add_child(modes)
+	var kinds_line: HBoxContainer = _line(lead, label_w, "New pins")
+	var picked: PackedInt32Array = selected_pins(c)
+	var kinds: PackedInt32Array = Puppet.kinds_of(e)
+	var tips: PackedStringArray = ["Position pin: the picture under it goes where you drag it", "Bend pin: turns and scales the picture round it without pinning where it is. Drag its ring to turn, its square to scale", "Advanced pin: position, turn and scale in one pin"]
+	for kd: int in 3:
+		var on: bool = new_kind == kd
+		if not picked.is_empty():
+			on = true
+			for i: int in picked:
+				if i >= kinds.size() or kinds[i] != kd:
+					on = false
+		kinds_line.add_child(_toggle(Puppet.KIND_NAMES[kd], "pin", on, tips[kd] + (". Applies to the picked pins too" if not picked.is_empty() else ""), _script()._on_kind.bind(c.id, kd)))
+	box.add_child(kinds_line)
+	var rec: HBoxContainer = _line(lead, label_w, "Record")
+	rec.add_child(_toggle("Record pins", "stopwatch", PuppetRecord.on, "When on, dragging a pin plays the clip and records its path as you move it, a key every frame, thinned where the path is straight. Release to stop", _script()._on_record))
+	rec.add_child(PmLabel.dim("speed"))
+	rec.add_child(_tool_field(PuppetRecord.speed, PuppetRecord.SPEED_MIN, PuppetRecord.SPEED_MAX, 5.0, " %", "Playback speed while recording: below 100 gives you more time for a fast move", _script()._on_record_speed))
+	rec.add_child(PmLabel.dim("smooth"))
+	rec.add_child(_tool_field(PuppetRecord.smoothing, 0.0, PuppetRecord.SMOOTH_MAX, 1.0, " %", "Smoothing: evens out the shake in a recorded path when you let go. 0 keeps every wobble, 100 gives a calm, flowing path", _script()._on_record_smooth))
+	var layouts: Button = _button("Pin layouts", "list", "Put a ready made pin layout on this picture, or save this layout to use on another", _script()._on_layouts.bind(c.id))
+	layouts.name = "PinLayouts"
+	rec.add_child(layouts)
+	box.add_child(rec)
+	if picked.size() == 1 and picked[0] < kinds.size() and kinds[picked[0]] != Puppet.KIND_POSITION:
+		var i0: int = picked[0]
+		var s: Sequence = Session.seq()
+		var turn: Vector2 = Puppet.turns_at(c, e, s.playhead if s != null else c.start, s.fps if s != null else 30.0)[i0]
+		var pin_line: HBoxContainer = _line(lead, label_w, "Pin " + str(i0 + 1))
+		var animated: bool = AnimProp.is_animated((e.get("params", {}) as Dictionary).get(Puppet.KEY_TURNS, {}))
+		pin_line.add_child(_toggle("", "stopwatch", animated, "Animate the turn and scale of every bend and advanced pin, one row on the timeline", _script()._on_animate_turns.bind(c.id)))
+		var rf: Control = _tool_field(turn.x, -100000.0, 100000.0, 1.0, " deg", "How far this pin turns the picture round it", _script()._on_turn_field.bind(c.id, i0, 0))
+		rf.set_meta("puppet_turn", Vector2i(i0, 0))
+		pin_line.add_child(rf)
+		var sf: Control = _tool_field(turn.y, Puppet.SCALE_MIN, Puppet.SCALE_MAX, 1.0, " %", "How much this pin scales the picture round it", _script()._on_turn_field.bind(c.id, i0, 1))
+		sf.set_meta("puppet_turn", Vector2i(i0, 1))
+		pin_line.add_child(sf)
+		rf.connect("edit_ended", _script()._on_turn_done)
+		sf.connect("edit_ended", _script()._on_turn_done)
+		fields.append(rf)
+		fields.append(sf)
+		box.add_child(pin_line)
+	var brush: HBoxContainer = _line(lead, label_w, "Lock brush")
+	brush.add_child(PmLabel.dim("size"))
+	brush.add_child(_tool_field(PuppetLockUi.brush_px, PuppetLockUi.BRUSH_MIN, PuppetLockUi.BRUSH_MAX, 1.0, " px", "Brush size on the screen. [ and ] change it", _script()._on_brush.bind(0)))
+	brush.add_child(PmLabel.dim("strength"))
+	brush.add_child(_tool_field(PuppetLockUi.strength, 0.0, 100.0, 1.0, " %", "Lock strength: 100 holds the painted part still, lower keeps it stiff but lets it follow the pins", _script()._on_brush.bind(1)))
+	brush.add_child(PmLabel.dim("soft"))
+	brush.add_child(_tool_field(PuppetLockUi.softness, 0.0, 100.0, 1.0, " %", "Softness: how gently the lock fades out at the edge of the brush", _script()._on_brush.bind(2)))
+	brush.add_child(_button("Clear locks", "close", "Remove everything painted with the lock brush on this clip", _script()._on_clear_locks.bind(c.id)))
+	box.add_child(brush)
+	var av: Dictionary = PuppetLocks.area_values(e)
+	for a: int in (av["at"] as PackedVector2Array).size():
+		var row: HBoxContainer = _line(lead, label_w, "Lock area " + str(a + 1))
+		row.add_child(_value_field(c, e, PuppetLocks.area_key(a, "r"), PuppetLocks.AREA_RADIUS_DEFAULT, 0.0, 100000.0, 1.0, " px", "Size of the lock area, in layer pixels", fields))
+		row.add_child(_value_field(c, e, PuppetLocks.area_key(a, "s"), PuppetLocks.AREA_STRENGTH_DEFAULT, 0.0, 100.0, 1.0, " %", "Lock strength: 100 holds it still, lower keeps it stiff but free to move", fields))
+		row.add_child(_value_field(c, e, PuppetLocks.area_key(a, "f"), PuppetLocks.AREA_SOFT_DEFAULT, 0.0, 100.0, 1.0, " %", "Softness of its edge", fields))
+		row.add_child(_button("", "close", "Remove this lock area", _script()._on_drop_area.bind(c.id, a)))
+		box.add_child(row)
+
+
+static func _on_mode(on: bool, m: String) -> void:
+	if on:
+		set_mode(m)
+	elif m == MODE_LOCKS:
+		set_mode(MODE_PINS)
+
+
+static func _on_show_mesh(on: bool) -> void:
+	show_mesh = on
+	redraw_program()
+	poke_controls()
+
+
+static func _on_show_locks(on: bool) -> void:
+	show_locks = on
+	redraw_program()
+	poke_controls()
+
+
+static func _on_kind(on: bool, clip_id: String, kd: int) -> void:
+	if not on:
+		poke_controls()
+		return
+	new_kind = kd
+	poke_controls()
+	var c: Clip = _clip_now(clip_id)
+	if c != null and not selected_pins(c).is_empty():
+		set_kind(Session.doc, Session.seq(), c, selected_pins(c), kd)
+
+
+static func _on_record(on: bool) -> void:
+	PuppetRecord.on = on
+	poke_controls()
+	if on and not tool_on():
+		use_tool()
+
+
+static func _on_record_speed(v: float) -> void:
+	PuppetRecord.speed = v
+
+
+static func _on_record_smooth(v: float) -> void:
+	PuppetRecord.smoothing = v
+
+
+static func _on_brush(v: float, which: int) -> void:
+	if which == 0:
+		PuppetLockUi.brush_px = v
+	elif which == 1:
+		PuppetLockUi.strength = v
+	else:
+		PuppetLockUi.softness = v
+
+
+static func _on_clear_locks(clip_id: String) -> void:
+	var c: Clip = _clip_now(clip_id)
+	if c != null:
+		PuppetLockUi.clear_map(Session.doc, Session.seq(), c)
+
+
+static func _on_drop_area(clip_id: String, a: int) -> void:
+	var c: Clip = _clip_now(clip_id)
+	if c != null:
+		PuppetLockUi.drop_area(Session.doc, Session.seq(), c, a)
+
+
+static func _on_animate_turns(on: bool, clip_id: String) -> void:
+	var c: Clip = _clip_now(clip_id)
+	var s: Sequence = Session.seq()
+	if c == null or s == null:
+		return
+	var e: Dictionary = Puppet.any_effect_of(c)
+	if e.is_empty():
+		return
+	var value: Array = Puppet.flat(Puppet.turns_at(c, e, s.playhead, s.fps))
+	var next: Dictionary = AnimProp.set_key(AnimProp.make(value), Puppet.key_time(c, e, Puppet.KEY_TURNS, s.playhead), value) if on else AnimProp.make(value)
+	var cmds: Array[Command] = [ClipCmds.SetClipParam.new(s.id, c.id, path_of(e, Puppet.KEY_TURNS), next)]
+	_run(Session.doc, "Animate pin turns" if on else "Stop animating pin turns", cmds)
+
+
+static func _on_turn_field(v: float, clip_id: String, index: int, part: int) -> void:
+	var c: Clip = _clip_now(clip_id)
+	var s: Sequence = Session.seq()
+	if c == null or s == null:
+		return
+	var e: Dictionary = Puppet.any_effect_of(c)
+	if e.is_empty():
+		return
+	var turn: Vector2 = Puppet.turns_at(c, e, s.playhead, s.fps)[index]
+	if part == 0:
+		turn.x = v
+	else:
+		turn.y = v
+	turns_live(Session.doc, s, c, index, turn, -1.0)
+
+
+static func _on_turn_done() -> void:
+	if Session.doc != null:
+		Session.doc.undo.commit_live("Change pin turn")
+
+
+static func _on_layouts(clip_id: String) -> void:
+	var c: Clip = _clip_now(clip_id)
+	if c == null:
+		return
+	var items: Array = []
+	var all: Array = PuppetPresets.layouts()
+	for i: int in all.size():
+		items.append(PmMenu.item("layout_" + str(i), String((all[i] as Dictionary).get("name", "Layout"))))
+	items.append(PmMenu.separator())
+	items.append(PmMenu.item("save", "Save this layout"))
+	var anchor: Control = null
+	var tree: SceneTree = Engine.get_main_loop() as SceneTree
+	if tree != null:
+		var found: Array[Node] = tree.root.find_children("PinLayouts", "Button", true, false)
+		anchor = found[0] as Control if not found.is_empty() else null
+	if anchor == null:
+		return
+	var m: Control = PmMenu.open(anchor, items)
+	m.connect("picked", _script()._on_layout_picked.bind(clip_id))
+
+
+static func _on_layout_picked(id: String, clip_id: String) -> void:
+	var c: Clip = _clip_now(clip_id)
+	var s: Sequence = Session.seq()
+	if c == null or s == null:
+		return
+	if id == "save":
+		var e: Dictionary = Puppet.any_effect_of(c)
+		if e.is_empty():
+			Events.toast("Put some pins on first, then save the layout")
+			return
+		var name: String = PuppetPresets.next_name()
+		if PuppetPresets.save_layout(e, Puppet.size_of(e, layer_size(Session.doc, s, c)), name):
+			Events.toast("Saved the pin layout as " + name)
+		return
+	var all: Array = PuppetPresets.layouts()
+	var i: int = int(id.trim_prefix("layout_"))
+	if i >= 0 and i < all.size():
+		var n: int = PuppetPresets.apply(Session.doc, s, c, all[i])
+		if n == 0:
+			Events.toast("None of that layout lands on the picture")
 
 
 static func _gap(w: float) -> Control:
@@ -1128,6 +1860,8 @@ static func rows(c: Clip, e: Dictionary, label_w: float) -> Control:
 	link.pressed.connect(_script()._on_link.bind(c.id))
 	line2.add_child(link)
 	box.add_child(line2)
+	var fields: Array[Control] = []
+	_extra_rows(box, c, e, lead, label_w, fields)
 	var line3: HBoxContainer = PmUI.hbox(Tk.px(4.0))
 	line3.add_child(_gap(lead + label_w + float(Tk.px(4.0))))
 	var seq_now: Sequence = Session.seq()
@@ -1137,8 +1871,15 @@ static func rows(c: Clip, e: Dictionary, label_w: float) -> Control:
 	PmUI.tip(rebuild, "Make the mesh follow the outline of the picture at the playhead: its own see through parts, keys and masks. Use it on video, where the outline changes")
 	rebuild.pressed.connect(_script()._on_rebuild.bind(c.id))
 	line3.add_child(rebuild)
+	var med: MediaItem = Session.doc.media_by_id(c.media_id) if Session.doc != null else null
+	if not PuppetShape.follows_file(med):
+		var follow: Button = PmButton.make("Follow the video", "film")
+		follow.set("quiet", true)
+		PmUI.tip(follow, "Read the outline of the picture on every frame of the clip, so the mesh changes shape with the video. It steps through the clip once on the Program monitor")
+		follow.pressed.connect(_script()._on_follow.bind(c.id))
+		line3.add_child(follow)
 	box.add_child(line3)
-	var fields: Array[Control] = []
+	load("res://modules/core_panels/puppet_pin_rows.gd").call("add", box, c, e, lead, label_w)
 	for j: int in nh:
 		box.add_child(_hold_row(c, e, j, lead, label_w, fields))
 	for o: int in no:
@@ -1260,7 +2001,15 @@ static func sync_fields(clip_id: String, fields: Array[Control]) -> void:
 	for f: Control in fields:
 		if not is_instance_valid(f) or bool(f.get("_dragging")) or bool(f.get("_pressed")) or f.get("_editor") != null:
 			continue
-		var v: float = Puppet.value_at(c, e, String(f.get_meta("puppet_key", "")), s.playhead, s.fps, float(f.get_meta("puppet_fallback", 0.0)))
+		var v: float = 0.0
+		if f.has_meta("puppet_turn"):
+			var which: Vector2i = f.get_meta("puppet_turn")
+			var turns: PackedVector2Array = Puppet.turns_at(c, e, s.playhead, s.fps)
+			if which.x >= turns.size():
+				continue
+			v = turns[which.x].x if which.y == 0 else turns[which.x].y
+		else:
+			v = Puppet.value_at(c, e, String(f.get_meta("puppet_key", "")), s.playhead, s.fps, float(f.get_meta("puppet_fallback", 0.0)))
 		if absf(float(f.get("value")) - v) > 0.0001:
 			f.set("value", v)
 
@@ -1306,6 +2055,15 @@ static func _on_rebuild(clip_id: String) -> void:
 	var why: String = rebuild_mesh(Session.doc, Session.seq(), c)
 	if not why.is_empty():
 		Events.toast(why)
+
+
+static func _on_follow(clip_id: String) -> void:
+	var c: Clip = _clip_now(clip_id)
+	if c == null:
+		return
+	Events.toast("Reading the outline on every frame of the clip")
+	var why: String = await (load("res://modules/core_panels/puppet_follow.gd") as GDScript).call("bake", Session.doc, Session.seq(), c)
+	Events.toast(why if not why.is_empty() else "The mesh now follows the video")
 
 
 static func _on_unlink(clip_id: String, k: int) -> void:

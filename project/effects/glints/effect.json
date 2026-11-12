@@ -1,0 +1,26 @@
+{
+ "id": "glints",
+ "label": "Glints",
+ "category": "Light & Shadow",
+ "tags": ["light"],
+ "version": 1,
+ "blurb": "Sunlight glinting off water, snow, sequins, chrome or wet stone: the tiny bright points already in the textured highlights of the picture flash and twinkle, each on its own clock, with a hot core and a faint soft halo. Only points that stand out from the texture around them glint, so a flat white sky or wall stays calm and the dark parts of the shot never sparkle. Density sets how many glint at once and Speed how fast they twinkle; at Speed 0 they hold still.",
+ "params": [
+  {"key": "threshold", "label": "Brightness needed", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "texture_needed", "label": "Stand out from the texture", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.35},
+  {"key": "density", "label": "Density", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.45},
+  {"key": "speed", "label": "Speed", "type": "float", "min": 0, "max": 4, "step": 0.01, "default": 1},
+  {"key": "size", "label": "Glint size", "type": "float", "min": 0.5, "max": 6, "step": 0.05, "default": 2.5, "unit": " px"},
+  {"key": "brightness", "label": "Brightness", "type": "float", "min": 0, "max": 4, "step": 0.01, "default": 2.0},
+  {"key": "halo", "label": "Halo", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "whiteness", "label": "White hot", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 5}
+ ],
+ "passes": [
+  {"shader": "find.gdshader"},
+  {"shader": "down.gdshader", "scale": 0.5},
+  {"shader": "down.gdshader", "scale": 0.5},
+  {"shader": "down.gdshader", "scale": 0.5},
+  {"shader": "compose.gdshader", "scale": 8.0, "inputs": {"core_tex": 0, "halo_a": 1, "halo_b": 2}}
+ ]
+}

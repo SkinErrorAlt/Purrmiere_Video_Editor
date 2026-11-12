@@ -1,0 +1,19 @@
+{
+ "id": "snd_sound_wear",
+ "label": "Sound Wear",
+ "category": "Audio Reactive",
+ "tags": ["audio", "reactive", "look", "ageing"],
+ "version": 1,
+ "blurb": "Loud sound wears the picture out like an old print, and the damage stays. It keeps a running total of how much loud sound the clip has heard since it began: the colours fade towards paper, patches of the image rub through, scuffs gather, and the longer and louder it gets the more worn the frame becomes. Quiet moments add nothing, but they do not repair it either.",
+ "params": [
+  {"key": "wear_time", "label": "Wears out after", "type": "float", "min": 0.5, "max": 120.0, "step": 0.1, "default": 8.0, "unit": " s"},
+  {"key": "fade", "label": "Fade", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "abrasion", "label": "Rub through", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "scuffs", "label": "Scuffs", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "size", "label": "Size", "type": "float", "min": 0.2, "max": 4.0, "step": 0.01, "default": 1.0},
+  {"key": "base_colour", "label": "Paper colour", "type": "color", "default": [0.86, 0.82, 0.72, 1.0]},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": [{"shader": "effect.gdshader"}],
+ "reactive": {"listen": true, "defaults": {"snd_threshold": 0.0}}
+}

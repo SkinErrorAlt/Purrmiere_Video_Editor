@@ -1,0 +1,22 @@
+{
+ "id": "batik",
+ "label": "Batik",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Dyes the picture into cotton the batik way: the lightest parts are waxed first and stay the colour of the cloth, then each dye bath goes on top of the last so the shadows build up through overdyed colours to the deepest bath. The wax cracks as the cloth is handled, so the last dye seeps into a network of fine dark veins that is strongest where the wax sat longest, the wax lines wander a little as the tjanting draws them, dye creeps a short way under each wax edge, and the weave of the cotton shows through.",
+ "params": [
+  {"key": "palette", "label": "Dyes", "type": "enum", "choices": ["Soga brown and indigo", "Indigo", "Sunset", "Sea and moss", "The picture's colours"], "default": 0},
+  {"key": "baths", "label": "Dye baths", "type": "int", "min": 2, "max": 6, "step": 1, "default": 4},
+  {"key": "contrast", "label": "Contrast", "type": "float", "min": 0.5, "max": 2.5, "step": 0.01, "default": 1.15},
+  {"key": "crackle", "label": "Crackle", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "crack_size", "label": "Crack size", "type": "float", "min": 6.0, "max": 120.0, "step": 0.5, "default": 26.0, "unit": " px"},
+  {"key": "wobble", "label": "Wax line wander", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "weave", "label": "Cotton weave", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": [
+  {"shader": "soften.gdshader", "scale": 0.5},
+  {"shader": "dye.gdshader", "scale": 2.0}
+ ]
+}

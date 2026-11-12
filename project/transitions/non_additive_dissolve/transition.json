@@ -1,0 +1,16 @@
+{
+ "id": "non_additive_dissolve",
+ "label": "Non Additive Dissolve",
+ "group": "Dissolve",
+ "space": "2D",
+ "from": ["Premiere Non Additive Dissolve", "Final Cut Non Additive Dissolve"],
+ "blurb": "The swap is driven by brightness rather than by a flat fade: the bright parts of the incoming shot come through first while the dark parts of the outgoing one give way first, so highlights punch through the handover and shadows hold on. The old optical printer dissolve, good for firelight, city lights, water and anything with strong speculars. Lean it towards the incoming or the outgoing picture, invert it so the shadows lead instead, and set how hard the brightness threshold bites.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "balance", "label": "Driven by", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "bite", "label": "Threshold bite", "type": "float", "min": 0.02, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "invert", "label": "Shadows lead", "type": "bool", "default": false},
+  {"key": "flare", "label": "Mid flare", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.25},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 0}
+ ]
+}

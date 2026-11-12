@@ -12,6 +12,8 @@ const KIND_MISSING := "missing"
 const FIRST_FRAME_WAIT_MS := 4000
 const TitleStyle := preload("res://doc/title_style.gd")
 const TextGlyphs := preload("res://engine/text_glyphs.gd")
+const ShapeGeometry := preload("res://doc/shape_geometry.gd")
+const TextBlurLayer := preload("res://engine/text_blur_layer.gd")
 const PATTERN_W := 160
 const PATTERN_H := 90
 const YUV_SHADER := "res://engine/yuv.gdshader"
@@ -25,6 +27,7 @@ const PROXY_PREOPEN_SECONDS := 1.5
 const HINT_PLAY := 1
 const HINT_STEP := 2
 const PROXY_COLORSPACE := "bt709"
+const MadePicture := preload("res://engine/made_picture.gd")
 
 static var _yuv_shader: Shader = null
 static var _missing_tex: ImageTexture = null
@@ -47,11 +50,13 @@ var _rect: ColorRect = null
 var _material: ShaderMaterial = null
 var _label: Control = null
 var _box_layer: Control = null
+var _blur_layer: Control = null
 var _shadow_quad: TextureRect = null
 var _shadow_h: SubViewport = null
 var _shadow_h_rect: TextureRect = null
 var _shadow_src: SubViewport = null
 var _shadow_glyphs: Control = null
+var _made: Control = null
 var _props: Dictionary = {}
 var _props_stamp: String = ""
 var _image_tex: ImageTexture = null
@@ -163,11 +168,13 @@ func _teardown() -> void:
 	_material = null
 	_label = null
 	_box_layer = null
+	_blur_layer = null
 	_shadow_quad = null
 	_shadow_h = null
 	_shadow_h_rect = null
 	_shadow_src = null
 	_shadow_glyphs = null
+	_made = null
 	_frozen = false
 
 
@@ -208,6 +215,9 @@ func _build_title() -> void:
 		_rect.size = Vector2(_viewport.size)
 		_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		_viewport.add_child(_rect)
+		_made = MadePicture.new()
+		_viewport.add_child(_made)
+		MadePicture.apply(_viewport, _rect, _made, _props)
 	elif kind == KIND_SHAPE:
 		var sb: Control = _ShapeBox.new()
 		sb.set("props", TitleStyle.merged("shape", {}, _props))
@@ -225,10 +235,16 @@ func _build_title() -> void:
 		var tb: Control = _TitleBox.new()
 		tb.name = "TitleText"
 		tb.set("part", "text")
+		tb.set_meta(TextGlyphs.TRUE_BLUR, true)
 		tb.set("props", merged)
 		tb.size = Vector2(_viewport.size)
 		_viewport.add_child(tb)
 		_label = tb
+		_blur_layer = TextBlurLayer.new()
+		_blur_layer.name = "TitleBlur"
+		_blur_layer.size = Vector2(_viewport.size)
+		_viewport.add_child(_blur_layer)
+		_blur_layer.set("props", merged)
 		_update_shadow(merged)
 	add_child(_viewport)
 	_props_stamp = TitleStyle.stamp(_props)
@@ -344,6 +360,7 @@ func set_props(p: Dictionary) -> void:
 		return
 	if kind == KIND_SOLID and _rect != null:
 		_rect.color = TitleStyle.colour_of(_props.get("colour", null), Color(0.5, 0.5, 0.5, 1.0))
+		MadePicture.apply(_viewport, _rect, _made, _props)
 	elif _label != null:
 		var merged: Dictionary = TitleStyle.merged("shape" if kind == KIND_SHAPE else "title", {}, _props, media.label if media != null else "")
 		_label.set("props", merged)
@@ -351,6 +368,8 @@ func set_props(p: Dictionary) -> void:
 		if _box_layer != null:
 			_box_layer.set("props", merged)
 			_box_layer.queue_redraw()
+		if _blur_layer != null:
+			_blur_layer.set("props", merged)
 		_update_shadow(merged)
 
 
@@ -470,6 +489,9 @@ class _ShapeBox:
 	func _draw() -> void:
 		if props.is_empty():
 			return
+		if ShapeGeometry.uses_new(props):
+			ShapeGeometry.draw(self, props, size)
+			return
 		var w: float = clampf(float(props.get("width", 0.5)), 0.001, 1.0) * size.x
 		var h: float = clampf(float(props.get("height", 0.5)), 0.001, 1.0) * size.y
 		var r: Rect2 = Rect2((size.x - w) * 0.5, (size.y - h) * 0.5, w, h)
@@ -529,6 +551,8 @@ func set_quality_scale(s: float) -> void:
 			_label.size = Vector2(_viewport.size)
 		if _box_layer != null:
 			_box_layer.size = Vector2(_viewport.size)
+		if _blur_layer != null:
+			_blur_layer.size = Vector2(_viewport.size)
 		_resize_shadow()
 
 
@@ -819,12 +843,12 @@ func _proxy_lane() -> String:
 func _proxy_route(seconds: float) -> Dictionary:
 	if not use_proxy or media == null or media.path.is_empty() or media.fps <= 0.0:
 		return {}
-	var seg: Dictionary = Proxies.playback_segment(media.path, media.fps, seconds)
+	var seg: Dictionary = Proxies.playback_segment(media.path, media.fps, seconds, media.width)
 	if seg.is_empty():
 		return {}
 	var pick: Dictionary = Proxies.proxy_pick(String(seg["path"]), media.fps, seconds)
 	if bool(pick.get("before", false)) and int(seg["index"]) > 0:
-		var prev: Dictionary = Proxies.playback_segment(media.path, media.fps, Proxies.segment_start_for(int(seg["index"]) - 1, media.fps))
+		var prev: Dictionary = Proxies.playback_segment(media.path, media.fps, Proxies.segment_start_for(int(seg["index"]) - 1, media.fps), media.width)
 		var prev_pick: Dictionary = {} if prev.is_empty() else Proxies.proxy_pick(String(prev["path"]), media.fps, seconds)
 		if prev_pick.has("frame"):
 			seg = prev
@@ -849,7 +873,7 @@ func _preopen_next(route: Dictionary, seconds: float, quality: int) -> void:
 		return
 	if media.duration > 0.0 and nxt_start >= media.duration:
 		return
-	var nxt: Dictionary = Proxies.playback_segment(media.path, media.fps, nxt_start)
+	var nxt: Dictionary = Proxies.playback_segment(media.path, media.fps, nxt_start, media.width)
 	if nxt.is_empty() or String(nxt["path"]) == _preopened:
 		return
 	var s: Node = _session_node()

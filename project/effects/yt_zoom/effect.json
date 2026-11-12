@@ -12,6 +12,6 @@
   {"key": "blur", "label": "Zoom blur", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.0},
   {"key": "edges", "label": "Edges", "type": "enum", "choices": ["Mirror", "Repeat", "Transparent"], "default": 0}
  ],
- "handles": [{"kind": "point", "key": "centre"}],
+ "handles": [{"kind": "point", "key": "centre"}, {"kind": "angle", "key": "turn", "about": "centre", "zero": "up", "turn": "cw"}],
  "passes": "single"
 }

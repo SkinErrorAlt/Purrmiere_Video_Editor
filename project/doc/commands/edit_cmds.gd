@@ -2,6 +2,7 @@ extends RefCounted
 
 const VERSION := 1
 const CutLinks := preload("res://doc/cut_links.gd")
+const FreeRide := preload("res://doc/commands/free_ride_cmds.gd")
 
 
 class SetTiming extends "res://doc/commands/command.gd":
@@ -178,6 +179,7 @@ class RippleTrim extends "res://doc/commands/composite.gd":
 				apply(doc, SetTiming.new(seq_id, c.id, c.start, c.duration + applied_delta, c.in_offset, 0.0))
 		if not moves.is_empty():
 			apply(doc, ClipCmds.MoveClips.new(seq_id, moves))
+		FreeRide.ride(self, doc, seq_id, FreeRide.after(tracks, shift_from, shift, EditMath.fence_stop(s, shift_from)))
 		return true
 
 
@@ -203,6 +205,7 @@ class RollEdit extends "res://doc/commands/composite.gd":
 			return false
 		var bounds: Vector2 = Vector2(-INF, INF)
 		var pairs: Array[Array] = []
+		var rolled: PackedStringArray = PackedStringArray()
 		for tid: String in track_ids:
 			var t: Track = s.track_by_id(tid)
 			if t == null or t.locked:
@@ -221,6 +224,7 @@ class RollEdit extends "res://doc/commands/composite.gd":
 			if b != null:
 				bounds = EditMath.intersect(bounds, EditMath.head_delta_range(doc, s, b, a == null))
 			pairs.append([a, b])
+			rolled.append(tid)
 		if pairs.is_empty():
 			return false
 		applied_delta = EditMath.clamp_delta(new_t - edit_t, bounds)
@@ -235,6 +239,7 @@ class RollEdit extends "res://doc/commands/composite.gd":
 				apply(doc, SetTiming.new(seq_id, b.id, b.start + applied_delta, b.duration - applied_delta, new_in, -applied_delta))
 			if a != null:
 				apply(doc, SetTiming.new(seq_id, a.id, a.start, a.duration + applied_delta, a.in_offset, 0.0))
+		FreeRide.ride(self, doc, seq_id, FreeRide.across(s, rolled, edit_t, applied_delta))
 		return true
 
 
@@ -488,6 +493,7 @@ class RippleRemove extends "res://doc/commands/composite.gd":
 			var moves: Array[Dictionary] = EditMath.plan_moves(plan, -d)
 			if not moves.is_empty():
 				apply(doc, ClipCmds.MoveClips.new(seq_id, moves))
+			FreeRide.ride(self, doc, seq_id, FreeRide.after(tracks, b, -d, EditMath.fence_stop(s, b)))
 		return true
 
 	func _stack_holes(stacked: Dictionary) -> Array[Array]:
@@ -570,6 +576,7 @@ class ExtractRange extends "res://doc/commands/composite.gd":
 			var moves: Array[Dictionary] = EditMath.plan_moves(plan, -d)
 			if not moves.is_empty():
 				apply(doc, ClipCmds.MoveClips.new(seq_id, moves))
+			FreeRide.ride(self, doc, seq_id, FreeRide.after(tracks, t1, -d, EditMath.fence_stop(s, t1)))
 		return not steps.is_empty()
 
 
@@ -577,6 +584,8 @@ class InsertGap extends "res://doc/commands/composite.gd":
 	var t: float = 0.0
 	var gap: float = 0.0
 	var track_ids: PackedStringArray = PackedStringArray()
+	## Set when a locked region left too little room to push the clips after `t` along (doc/fences.gd).
+	var blocked_by_fence: bool = false
 
 	func _init(p_seq_id: String, p_t: float, p_gap: float, p_track_ids: PackedStringArray) -> void:
 		label = "Insert gap"
@@ -590,6 +599,16 @@ class InsertGap extends "res://doc/commands/composite.gd":
 		if s == null or gap <= EditMath.EPS:
 			return false
 		var tracks: Array[Track] = EditMath.ripple_tracks(s, track_ids)
+		var stop: float = EditMath.fence_stop(s, t)
+		if stop < INF:
+			var room: float = EditMath.fence_ahead(s, tracks, t, PackedStringArray())
+			for ftr: Track in tracks:
+				for fc: Clip in ftr.clips_at(t):
+					if t > fc.start + EditMath.EPS:
+						room = minf(room, stop - fc.end())
+			if room < gap - EditMath.EPS:
+				blocked_by_fence = true
+				return false
 		var spanning: PackedStringArray = PackedStringArray()
 		for tr: Track in tracks:
 			for c: Clip in tr.clips_at(t):
@@ -600,6 +619,7 @@ class InsertGap extends "res://doc/commands/composite.gd":
 		var moves: Array[Dictionary] = EditMath.plan_moves(EditMath.ripple_plan(s, tracks, t, PackedStringArray()), gap)
 		if not moves.is_empty():
 			apply(doc, ClipCmds.MoveClips.new(seq_id, moves))
+		FreeRide.ride(self, doc, seq_id, FreeRide.after(tracks, t, gap, EditMath.fence_stop(s, t)))
 		return true
 
 
@@ -634,6 +654,7 @@ class CloseGap extends "res://doc/commands/composite.gd":
 		if d <= EditMath.EPS:
 			return false
 		apply(doc, ClipCmds.MoveClips.new(seq_id, EditMath.plan_moves(plan, -d)))
+		FreeRide.ride(self, doc, seq_id, FreeRide.after(tracks, gap_end, -d, EditMath.fence_stop(s, gap_end)))
 		return true
 
 

@@ -2,6 +2,7 @@ extends RefCounted
 
 const Sequence := preload("res://doc/sequence.gd")
 const Marker := preload("res://doc/marker.gd")
+const MarkerKinds := preload("res://doc/marker_kinds.gd")
 const PREF_LAYERS := "markers.layers"
 const PREF_HIDDEN_EXPORT := "markers.hidden_export"
 const RULER := ""
@@ -357,7 +358,7 @@ static func groups_for_text(seq: Sequence, picked: PackedStringArray) -> Array[D
 	for m: Marker in usable(seq):
 		if not picked.is_empty() and not picked.has(m.id):
 			continue
-		if m.kind == "tag":
+		if m.kind == "tag" or not MarkerKinds.makes_text(m):
 			continue
 		var lane: String = lane_in(idx, m)
 		if not by.has(lane):

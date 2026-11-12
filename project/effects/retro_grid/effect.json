@@ -5,6 +5,7 @@
  "tags": ["look"],
  "version": 1,
  "blurb": "The eighties synthwave scene: a glowing neon grid floor rushing towards you, a striped sun sinking into the horizon and a starry purple sky. Replaces the picture by default for an intro or a background; choose Behind the picture to put it behind a cut out, or Screen to lay the neon over footage.",
+ "handles": [{"kind": "band", "key": "horizon"}],
  "params": [
   {"key": "horizon", "label": "Horizon", "type": "float", "min": 0.2, "max": 0.9, "step": 0.005, "default": 0.56},
   {"key": "speed", "label": "Speed", "type": "float", "min": 0.0, "max": 4.0, "step": 0.01, "default": 0.8},

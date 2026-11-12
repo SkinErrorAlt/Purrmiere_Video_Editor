@@ -1,0 +1,36 @@
+{
+ "id": "glass_smash_3d",
+ "label": "Glass Smash 3D",
+ "group": "3D",
+ "space": "3D",
+ "engine": "shatter",
+ "from": ["Real baked glass physics"],
+ "blurb": "The outgoing picture is a sheet of real glass. It smashes from the point you choose into a web of fine 3D shards that each refract, catch the light with a fresnel edge and split the colour at their corners, then tumble away under gravity and reveal the next clip behind. Baked once by the native engine so it plays back instantly. Drag the impact point on the Program monitor, set how fine it breaks and how the light catches it, and switch on motion blur for a smoother fall.",
+ "default_duration": 1.5,
+ "params": [
+  {"key": "glass", "label": "Material", "type": "enum", "choices": ["Solid shards", "Glass"], "default": 1},
+  {"key": "action", "label": "How it leaves", "type": "enum", "choices": ["Burst toward you", "Pull toward you", "Fall over", "Explode outward", "Swirl away"], "default": 0},
+  {"key": "pattern", "label": "Shard pattern", "type": "enum", "choices": ["Even wall", "Radial from impact"], "default": 1},
+  {"key": "impact", "label": "Impact point", "type": "vec2", "default": [0.5, 0.45]},
+  {"key": "chunks", "label": "How fine it breaks", "type": "float", "min": 6, "max": 44, "step": 1, "default": 20},
+  {"key": "refraction", "label": "Refraction", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.35},
+  {"key": "fresnel", "label": "Edge light", "type": "float", "min": 0.5, "max": 6, "step": 0.05, "default": 3.0},
+  {"key": "highlight", "label": "Highlight", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 0.9},
+  {"key": "dispersion", "label": "Colour split", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.35},
+  {"key": "tint_amt", "label": "Glass tint", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.14},
+  {"key": "tint", "label": "Tint colour", "type": "color", "default": [0.60, 0.85, 0.74, 1]},
+  {"key": "dust", "label": "Dust and chips", "type": "enum", "choices": ["Off", "On"], "default": 1},
+  {"key": "dust_amt", "label": "Dust amount", "type": "float", "min": 0, "max": 3, "step": 0.05, "default": 1.2},
+  {"key": "force", "label": "Force", "type": "float", "min": 0.1, "max": 2.5, "step": 0.01, "default": 0.9},
+  {"key": "spread", "label": "Spread", "type": "float", "min": 0, "max": 1.5, "step": 0.01, "default": 0.5},
+  {"key": "spin", "label": "Spin", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 0.6},
+  {"key": "gravity", "label": "Gravity", "type": "float", "min": 0, "max": 30, "step": 0.1, "default": 9.8},
+  {"key": "restitution", "label": "Bounce", "type": "float", "min": 0, "max": 0.9, "step": 0.01, "default": 0.2},
+  {"key": "drag", "label": "Air drag", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.12},
+  {"key": "motion_blur", "label": "Motion blur", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.0},
+  {"key": "variant", "label": "Variation", "type": "float", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "handles": [
+  {"kind": "point", "key": "impact"}
+ ]
+}

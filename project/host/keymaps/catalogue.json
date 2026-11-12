@@ -871,6 +871,11 @@
    "category": "Clip",
    "scope": "global"
   },
+  "clip.rewind_buildup": {
+   "label": "Rewind build-up",
+   "category": "Clip",
+   "scope": "global"
+  },
   "clip.hold_to_end": {
    "label": "Hold this frame to the end",
    "category": "Clip",
@@ -1429,6 +1434,76 @@
   "tracker.stop": {
    "label": "Tracker: stop tracking",
    "category": "Clip",
+   "scope": "global"
+  },
+  "tool.object_select": {
+   "label": "Object Select tool",
+   "category": "Tools",
+   "scope": "global"
+  },
+  "object.clear": {
+   "label": "Object Select: clear the object on this clip",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "object.again": {
+   "label": "Object Select: work the object out again on this frame",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "object.track_forward": {
+   "label": "Object Select: track the object forward through the clip",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "object.track_backward": {
+   "label": "Object Select: track the object backward through the clip",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "object.track_stop": {
+   "label": "Object Select: stop tracking the object",
+   "category": "Clip",
+   "scope": "global"
+  },
+  "tool.mask_brush": {
+   "label": "Mask Brush tool",
+   "category": "Tools",
+   "scope": "global"
+  },
+  "mask_brush.kind": {
+   "label": "Mask Brush: next kind of brush",
+   "category": "Tools",
+   "scope": "global"
+  },
+  "views.solo_next_overlap": {
+   "label": "Go to the next overlap in the soloed view",
+   "category": "Clip",
+   "scope": "timeline"
+  },
+  "app.double_press_report": {
+   "label": "How many double presses were thrown away",
+   "category": "App",
+   "scope": "global"
+  },
+  "bin.toggle_shelf": {
+   "label": "Show or hide the pinned sidebar",
+   "category": "Bin",
+   "scope": "global"
+  },
+  "clip.see_inside_all": {
+   "label": "See inside every nest",
+   "category": "Clip",
+   "scope": "timeline"
+  },
+  "seq.lock_in_out": {
+   "label": "Lock in to out (nothing ripples through)",
+   "category": "Sequence",
+   "scope": "global"
+  },
+  "seq.unlock_all": {
+   "label": "Unlock every locked region",
+   "category": "Sequence",
    "scope": "global"
   }
  }

@@ -28,6 +28,7 @@ const TokenComplete := preload("res://ui/kit/token_complete.gd")
 const DATA_MENU := "data_tok:"
 const ExtrasUI := preload("res://modules/core_panels/text_extras_ui.gd")
 const FontLibrary := preload("res://doc/font_library.gd")
+const TitleScope := preload("res://modules/core_panels/title_scope.gd")
 const TEXT_PATH := "props.text"
 const MIN_LINES := 6
 const LABEL_CAP := 48
@@ -51,9 +52,12 @@ var _italic: Button = null
 var _upper: Button = null
 var _tools: HBoxContainer = null
 var _strip: Control = null
+var _runs: Control = null
 var _char_btn: Button = null
 var _animators: Control = null
 var _font_btn: Button = null
+var _scope_drop: Button = null
+var scope: String = TitleScope.THIS
 var _extras: Control = null
 var _font_row: HBoxContainer = null
 var _font_note: Label = null
@@ -162,6 +166,9 @@ func _build() -> void:
 	_edit.focus_exited.connect(_on_focus_exited)
 	TokenComplete.attach(_edit, _token_context)
 	add_child(_edit)
+	_runs = (load("res://modules/core_panels/text_popout.gd") as GDScript).call("selection_bar", _edit, self)
+	_runs.visible = false
+	add_child(_runs)
 	_count_label = PmLabel.trim("", "text_faint")
 	add_child(_count_label)
 	_tools = PmUI.hbox(Tk.px(2.0))
@@ -202,6 +209,11 @@ func _build() -> void:
 	_font_btn.pressed.connect(_on_font_pressed)
 	_tools.add_child(_font_btn)
 	_tools.add_child(PmUI.spacer())
+	_scope_drop = PmDrop.make_drop([PmDrop.choice(TitleScope.THIS, String(TitleScope.LABELS[TitleScope.THIS]))], TitleScope.THIS)
+	_scope_drop.name = "StyleScope"
+	PmUI.tip(_scope_drop, "Which boxes Style, B, I, AA, alignment and font change: this box, the selected boxes, the boxes sharing this title or every text on this track")
+	_scope_drop.connect("changed", set_scope)
+	_tools.add_child(_scope_drop)
 	add_child(_tools)
 	_font_row = PmUI.hbox(Tk.px(4.0))
 	_font_row.visible = false
@@ -347,6 +359,7 @@ func refresh() -> void:
 		_count_label.text = EMPTY_NOTE
 		_note_label.visible = false
 		_strip.call("show_for", d, seq_id, "")
+		_runs.call("show_for", d, seq_id, "")
 		_animators.call("show_for", d, seq_id, "")
 		_extras.call("show_for", d, seq_id, "")
 		return
@@ -370,6 +383,7 @@ func refresh() -> void:
 	_font_note.text = missing
 	_font_row.visible = not missing.is_empty()
 	_strip.call("show_for", d, seq_id, c.id)
+	_runs.call("show_for", d, seq_id, c.id)
 	_animators.call("show_for", d, seq_id, c.id)
 	_extras.call("show_for", d, seq_id, c.id)
 
@@ -393,6 +407,26 @@ func _refresh_tools(d: Project, c: Clip) -> void:
 	if not TitleStyle.ALIGNS.has(align):
 		align = "center"
 	_align_drop.call("set_value", align, false)
+	var s: Sequence = d.sequence_by_id(seq_id)
+	var list: Array = []
+	for ch: Dictionary in TitleScope.choices(d, s, c):
+		list.append(PmDrop.choice(String(ch["id"]), String(ch["label"])))
+	_scope_drop.call("set_choices", list)
+	scope = TitleScope.usable(d, s, c, scope)
+	_scope_drop.call("set_value", scope, false)
+
+
+func set_scope(id: String) -> void:
+	scope = id if TitleScope.ORDER.has(id) else TitleScope.THIS
+
+
+func scope_ids() -> PackedStringArray:
+	var d: Project = _doc()
+	var c: Clip = target_clip()
+	if d == null or c == null:
+		return PackedStringArray()
+	var s: Sequence = d.sequence_by_id(seq_id)
+	return TitleScope.ids_for(d, s, c, TitleScope.usable(d, s, c, scope))
 
 
 func _presets(d: Project) -> Array[Dictionary]:
@@ -417,7 +451,7 @@ func _apply_inert(on: bool) -> void:
 		_edit.add_theme_color_override("font_readonly_color", Tk.c["text_faint"])
 		_edit.add_theme_color_override("background_color", Color(0.0, 0.0, 0.0, 0.0))
 		_edit.placeholder_text = "" if on else "Type the title here"
-	for b: Button in [_style_btn, _bold, _italic, _upper, _align_drop, _char_btn, _font_btn]:
+	for b: Button in [_style_btn, _bold, _italic, _upper, _align_drop, _char_btn, _font_btn, _scope_drop]:
 		if b != null:
 			b.disabled = on
 	if _name_label != null:
@@ -455,6 +489,9 @@ func pick_font(id: String) -> bool:
 	var s: Sequence = d.sequence_by_id(seq_id) if d != null else null
 	if s == null or target_clip() == null:
 		return false
+	var ids: PackedStringArray = scope_ids()
+	if ids.size() > 1 and (id == FontMenu.DEFAULT_ID or id.begins_with(FontMenu.PICK)):
+		return TitleScope.write_prop(d, s, ids, "font", "" if id == FontMenu.DEFAULT_ID else id.substr(FontMenu.PICK.length()))
 	return FontMenu.on_pick(self, d, s, clip_id, id)
 
 
@@ -517,7 +554,10 @@ func _token_context() -> Dictionary:
 func _on_text_changed() -> void:
 	if _updating or _inert:
 		return
+	var was: String = text_of(_doc(), target_clip())
 	write_text(_edit.text)
+	(load("res://modules/core_panels/text_popout.gd") as GDScript).call("apply_typed", _doc(), seq_id, clip_id, was, _edit.text)
+	(load("res://modules/core_panels/text_popout.gd") as GDScript).call("shift_picks", _doc(), seq_id, clip_id, was, _edit.text)
 	_count_label.text = counts_text(_edit.text)
 
 
@@ -595,6 +635,10 @@ func _write_prop(key: String, value: Variant) -> void:
 	var s: Sequence = d.sequence_by_id(seq_id)
 	if s == null:
 		return
+	var ids: PackedStringArray = scope_ids()
+	if ids.size() > 1:
+		TitleScope.write_prop(d, s, ids, key, value)
+		return
 	var path: String = "props." + key
 	var key_at: float = Bus.instance().key_time_for(c, path, Session.playhead())
 	Verbs.set_clip_param(d, s, c.id, path, value, key_at, false)
@@ -664,7 +708,9 @@ func _on_style_pick(id: String) -> void:
 	var s: Sequence = d.sequence_by_id(seq_id)
 	if s == null:
 		return
-	var ids: PackedStringArray = PackedStringArray([c.id])
+	var ids: PackedStringArray = scope_ids()
+	if ids.is_empty():
+		ids = PackedStringArray([c.id])
 	if id == "subtitle":
 		Subtitles.apply_style(d, s, ids, Subtitles.subtitle_style())
 	elif id == "save":
@@ -712,10 +758,10 @@ static func data_menu_items() -> Array:
 		PmMenu.sub_item("data_ends", "Time recording ended", ends),
 		PmMenu.separator(),
 	]
-	for tok: String in ["length", "into", "file", "name", "fps", "size", "today"]:
+	for tok: String in ["length", "into", "file", "folder", "name", "track", "fps", "size", "today", "timecode", "clip_timecode", "file_date"]:
 		out.append(PmMenu.item(DATA_MENU + "{" + tok + "}", String(DataText.TOKEN_LABELS.get(tok, tok))))
 	out.append(PmMenu.separator())
-	for tok2: String in ["edit_time", "clips", "cuts", "project"]:
+	for tok2: String in ["edit_time", "clips", "clip_no", "cuts", "project", "sequence", "seq_size", "seq_fps", "marker", "marker_note"]:
 		out.append(PmMenu.item(DATA_MENU + "{" + tok2 + "}", String(DataText.TOKEN_LABELS.get(tok2, tok2))))
 	out.append(PmMenu.separator())
 	out.append(PmMenu.item(DATA_MENU + "{date:DDDD [the] Do}", "Your own: write {date:...} with YYYY MMMM MMM MM D Do DDDD h mm ss A, words in [ ]"))

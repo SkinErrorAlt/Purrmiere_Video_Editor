@@ -1,0 +1,16 @@
+{
+ "id": "weave",
+ "label": "Weave",
+ "group": "Wipe",
+ "space": "2D",
+ "from": ["Keynote Weave", "Boris Basket Weave"],
+ "blurb": "The incoming shot is woven in as a basket: ribbons run in from the left across every other row while ribbons run down from the top through every other column, and where two ribbons meet one passes over and the other goes under. The ribbons that pass beneath take a soft shadow from the one on top, so the lattice reads as real strips of material rather than a flat pattern. Set the number of ribbons each way, how much the crossings are shaded, and how far one ribbon runs ahead of its neighbour.",
+ "default_duration": 1.3,
+ "params": [
+  {"key": "rows", "label": "Ribbons across", "type": "int", "min": 2, "max": 32, "step": 1, "default": 6},
+  {"key": "cols", "label": "Ribbons down", "type": "int", "min": 2, "max": 32, "step": 1, "default": 9},
+  {"key": "shade", "label": "Crossing shade", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45},
+  {"key": "stagger", "label": "Stagger", "type": "float", "min": 0.0, "max": 0.8, "step": 0.01, "default": 0.6},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 1}
+ ]
+}

@@ -1,0 +1,22 @@
+{
+ "id": "instant_film",
+ "label": "Instant Film",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "The picture as an instant print: soft and milky with teal shadows and creamy highlights, developing out of the blue green opacifier as you key Development up (cyan dye first, yellow last), with the chemistry's own marks: a wavy front where the reagent ran out at the far edge and repeated blemishes from the rollers.",
+ "params": [
+  {"key": "stock", "label": "Stock", "type": "enum", "choices": ["Integral", "Peel apart", "Expired"], "default": 0},
+  {"key": "development", "label": "Development", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "softness", "label": "Softness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45},
+  {"key": "fade", "label": "Milky blacks", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "chemistry", "label": "Chemistry marks", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "pod", "label": "Pod edge", "type": "enum", "choices": ["Bottom", "Top", "Left", "Right"], "default": 0},
+  {"key": "rollers", "label": "Roller marks", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 999, "step": 1, "default": 7}
+ ],
+ "passes": [
+  {"shader": "soften.gdshader", "scale": 0.5},
+  {"shader": "develop.gdshader", "scale": 2.0}
+ ]
+}

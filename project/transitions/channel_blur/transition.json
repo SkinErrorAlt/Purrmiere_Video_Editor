@@ -14,5 +14,8 @@
   {"key": "offset", "label": "Shift apart", "type": "float", "min": 0, "max": 60, "step": 1, "default": 10, "unit": " px"},
   {"key": "angle", "label": "Shift angle", "type": "float", "min": -180, "max": 180, "step": 1, "default": 0, "unit": " deg"},
   {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 1}
+ ],
+ "handles": [
+  {"kind": "angle", "key": "angle", "zero": "right"}
  ]
 }

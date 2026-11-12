@@ -1,0 +1,258 @@
+{
+ "id": "motion_shed",
+ "label": "Motion Shedding",
+ "category": "Time",
+ "tags": [
+  "look"
+ ],
+ "version": 1,
+ "blurb": "Whatever moves sheds specks that fly off with its own movement. Each speck leaves the moving thing in the direction and at the speed that part was going at that moment, carries on through the air, slows, drops a little and fades, in the colour of what it came from. A swung arm throws a spray along the swing, a runner leaves a wake of flecks pointing back along the run, a spinning wheel throws them off its rim, and the faster something moves the further its specks fly. Dust keeps the colours, Embers glow like sparks off a grinder, Light shines in the moving thing's own colours.",
+ "history": {
+  "max": 26,
+  "reach": [
+   "life"
+  ],
+  "seconds": [
+   "life"
+  ]
+ },
+ "params": [
+  {
+   "key": "kind",
+   "label": "Kind",
+   "type": "enum",
+   "choices": [
+    "Dust",
+    "Embers",
+    "Light"
+   ],
+   "default": 1
+  },
+  {
+   "key": "amount",
+   "label": "Amount",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.4
+  },
+  {
+   "key": "life",
+   "label": "Lasts",
+   "type": "float",
+   "min": 0.1,
+   "max": 0.8,
+   "step": 0.01,
+   "default": 0.7,
+   "unit": " s"
+  },
+  {
+   "key": "throw_speed",
+   "label": "Throw speed",
+   "type": "float",
+   "min": 0.0,
+   "max": 3.0,
+   "step": 0.01,
+   "default": 1.0
+  },
+  {
+   "key": "slow_down",
+   "label": "Slow down",
+   "type": "float",
+   "min": 0.0,
+   "max": 0.5,
+   "step": 0.01,
+   "default": 0.22
+  },
+  {
+   "key": "fall",
+   "label": "Fall",
+   "type": "float",
+   "min": -1.0,
+   "max": 2.0,
+   "step": 0.01,
+   "default": 0.15,
+   "unit": " px"
+  },
+  {
+   "key": "scatter",
+   "label": "Scatter",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.35
+  },
+  {
+   "key": "size",
+   "label": "Speck size",
+   "type": "float",
+   "min": 0.8,
+   "max": 10.0,
+   "step": 0.1,
+   "default": 2.2,
+   "unit": " px"
+  },
+  {
+   "key": "streak",
+   "label": "Streak",
+   "type": "float",
+   "min": 0.0,
+   "max": 3.0,
+   "step": 0.01,
+   "default": 1.0
+  },
+  {
+   "key": "spacing",
+   "label": "Shedding points",
+   "type": "float",
+   "min": 3.0,
+   "max": 30.0,
+   "step": 0.1,
+   "default": 6.0,
+   "unit": " px"
+  },
+  {
+   "key": "glow",
+   "label": "Glow",
+   "type": "float",
+   "min": 0.0,
+   "max": 2.0,
+   "step": 0.01,
+   "default": 0.5
+  },
+  {
+   "key": "ember_colour",
+   "label": "Ember colour",
+   "type": "color",
+   "default": [
+    1.0,
+    0.55,
+    0.16,
+    1.0
+   ]
+  },
+  {
+   "key": "camera",
+   "label": "Ignore camera movement",
+   "type": "bool",
+   "default": true
+  }
+ ],
+ "passes": [
+  {
+   "shader": "res://effects/pixel_motion_blur/luma.gdshader",
+   "scale": 0.5,
+   "set": {
+    "stage": 0,
+    "age": 1.0
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/luma.gdshader",
+   "scale": 0.5,
+   "set": {
+    "stage": 1
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/luma.gdshader",
+   "scale": 0.5,
+   "set": {
+    "stage": 1
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/luma.gdshader",
+   "scale": 0.5,
+   "set": {
+    "stage": 1
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/search.gdshader",
+   "scale": 1.0,
+   "set": {
+    "radius": 6,
+    "level_scale": 16.0,
+    "patch": 2,
+    "lambda": 0.004
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/refine.gdshader",
+   "scale": 2.0,
+   "set": {
+    "level_scale": 8.0,
+    "patch": 1,
+    "lambda": 0.004
+   },
+   "inputs": {
+    "luma_tex": 2
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/refine.gdshader",
+   "scale": 2.0,
+   "set": {
+    "level_scale": 4.0,
+    "patch": 1,
+    "lambda": 0.004,
+    "half_step": true
+   },
+   "inputs": {
+    "luma_tex": 1
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/refine.gdshader",
+   "scale": 2.0,
+   "set": {
+    "level_scale": 2.0,
+    "patch": 1,
+    "lambda": 0.004,
+    "half_step": true
+   },
+   "inputs": {
+    "luma_tex": 0
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/smooth.gdshader",
+   "scale": 1.0
+  },
+  {
+   "shader": "res://effects/_motion_kit/global.gdshader",
+   "scale": 0.0625
+  },
+  {
+   "shader": "res://effects/_motion_kit/clean.gdshader",
+   "scale": 16.0,
+   "inputs": {
+    "flow_tex": 8,
+    "luma_tex": 0,
+    "global_tex": 9
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/smooth.gdshader",
+   "scale": 1.0
+  },
+  {
+   "shader": "res://effects/_motion_kit/atlas.gdshader",
+   "scale": 0.25,
+   "inputs": {
+    "global_tex": 9
+   }
+  },
+  {
+   "shader": "shed.gdshader",
+   "scale": 4.0
+  },
+  {
+   "shader": "composite.gdshader",
+   "scale": 2.0
+  }
+ ]
+}

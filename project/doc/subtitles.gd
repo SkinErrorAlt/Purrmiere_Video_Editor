@@ -6,6 +6,7 @@ const Track := preload("res://doc/track.gd")
 const Clip := preload("res://doc/clip.gd")
 const MediaItem := preload("res://doc/media_item.gd")
 const Marker := preload("res://doc/marker.gd")
+const MarkerKinds := preload("res://doc/marker_kinds.gd")
 const AnimProp := preload("res://doc/anim_prop.gd")
 const TitleStyle := preload("res://doc/title_style.gd")
 const Verbs := preload("res://doc/verbs.gd")
@@ -184,7 +185,7 @@ static func spans_from_markers(seq: Sequence, only_selected: PackedStringArray =
 	var want: float = clampf(length, MIN_BOX_SECONDS, MAX_BOX_SECONDS) if length > 0.0 else box_seconds()
 	var list: Array[Marker] = []
 	for mk: Marker in MarkerLayers.usable(seq):
-		if mk.kind == TAG_KIND:
+		if mk.kind == TAG_KIND or not MarkerKinds.makes_text(mk):
 			continue
 		if only_selected.is_empty() or only_selected.has(mk.id):
 			list.append(mk)

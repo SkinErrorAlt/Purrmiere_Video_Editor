@@ -1,0 +1,17 @@
+{
+ "id": "motion_extract",
+ "label": "Motion Extraction",
+ "category": "Time",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "The invert and delay trick: a negative of the clip from a moment ago is laid over the clip itself at half strength, so everything that holds still cancels out to flat grey and only what moves is left, drawn as glowing positive and negative edges. It finds movement you would never notice, like breathing, swaying leaves and the drift of a crowd. Glow on black keeps only the change, in its own colours.",
+ "history": {"max": 31, "reach": ["delay"], "seconds": ["delay"]},
+ "params": [
+  {"key": "delay", "label": "Compare with", "type": "float", "min": 0.03, "max": 1.0, "step": 0.005, "default": 0.1, "unit": " s"},
+  {"key": "kind", "label": "Kind", "type": "enum", "choices": ["Grey card", "Glow on black", "Grey card in colour"], "default": 0},
+  {"key": "gain", "label": "Boost", "type": "float", "min": 1.0, "max": 12.0, "step": 0.05, "default": 3.0},
+  {"key": "grain", "label": "Ignore grain", "type": "float", "min": 0.0, "max": 0.2, "step": 0.002, "default": 0.02},
+  {"key": "keep", "label": "Show the clip through", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.0}
+ ],
+ "passes": [{"shader": "effect.gdshader"}]
+}

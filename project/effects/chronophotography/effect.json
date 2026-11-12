@@ -1,0 +1,17 @@
+{
+ "id": "chronophotography",
+ "label": "Chronophotography",
+ "category": "Time",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Freezes copies of a moving subject at even steps through time on one picture, like the motion studies of Marey and Muybridge. Works best with a camera that holds still: the still background is found from the frames themselves, and only what differs from it is kept from each moment.",
+ "history": {"max": 62, "reach": ["copies", "interval"], "seconds": ["interval"]},
+ "params": [
+  {"key": "copies", "label": "Copies", "type": "int", "min": 1, "max": 12, "step": 1, "default": 6},
+  {"key": "interval", "label": "Time between copies", "type": "float", "min": 0.02, "max": 1.0, "step": 0.005, "default": 0.15, "unit": " s"},
+  {"key": "threshold", "label": "What counts as moving", "type": "float", "min": 0.01, "max": 0.5, "step": 0.005, "default": 0.09},
+  {"key": "softness", "label": "Edge softness", "type": "float", "min": 0.005, "max": 0.4, "step": 0.005, "default": 0.06},
+  {"key": "fade", "label": "Older copies fade", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35}
+ ],
+ "passes": [{"shader": "effect.gdshader"}]
+}

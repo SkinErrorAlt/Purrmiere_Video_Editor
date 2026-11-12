@@ -6,6 +6,7 @@ const Clip := preload("res://doc/clip.gd")
 const MediaItem := preload("res://doc/media_item.gd")
 const AnimProp := preload("res://doc/anim_prop.gd")
 const MaskShape := preload("res://doc/mask_shape.gd")
+const ObjectMask := preload("res://doc/object_mask.gd")
 const Command := preload("res://doc/commands/command.gd")
 const ClipCmds := preload("res://doc/commands/clip_cmds.gd")
 const RecordCmds := preload("res://doc/commands/record_cmds.gd")
@@ -16,8 +17,10 @@ const PmText := preload("res://ui/kit/pm_text.gd")
 const PmMenu := preload("res://ui/kit/pm_menu.gd")
 const PREF_KIND := "program.pen_shape"
 const TRACKING_EVAL := "res://engine/tracking_eval.gd"
-const KINDS: PackedStringArray = ["rect", "ellipse", "polygon"]
-const KIND_LABELS: Dictionary = {"rect": "Rectangle", "ellipse": "Ellipse", "polygon": "Polygon"}
+const KINDS: PackedStringArray = ["polygon", "draw", "rect", "ellipse"]
+const KIND_LABELS: Dictionary = {"rect": "Rectangle", "ellipse": "Ellipse", "polygon": "Polygon (click points)", "draw": "Freehand (drag to draw)"}
+const KIND_ICONS: Dictionary = {"rect": "grid", "ellipse": "loop", "polygon": "pen", "draw": "pen"}
+const FREEHAND_TOLERANCE_PX := 2.0
 const INK := Color(1.0, 0.776, 0.337, 1.0)
 const PEN_INK := Color(0.459, 0.898, 0.608, 1.0)
 const LABEL_BACK := Color(0.051, 0.055, 0.063, 0.85)
@@ -31,6 +34,7 @@ const ELLIPSE_STEPS := 48
 const MIN_SIDE := 0.004
 const ADD_LABEL := "Add a shape point"
 const DROP_LABEL := "Remove a shape point"
+const STRAIGHT_LABEL := "Straighten a shape edge"
 const DRAW_LABEL := "Draw a shape"
 
 var drag: Dictionary = {}
@@ -194,6 +198,8 @@ func targets(panel: Object, pic: Rect2) -> Array[Dictionary]:
 		var mid: String = String(m.get("id", ""))
 		if mid.is_empty() or not bool(m.get("enabled", true)) or not String(m.get("region_of", "")).is_empty():
 			continue
+		if ObjectMask.is_object(m):
+			continue
 		var mxf: Transform2D = xf
 		if m.has("track"):
 			var tx: Variant = load(TRACKING_EVAL).call("mask_xf", panel.call("doc"), c, m, s.playhead, s.fps)
@@ -238,15 +244,26 @@ func _poly_target(t: Dictionary, m: Dictionary, local: float, dur: float, fps: f
 	if pts.size() < 2:
 		return false
 	var xf: Transform2D = t["xf"]
+	var bends: PackedVector2Array = MaskShape.handles_at(m, local, dur, fps)
 	var hs: Array[Dictionary] = []
-	var shape: PackedVector2Array = PackedVector2Array()
 	for i: int in pts.size():
-		var at: Vector2 = xf * pts[i]
-		hs.append({"id": "p" + str(i), "at": at, "look": "dot", "name": "Point " + str(i + 1)})
-		shape.append(at)
+		hs.append({"id": "p" + str(i), "at": xf * pts[i], "look": "dot", "name": "Point " + str(i + 1)})
+	for j: int in pts.size():
+		if bends.size() < j * 2 + 2:
+			continue
+		if bends[j * 2].length() > MaskShape.STRAIGHT:
+			hs.append({"id": "hi" + str(j), "at": xf * (pts[j] + bends[j * 2]), "look": "bend", "from": xf * pts[j], "name": "Point " + str(j + 1) + " curve in"})
+		if bends[j * 2 + 1].length() > MaskShape.STRAIGHT:
+			hs.append({"id": "ho" + str(j), "at": xf * (pts[j] + bends[j * 2 + 1]), "look": "bend", "from": xf * pts[j], "name": "Point " + str(j + 1) + " curve out"})
+	var walk: Dictionary = MaskShape.curve_walk(pts, bends)
+	var shape: PackedVector2Array = PackedVector2Array()
+	for p: Vector2 in (walk["path"] as PackedVector2Array):
+		shape.append(xf * p)
 	t["handles"] = hs
 	t["shape"] = shape
+	t["owners"] = walk["owners"]
 	t["points"] = pts
+	t["bends"] = bends
 	return true
 
 
@@ -280,7 +297,9 @@ func edge_hit(panel: Object, pic: Rect2, at: Vector2) -> Dictionary:
 			continue
 		var near: Dictionary = nearest_edge(sq, at)
 		if float(near["distance"]) <= EDGE_REACH:
-			return {"target": t, "index": int(near["index"])}
+			var owners: PackedInt32Array = t.get("owners", PackedInt32Array())
+			var walked: int = int(near["index"])
+			return {"target": t, "index": owners[walked] if walked >= 0 and walked < owners.size() else walked}
 	return {}
 
 
@@ -294,6 +313,16 @@ func input(event: InputEvent, pic: Rect2, panel: Object) -> bool:
 			return false
 		if mb.pressed and mb.double_click:
 			if _double(panel, pic, mb):
+				_accept(view)
+				return true
+			return false
+		if mb.pressed and (mb.ctrl_pressed or mb.meta_pressed):
+			if _ctrl_press(panel, pic, mb):
+				_accept(view)
+				return true
+			return false
+		if mb.pressed and mb.alt_pressed:
+			if _alt_press(panel, pic, mb):
 				_accept(view)
 				return true
 			return false
@@ -331,13 +360,57 @@ func _accept(view: Control) -> void:
 		view.call("redraw_overlay")
 
 
+func _ctrl_press(panel: Object, pic: Rect2, mb: InputEventMouseButton) -> bool:
+	var on: Dictionary = hit(panel, pic, mb.position)
+	if on.is_empty():
+		return false
+	var handle: String = String(on["handle"])
+	var mask_id: String = String((on["target"] as Dictionary)["mask_id"])
+	if handle.begins_with("hi") or handle.begins_with("ho"):
+		return straighten(panel, mask_id, int(handle.substr(2)), 0 if handle.begins_with("hi") else 1)
+	if not handle.begins_with("p"):
+		return false
+	return drop_point(panel, mask_id, int(handle.substr(1)))
+
+
+func straighten(panel: Object, mask_id: String, at: int, side: int) -> bool:
+	var d: Project = panel.call("doc")
+	var s: Sequence = panel.call("seq")
+	var c: Clip = panel.call("gizmo_clip")
+	if d == null or s == null or c == null:
+		return false
+	var path: String = "masks." + mask_id + ".handles"
+	var current: Dictionary = c.get_param(path)
+	if current.is_empty():
+		return false
+	var count: int = MaskShape.point_count(c.get_param("masks." + mask_id + ".points"))
+	var next: Dictionary = MaskShape.set_handle(current, at, side, Vector2.ZERO, count)
+	if next == current:
+		return false
+	edits += 1
+	var cmds: Array[Command] = [ClipCmds.SetClipParam.new(s.id, c.id, path, next)]
+	return Verbs.run(d, STRAIGHT_LABEL, cmds)
+
+
+func _alt_press(panel: Object, pic: Rect2, mb: InputEventMouseButton) -> bool:
+	var on: Dictionary = hit(panel, pic, mb.position)
+	if not on.is_empty() and String(on["handle"]).begins_with("p"):
+		_begin(panel, pic, {"target": on["target"], "handle": "pull" + String(on["handle"]).substr(1), "name": String(on.get("name", ""))}, mb)
+		return true
+	var near: Dictionary = edge_hit(panel, pic, mb.position)
+	if near.is_empty():
+		return false
+	var t: Dictionary = near["target"]
+	return add_point(panel, String(t["mask_id"]), int(near["index"]) + 1, _uv_at(panel, pic, t["xf"], mb.position))
+
+
 func _begin(panel: Object, pic: Rect2, h: Dictionary, mb: InputEventMouseButton) -> void:
 	var t: Dictionary = h["target"]
 	var s: Sequence = panel.call("seq")
 	var c: Clip = s.clip_by_id(String(t["clip_id"])) if s != null else null
 	var bus: Object = panel.call("bus")
 	var key_at: Dictionary = {}
-	for key: String in (["centre", "size"] if bool(t["box"]) else ["points"]):
+	for key: String in (["centre", "size"] if bool(t["box"]) else ["points", "handles"]):
 		var path: String = "masks." + String(t["mask_id"]) + "." + key
 		key_at[path] = float(bus.call("key_time_for", c, path, s.playhead)) if bus != null and c != null else -1.0
 	drag = {"target": t, "handle": String(h["handle"]), "press": mb.position, "press_uv": _uv_at(panel, pic, t["xf"], mb.position), "open": false, "key_at": key_at, "label": String(t["label"]), "pointer": mb.position, "chip": ""}
@@ -412,6 +485,9 @@ func _drag_points(d: Project, s: Sequence, c: Clip, t: Dictionary, uv: Vector2, 
 		for i: int in pts.size():
 			pts[i] = pts[i] + shift
 		drag["chip"] = String(t["label"]) + " moved"
+	elif handle.begins_with("h") or handle.begins_with("pull"):
+		_drag_bend(d, s, c, t, uv, pts, handle)
+		return
 	else:
 		var j: int = int(handle.substr(1))
 		if j < 0 or j >= pts.size():
@@ -425,12 +501,32 @@ func _drag_points(d: Project, s: Sequence, c: Clip, t: Dictionary, uv: Vector2, 
 	_write(d, s, c, "masks." + String(t["mask_id"]) + ".points", MaskShape.flat_of(pts))
 
 
+func _drag_bend(d: Project, s: Sequence, c: Clip, t: Dictionary, uv: Vector2, pts: PackedVector2Array, handle: String) -> void:
+	var pull: bool = handle.begins_with("pull")
+	var j: int = int(handle.substr(4)) if pull else int(handle.substr(2))
+	if j < 0 or j >= pts.size():
+		return
+	var bends: PackedVector2Array = (t.get("bends", PackedVector2Array()) as PackedVector2Array).duplicate()
+	while bends.size() < pts.size() * 2:
+		bends.append(Vector2.ZERO)
+	var reach: Vector2 = uv - pts[j]
+	if pull:
+		bends[j * 2] = -reach
+		bends[j * 2 + 1] = reach
+	elif handle.begins_with("hi"):
+		bends[j * 2] = reach
+	else:
+		bends[j * 2 + 1] = reach
+	_write(d, s, c, "masks." + String(t["mask_id"]) + ".handles", MaskShape.flat_of(bends))
+	drag["chip"] = "%s point %d curve: %.1f %%, %.1f %%" % [String(t["label"]), j + 1, reach.x * 100.0, reach.y * 100.0]
+
+
 func _write(d: Project, s: Sequence, c: Clip, path: String, value: Variant) -> void:
 	if RecordCmds.write(d, s, c.id, path, value, true):
 		return
 	var key_at: float = float((drag.get("key_at", {}) as Dictionary).get(path, -1.0))
 	var current: Dictionary = c.get_param(path)
-	if path.ends_with(".points") and not current.is_empty():
+	if (path.ends_with(".points") or path.ends_with(".handles")) and not current.is_empty():
 		current = MaskShape.flatten_prop(current)
 	var next: Dictionary = AnimProp.make(value)
 	if key_at >= 0.0:
@@ -438,6 +534,39 @@ func _write(d: Project, s: Sequence, c: Clip, path: String, value: Variant) -> v
 	var cmd: ClipCmds.SetClipParam = ClipCmds.SetClipParam.new(s.id, c.id, path, next)
 	cmd.label = String(drag.get("label", "Shape"))
 	d.undo.live(cmd)
+	if key_at >= 0.0 and (path.ends_with(".points") or path.ends_with(".handles")):
+		_key_sibling(d, s, c, path, key_at)
+
+
+## A shape key holds the whole shape: keying the points keys their curves at the same time and the other way
+## round, so the two never drift apart between keys.
+func _key_sibling(d: Project, s: Sequence, c: Clip, path: String, key_at: float) -> void:
+	var points_side: bool = path.ends_with(".points")
+	var sib: String = path.trim_suffix(".points") + ".handles" if points_side else path.trim_suffix(".handles") + ".points"
+	var mid: String = path.get_slice(".", 1)
+	var mi: int = MaskShape.index_of(c.masks, mid)
+	if mi < 0:
+		return
+	var m: Dictionary = c.masks[mi]
+	var now: Dictionary = c.get_param(sib)
+	if now.is_empty():
+		return
+	if points_side and not m.has("handles"):
+		return
+	now = MaskShape.flatten_prop(now)
+	var local: float = c.param_time(sib, key_at - c.start)
+	var count: int = MaskShape.point_count(c.get_param(path.trim_suffix(".handles") + ".points" if not points_side else path))
+	var value: Array = []
+	if points_side:
+		value = MaskShape.flat_of(MaskShape.handles_at(m, key_at - c.start, c.duration, s.fps))
+		if value.size() < count * 2 * 2:
+			value = MaskShape.zero_handles(count)
+	else:
+		value = MaskShape.flat_of(MaskShape.points_at(m, key_at - c.start, c.duration, s.fps))
+	var keyed: Dictionary = AnimProp.set_key(now, local, value)
+	var cmd2: ClipCmds.SetClipParam = ClipCmds.SetClipParam.new(s.id, c.id, sib, keyed)
+	cmd2.label = String(drag.get("label", "Shape"))
+	d.undo.live(cmd2)
 
 
 func _end(panel: Object) -> void:
@@ -483,14 +612,25 @@ func add_point(panel: Object, mask_id: String, at: int, uv: Vector2) -> bool:
 	if d == null or s == null or c == null:
 		return false
 	var path: String = "masks." + mask_id + ".points"
+	var bend_path: String = "masks." + mask_id + ".handles"
 	var current: Dictionary = c.get_param(path)
 	if current.is_empty():
 		return false
-	var next: Dictionary = MaskShape.insert_point(current, at, uv)
-	if next == current:
+	var frac: float = 0.5
+	var mi: int = MaskShape.index_of(c.masks, mask_id)
+	if mi >= 0:
+		var now_pts: PackedVector2Array = MaskShape.points_at(c.masks[mi], s.playhead - c.start, c.duration, s.fps)
+		var n: int = now_pts.size()
+		if n >= 2:
+			var i: int = clampi(at, 0, n)
+			frac = MaskShape.segment_frac(now_pts[(i - 1 + n) % n], now_pts[i % n], uv)
+	var next: Dictionary = MaskShape.insert_curve_point(current, c.get_param(bend_path), at, uv, frac)
+	if next.is_empty() or next["points"] == current:
 		return false
 	edits += 1
-	var cmds: Array[Command] = [ClipCmds.SetClipParam.new(s.id, c.id, path, next)]
+	var cmds: Array[Command] = [ClipCmds.SetClipParam.new(s.id, c.id, path, next["points"])]
+	if not (next["handles"] as Dictionary).is_empty():
+		cmds.append(ClipCmds.SetClipParam.new(s.id, c.id, bend_path, next["handles"]))
 	return Verbs.run(d, ADD_LABEL, cmds)
 
 
@@ -501,14 +641,18 @@ func drop_point(panel: Object, mask_id: String, at: int) -> bool:
 	if d == null or s == null or c == null:
 		return false
 	var path: String = "masks." + mask_id + ".points"
+	var bend_path: String = "masks." + mask_id + ".handles"
 	var current: Dictionary = c.get_param(path)
 	if current.is_empty() or MaskShape.point_count(current) <= MaskShape.MIN_POINTS:
 		return false
-	var next: Dictionary = MaskShape.remove_point(current, at)
-	if next == current:
+	var held: Dictionary = c.get_param(bend_path)
+	var next: Dictionary = MaskShape.remove_curve_point(current, held, at)
+	if next.is_empty() or next["points"] == current:
 		return false
 	edits += 1
-	var cmds: Array[Command] = [ClipCmds.SetClipParam.new(s.id, c.id, path, next)]
+	var cmds: Array[Command] = [ClipCmds.SetClipParam.new(s.id, c.id, path, next["points"])]
+	if not (next["handles"] as Dictionary).is_empty():
+		cmds.append(ClipCmds.SetClipParam.new(s.id, c.id, bend_path, next["handles"]))
 	return Verbs.run(d, DROP_LABEL, cmds)
 
 
@@ -544,7 +688,13 @@ func pen_input(event: InputEvent, pic: Rect2, panel: Object) -> bool:
 			return false
 		pen["at"] = _uv_at(panel, pic, xf, mm.position)
 		pen["pointer"] = mm.position
-		if String(pen["kind"]) != "polygon" and bool(pen.get("dragging", false)):
+		if String(pen["kind"]) == "draw" and bool(pen.get("dragging", false)):
+			var stroke: PackedVector2Array = pen["pts"]
+			var at_uv: Vector2 = pen["at"]
+			if stroke.is_empty() or stroke[stroke.size() - 1].distance_to(at_uv) > float(pen.get("tol", 0.001)) * 0.5:
+				stroke.append(at_uv)
+				pen["pts"] = stroke
+		elif String(pen["kind"]) != "polygon" and bool(pen.get("dragging", false)):
 			pen["to"] = pen["at"]
 		if view != null:
 			view.call("redraw_overlay")
@@ -554,6 +704,9 @@ func pen_input(event: InputEvent, pic: Rect2, panel: Object) -> bool:
 
 func _pen_press(panel: Object, pic: Rect2, c: Clip, uv: Vector2, mb: InputEventMouseButton) -> void:
 	var kind: String = pen_kind(Prefs)
+	if kind == "draw":
+		pen = {"clip_id": c.id, "kind": kind, "at": uv, "pointer": mb.position, "dragging": true, "pts": PackedVector2Array([uv]), "tol": FREEHAND_TOLERANCE_PX / maxf(pic.size.x, 1.0)}
+		return
 	if kind != "polygon":
 		pen = {"clip_id": c.id, "kind": kind, "from": uv, "to": uv, "at": uv, "pointer": mb.position, "dragging": true, "pts": PackedVector2Array()}
 		return
@@ -571,6 +724,13 @@ func _pen_press(panel: Object, pic: Rect2, c: Clip, uv: Vector2, mb: InputEventM
 
 func _pen_release(panel: Object, c: Clip, uv: Vector2) -> void:
 	if pen.is_empty() or String(pen["kind"]) == "polygon":
+		return
+	if String(pen["kind"]) == "draw":
+		var stroke: PackedVector2Array = pen["pts"]
+		stroke.append(uv)
+		var tol: float = float(pen.get("tol", 0.002))
+		pen = {}
+		make_drawn_mask(panel, c, stroke, tol)
 		return
 	pen["to"] = uv
 	pen["dragging"] = false
@@ -591,6 +751,29 @@ func _make_box_mask(panel: Object, c: Clip, kind: String, box: Rect2) -> bool:
 	var m: Dictionary = MaskShape.make(kind, d.mint_id("mask"))
 	m["centre"] = [box.get_center().x, box.get_center().y]
 	m["size"] = [box.size.x, box.size.y]
+	var masks: Array[Dictionary] = c.masks.duplicate(true)
+	masks.append(m)
+	draws += 1
+	var cmds: Array[Command] = [ClipCmds.SetClipField.new(s.id, c.id, "masks", masks)]
+	return Verbs.run(d, DRAW_LABEL, cmds)
+
+
+## Makes a mask from a hand drawn stroke: thinned to the points that hold its shape, smooth curves through them.
+func make_drawn_mask(panel: Object, c: Clip, stroke: PackedVector2Array, tol: float) -> bool:
+	var d: Project = panel.call("doc")
+	var s: Sequence = panel.call("seq")
+	if d == null or s == null or c == null or stroke.size() < 3:
+		return false
+	var lo: Vector2 = stroke[0]
+	var hi: Vector2 = stroke[0]
+	for p: Vector2 in stroke:
+		lo = Vector2(minf(lo.x, p.x), minf(lo.y, p.y))
+		hi = Vector2(maxf(hi.x, p.x), maxf(hi.y, p.y))
+	if hi.x - lo.x < MIN_SIDE * 2.0 or hi.y - lo.y < MIN_SIDE * 2.0:
+		return false
+	var m: Dictionary = MaskShape.make_drawn(d.mint_id("mask"), stroke, tol)
+	if MaskShape.flat_points(m["points"]).size() / 2 < MaskShape.MIN_POINTS:
+		return false
 	var masks: Array[Dictionary] = c.masks.duplicate(true)
 	masks.append(m)
 	draws += 1
@@ -651,11 +834,30 @@ func handle_key(e: InputEventKey, panel: Object) -> bool:
 
 
 func menu_items() -> Array:
+	return shape_menu_items()
+
+
+## The Pen's shapes, for the Program menu and the flyout on the Pen tool button.
+static func shape_menu_items() -> Array:
 	var now: String = pen_kind(Prefs)
 	var out: Array = []
 	for k: String in KINDS:
 		out.append(PmMenu.check_item("penshape:" + k, String(KIND_LABELS[k]), now == k))
 	return out
+
+
+## Picks a shape from the flyout: remembers it and switches to the Pen.
+static func pick_shape(id: String) -> bool:
+	if not id.begins_with("penshape:"):
+		return false
+	var k: String = id.substr(9)
+	if not KINDS.has(k):
+		return false
+	ensure_prefs(Prefs)
+	Prefs.set_value(PREF_KIND, k)
+	if Session.tool_id != "pen":
+		Session.set_tool("pen")
+	return true
 
 
 func arm_items(panel: Object) -> Array:
@@ -737,6 +939,9 @@ func _draw_target(ci: CanvasItem, pic: Rect2, panel: Object, t: Dictionary, tag:
 		if String(h["look"]) == "square":
 			var w: float = HANDLE + (2.0 if hot else 0.0)
 			ci.draw_rect(Rect2(at - Vector2(w, w) * 0.5, Vector2(w, w)), INK, true)
+		elif String(h["look"]) == "bend":
+			ci.draw_line(_screen(panel, pic, h["from"]), at, Color(INK, 0.55), 1.0, true)
+			ci.draw_arc(at, DOT + (1.5 if hot else 0.0), 0.0, TAU, 14, INK, 1.5, true)
 		else:
 			ci.draw_circle(at, DOT + (1.5 if hot else 0.0), INK)
 	if lit and shape.size() >= 1:
@@ -755,6 +960,15 @@ func _draw_pen(ci: CanvasItem, pic: Rect2, panel: Object, font: Font, fs: int, o
 	var xf: Transform2D = lx["xf"]
 	var kind: String = String(pen["kind"])
 	var line: PackedVector2Array = PackedVector2Array()
+	if kind == "draw":
+		var stroke: PackedVector2Array = PackedVector2Array()
+		for ps: Vector2 in (pen["pts"] as PackedVector2Array):
+			stroke.append(_screen(panel, pic, xf * ps))
+		if stroke.size() >= 2:
+			ci.draw_polyline(stroke, PEN_INK, 2.0, true)
+			ci.draw_line(stroke[stroke.size() - 1], stroke[0], Color(PEN_INK, 0.35), 1.0, true)
+			_draw_chip(ci, outer, stroke[0] + Vector2(10.0, -22.0), "Let go to close the shape", font, fs)
+		return
 	if kind == "polygon":
 		for p: Vector2 in (pen["pts"] as PackedVector2Array):
 			line.append(_screen(panel, pic, xf * p))

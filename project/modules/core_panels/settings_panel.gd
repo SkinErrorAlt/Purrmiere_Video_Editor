@@ -1,6 +1,7 @@
 extends "res://modules/core_panels/panel_base.gd"
 
 const ModulesList := preload("res://ui/editor/modules_list.gd")
+const BinShelf := preload("res://doc/bin_shelf.gd")
 const Keybind := preload("res://modules/core_panels/keybind_edit.gd")
 const KEYS_FOLD := "settings.shortcuts"
 const KEYS_TITLE := "Shortcuts"
@@ -210,7 +211,7 @@ func rebuild() -> void:
 	_built_keys = Prefs.keys().size()
 	var groups: Dictionary = {}
 	for key: String in Prefs.keys():
-		if key.begins_with("ui.fold.") or key.begins_with("ui.window.") or key.begins_with("ui.split.") or key.begins_with("modules.") or key == "ui.workspace" or key == "app.recent" or key == "projects.recent":
+		if key.begins_with("ui.fold.") or key.begins_with("ui.window.") or key.begins_with("ui.split.") or key.begins_with("modules.") or key == "ui.workspace" or key == "app.recent" or key == "projects.recent" or key == BinShelf.PREF_KEY:
 			continue
 		var spec: Dictionary = Prefs.spec(key)
 		var label: String = String(spec.get("label", key))

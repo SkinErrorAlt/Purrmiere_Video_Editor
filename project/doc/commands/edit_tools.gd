@@ -1,6 +1,7 @@
 extends RefCounted
 
 const MarkerLayers := preload("res://doc/marker_layers.gd")
+const MarkerKinds := preload("res://doc/marker_kinds.gd")
 const VERSION := 1
 const Project := preload("res://doc/project.gd")
 const Sequence := preload("res://doc/sequence.gd")
@@ -24,6 +25,9 @@ const EPS := 0.00001
 const SOURCE_TOLERANCE := 0.001
 const PREF_FREEZE_SECONDS := "edit.freeze_seconds"
 const PREF_FREEZE_RIPPLE := "edit.freeze_ripple"
+const PREF_REWIND_WINDOW := "edit.rewind_window"
+const PREF_REWIND_LEN := "edit.rewind_len"
+const PREF_REWIND_SLOW := "edit.rewind_slow"
 const PREF_PREROLL := "playback.preroll"
 const PREF_POSTROLL := "playback.postroll"
 const PREF_RAZOR_TIME := "timeline.razor_time"
@@ -51,6 +55,9 @@ static func register_prefs() -> void:
 	var specs: Array = [
 		[PREF_FREEZE_SECONDS, 2.0, {"label": "Freeze frame length (seconds)", "type": "float", "min": 0.04, "max": 600.0}],
 		[PREF_FREEZE_RIPPLE, true, {"label": "Freeze frame pushes later clips along", "type": "bool"}],
+		[PREF_REWIND_WINDOW, 6.0, {"label": "Rewind build-up look-back (seconds)", "type": "float", "min": 0.2, "max": 120.0}],
+		[PREF_REWIND_LEN, 2.0, {"label": "Rewind build-up length on the timeline (seconds)", "type": "float", "min": 0.1, "max": 60.0}],
+		[PREF_REWIND_SLOW, 0.7, {"label": "Rewind build-up start speed (fraction of average)", "type": "float", "min": 0.05, "max": 1.0}],
 		[PREF_PREROLL, 2.0, {"label": "Preroll for play around and play in to out (seconds)", "type": "float", "min": 0.0, "max": 60.0}],
 		[PREF_POSTROLL, 2.0, {"label": "Postroll for play around and play in to out (seconds)", "type": "float", "min": 0.0, "max": 60.0}],
 		[PREF_RAZOR_TIME, true, {"label": "Razor: show the cut time in the ruler", "type": "bool"}],
@@ -122,6 +129,17 @@ static func freeze_frame(doc: Project, seq: Sequence, clip_id: String, t: float,
 	var hold_id: String = String(cmd.get("hold_id"))
 	Verbs.select(doc, seq, PackedStringArray([hold_id]), "replace")
 	return hold_id
+
+
+static func rewind_buildup(doc: Project, seq: Sequence, clip_id: String, window: float, build_len: float, slow_factor: float) -> String:
+	if doc == null or seq == null or seq.clip_by_id(clip_id) == null or build_len <= 0.0 or window <= 0.0:
+		return ""
+	var cmd: Command = ToolCmds.RewindBuildup.new(seq.id, clip_id, window, build_len, slow_factor)
+	if not Verbs.run(doc, "Rewind build-up", [cmd]):
+		return ""
+	var copy_id: String = String(cmd.get("copy_id"))
+	Verbs.select(doc, seq, PackedStringArray([copy_id]), "replace")
+	return copy_id
 
 
 static func hold_to_end(doc: Project, seq: Sequence, clip_id: String, t: float) -> String:
@@ -361,7 +379,7 @@ static func replace_targets(seq: Sequence, clip_id: String) -> PackedStringArray
 	return out
 
 
-static func replace_with(doc: Project, seq: Sequence, clip_id: String, media_id: String) -> bool:
+static func replace_with(doc: Project, seq: Sequence, clip_id: String, media_id: String, align: bool = false) -> bool:
 	if doc == null or seq == null or doc.media_by_id(media_id) == null:
 		return false
 	var item: MediaItem = doc.media_by_id(media_id)
@@ -380,7 +398,7 @@ static func replace_with(doc: Project, seq: Sequence, clip_id: String, media_id:
 		fits.append(id)
 	if not fits.has(clip_id):
 		return false
-	return Verbs.replace_media(doc, seq, fits, media_id)
+	return Verbs.replace_media(doc, seq, fits, media_id, align)
 
 
 static func is_through(a: Clip, b: Clip) -> bool:
@@ -911,7 +929,7 @@ static func markers_in_range(seq: Sequence) -> PackedFloat64Array:
 	var lo: float = seq.in_point if seq.in_point >= 0.0 else -INF
 	var hi: float = seq.out_point if seq.out_point >= 0.0 else INF
 	for m: Marker in MarkerLayers.usable(seq):
-		if m.time >= lo - EPS and m.time <= hi + EPS and not out.has(m.time):
+		if MarkerKinds.cuts(m) and m.time >= lo - EPS and m.time <= hi + EPS and not out.has(m.time):
 			out.append(m.time)
 	out.sort()
 	return out
@@ -938,7 +956,7 @@ static func chapter_markers(seq: Sequence) -> Array[Marker]:
 	if seq == null:
 		return out
 	for m: Marker in MarkerLayers.usable(seq):
-		if m.kind == "chapter":
+		if MarkerKinds.makes_chapter(m):
 			out.append(m)
 	out.sort_custom(func(a: Marker, b: Marker) -> bool: return a.time < b.time)
 	return out

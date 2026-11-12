@@ -1,0 +1,42 @@
+{
+ "id": "text_hex",
+ "label": "Hex",
+ "category": "Text",
+ "version": 1,
+ "applies_to": "text",
+ "text_transform": "hex",
+ "tags": [
+  "text",
+  "encoding"
+ ],
+ "blurb": "Each byte of the text (UTF-8) as two hex digits.",
+ "params": [
+  {
+   "key": "direction",
+   "label": "Direction",
+   "type": "enum",
+   "choices": [
+    "Encode",
+    "Decode"
+   ],
+   "default": 0
+  },
+  {
+   "key": "spacing",
+   "label": "Spacing",
+   "type": "enum",
+   "choices": [
+    "A space between bytes",
+    "No spaces"
+   ],
+   "default": 0
+  },
+  {
+   "key": "upper",
+   "label": "Capital letters",
+   "type": "bool",
+   "default": false
+  }
+ ],
+ "passes": []
+}

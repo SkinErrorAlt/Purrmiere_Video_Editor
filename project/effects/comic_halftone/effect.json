@@ -1,0 +1,16 @@
+{
+ "id": "comic_halftone",
+ "label": "Comic Halftone",
+ "category": "Stylize",
+ "tags": ["comic", "halftone", "print", "spiderverse", "pop art", "ben-day"],
+ "passes": "single",
+ "blurb": "Reprints the picture like a comic book: four inks (cyan, magenta, yellow and black) each laid down as a grid of dots at its own angle, so smooth tone turns into Ben-Day halftone, with punchy posterised colour and bold ink lines traced along the edges, for the printed-on-pulp look of Spider-Verse and pop art. Dot size sets how coarse the print is, Punch pushes the colours and flattens them into comic bands, and Ink lines controls the black outlines.",
+ "params": [
+  {"key": "dot_size", "label": "Dot size", "type": "float", "min": 2.0, "max": 40.0, "step": 0.5, "default": 6.0, "unit": " px"},
+  {"key": "angle", "label": "Screen angle", "type": "float", "min": 0.0, "max": 90.0, "step": 1.0, "default": 15.0, "unit": " deg"},
+  {"key": "punch", "label": "Punch", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.55},
+  {"key": "edges", "label": "Ink lines", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "amount", "label": "Amount", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0}
+ ],
+ "handles": [{"kind": "angle", "key": "angle", "zero": "right", "turn": "cw"}]
+}

@@ -1,0 +1,28 @@
+{
+ "id": "text_reverse",
+ "label": "Reverse",
+ "category": "Text",
+ "version": 1,
+ "applies_to": "text",
+ "text_transform": "reverse",
+ "tags": [
+  "text",
+  "cipher"
+ ],
+ "blurb": "Writes the text backwards: the whole text, the order of words or lines, or the letters inside each word.",
+ "params": [
+  {
+   "key": "what",
+   "label": "Reverse",
+   "type": "enum",
+   "choices": [
+    "The whole text",
+    "The order of words",
+    "The order of lines",
+    "The letters in each word"
+   ],
+   "default": 0
+  }
+ ],
+ "passes": []
+}

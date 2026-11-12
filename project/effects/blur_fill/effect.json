@@ -4,6 +4,7 @@
  "category": "Transform",
  "version": 1,
  "canvas": "frame",
+ "canvas_picture": {"size": "size", "at": "position"},
  "blurb": "Fills the whole frame round a clip of another shape with a blurred, darkened and zoomed copy of itself: the look for vertical Shorts cut from wide gameplay, and for tall phone clips in a wide video. It draws over the whole frame, not only inside the clip, so leave the clip at its fitted size and move the sharp picture with Picture size and Picture at. The fill can also be mirrored edges, stretched edges, a colour or nothing.",
  "params": [
   {"key": "fill", "label": "Fill with", "type": "enum", "choices": ["Blurred copy", "Mirrored edges", "Stretched edges", "Colour", "See through"], "default": 0},

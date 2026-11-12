@@ -1,0 +1,18 @@
+{
+ "id": "ball_action",
+ "label": "Ball Action",
+ "category": "Stylize",
+ "version": 1,
+ "blurb": "The picture is rebuilt out of a tray of little balls, one for each square of a grid, each ball taking its colour from the part of the frame it covers. They are shaded like real spheres with a highlight on the lit side and a dark terminator on the other, they sit in their own shadows, and they can be turned so the colour they carry rolls round the surface. Leave a gap between them and the background shows through, close the gap up and they pack together like a bag of marbles. Rotation can run off the clock so the whole tray rolls as the shot plays.",
+ "params": [
+  {"key": "across", "label": "Balls across", "type": "float", "min": 4.0, "max": 160.0, "step": 1.0, "default": 44.0},
+  {"key": "ball", "label": "Ball size", "type": "float", "min": 0.3, "max": 1.4, "step": 0.01, "default": 1.0},
+  {"key": "spin", "label": "Roll", "type": "float", "min": -1.0, "max": 1.0, "step": 0.01, "default": 0.0},
+  {"key": "roll_rate", "label": "Roll over time", "type": "float", "min": -2.0, "max": 2.0, "step": 0.01, "default": 0.0, "unit": " /s"},
+  {"key": "shade", "label": "Shading", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.8},
+  {"key": "shine", "label": "Highlight", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.8},
+  {"key": "backdrop", "label": "Behind", "type": "color", "default": [0.03, 0.03, 0.04, 1.0]},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0}
+ ],
+ "passes": "single"
+}

@@ -124,6 +124,8 @@ static func visible_widths(canvas: Control) -> PackedFloat32Array:
 
 
 static func dense(canvas: Control, count: int, limit: int) -> bool:
+	if canvas.has_method("fold") and not (canvas.call("fold") as Dictionary).is_empty():
+		return false
 	if count > limit:
 		return true
 	if count < SUMMARY_MIN_COUNT:

@@ -68,7 +68,7 @@ static func instance() -> RefCounted:
 
 static func kind_for(path: String) -> String:
 	var ext: String = path.get_extension().to_lower()
-	if ext in VIDEO_EXT:
+	if ext in VIDEO_EXT or load("res://doc/animated_still.gd").call("plays", path):
 		return "video"
 	if ext in AUDIO_EXT:
 		return "audio"
@@ -281,6 +281,8 @@ func open_item(doc: Project, item: MediaItem) -> int:
 	_spend("info_ms", t_info)
 	if bool(info.get("ok", false)) and float(info.get("duration", 0.0)) > 0.0:
 		_apply_info(doc, item.id, info)
+	if Session.has_method("push_playback_graph"):
+		Session.call_deferred("push_playback_graph")
 	return h
 
 
@@ -358,6 +360,7 @@ func open_all(doc: Project) -> void:
 	_unhook_scope()
 	if doc == null:
 		return
+	preload("res://doc/made_sound.gd").heal(doc.media)
 	var away: Dictionary = _hook_scope(doc)
 	var used: Dictionary = used_media_ids(doc) if defer_enabled else {}
 	for m: MediaItem in timeline_first(doc):

@@ -1,0 +1,18 @@
+{
+ "id": "snd_held_heat",
+ "label": "Held Heat",
+ "category": "Audio Reactive",
+ "tags": ["audio", "reactive", "distort", "heat"],
+ "version": 1,
+ "blurb": "Sound that keeps going heats the air. A held note, an engine, a crowd's roar or a long drone slowly builds a heat shimmer that rises from the bottom of the frame and warms it, while short bangs and clicks, however loud, do nothing at all. It follows how long a sound has been held, so the haze swells through a sustained passage and clears when it breaks.",
+ "params": [
+  {"key": "shimmer", "label": "Shimmer", "type": "float", "min": 0.0, "max": 40.0, "step": 0.1, "default": 15.0, "unit": " px"},
+  {"key": "rise", "label": "Rise speed", "type": "float", "min": 0.0, "max": 3.0, "step": 0.01, "default": 0.9},
+  {"key": "height_frac", "label": "Height", "type": "float", "min": 0.05, "max": 1.0, "step": 0.01, "default": 0.8},
+  {"key": "scale", "label": "Size", "type": "float", "min": 0.2, "max": 4.0, "step": 0.01, "default": 1.0},
+  {"key": "warmth", "label": "Warmth", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "threshold_sus", "label": "Needs held sound", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45}
+ ],
+ "passes": [{"shader": "effect.gdshader"}],
+ "reactive": {"listen": true, "defaults": {"snd_threshold": 0.0}}
+}

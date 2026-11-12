@@ -12,5 +12,8 @@
   {"key": "alternate", "label": "Alternate sides", "type": "bool", "default": true},
   {"key": "stagger", "label": "Stagger", "type": "float", "min": 0, "max": 0.9, "step": 0.01, "default": 0.45},
   {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth", "Glide in"], "default": 2}
+ ],
+ "handles": [
+  {"kind": "angle", "key": "angle", "zero": "right", "turn": "ccw"}
  ]
 }

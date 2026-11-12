@@ -1,5 +1,6 @@
 extends RefCounted
 
+const Fold := preload("res://ui/timeline/timeline_fold.gd")
 const Project := preload("res://doc/project.gd")
 const Sequence := preload("res://doc/sequence.gd")
 const Track := preload("res://doc/track.gd")
@@ -18,6 +19,7 @@ const PmUI := preload("res://ui/kit/pm_ui.gd")
 const Far := preload("res://ui/timeline/timeline_far.gd")
 const TrackCmds := preload("res://doc/commands/track_cmds.gd")
 const ClipCmds := preload("res://doc/commands/clip_cmds.gd")
+const Solo := preload("res://ui/timeline/timeline_view_solo.gd")
 const LISTEN_TEXT := "LISTEN MUTED, STILL EXPORTED"
 const LISTEN_HATCH := 9.0
 const META := "timeline_filter_state"
@@ -38,6 +40,9 @@ class State extends RefCounted:
 	var view: Dictionary = {}
 	var matcher: ClipFilter.Matcher = null
 	var active: bool = false
+	var rules: bool = false
+	var solo: bool = false
+	var solo_hidden: Dictionary = {}
 	var darken: bool = false
 	var shown: Dictionary = {}
 	var roles: Dictionary = {}
@@ -57,6 +62,7 @@ class State extends RefCounted:
 	var header_w: float = 160.0
 	var pps: float = 40.0
 	var scroll_x: float = 0.0
+	var fold: Dictionary = {}
 	var width: float = 0.0
 	var ghosts: int = 0
 	var veils: int = 0
@@ -90,7 +96,10 @@ static func state_for(canvas: Control, d: Project, s: Sequence) -> State:
 		st.seq_ref = ref
 		st.view = view_of(s)
 		st.matcher = ClipFilter.compile(s, st.view) if s != null else null
-		st.active = st.matcher != null and st.matcher.active
+		st.rules = st.matcher != null and st.matcher.active
+		st.solo = Solo.is_on(s)
+		st.solo_hidden = Solo.hidden_ids(d, s) if st.solo else {}
+		st.active = st.rules or st.solo
 		st.darken = ClipFilter.darken_on(st.view)
 		st.shown = {}
 		st.track_any = {}
@@ -114,10 +123,12 @@ static func shown_in(st: State, d: Project, t: Track, c: Clip) -> bool:
 	var v: Variant = st.shown.get(c, null)
 	if v != null:
 		return bool(v)
-	var item: MediaItem = d.media_by_id(c.media_id) if d != null else null
-	var m: ClipFilter.Matcher = st.matcher
-	var role: String = role_cached(st, item, t, c) if ClipFilter.wants_role(m) and t.is_sound(c) else ""
-	var ok: bool = ClipFilter.matches(m, item, t, c, role)
+	var ok: bool = not (st.solo and st.solo_hidden.has(c.id))
+	if ok and st.rules:
+		var item: MediaItem = d.media_by_id(c.media_id) if d != null else null
+		var m: ClipFilter.Matcher = st.matcher
+		var role: String = role_cached(st, item, t, c) if ClipFilter.wants_role(m) and t.is_sound(c) else ""
+		ok = ClipFilter.matches(m, item, t, c, role)
 	st.shown[c] = ok
 	return ok
 
@@ -169,6 +180,7 @@ static func _per_paint(st: State, canvas: Control, s: Sequence) -> void:
 	st.header_w = float(canvas.get("header_w"))
 	st.pps = float(canvas.get("pps"))
 	st.scroll_x = float(canvas.get("scroll_x"))
+	st.fold = canvas.call("fold") if canvas.has_method("fold") else {}
 	st.width = canvas.size.x
 
 
@@ -207,7 +219,7 @@ static func begin_lane(canvas: Control, d: Project, s: Sequence, l: Dictionary, 
 		canvas.draw_rect(lane_rect, Tk.c["veil"], true)
 		st.veils += 1
 	if cheap and st.active and st.moving.is_empty() and not track_has_match(st, d, t):
-		var count: int = t.index_of_last_starting_before((st.width - st.header_w + st.scroll_x) / st.pps) - t.index_of_first_visible(st.scroll_x / st.pps) + 1
+		var count: int = t.index_of_last_starting_before(Fold.t_of(st.fold, st.width, st.header_w, st.pps, st.scroll_x)) - t.index_of_first_visible(Fold.t_of(st.fold, st.header_w, st.header_w, st.pps, st.scroll_x)) + 1
 		if Far.dense(canvas, count, Far.DENSE_DEFAULT):
 			st.lane_out = true
 		else:
@@ -217,15 +229,15 @@ static func begin_lane(canvas: Control, d: Project, s: Sequence, l: Dictionary, 
 
 
 static func _ghost_lane(st: State, canvas: Control, d: Project, t: Track, lane_y: float, lane_h: float) -> void:
-	var t0: float = st.scroll_x / st.pps
-	var t1: float = (st.width - st.header_w + st.scroll_x) / st.pps
+	var t0: float = Fold.t_of(st.fold, st.header_w, st.header_w, st.pps, st.scroll_x)
+	var t1: float = Fold.t_of(st.fold, st.width, st.header_w, st.pps, st.scroll_x)
 	var i: int = t.index_of_first_visible(t0)
 	var j: int = t.index_of_last_starting_before(t1)
 	var last_x: float = -INF
 	for idx: int in range(i, j + 1):
 		var c: Clip = t.clips[idx]
-		var x0: float = st.header_w + c.start * st.pps - st.scroll_x
-		var x1: float = st.header_w + c.end() * st.pps - st.scroll_x
+		var x0: float = Fold.x_of(st.fold, c.start, st.header_w, st.pps, st.scroll_x)
+		var x1: float = Fold.x_of(st.fold, c.end(), st.header_w, st.pps, st.scroll_x)
 		if x1 <= st.header_w or x0 >= st.width or x1 <= last_x + 1.0:
 			continue
 		var r: Rect2 = Rect2(maxf(x0, st.header_w), lane_y + 1.0, minf(x1, st.width) - maxf(x0, st.header_w), lane_h - 2.0)
@@ -314,16 +326,17 @@ static func draw_listen(canvas: Control, l: Dictionary, region: Rect2, set_scrol
 		return
 	var pps: float = float(canvas.get("pps"))
 	var sx: float = float(canvas.get("scroll_x"))
-	var t0: float = sx / pps
-	var t1: float = (canvas.size.x - hw + sx) / pps
+	var lf: Dictionary = canvas.call("fold") if canvas.has_method("fold") else {}
+	var t0: float = Fold.t_of(lf, hw, hw, pps, sx)
+	var t1: float = Fold.t_of(lf, canvas.size.x, hw, pps, sx)
 	var i: int = t.index_of_first_visible(t0)
 	while i < t.clips.size() and t.clips[i].start < t1:
 		var c: Clip = t.clips[i]
 		i += 1
 		if not c.listen_muted:
 			continue
-		var x0: float = maxf(hw + c.start * pps - sx, hw)
-		var x1: float = minf(hw + c.end() * pps - sx, canvas.size.x)
+		var x0: float = maxf(Fold.x_of(lf, c.start, hw, pps, sx), hw)
+		var x1: float = minf(Fold.x_of(lf, c.end(), hw, pps, sx), canvas.size.x)
 		if x1 <= x0:
 			continue
 		var r: Rect2 = Rect2(x0, lane_y + 1.0, x1 - x0, lane_h - 2.0).intersection(vis)
@@ -424,7 +437,7 @@ static func set_view(canvas: Control, view: Dictionary, label: String) -> bool:
 	var s: Sequence = _seq(canvas)
 	if d == null or s == null:
 		return false
-	var done: bool = Verbs.run(d, label, [ViewCmds.SetTrackView.new(s.id, view, label)])
+	var done: bool = Verbs.run(d, label, [Solo.SetView.new(s.id, Solo.with_solo_into(s, view), label)])
 	if done and canvas.has_method("_notify_toolbar"):
 		canvas.call("_notify_toolbar")
 	canvas.queue_redraw()
@@ -486,6 +499,8 @@ static func menu_items(canvas: Control) -> Array:
 	items.append(PmMenu.separator())
 	items.append(PmMenu.check_item("darken", "Darken all but locked and selected", ClipFilter.darken_on(view)))
 	items.append(PmMenu.separator())
+	items.append_array(Solo.menu_items(s, Solo.overlap_count(d, s)))
+	items.append(PmMenu.separator())
 	var sel_matching: Dictionary = PmMenu.item("select_matching", "Select the matching clips")
 	var mv: Dictionary = PmMenu.sub_item("move_matching", "Move the matching clips to", move_targets(s, "fmove:"))
 	if not ClipFilter.is_active(view):
@@ -516,6 +531,11 @@ static func on_menu(id: String, canvas: Control) -> bool:
 	if s == null or d == null:
 		return false
 	var view: Dictionary = view_of(s)
+	if Solo.on_menu(d, s, id):
+		canvas.queue_redraw()
+		if canvas.has_method("_notify_toolbar"):
+			canvas.call("_notify_toolbar")
+		return true
 	if id == "on":
 		return set_view(canvas, ClipFilter.with(view, ClipFilter.K_ON, not ClipFilter.is_active(view)), "Filter " + ("off" if ClipFilter.is_active(view) else "on"))
 	if id.begins_with("kind:"):
@@ -750,8 +770,11 @@ static func sync_button(b: Button, canvas: Control) -> void:
 		return
 	var s: Sequence = _seq(canvas)
 	var view: Dictionary = view_of(s)
-	b.button_pressed = ClipFilter.is_active(view) or ClipFilter.darken_on(view)
+	var soloing: bool = Solo.is_on(s)
+	b.button_pressed = ClipFilter.is_active(view) or ClipFilter.darken_on(view) or soloing
 	var tip: String = "Timeline view: " + (ClipFilter.summary(view) if ClipFilter.is_active(view) else "no filter")
+	if soloing:
+		tip += ", soloing " + Solo.view_name(s)
 	if ClipFilter.darken_on(view):
 		tip += ", darkened"
 	PmUI.tip(b, tip)

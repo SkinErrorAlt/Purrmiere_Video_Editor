@@ -1,0 +1,19 @@
+{
+ "id": "deflicker",
+ "label": "Deflicker",
+ "category": "Colour Correction",
+ "tags": ["repair"],
+ "version": 1,
+ "blurb": "Steadies brightness that pumps and flickers from frame to frame: time lapses where the camera's exposure jumps, old film with uneven frames, lights on a mains supply, a cloud passing a window too fast. Each frame is measured against the frames just before it and nudged back to their level, so the flicker goes and slow real changes such as a sunset are kept. Whole picture corrects the frame as one; By area handles flicker that is stronger in one part of the frame.",
+ "history": {"max": 62, "reach": ["window"], "seconds": ["window"]},
+ "params": [
+  {"key": "window", "label": "Steady over", "type": "float", "min": 0.1, "max": 2.0, "step": 0.01, "default": 0.5, "unit": " s"},
+  {"key": "mode", "label": "Correct", "type": "enum", "choices": ["Whole picture", "By area"], "default": 0},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "colour", "label": "Fix colour flicker too", "type": "bool", "default": true}
+ ],
+ "passes": [
+  {"shader": "measure.gdshader", "scale": 0.03125},
+  {"shader": "apply.gdshader", "scale": 32.0}
+ ]
+}

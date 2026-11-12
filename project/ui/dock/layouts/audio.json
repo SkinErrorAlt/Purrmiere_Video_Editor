@@ -42,7 +42,8 @@
     "t": "g",
     "tabs": [
      "audio",
-     "markers"
+     "markers",
+     "spectrogram"
     ],
     "active": "audio"
    }

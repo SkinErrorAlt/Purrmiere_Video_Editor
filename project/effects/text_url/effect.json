@@ -1,0 +1,26 @@
+{
+ "id": "text_url",
+ "label": "URL Encoding",
+ "category": "Text",
+ "version": 1,
+ "applies_to": "text",
+ "text_transform": "url",
+ "tags": [
+  "text",
+  "encoding"
+ ],
+ "blurb": "Percent codes for every character that isn't safe in a web address, as encodeURIComponent.",
+ "params": [
+  {
+   "key": "direction",
+   "label": "Direction",
+   "type": "enum",
+   "choices": [
+    "Encode",
+    "Decode"
+   ],
+   "default": 0
+  }
+ ],
+ "passes": []
+}

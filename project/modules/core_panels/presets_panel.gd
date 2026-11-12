@@ -32,6 +32,9 @@ const TILE_W := 130.0
 var scope_tab: String = "library"
 var kind_filter: String = ""
 var tag_filter: String = ""
+## The preset folder being looked at ("" shows every preset). Folders are kept with the effect folders.
+var folder_filter: String = ""
+var _folders: HFlowContainer = null
 var search: String = ""
 var _tabs: Control = null
 var _search: LineEdit = null
@@ -66,6 +69,10 @@ func _build(root_: Control) -> void:
 	_tags = HFlowContainer.new()
 	_tags.add_theme_constant_override("h_separation", Tk.px(4.0))
 	col.add_child(_tags)
+	_folders = HFlowContainer.new()
+	_folders.name = "PresetFolders"
+	_folders.add_theme_constant_override("h_separation", Tk.px(4.0))
+	col.add_child(_folders)
 	var scroll: ScrollContainer = vscroll_area(col)
 	_grid = _Grid.new()
 	_grid.panel = self
@@ -88,6 +95,13 @@ static func kind_group(kind: String) -> String:
 	if KIND_LABELS.has(kind):
 		return String(KIND_LABELS[kind])
 	return kind.replace("_", " ").capitalize()
+
+
+# The shelf a preset is listed under: its own shelf when it ships with one (the Voice presets),
+# otherwise the group of its kind.
+static func shelf_of(p: Dictionary) -> String:
+	var shelf: String = String(p.get("shelf", ""))
+	return shelf if not shelf.is_empty() else kind_group(String(p.get("kind", "")))
 
 
 func all_presets() -> Array[Dictionary]:
@@ -126,9 +140,19 @@ func set_favourite(id: String, on: bool) -> void:
 
 func unsorted_filtered() -> Array[Dictionary]:
 	var out: Array[Dictionary] = []
+	var in_folder: PackedStringArray = PackedStringArray()
+	var folder_on: bool = false
+	if not folder_filter.is_empty():
+		var f: Dictionary = PresetFavs.find(folder_filter, PresetFavs.PRESET_FOLDERS)
+		if f.is_empty():
+			folder_filter = ""
+		else:
+			folder_on = true
+			in_folder = f["items"]
 	for p: Dictionary in all_presets():
-		var kind: String = String(p.get("kind", ""))
-		if not kind_filter.is_empty() and kind_group(kind) != kind_filter:
+		if folder_on and not in_folder.has(String(p.get("id", ""))):
+			continue
+		if not kind_filter.is_empty() and shelf_of(p) != kind_filter:
 			continue
 		if not tag_filter.is_empty() and not (tag_filter in (p.get("tags", []) as Array)):
 			continue
@@ -147,7 +171,7 @@ func rebuild() -> void:
 	var kinds: PackedStringArray = PackedStringArray()
 	var tags: PackedStringArray = PackedStringArray()
 	for p: Dictionary in all:
-		var kl: String = kind_group(String(p.get("kind", "")))
+		var kl: String = shelf_of(p)
 		if not kinds.has(kl):
 			kinds.append(kl)
 		for t: Variant in p.get("tags", []):
@@ -173,8 +197,101 @@ func rebuild() -> void:
 		tb.pressed.connect(_on_tag.bind(t))
 		_tags.add_child(tb)
 	_tags.visible = not tags.is_empty()
+	_build_folder_chips()
 	_presets = filtered()
 	_grid.call("set_items", _presets)
+
+
+func _build_folder_chips() -> void:
+	if _folders == null:
+		return
+	PmUI.clear(_folders)
+	var all_btn: Button = PmButton.make("All presets", "folder", true)
+	all_btn.set("quiet", true)
+	all_btn.button_pressed = folder_filter.is_empty()
+	all_btn.pressed.connect(open_folder.bind(""))
+	_folders.add_child(all_btn)
+	for f: Dictionary in PresetFavs.folders(PresetFavs.PRESET_FOLDERS):
+		var fid: String = String(f["id"])
+		var chip: Button = PmButton.make(String(f["name"]) + " (" + str((f["items"] as PackedStringArray).size()) + ")", "folder", true)
+		chip.name = "PresetFolder_" + fid
+		chip.set("quiet", true)
+		chip.button_pressed = folder_filter == fid
+		PmUI.tip(chip, "Show the presets in this folder. Drag a preset here to put it in. Right click to rename or delete")
+		chip.pressed.connect(open_folder.bind(fid))
+		chip.gui_input.connect(_on_folder_chip_input.bind(fid, chip))
+		var slot: Control = PmSlot.make(PackedStringArray(["preset"]))
+		slot.name = "PresetFolderDrop"
+		slot.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		slot.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		slot.connect("dropped", func(payload: Dictionary, _local: Vector2) -> void: put_in_folder(String(payload.get("id", "")), fid))
+		chip.add_child(slot)
+		_folders.add_child(chip)
+	var add: Button = quiet_icon("folder_new", "New preset folder")
+	add.name = "NewPresetFolder"
+	add.pressed.connect(func() -> void: new_preset_folder())
+	_folders.add_child(add)
+
+
+func open_folder(fid: String) -> void:
+	folder_filter = fid
+	rebuild()
+
+
+func new_preset_folder(name_: String = "") -> String:
+	var id: String = PresetFavs.create(name_, PresetFavs.PRESET_FOLDERS)
+	rebuild()
+	return id
+
+
+func put_in_folder(preset_id: String, fid: String) -> bool:
+	if preset_id.is_empty():
+		return false
+	var ok: bool = PresetFavs.add(fid, preset_id, "", PresetFavs.PRESET_FOLDERS)
+	if ok:
+		var f: Dictionary = PresetFavs.find(fid, PresetFavs.PRESET_FOLDERS)
+		Events.toast("Put in " + String(f.get("name", "the folder")))
+		rebuild()
+	return ok
+
+
+func take_out_of_folder(preset_id: String, fid: String) -> bool:
+	var ok: bool = PresetFavs.take_out(fid, preset_id, PresetFavs.PRESET_FOLDERS)
+	if ok:
+		rebuild()
+	return ok
+
+
+func _on_folder_chip_input(event: InputEvent, fid: String, chip: Control) -> void:
+	if not (event is InputEventMouseButton):
+		return
+	var mb: InputEventMouseButton = event
+	if mb.button_index != MOUSE_BUTTON_RIGHT or not mb.pressed:
+		return
+	var items: Array = [PmMenu.item("rename", "Rename the folder"), PmMenu.item("left", "Move left"), PmMenu.item("right", "Move right"), PmMenu.separator(), PmMenu.item("delete", "Delete the folder (keeps its presets)", "", "trash")]
+	var m: Control = PmMenu.open(chip, items)
+	if m != null and m.is_inside_tree():
+		m.connect("picked", on_folder_chip_menu.bind(fid))
+	chip.accept_event()
+
+
+func on_folder_chip_menu(pick: String, fid: String) -> void:
+	var key: String = PresetFavs.PRESET_FOLDERS
+	if pick == "rename":
+		var f: Dictionary = PresetFavs.find(fid, key)
+		var fields: Array[Dictionary] = [{"key": "name", "label": "Name", "type": "string", "default": String(f.get("name", ""))}]
+		var answered: Signal = PmUI.form(_root, "Rename the folder", fields, "OK", "Cancel")
+		answered.connect(func(r: Variant) -> void:
+			if typeof(r) == TYPE_DICTIONARY and PresetFavs.rename(fid, String((r as Dictionary).get("name", "")), key):
+				rebuild())
+	elif pick == "left" or pick == "right":
+		if PresetFavs.move(fid, -1 if pick == "left" else 1, key):
+			rebuild()
+	elif pick == "delete":
+		if PresetFavs.remove(fid, key):
+			if folder_filter == fid:
+				folder_filter = ""
+			rebuild()
 
 
 func _on_kind(k: String) -> void:
@@ -260,18 +377,47 @@ func open_context(id: String, at: Vector2) -> void:
 		PmMenu.item("fav", "Remove from Favourites" if is_favourite(id) else "Add to Favourites"),
 		PmMenu.item("edit", "Rename and tags"),
 		PmMenu.item("duplicate", "Duplicate"),
+		PmMenu.sub_item("pfolder", "Put in folder", folder_menu_items(id)),
+	]
+	if not folder_filter.is_empty():
+		items.append(PmMenu.item("pfolder_out", "Take out of this folder"))
+	items.append_array([
 		PmMenu.separator(),
 		PmMenu.item("up", "Move up"),
 		PmMenu.item("down", "Move down"),
 		PmMenu.separator(),
 		PmMenu.item("delete", "Delete", "", "trash"),
-	]
+	])
 	var m: Control = PmMenu.open(_grid, items, at)
 	if m != null and m.is_inside_tree():
 		m.connect("picked", _on_context.bind(id))
 
 
+func folder_menu_items(preset_id: String) -> Array:
+	var out: Array = []
+	for f: Dictionary in PresetFavs.folders(PresetFavs.PRESET_FOLDERS):
+		out.append(PmMenu.check_item("pfolder_put:" + String(f["id"]), String(f["name"]), (f["items"] as PackedStringArray).has(preset_id)))
+	if not out.is_empty():
+		out.append(PmMenu.separator())
+	out.append(PmMenu.item("pfolder_new", "New folder with this preset"))
+	return out
+
+
 func _on_context(action: String, id: String) -> void:
+	if action.begins_with("pfolder_put:"):
+		var fid: String = action.substr(12)
+		var f: Dictionary = PresetFavs.find(fid, PresetFavs.PRESET_FOLDERS)
+		if (f.get("items", PackedStringArray()) as PackedStringArray).has(id):
+			take_out_of_folder(id, fid)
+		else:
+			put_in_folder(id, fid)
+		return
+	if action == "pfolder_new":
+		put_in_folder(id, new_preset_folder())
+		return
+	if action == "pfolder_out":
+		take_out_of_folder(id, folder_filter)
+		return
 	var s: Sequence = seq()
 	if action == "apply":
 		apply_preset_id(id, PackedStringArray(), s.playhead if s != null else 0.0, null)

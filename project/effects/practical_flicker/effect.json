@@ -1,0 +1,31 @@
+{
+ "id": "practical_flicker",
+ "label": "Practical Light Flicker",
+ "category": "Light & Shadow",
+ "tags": ["light"],
+ "version": 1,
+ "blurb": "Finds the lamps that are in the shot and makes them flicker, and the room flickers with them: walls and faces near a lamp brighten and dim as it does, while parts lit by something else hold steady. A failing bulb sputters and drops out in bursts and goes orange as it dims, a fluorescent tube shimmers and strobes when it struggles to strike, a candle or fire breathes and gutters. Separate lamps in different parts of the frame flicker on their own unless Lights flicker apart is turned down.",
+ "params": [
+  {"key": "mode", "label": "Light", "type": "enum", "choices": ["Failing bulb", "Fluorescent tube", "Candle or fire"], "default": 0},
+  {"key": "threshold", "label": "Lamp brightness", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.75},
+  {"key": "reach", "label": "Reach", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "room", "label": "Other light in the room", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.3},
+  {"key": "depth", "label": "Flicker depth", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.8},
+  {"key": "speed", "label": "Speed", "type": "float", "min": 0.1, "max": 4, "step": 0.01, "default": 1},
+  {"key": "independence", "label": "Lights flicker apart", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.8},
+  {"key": "warmth", "label": "Dims warmer", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 11}
+ ],
+ "passes": [
+  {"shader": "source.gdshader", "scale": 0.5},
+  {"shader": "down.gdshader", "scale": 0.5},
+  {"shader": "down.gdshader", "scale": 0.5},
+  {"shader": "down.gdshader", "scale": 0.5},
+  {"shader": "down.gdshader", "scale": 0.5},
+  {"shader": "up.gdshader", "scale": 2.0, "inputs": {"level_tex": 3}},
+  {"shader": "up.gdshader", "scale": 2.0, "inputs": {"level_tex": 2}},
+  {"shader": "up.gdshader", "scale": 2.0, "inputs": {"level_tex": 1}},
+  {"shader": "up.gdshader", "scale": 2.0, "inputs": {"level_tex": 0}},
+  {"shader": "compose.gdshader", "scale": 2.0}
+ ]
+}

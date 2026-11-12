@@ -1043,6 +1043,8 @@ func load_layout(name: String) -> bool:
 	flush_history()
 	var d: Dictionary = _read_layout_file(user_dir() + name + ".json")
 	var shipped: Dictionary = _read_layout_file(SHIPPED_DIR + name + ".json")
+	if shipped.is_empty():
+		shipped = (load("res://host/module_extras.gd").call("shared") as Object).call("layout", name)
 	if d.is_empty():
 		d = shipped
 	elif not shipped.is_empty():
@@ -1669,6 +1671,9 @@ func own_workspaces() -> Array[Dictionary]:
 
 
 func workspace_label(name: String) -> String:
+	var mw: Dictionary = (load("res://host/module_extras.gd").call("shared") as Object).call("workspace", name)
+	if not mw.is_empty():
+		return String(mw["label"])
 	if is_own(name):
 		var d: Dictionary = _read_layout_file(user_dir() + name + ".json")
 		var l: String = String(d.get("label", ""))

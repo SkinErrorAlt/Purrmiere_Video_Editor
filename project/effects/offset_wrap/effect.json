@@ -1,0 +1,17 @@
+{
+ "id": "offset_wrap",
+ "label": "Offset",
+ "category": "Transform",
+ "version": 1,
+ "blurb": "Slides the picture across the frame and brings what falls off one side back in on the other, so nothing is ever lost and the frame is always full. It is the tool for checking that a texture tiles, for putting the seam of a pattern somewhere you can paint it out, and for endless scrolling backgrounds, because the shift can run off the clock at a steady rate in either direction. Instead of wrapping it can mirror what falls off, hold the edge pixel, or leave the uncovered part transparent, and a soft blend can be laid over the join so the seam does not read as a hard line.",
+ "params": [
+  {"key": "shift_x", "label": "Across", "type": "float", "min": -1.0, "max": 1.0, "step": 0.001, "default": 0.0},
+  {"key": "shift_y", "label": "Up and down", "type": "float", "min": -1.0, "max": 1.0, "step": 0.001, "default": 0.0},
+  {"key": "scroll_x", "label": "Scroll across", "type": "float", "min": -2.0, "max": 2.0, "step": 0.01, "default": 0.0, "unit": " /s"},
+  {"key": "scroll_y", "label": "Scroll down", "type": "float", "min": -2.0, "max": 2.0, "step": 0.01, "default": 0.0, "unit": " /s"},
+  {"key": "outside", "label": "What falls off", "type": "enum", "choices": ["Wraps round", "Mirrors", "Holds the edge", "Goes clear"], "default": 0},
+  {"key": "seam", "label": "Blend the seam", "type": "float", "min": 0.0, "max": 0.3, "step": 0.005, "default": 0.0},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0}
+ ],
+ "passes": "single"
+}

@@ -20,6 +20,6 @@
  ],
  "handles": [
   {"kind": "point", "key": "centre"},
-  {"kind": "angle", "key": "angle"}
+  {"kind": "angle", "key": "angle", "zero": "right", "turn": "ccw"}
  ]
 }

@@ -1,0 +1,62 @@
+{
+ "id": "text_every_nth",
+ "label": "Every Nth Letter",
+ "category": "Text",
+ "version": 1,
+ "applies_to": "text",
+ "text_transform": "every_nth",
+ "tags": [
+  "text",
+  "horror",
+  "puzzle"
+ ],
+ "blurb": "Picks every Nth letter, a skip cipher: a message hidden inside ordinary text. Colour them, or keep only them to read it.",
+ "params": [
+  {
+   "key": "n",
+   "label": "Every",
+   "type": "int",
+   "min": 1,
+   "max": 50,
+   "step": 1,
+   "default": 3
+  },
+  {
+   "key": "first",
+   "label": "Starting with letter",
+   "type": "int",
+   "min": 1,
+   "max": 50,
+   "step": 1,
+   "default": 1
+  },
+  {
+   "key": "letters_only",
+   "label": "Count letters and digits only",
+   "type": "bool",
+   "default": true
+  },
+  {
+   "key": "mode",
+   "label": "Do",
+   "type": "enum",
+   "choices": [
+    "Keep only those letters",
+    "Colour those letters"
+   ],
+   "default": 0
+  },
+  {
+   "key": "colour",
+   "label": "Colour",
+   "type": "color",
+   "default": [
+    0.85,
+    0.05,
+    0.05,
+    1
+   ]
+  }
+ ],
+ "passes": []
+}

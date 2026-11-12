@@ -19,6 +19,7 @@ const PmButton := preload("res://ui/kit/pm_button.gd")
 const PmUI := preload("res://ui/kit/pm_ui.gd")
 const PmText := preload("res://ui/kit/pm_text.gd")
 const EffectHandlesUi := preload("res://modules/core_panels/effect_handles_ui.gd")
+const PlaneGizmo := preload("res://modules/core_panels/plane_gizmo.gd")
 const TransitionRegistry := preload("res://engine/transition_registry.gd")
 const TR_UID := "__transition"
 const TR_PREFIX := "transition:"
@@ -41,12 +42,21 @@ const SPIN_REACH := 56.0
 const ANGLE_REACH := 2.0
 const SEARCH_STEP := 1.0
 const TILT_MAX := 89.0
-const INK := Color(0.369, 0.784, 1.0, 1.0)
+const INK := Color(1.0, 0.741, 0.231, 1.0)
+const SHADE := Color(0.0, 0.0, 0.0, 0.55)
+const FILL := Color(1.0, 1.0, 1.0, 1.0)
 const LAYER_INK := Color(1.0, 1.0, 1.0, 0.45)
-const LABEL_BACK := Color(0.051, 0.055, 0.063, 0.85)
+const LABEL_BACK := Color(0.051, 0.055, 0.063, 0.88)
+const ARROW_LEN := 9.0
+const ARROW_HALF := 4.5
+const DIAL_TICK := 4.0
+const DIAL_STEP := 6.0
+const WEDGE := 0.6
+const CHIP_GAP := Vector2(16.0, 18.0)
+const CHIP_BAR := 2.0
 const GROUP := "pm_handle_switch"
 const CROP_LABEL := "Crop region"
-const SWITCH_TIP := "Handles on the Program monitor: drag this effect's corners, edges and points there. Click again for the clip's own handles"
+const SWITCH_TIP := "Handles on the Program monitor. They also show when you click this effect's name or one of its rows. Click again, or click Motion, for the clip's own handles"
 const EDGE_OF_CORNER: Array = [[0, 1], [2, 1], [2, 3], [0, 3]]
 const EDGE_OF_SIDE: PackedInt32Array = [1, 2, 3, 0]
 const SIDE_MID: Array[Vector2] = [Vector2(0.5, 0.0), Vector2(1.0, 0.5), Vector2(0.5, 1.0), Vector2(0.0, 0.5)]
@@ -56,6 +66,8 @@ static var focus: Dictionary = {}
 
 var drag: Dictionary = {}
 var hover: String = ""
+var cursor: Control.CursorShape = Control.CURSOR_ARROW
+var last_chip: Rect2 = Rect2()
 var drags: int = 0
 var last_curve: PackedVector2Array = PackedVector2Array()
 static var plant_effect_paths: bool = false
@@ -187,8 +199,11 @@ static func pair_default(c: Clip, path: String) -> Variant:
 	if c == null or parts.size() != 3 or parts[0] != "effects":
 		return null
 	var e: Dictionary = c.effect_by_uid(parts[1])
-	if String(e.get("id", "")) != PairLayout.PAIR_VIEW_ID:
+	if e.is_empty():
 		return null
+	if String(e.get("id", "")) != PairLayout.PAIR_VIEW_ID:
+		var spec: Dictionary = _param_spec(def_for(String(e.get("id", ""))), parts[2])
+		return AnimProp.norm(spec["default"]) if spec.has("default") else null
 	var key: String = parts[2]
 	if key.begins_with("place") or key.begins_with("size") or key.begins_with(PairCrop.TURN_PREFIX):
 		return _param_spec(def_for(PairLayout.PAIR_VIEW_ID), key).get("default", null)
@@ -359,8 +374,10 @@ func _allowed(panel: Object) -> bool:
 func focused_entry(panel: Object) -> Dictionary:
 	var s0: Sequence = panel.call("seq")
 	if s0 != null:
+		var held: Dictionary = s0.selected_transition
 		for cid: Variant in focus.keys():
-			if String(focus[cid]) != TR_UID or not s0.selected_clip_ids.has(String(cid)):
+			var picked_tr: bool = String(held.get("clip_id", "")) == String(cid) and String(held.get("side", "in")) == "in"
+			if String(focus[cid]) != TR_UID or not (s0.selected_clip_ids.has(String(cid)) or picked_tr):
 				continue
 			var tc: Clip = s0.clip_by_id(String(cid))
 			var te: Dictionary = transition_entry(tc)
@@ -486,7 +503,10 @@ func targets(panel: Object, pic: Rect2) -> Array[Dictionary]:
 			KIND_ANGLE:
 				ok = _angle_target(t, c, e, def, local, s.fps, _k(panel, pic))
 			KIND_PLANE:
-				ok = _plane_target(t, c, e, def, local, s.fps, px)
+				if PlaneGizmo.is_frame_units(sd):
+					ok = PlaneGizmo.build(t, _named_values(c, e, def, PlaneGizmo.named_keys(sd), local, s.fps), px.x / maxf(px.y, 1.0), _k(panel, pic))
+				else:
+					ok = _plane_target(t, c, e, def, local, s.fps, px)
 			KIND_RING:
 				ok = _ring_target(t, c, e, def, local, s.fps, px)
 			KIND_BAND:
@@ -566,10 +586,16 @@ func _point_target(t: Dictionary, c: Clip, e: Dictionary, def: Dictionary, local
 	var xf: Transform2D = t["xf"]
 	var pts: PackedVector2Array = PackedVector2Array()
 	var hs: Array[Dictionary] = []
+	var line: bool = String(t.get("kind", "")) == KIND_LINE and keys.size() >= 2
 	for i: int in keys.size():
 		var p: Vector2 = _vec2(value_of(c, e, def, keys[i], local, fps), Vector2(0.5, 0.5))
 		pts.append(p)
-		hs.append({"id": "p" + str(i), "at": xf * p, "look": "ring", "name": String(_param_spec(def, keys[i]).get("label", keys[i])), "tip": EffectHandlesUi.point_text(def, keys[i], p)})
+		var look: String = "ring"
+		if line and i == 0:
+			look = "start"
+		elif line and i == keys.size() - 1:
+			look = "end"
+		hs.append({"id": "p" + str(i), "at": xf * p, "look": look, "name": String(_param_spec(def, keys[i]).get("label", keys[i])), "tip": EffectHandlesUi.point_text(def, keys[i], p)})
 	t["keys"] = keys
 	t["points"] = pts
 	t["handles"] = hs
@@ -686,6 +712,13 @@ func _plane_values(c: Clip, e: Dictionary, def: Dictionary, sd: Dictionary, loca
 	return v
 
 
+func _named_values(c: Clip, e: Dictionary, def: Dictionary, keys: PackedStringArray, local: float, fps: float) -> Dictionary:
+	var v: Dictionary = {}
+	for key: String in keys:
+		v[key] = value_of(c, e, def, key, local, fps)
+	return v
+
+
 func _plane_target(t: Dictionary, c: Clip, e: Dictionary, def: Dictionary, local: float, fps: float, px: Vector2) -> bool:
 	var sd: Dictionary = t["spec"]
 	var v: Dictionary = _plane_values(c, e, def, sd, local, fps)
@@ -712,6 +745,7 @@ func _plane_target(t: Dictionary, c: Clip, e: Dictionary, def: Dictionary, local
 	t["aspect"] = aspect
 	t["shape"] = shape
 	t["handles"] = hs
+	t["keys"] = PlaneGizmo.named_keys(sd)
 	t["centre"] = xf * plane_project(Vector2(0.5, 0.5), v, aspect)
 	t["movable"] = false
 	return true
@@ -746,7 +780,7 @@ func _region_targets(panel: Object, c: Clip, e: Dictionary, base: Dictionary, la
 
 
 static func _reach_of(look: String) -> float:
-	if look == "ring":
+	if look == "ring" or look == "start" or look == "end":
 		return RING + REACH
 	if look.begins_with("knob"):
 		return EffectHandlesUi.KNOB + REACH
@@ -793,6 +827,58 @@ func hit(panel: Object, pic: Rect2, at: Vector2) -> Dictionary:
 		if Geometry2D.is_point_in_polygon(at, sq):
 			return {"target": t, "handle": "in", "name": String(t.get("name", t.get("label", ""))), "key": str(ti2) + ":in"}
 	return _nearest(panel, pic, ts, at, EffectHandlesUi.PICK_REACH)
+
+
+static func resize_cursor(v: Vector2) -> Control.CursorShape:
+	if v.length() <= 0.000001:
+		return Control.CURSOR_MOVE
+	var a: float = fposmod(rad_to_deg(v.angle()), 180.0)
+	if a < 22.5 or a >= 157.5:
+		return Control.CURSOR_HSIZE
+	if a < 67.5:
+		return Control.CURSOR_FDIAGSIZE
+	if a < 112.5:
+		return Control.CURSOR_VSIZE
+	return Control.CURSOR_BDIAGSIZE
+
+
+static func _handle_at(t: Dictionary, id: String) -> Dictionary:
+	for h: Variant in (t.get("handles", []) as Array):
+		if String((h as Dictionary).get("id", "")) == id:
+			return h
+	return {}
+
+
+static func _middle_of(t: Dictionary) -> Vector2:
+	if t.has("centre"):
+		return t["centre"]
+	if t.has("geo") and t.has("xf"):
+		return (t["xf"] as Transform2D) * Vector2((t["geo"] as Dictionary)["c"])
+	var shape: PackedVector2Array = t.get("shape", PackedVector2Array())
+	var sum: Vector2 = Vector2.ZERO
+	for p: Vector2 in shape:
+		sum += p
+	return sum / float(shape.size()) if not shape.is_empty() else Vector2.ZERO
+
+
+static func cursor_for(h: Dictionary) -> Control.CursorShape:
+	var t: Dictionary = h.get("target", {})
+	var id: String = String(h.get("handle", ""))
+	var kind: String = String(t.get("kind", ""))
+	if id == "in" or kind == KIND_POINT or kind == KIND_LINE:
+		return Control.CURSOR_MOVE
+	if kind == KIND_ANGLE or (kind == KIND_PLANE and (id.begins_with("e") or id == "r")):
+		return Control.CURSOR_CROSS
+	var hd: Dictionary = _handle_at(t, id)
+	var at: Vector2 = hd.get("at", h.get("at", Vector2.ZERO))
+	if kind == KIND_BAND:
+		var info: Dictionary = t.get("band", {})
+		var xf: Transform2D = t.get("xf", Transform2D.IDENTITY)
+		return resize_cursor(xf.basis_xform(EffectHandlesUi.band_at(bool(info.get("vertical", false)), 1.0, 0.0) - EffectHandlesUi.band_at(bool(info.get("vertical", false)), 0.0, 0.0)))
+	if id.begins_with("e") and hd.get("dir") is Vector2:
+		var along: Vector2 = hd["dir"]
+		return resize_cursor(Vector2(-along.y, along.x))
+	return resize_cursor(at - _middle_of(t))
 
 
 func _keeps_focus(panel: Object) -> bool:
@@ -844,7 +930,9 @@ func input(event: InputEvent, pic: Rect2, panel: Object) -> bool:
 					set_focus((fe2["clip"] as Clip).id, String((fe2["entry"] as Dictionary).get("uid", "")), false)
 				return false
 			_begin(panel, pic, h, mb)
+			cursor = cursor_for(h)
 			if view != null:
+				view.mouse_default_cursor_shape = cursor
 				view.accept_event()
 				view.call("redraw_overlay")
 			return true
@@ -864,7 +952,12 @@ func input(event: InputEvent, pic: Rect2, panel: Object) -> bool:
 				hover = now
 				if view != null:
 					view.call("redraw_overlay")
-			return false
+			if h2.is_empty():
+				return false
+			cursor = cursor_for(h2)
+			if view != null:
+				view.mouse_default_cursor_shape = cursor
+			return true
 		_motion(panel, pic, mm)
 		if view != null:
 			view.accept_event()
@@ -903,6 +996,8 @@ static func _handle_key(t: Dictionary, handle: String) -> String:
 	var kind: String = String(t.get("kind", ""))
 	if kind == KIND_BAND:
 		return EffectHandlesUi.band_key_of(t["spec"], handle)
+	if kind == KIND_PLANE:
+		return PlaneGizmo.key_of(t["spec"], handle)
 	if kind == KIND_RING:
 		var sd: Dictionary = t["spec"]
 		var field: String = "key"
@@ -1220,6 +1315,14 @@ func _drag_plane(d: Project, s: Sequence, c: Clip, t: Dictionary, seq_p: Vector2
 	var handle: String = String(drag["handle"])
 	var def: Dictionary = def_for(String(t["eid"]))
 	var uid: String = String(t["uid"])
+	if PlaneGizmo.is_frame_units(sd):
+		var press_seq: Vector2 = drag["press_seq"]
+		var got_f: Dictionary = PlaneGizmo.drag(t, handle, Vector2(drag["grab"]) + seq_p - press_seq, press_seq, seq_p, def, mm.shift_pressed, not skip and MonitorSnap.is_on(), MonitorSnap.distance_px() / maxf(k, 0.0001))
+		var writes: Dictionary = got_f.get("writes", {})
+		for wk: Variant in writes.keys():
+			_write(d, s, c, path_for(uid, String(wk)), writes[wk])
+		drag["chip"] = String(got_f.get("chip", ""))
+		return
 	if handle.begins_with("c"):
 		var key_s: String = String(sd.get("scale", ""))
 		if key_s.is_empty():
@@ -1327,6 +1430,8 @@ func cancel(panel: Object) -> void:
 func draw(ci: CanvasItem, pic: Rect2, panel: Object) -> void:
 	if pic.size.x <= 0.0 or not _allowed(panel):
 		return
+	if not active():
+		EffectHandlesUi.watch_added(panel.call("gizmo_clip"))
 	var ts: Array[Dictionary] = targets(panel, pic)
 	if ts.is_empty():
 		return
@@ -1337,6 +1442,7 @@ func draw(ci: CanvasItem, pic: Rect2, panel: Object) -> void:
 		for p: Vector2 in (lx["quad"] as PackedVector2Array):
 			lq.append(_screen(panel, pic, p))
 		lq.append(lq[0])
+		ci.draw_polyline(lq, Color(SHADE, 0.3), 2.5, true)
 		ci.draw_polyline(lq, LAYER_INK, 1.0, true)
 	if active():
 		var snap: RefCounted = panel.call("snapper")
@@ -1346,14 +1452,20 @@ func draw(ci: CanvasItem, pic: Rect2, panel: Object) -> void:
 	var fs: int = Tk.fs(Tk.sz("font_small"))
 	var outer: Rect2 = Rect2(Vector2.ZERO, (ci as Control).size) if ci is Control else pic
 	var dragged: String = ""
+	var drag_ink: Color = INK
+	var away: Vector2 = Vector2.ONE
 	if active():
 		for ti: int in ts.size():
 			if _same_target(ts[ti], drag["target"]):
 				dragged = str(ti) + ":" + String(drag["handle"])
+				drag_ink = ts[ti]["colour"]
+				if ts[ti].has("centre"):
+					var off: Vector2 = Vector2(drag["pointer"]) - _screen(panel, pic, ts[ti]["centre"])
+					away = Vector2(-1.0 if off.x < 0.0 else 1.0, -1.0 if off.y < 0.0 else 1.0)
 	for ti2: int in ts.size():
 		_draw_target(ci, pic, panel, ts[ti2], str(ti2), dragged, font, fs, outer)
 	if active() and not String(drag.get("chip", "")).is_empty():
-		_draw_chip(ci, outer, Vector2(drag["pointer"]) + Vector2(14.0, 16.0), String(drag["chip"]), font, fs)
+		last_chip = _draw_chip(ci, outer, Vector2(drag["pointer"]) + CHIP_GAP * away, String(drag["chip"]), font, fs, drag_ink, away)
 
 
 static func _same_target(a: Dictionary, b: Dictionary) -> bool:
@@ -1362,61 +1474,173 @@ static func _same_target(a: Dictionary, b: Dictionary) -> bool:
 
 func _draw_target(ci: CanvasItem, pic: Rect2, panel: Object, t: Dictionary, tag: String, dragged: String, font: Font, fs: int, outer: Rect2) -> void:
 	var ink: Color = t["colour"]
+	var held: bool = dragged.begins_with(tag + ":")
+	var lit: bool = hover.begins_with(tag + ":") or held
 	var shape: PackedVector2Array = t.get("shape", PackedVector2Array())
 	if shape.size() >= 3:
 		var closed: PackedVector2Array = PackedVector2Array()
 		for p: Vector2 in shape:
 			closed.append(_screen(panel, pic, p))
 		closed.append(closed[0])
-		var lit: bool = hover.begins_with(tag + ":") or dragged.begins_with(tag + ":")
-		ci.draw_polyline(closed, ink, 2.0 if lit else 1.5, true)
+		ci.draw_polyline(closed, SHADE, 3.5 if lit else 3.0, true)
+		ci.draw_polyline(closed, ink, 2.0 if lit else 1.25, true)
 	var kind: String = String(t["kind"])
 	var hs: Array = t["handles"]
 	if kind == KIND_RING or kind == KIND_BAND:
-		EffectHandlesUi.draw_lines(ci, t, func(p: Vector2) -> Vector2: return _screen(panel, pic, p), ink, hover.begins_with(tag + ":") or dragged.begins_with(tag + ":"))
+		EffectHandlesUi.draw_lines(ci, t, func(p: Vector2) -> Vector2: return _screen(panel, pic, p), ink, lit)
 	if kind == KIND_LINE and hs.size() >= 2:
-		if bool((t["spec"] as Dictionary).get("curve", false)) and hs.size() >= 3:
-			var through: PackedVector2Array = PackedVector2Array()
-			for hp: Dictionary in hs:
-				through.append(_screen(panel, pic, hp["at"]))
-			var smooth: PackedVector2Array = curve_points(through, CURVE_STEPS)
-			last_curve = smooth
-			ci.draw_polyline(smooth, Color(ink, 0.8), 1.5, true)
-		else:
-			for li: int in hs.size() - 1:
-				ci.draw_dashed_line(_screen(panel, pic, (hs[li] as Dictionary)["at"]), _screen(panel, pic, (hs[li + 1] as Dictionary)["at"]), Color(ink, 0.6), 1.0, 4.0)
+		_draw_path(ci, pic, panel, t, hs, ink, lit)
 	if kind == KIND_ANGLE and not hs.is_empty():
-		ci.draw_line(_screen(panel, pic, t["centre"]), _screen(panel, pic, (hs[0] as Dictionary)["at"]), ink, 1.0, true)
+		_draw_dial(ci, pic, panel, t, ink, lit, held)
+	if kind == KIND_PLANE and t.has("stem"):
+		PlaneGizmo.draw_stem(ci, t, func(p: Vector2) -> Vector2: return _screen(panel, pic, p), ink, lit)
 	for h: Dictionary in hs:
 		var at: Vector2 = _screen(panel, pic, h["at"])
 		var id: String = tag + ":" + String(h["id"])
 		var lit_h: bool = id == hover or id == dragged
-		_draw_look(ci, String(h["look"]), at, h.get("dir", Vector2.RIGHT), ink, lit_h, panel, pic)
+		_draw_look(ci, String(h["look"]), at, h.get("dir", Vector2.RIGHT), ink, lit_h)
 		if lit_h and kind != KIND_REGIONS and not String(h.get("name", "")).is_empty() and not active():
-			_draw_chip(ci, outer, at + Vector2(10.0, -22.0), String(h.get("tip", h["name"])), font, fs)
+			_draw_chip(ci, outer, at + Vector2(12.0, -26.0), String(h.get("tip", h["name"])), font, fs, ink)
 	if kind == KIND_REGIONS and shape.size() == 4:
 		var corner: Vector2 = _screen(panel, pic, shape[0])
-		_draw_chip(ci, outer, corner + Vector2(0.0, -font.get_height(fs) - PmText.pad()), String(t.get("name", "")), font, fs)
+		_draw_chip(ci, outer, corner + Vector2(0.0, -font.get_height(fs) - PmText.pad()), String(t.get("name", "")), font, fs, ink)
 
 
-func _draw_look(ci: CanvasItem, look: String, at: Vector2, dir_seq: Variant, ink: Color, lit: bool, _panel: Object, _pic: Rect2) -> void:
+func _draw_path(ci: CanvasItem, pic: Rect2, panel: Object, t: Dictionary, hs: Array, ink: Color, lit: bool) -> void:
+	var through: PackedVector2Array = PackedVector2Array()
+	for hp: Dictionary in hs:
+		through.append(_screen(panel, pic, hp["at"]))
+	var w: float = 1.75 if lit else 1.25
+	var gap: float = RING + 2.0
+	var end: Vector2 = through[through.size() - 1]
+	var from: Vector2 = through[through.size() - 2]
+	if bool((t["spec"] as Dictionary).get("curve", false)) and hs.size() >= 3:
+		var smooth: PackedVector2Array = curve_points(through, CURVE_STEPS)
+		last_curve = smooth
+		ci.draw_polyline(smooth, SHADE, w + 2.0, true)
+		ci.draw_polyline(smooth, ink, w, true)
+		for i: int in range(smooth.size() - 2, -1, -1):
+			from = smooth[i]
+			if from.distance_to(end) > gap + ARROW_LEN:
+				break
+	else:
+		for li: int in hs.size() - 1:
+			var a: Vector2 = through[li]
+			var b: Vector2 = through[li + 1]
+			var n: float = a.distance_to(b)
+			if n <= gap * 2.0:
+				continue
+			var u: Vector2 = (b - a) / n
+			ci.draw_line(a + u * gap, b - u * gap, SHADE, w + 2.0, true)
+			ci.draw_line(a + u * gap, b - u * gap, ink, w, true)
+	if from.distance_to(end) > gap * 2.0 + ARROW_LEN:
+		var dir: Vector2 = (end - from).normalized()
+		_draw_arrow(ci, end - dir * (gap + 1.0), dir, ink)
+
+
+func _draw_arrow(ci: CanvasItem, tip: Vector2, dir: Vector2, ink: Color) -> void:
+	var side: Vector2 = Vector2(-dir.y, dir.x)
+	var back: Vector2 = tip - dir * ARROW_LEN
+	ci.draw_colored_polygon(PackedVector2Array([tip + dir * 1.5, back - dir * 1.0 + side * (ARROW_HALF + 1.5), back - dir * 1.0 - side * (ARROW_HALF + 1.5)]), SHADE)
+	ci.draw_colored_polygon(PackedVector2Array([tip, back + side * ARROW_HALF, back - side * ARROW_HALF]), ink)
+
+
+func _draw_dial(ci: CanvasItem, pic: Rect2, panel: Object, t: Dictionary, ink: Color, lit: bool, held: bool) -> void:
+	var hs: Array = t["handles"]
+	var c: Vector2 = _screen(panel, pic, t["centre"])
+	var k: Vector2 = _screen(panel, pic, (hs[0] as Dictionary)["at"])
+	var r: float = c.distance_to(k)
+	if r < HANDLE:
+		return
+	var xf: Transform2D = t["xf"]
+	var sd: Dictionary = t["spec"]
+	if held:
+		var sweep: float = clampf(float(t.get("angle", 0.0)), -360.0, 360.0)
+		var steps: int = maxi(1, int(ceil(absf(sweep) / DIAL_STEP)))
+		var prev: Vector2 = c + EffectHandlesUi.arm_dir(xf, 0.0, sd) * r * WEDGE
+		var rim: PackedVector2Array = PackedVector2Array([prev])
+		for i: int in steps:
+			var nxt: Vector2 = c + EffectHandlesUi.arm_dir(xf, sweep * float(i + 1) / float(steps), sd) * r * WEDGE
+			if absf((prev - c).cross(nxt - c)) > 0.0001:
+				ci.draw_colored_polygon(PackedVector2Array([c, prev, nxt]), Color(ink, 0.3))
+			rim.append(nxt)
+			prev = nxt
+		if rim.size() >= 2:
+			ci.draw_polyline(rim, ink, 1.0, true)
+	ci.draw_arc(c, r, 0.0, TAU, 64, SHADE, 3.0, true)
+	ci.draw_arc(c, r, 0.0, TAU, 64, Color(ink, 0.95 if lit else 0.75), 1.75 if lit else 1.25, true)
+	for q: int in 4:
+		var d: Vector2 = EffectHandlesUi.arm_dir(xf, 90.0 * float(q), sd)
+		var long: float = DIAL_TICK * (2.0 if q == 0 else 1.0)
+		ci.draw_line(c + d * (r - long), c + d * r, SHADE, 3.0, true)
+		ci.draw_line(c + d * (r - long), c + d * r, ink, 1.25, true)
+	var u: Vector2 = (k - c) / r
+	ci.draw_line(c, k - u * (EffectHandlesUi.KNOB - 1.0), SHADE, 3.0, true)
+	ci.draw_line(c, k - u * (EffectHandlesUi.KNOB - 1.0), ink, 1.5 if lit else 1.25, true)
+	ci.draw_circle(c, 3.0, SHADE)
+	ci.draw_circle(c, 2.0, FILL)
+
+
+func _draw_cross_ring(ci: CanvasItem, at: Vector2, ink: Color, lit: bool) -> void:
+	var r: float = RING + (1.0 if lit else 0.0)
+	var arm: float = r + 4.0
+	if lit:
+		ci.draw_circle(at, r, Color(ink, 0.3))
+	ci.draw_arc(at, r, 0.0, TAU, 24, SHADE, 3.5, true)
+	ci.draw_line(at - Vector2(arm, 0.0), at + Vector2(arm, 0.0), SHADE, 3.0, true)
+	ci.draw_line(at - Vector2(0.0, arm), at + Vector2(0.0, arm), SHADE, 3.0, true)
+	ci.draw_arc(at, r, 0.0, TAU, 24, ink, 2.0 if lit else 1.5, true)
+	ci.draw_line(at - Vector2(arm, 0.0), at + Vector2(arm, 0.0), ink, 1.25, true)
+	ci.draw_line(at - Vector2(0.0, arm), at + Vector2(0.0, arm), ink, 1.25, true)
+
+
+func _draw_square(ci: CanvasItem, at: Vector2, size: float, ink: Color, lit: bool) -> void:
+	var r: Rect2 = Rect2((at - Vector2(size, size) * 0.5).round(), Vector2(size, size))
+	ci.draw_rect(r.grow(1.0), SHADE, true)
+	ci.draw_rect(r, ink if lit else FILL, true)
+	ci.draw_rect(r, ink, false, 1.0)
+
+
+func _bar_box(at: Vector2, dir: Vector2, half_l: float, half_w: float) -> PackedVector2Array:
+	var side: Vector2 = Vector2(-dir.y, dir.x)
+	return PackedVector2Array([at - dir * half_l - side * half_w, at + dir * half_l - side * half_w, at + dir * half_l + side * half_w, at - dir * half_l + side * half_w])
+
+
+func _draw_look(ci: CanvasItem, look: String, at: Vector2, dir_seq: Variant, ink: Color, lit: bool) -> void:
 	var h: float = HANDLE + (2.0 if lit else 0.0)
 	match look:
 		"square":
-			ci.draw_rect(Rect2(at - Vector2(h, h) * 0.5, Vector2(h, h)), ink, true)
+			_draw_square(ci, at, h, ink, lit)
 		"bar":
 			var dir: Vector2 = (dir_seq as Vector2).normalized() if dir_seq is Vector2 and (dir_seq as Vector2).length() > 0.0001 else Vector2.RIGHT
-			ci.draw_line(at - dir * BAR * 0.5, at + dir * BAR * 0.5, ink, 4.0 + (1.0 if lit else 0.0))
+			var half_l: float = BAR * 0.5 + (1.0 if lit else 0.0)
+			var half_w: float = 2.5 + (0.5 if lit else 0.0)
+			var box: PackedVector2Array = _bar_box(at, dir, half_l, half_w)
+			ci.draw_colored_polygon(_bar_box(at, dir, half_l + 1.0, half_w + 1.0), SHADE)
+			ci.draw_colored_polygon(box, ink if lit else FILL)
+			var edge: PackedVector2Array = box.duplicate()
+			edge.append(box[0])
+			ci.draw_polyline(edge, ink, 1.0, true)
 		"dot":
-			ci.draw_circle(at, 3.5 + (1.0 if lit else 0.0), ink)
-		"ring":
-			ci.draw_arc(at, RING, 0.0, TAU, 20, ink, 2.0 if lit else 1.5, true)
-			for dv: Vector2 in [Vector2.RIGHT, Vector2.LEFT, Vector2.UP, Vector2.DOWN]:
-				ci.draw_line(at + dv * (RING + 2.0), at + dv * (RING + 6.0), ink, 1.5, true)
+			var rd: float = 3.5 + (1.0 if lit else 0.0)
+			ci.draw_circle(at, rd + 1.0, SHADE)
+			ci.draw_circle(at, rd, ink if lit else FILL)
+			ci.draw_arc(at, rd, 0.0, TAU, 16, ink, 1.0, true)
+		"ring", "start":
+			_draw_cross_ring(ci, at, ink, lit)
+		"end":
+			var re: float = RING + (1.0 if lit else 0.0)
+			ci.draw_circle(at, re + 1.5, SHADE)
+			ci.draw_circle(at, re, ink)
+			ci.draw_arc(at, re - 0.5, 0.0, TAU, 24, FILL, 1.5, true)
+			ci.draw_circle(at, 1.75, FILL)
 		"cross":
+			ci.draw_line(at - Vector2(h, 0.0), at + Vector2(h, 0.0), SHADE, 4.0, true)
+			ci.draw_line(at - Vector2(0.0, h), at + Vector2(0.0, h), SHADE, 4.0, true)
 			ci.draw_line(at - Vector2(h, 0.0), at + Vector2(h, 0.0), ink, 2.0, true)
 			ci.draw_line(at - Vector2(0.0, h), at + Vector2(0.0, h), ink, 2.0, true)
 		"spin":
+			ci.draw_arc(at, 3.5 + (1.0 if lit else 0.0), 0.0, TAU, 12, SHADE, 3.0, true)
 			ci.draw_arc(at, 3.5 + (1.0 if lit else 0.0), 0.0, TAU, 12, ink, 1.5, true)
 		"knob":
 			EffectHandlesUi.draw_knob(ci, at, ink, lit, false)
@@ -1426,14 +1650,18 @@ func _draw_look(ci: CanvasItem, look: String, at: Vector2, dir_seq: Variant, ink
 			EffectHandlesUi.draw_pill(ci, at, dir_seq, ink, lit)
 
 
-func _draw_chip(ci: CanvasItem, outer: Rect2, at: Vector2, text: String, font: Font, fs: int) -> void:
+func _draw_chip(ci: CanvasItem, outer: Rect2, at: Vector2, text: String, font: Font, fs: int, ink: Color = INK, side: Vector2 = Vector2.ONE) -> Rect2:
 	if text.is_empty():
-		return
+		return Rect2()
 	var pad: float = PmText.pad()
-	var w: float = PmText.width_of(font, text, fs) + pad * 2.0
-	var h: float = font.get_height(fs) + 2.0
+	var w: float = PmText.width_of(font, text, fs) + pad * 2.0 + CHIP_BAR
+	var h: float = font.get_height(fs) + 4.0
+	at -= Vector2(w if side.x < 0.0 else 0.0, h if side.y < 0.0 else 0.0)
 	var x: float = clampf(at.x, outer.position.x + 2.0, maxf(outer.end.x - w - 2.0, outer.position.x + 2.0))
 	var y: float = clampf(at.y, outer.position.y + 2.0, maxf(outer.end.y - h - 2.0, outer.position.y + 2.0))
 	var box: Rect2 = Rect2(Vector2(x, y).round(), Vector2(w, h))
+	ci.draw_rect(box.grow(1.0), Color(SHADE, 0.35), true)
 	ci.draw_rect(box, LABEL_BACK, true)
-	PmText.draw_in(ci, font, box.grow_individual(-pad, 0.0, -pad, 0.0), text, fs, Tk.c["text_bright"], HORIZONTAL_ALIGNMENT_LEFT, NAN, PmText.ELIDE, box)
+	ci.draw_rect(Rect2(box.position, Vector2(CHIP_BAR, box.size.y)), ink, true)
+	PmText.draw_in(ci, font, box.grow_individual(-pad - CHIP_BAR, 0.0, -pad, 0.0), text, fs, Tk.c["text_bright"], HORIZONTAL_ALIGNMENT_LEFT, NAN, PmText.ELIDE, box)
+	return box

@@ -9,6 +9,8 @@ const Command := preload("res://doc/commands/command.gd")
 const ClipCmds := preload("res://doc/commands/clip_cmds.gd")
 const MaskShape := preload("res://doc/mask_shape.gd")
 const TextExtras := preload("res://doc/text_extras.gd")
+const TextDecode := preload("res://doc/text_decode.gd")
+const TextMaskPath := preload("res://doc/text_mask_path.gd")
 const PmUI := preload("res://ui/kit/pm_ui.gd")
 const PmLabel := preload("res://ui/kit/pm_label.gd")
 const PmButton := preload("res://ui/kit/pm_button.gd")
@@ -22,7 +24,12 @@ const NUMBERS: Array = [
 	["path_waves", "Waves", 0.0, 20.0, 0.1, "", "path"],
 	["counter_value", "Value", -1000000000.0, 1000000000.0, 1.0, "", "counter"],
 	["counter_decimals", "Decimals", 0.0, 6.0, 1.0, "", "counter"],
+	["reveal_count", "Characters shown", -1.0, TextExtras.COUNT_MAX, 1.0, "", "reveal"],
+	["decode_rate", "Rerolls a second", 0.0, TextDecode.RATE_MAX, 0.5, "", "decode"],
+	["decode_seed", "Scramble seed", 0.0, TextDecode.SEED_MAX, 1.0, "", "decode"],
 ]
+const COUNT_NOTE := "Characters shown: -1 leaves it to Reveal. 0 or more wins over Reveal and shows exactly that many characters, so you can key 7 at one frame and 12 at another."
+const DECODE_NOTE := "Stand in characters fill the positions that have not arrived yet, so key Characters shown above, or Reveal, and the text scrambles and resolves. The scramble is worked out from the seed and the clip's own time, so the same frame always draws the same characters and an export matches the preview. Set Rerolls a second to 0 to hold them still."
 
 var seq_id: String = ""
 var clip_id: String = ""
@@ -36,7 +43,13 @@ var _counter_on: CheckBox = null
 var _prefix: LineEdit = null
 var _suffix: LineEdit = null
 var _mask_btn: Button = null
+var _mask_live: CheckBox = null
 var _note: Label = null
+var _decode_on: CheckBox = null
+var _pool_drop: Button = null
+var _order_drop: Button = null
+var _chars: LineEdit = null
+var _decode_note: Label = null
 
 
 func _init() -> void:
@@ -64,6 +77,13 @@ func _init() -> void:
 	_mask_btn.set("quiet", true)
 	_mask_btn.pressed.connect(_on_from_mask)
 	add_child(_mask_btn)
+	_mask_live = CheckBox.new()
+	_mask_live.name = "PathFollowsMask"
+	_mask_live.text = "Keep following the mask as it changes"
+	_mask_live.focus_mode = Control.FOCUS_NONE
+	PmUI.tip(_mask_live, "The text stays on the clip's first mask when the mask is moved, reshaped or keyframed, instead of copying its shape once")
+	_mask_live.toggled.connect(set_mask_live)
+	add_child(_mask_live)
 	var grid: GridContainer = GridContainer.new()
 	grid.name = "ExtrasGrid"
 	grid.columns = 3
@@ -75,6 +95,22 @@ func _init() -> void:
 			_counter_on.focus_mode = Control.FOCUS_NONE
 			_counter_on.toggled.connect(_on_counter_on)
 			grid.add_child(_counter_on)
+			grid.add_child(Control.new())
+			grid.add_child(Control.new())
+		if String(spec[6]) == "reveal" and String(spec[0]) == "reveal_count":
+			grid.add_child(PmLabel.trim("How much has appeared", "text_bright"))
+			grid.add_child(Control.new())
+			grid.add_child(Control.new())
+		if String(spec[6]) == "decode" and String(spec[0]) == "decode_rate":
+			grid.add_child(PmLabel.trim("What has not arrived yet", "text_bright"))
+			grid.add_child(Control.new())
+			grid.add_child(Control.new())
+			_decode_on = CheckBox.new()
+			_decode_on.name = "DecodeOn"
+			_decode_on.text = "Show a stand in character instead of nothing"
+			_decode_on.focus_mode = Control.FOCUS_NONE
+			_decode_on.toggled.connect(_on_decode_on)
+			grid.add_child(_decode_on)
 			grid.add_child(Control.new())
 			grid.add_child(Control.new())
 		grid.add_child(PmLabel.body(String(spec[1])))
@@ -111,9 +147,35 @@ func _init() -> void:
 	_suffix.text_submitted.connect(_on_affix.bind("counter_suffix"))
 	fmt_row.add_child(_suffix)
 	add_child(fmt_row)
-	_note = PmLabel.wrap("", "text_faint")
-	_note.visible = false
+	var decode_row: HBoxContainer = PmUI.hbox(Tk.px(4.0))
+	decode_row.name = "DecodeRow"
+	decode_row.add_child(PmLabel.body("Stand ins come from"))
+	var pools: Array = []
+	for p: int in TextDecode.POOLS.size():
+		pools.append(PmDrop.choice(TextDecode.POOLS[p], TextDecode.POOL_LABELS[p]))
+	_pool_drop = PmDrop.make_drop(pools, "text")
+	_pool_drop.name = "DecodePool"
+	_pool_drop.connect("changed", _on_pool)
+	decode_row.add_child(_pool_drop)
+	_chars = PmUI.line_edit("Characters")
+	_chars.name = "DecodeChars"
+	_chars.text_submitted.connect(_on_chars)
+	decode_row.add_child(_chars)
+	decode_row.add_child(PmLabel.body("Settling"))
+	var orders: Array = []
+	for o: int in TextDecode.ORDERS.size():
+		orders.append(PmDrop.choice(TextDecode.ORDERS[o], TextDecode.ORDER_LABELS[o]))
+	_order_drop = PmDrop.make_drop(orders, "left")
+	_order_drop.name = "DecodeOrder"
+	_order_drop.connect("changed", _on_order)
+	decode_row.add_child(_order_drop)
+	add_child(decode_row)
+	_note = PmLabel.wrap(COUNT_NOTE, "text_faint")
+	_note.name = "ExtrasNote"
 	add_child(_note)
+	_decode_note = PmLabel.wrap(DECODE_NOTE, "text_faint")
+	_decode_note.name = "DecodeNote"
+	add_child(_decode_note)
 
 
 func target() -> Clip:
@@ -147,12 +209,25 @@ func show_for(doc: Project, sequence_id: String, id: String) -> void:
 	if not _suffix.has_focus():
 		_suffix.text = String(TextExtras.get_value(live, "counter_suffix"))
 	_mask_btn.disabled = c.masks.is_empty()
+	_mask_live.disabled = c.masks.is_empty()
+	_mask_live.set_pressed_no_signal(TextMaskPath.live(c.props))
 	for spec: Array in NUMBERS:
 		var field: String = String(spec[0])
 		var f: Control = _fields[field]
 		if not bool(f.get("_dragging")) and f.get("_editor") == null:
-			f.set("value", float(TextExtras.get_value(live, field)))
+			f.set("value", float(value_of(live, field)))
 		(_keys[field] as Button).set_pressed_no_signal(is_keyed(c, field))
+	_decode_on.set_pressed_no_signal(TextDecode.on(live))
+	_pool_drop.call("set_value", TextDecode.pool_name(live), false)
+	_order_drop.call("set_value", TextDecode.order_name(live), false)
+	if not _chars.has_focus():
+		_chars.text = String(TextDecode.get_value(live, "decode_chars"))
+
+
+func value_of(live: Dictionary, field: String) -> Variant:
+	if TextDecode.defaults().has(field):
+		return TextDecode.get_value(live, field)
+	return TextExtras.get_value(live, field)
 
 
 func is_keyed(c: Clip, field: String) -> bool:
@@ -182,10 +257,25 @@ func toggle_key(field: String) -> bool:
 	var path: String = "props." + field
 	var cur: Variant = c.props.get(field)
 	if not (cur is Dictionary) or not AnimProp.is_animated(cur):
-		var v: Variant = TextExtras.get_value(c.props_at(s.playhead - c.start), field)
+		var v: Variant = value_of(c.props_at(s.playhead - c.start), field)
 		var cmd: Command = ClipCmds.SetClipParam.new(seq_id, clip_id, path, AnimProp.set_key(AnimProp.make(v), c.param_time(path, s.playhead - c.start), v))
 		return Verbs.run(_doc, "Keyframe", [cmd] as Array[Command])
 	return Verbs.toggle_keyframe(_doc, s, clip_id, path, s.playhead)
+
+
+func clock_is_live(c: Clip) -> bool:
+	return TextDecode.clock_follows_time(c.props.get("decode_clock", null))
+
+
+func set_decode(on: bool) -> bool:
+	var c: Clip = target()
+	var s: Sequence = seq()
+	if c == null or s == null:
+		return false
+	var cmds: Array[Command] = [ClipCmds.SetClipParam.new(seq_id, clip_id, "props.decode_on", AnimProp.make(on))]
+	if on and not clock_is_live(c):
+		cmds.append(ClipCmds.SetClipParam.new(seq_id, clip_id, "props.decode_clock", TextDecode.clock_prop()))
+	return Verbs.run(_doc, "Scramble what has not arrived", cmds)
 
 
 func path_from_mask() -> bool:
@@ -215,6 +305,21 @@ func path_from_mask() -> bool:
 	return Verbs.run(_doc, "Path from mask", [ClipCmds.SetClipField.new(seq_id, clip_id, "props", props)] as Array[Command])
 
 
+func set_mask_live(on: bool) -> bool:
+	var c: Clip = target()
+	var s: Sequence = seq()
+	if c == null or s == null or (on and c.masks.is_empty()):
+		return false
+	var props: Dictionary = c.props.duplicate(true)
+	props[TextMaskPath.KEY] = on
+	if on:
+		var f: Array = TextMaskPath.path_at(c.masks, s.playhead - c.start, c.duration, s.fps)
+		if f.size() >= 4:
+			props["path_points"] = f
+		props["path_shape"] = "points"
+	return Verbs.run(_doc, "Path follows the mask" if on else "Path stops following the mask", [ClipCmds.SetClipField.new(seq_id, clip_id, "props", props)] as Array[Command])
+
+
 func _on_shape(id: String) -> void:
 	write("path_shape", id)
 
@@ -233,6 +338,22 @@ func _on_format(id: String) -> void:
 
 func _on_affix(text: String, field: String) -> void:
 	write(field, text)
+
+
+func _on_decode_on(on: bool) -> void:
+	set_decode(on)
+
+
+func _on_pool(id: String) -> void:
+	write("decode_pool", id)
+
+
+func _on_order(id: String) -> void:
+	write("decode_order", id)
+
+
+func _on_chars(text: String) -> void:
+	write("decode_chars", text)
 
 
 func _on_number(v: float, field: String) -> void:

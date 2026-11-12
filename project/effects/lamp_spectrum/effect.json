@@ -1,0 +1,16 @@
+{
+ "id": "lamp_spectrum",
+ "label": "Lamp Spectrum",
+ "category": "Colour Correction",
+ "tags": ["light", "look"],
+ "version": 1,
+ "blurb": "Relights the shot under a real lamp by working wavelength by wavelength instead of tinting. Each pixel is turned back into the smooth reflectance spectrum of a surface that would give that colour, that spectrum is lit by the emission spectrum of the lamp you pick, and the camera turns the result back into colour. Lamps that give light in only a few narrow lines lose colours a tint never could: under low pressure sodium every colour collapses into one, so even a camera balanced to the lamp sees a world in shades of a single amber; mercury vapour leaves reds dead and greys cold; the spikes of a fluorescent tube make some colours jump and others sink; a single wavelength lights only the surfaces that reflect it. Balance chooses whether the camera is balanced to the lamp or left on daylight.",
+ "params": [
+  {"key": "lamp", "label": "Lamp", "type": "enum", "choices": ["Daylight", "Low pressure sodium", "High pressure sodium", "Mercury vapour", "Cool white tube", "Three band tube", "White LED", "Tungsten", "Candle", "Single wavelength"], "default": 1},
+  {"key": "wavelength", "label": "Wavelength", "type": "float", "min": 400.0, "max": 700.0, "step": 0.5, "default": 589.0, "unit": " nm"},
+  {"key": "balance", "label": "Camera balanced for", "type": "enum", "choices": ["The lamp", "Daylight"], "default": 1},
+  {"key": "exposure", "label": "Exposure", "type": "float", "min": -4.0, "max": 4.0, "step": 0.01, "default": 0.0, "unit": " stops"},
+  {"key": "purity", "label": "Colour", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0}
+ ],
+ "passes": "single"
+}

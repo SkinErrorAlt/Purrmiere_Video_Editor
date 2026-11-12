@@ -1,0 +1,20 @@
+{
+ "id": "slow_scan_tv",
+ "label": "Slow Scan TV",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "The picture received as a slow scan television image over radio, the way pictures come down from the space station: it builds up line by line, leans over when the receiver clock is off with the dark sync stripe running diagonally through it, jumps sideways where a sync pulse was missed, and picks up coloured streaks where the signal fades and diagonal stripes from a whistling carrier.",
+ "params": [
+  {"key": "received", "label": "Received", "type": "float", "min": 0.0, "max": 1.0, "step": 0.001, "default": 1.0},
+  {"key": "mode", "label": "Mode", "type": "enum", "choices": ["Martin, colour by lines", "Robot, brightness and colour"], "default": 0},
+  {"key": "lines", "label": "Lines", "type": "int", "min": 120, "max": 496, "step": 1, "default": 256},
+  {"key": "slant", "label": "Slant", "type": "float", "min": -1.0, "max": 1.0, "step": 0.001, "default": 0.12},
+  {"key": "signal", "label": "Signal strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.72},
+  {"key": "fading", "label": "Fading", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "carrier", "label": "Carrier whistle", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.25},
+  {"key": "slips", "label": "Sync slips", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

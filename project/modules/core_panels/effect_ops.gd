@@ -9,6 +9,7 @@ const Verbs := preload("res://doc/verbs.gd")
 const Command := preload("res://doc/commands/command.gd")
 const EffectCmds := preload("res://doc/commands/effect_cmds.gd")
 const EffectSource := preload("res://modules/core_panels/effect_source.gd")
+const TextFx := preload("res://doc/text_fx/text_fx.gd")
 const ValueClipboard := preload("res://modules/core_panels/value_clipboard.gd")
 const ClipWarnings := preload("res://doc/clip_warnings.gd")
 const PmUI := preload("res://ui/kit/pm_ui.gd")
@@ -50,6 +51,8 @@ static func paste_effect(doc: Project, seq: Sequence, clip_ids: PackedStringArra
 		return 0
 	var sound: bool = bool(clipboard.get("audio", false))
 	var targets: PackedStringArray = Verbs.audio_targets(seq, clip_ids) if sound else Verbs.video_targets(seq, clip_ids)
+	if TextFx.text_only(EffectSource.get_def(String((clipboard["entry"] as Dictionary).get("id", "")))):
+		targets = Verbs.title_targets(doc, seq, targets)
 	var cmds: Array[Command] = []
 	for id: String in targets:
 		cmds.append(EffectCmds.InsertEffectEntry.new(seq.id, id, clipboard["entry"], doc.mint_id("e"), -1, sound))
@@ -358,6 +361,8 @@ static func move_targets(seq: Sequence, from_clip_id: String, uid: String, ids: 
 		return out
 	var sound: bool = src.is_audio_effect(uid)
 	var reach: PackedStringArray = Verbs.audio_targets(seq, ids) if sound else Verbs.video_targets(seq, ids)
+	if TextFx.text_only(EffectSource.get_def(String(entry_of(src, uid).get("id", "")))):
+		reach = Verbs.title_targets(Session.doc, seq, reach)
 	for id: String in reach:
 		if id == from_clip_id and not copy:
 			continue
@@ -375,6 +380,8 @@ static func move_refusal(seq: Sequence, from_clip_id: String, uid: String, ids: 
 	if move_targets(seq, from_clip_id, uid, ids, copy).is_empty():
 		if ids.size() == 1 and ids[0] == from_clip_id:
 			return SAME_CLIP
+		if TextFx.text_only(EffectSource.get_def(String(entry_of(src, uid).get("id", "")))):
+			return TextFx.REFUSAL
 		return NO_SOUND_HERE if src.is_audio_effect(uid) else NO_PICTURE_HERE
 	if not copy and Verbs.unlocked(seq, PackedStringArray([from_clip_id])).is_empty():
 		return SOURCE_LOCKED

@@ -1,0 +1,19 @@
+{
+ "id": "dispersion_wipe",
+ "label": "Dispersion Wipe",
+ "group": "Distort",
+ "space": "2D",
+ "from": ["Premiere Lens Dispersion", "After Effects CC Light Burst"],
+ "blurb": "A prism sweeps across the frame: along a moving band the picture smears into red, green and blue streaks that disperse like light through glass, and the next shot forms out of them. Set the band width, how far the colours split, the streak length, and a glow along the leading edge. Any of six directions.",
+ "default_duration": 0.9,
+ "params": [
+  {"key": "direction", "label": "Direction", "type": "enum", "choices": ["Right", "Left", "Down", "Up", "Down right", "Down left"], "default": 0},
+  {"key": "timing", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth", "Strong", "Slow end", "Overshoot", "Bounce"], "default": 1},
+  {"key": "band", "label": "Band width", "type": "float", "min": 0.04, "max": 0.6, "step": 0.01, "default": 0.24},
+  {"key": "dispersion", "label": "Colour split", "type": "float", "min": 0, "max": 0.2, "step": 0.001, "default": 0.06},
+  {"key": "streak", "label": "Streak length", "type": "float", "min": 0, "max": 0.3, "step": 0.005, "default": 0.12},
+  {"key": "glow", "label": "Edge glow", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 0.7},
+  {"key": "glow_tint", "label": "Glow tint", "type": "color", "default": [1, 1, 1, 1]},
+  {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ]
+}

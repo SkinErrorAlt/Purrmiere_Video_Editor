@@ -3,6 +3,7 @@ extends RefCounted
 const Project := preload("res://doc/project.gd")
 const Migrations := preload("res://doc/migrations.gd")
 const Health := preload("res://doc/health.gd")
+const NewerFiles := preload("res://doc/newer_files.gd")
 const EXT := ".purrmiere"
 const SNAPSHOT_DIR := ".purrmiere_snapshots"
 const SNAPSHOT_KEEP := 20
@@ -15,6 +16,7 @@ const RECOVERY_SEP := "__"
 
 static var _autosave: Dictionary = {}
 static var last_error: String = ""
+static var last_warning: String = ""
 static var _bg_task: int = -1
 static var _bg_out: Array = []
 static var _bg_last: Dictionary = {}
@@ -42,6 +44,8 @@ static func write_atomic(path: String, text: String, keep_bak: bool) -> Error:
 
 
 static func write_atomic_core(path: String, text: String, keep_bak: bool) -> Array:
+	if NewerFiles.is_held(path):
+		return [ERR_FILE_CANT_WRITE, NewerFiles.refused_text(path)]
 	if text.strip_edges().is_empty():
 		return [ERR_INVALID_DATA, "refused to write an empty file to " + path]
 	var dir: String = path.get_base_dir()
@@ -131,7 +135,7 @@ static func read_json(path: String) -> Dictionary:
 
 
 static func project_dict(project: Project) -> Dictionary:
-	var d: Dictionary = {"format_version": Project.FORMAT_VERSION}
+	var d: Dictionary = {"format_version": NewerFiles.stamp()}
 	var body: Dictionary = project.to_dict()
 	for k: Variant in body.keys():
 		d[k] = body[k]
@@ -174,6 +178,7 @@ static func save_view(project: Project, path: String) -> Error:
 
 static func load(path: String) -> Project:
 	last_error = ""
+	last_warning = ""
 	var d: Dictionary = read_json(path)
 	if d.is_empty():
 		d = read_json(path + ".bak")
@@ -181,6 +186,7 @@ static func load(path: String) -> Project:
 			last_error = "could not read " + path + " or its .bak"
 			return null
 		print("Io: " + path + " was empty or unreadable, loaded the .bak instead")
+	last_warning = NewerFiles.note_loaded(path, d)
 	d = Migrations.migrate(d)
 	var project: Project = Project.from_dict(d)
 	project.path = path
@@ -300,10 +306,12 @@ static func snapshot_info(path: String) -> Dictionary:
 
 static func load_snapshot(path: String) -> Project:
 	last_error = ""
+	last_warning = ""
 	var d: Dictionary = read_json(path)
 	if d.is_empty():
 		last_error = "could not read the snapshot " + path.get_file()
 		return null
+	last_warning = NewerFiles.note_loaded("", d)
 	d = Migrations.migrate(d)
 	var project: Project = Project.from_dict(d)
 	project.path = ""

@@ -111,6 +111,9 @@ func _ready() -> void:
 	status = PmStatusBar.new()
 	_col.add_child(status)
 	_register_commands()
+	var extras: Object = load("res://host/module_extras.gd").call("shared")
+	if not extras.is_connected("changed", _on_extras_changed):
+		extras.connect("changed", _on_extras_changed)
 	_refresh_ws_tabs()
 	_sync_lock()
 	switch_workspace("editing")
@@ -131,7 +134,21 @@ func workspace_ids() -> PackedStringArray:
 
 func _own() -> Array[Dictionary]:
 	var list: Array[Dictionary] = dock.call("own_workspaces")
+	for mw: Dictionary in _module_workspaces():
+		list.append({"id": String(mw["id"]), "label": String(mw["label"])})
 	return list
+
+
+func _module_workspaces() -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	for w: Dictionary in (load("res://host/module_extras.gd").call("shared") as Object).get("workspaces"):
+		out.append(w)
+	return out
+
+
+func _on_extras_changed(what: String) -> void:
+	if what == "workspaces" and ws_tabs != null:
+		_refresh_ws_tabs()
 
 
 func workspace_label(id: String) -> String:
@@ -151,9 +168,14 @@ func _refresh_ws_tabs() -> void:
 		else:
 			ws_tabs.call("add_tab", id, String(o["label"]), 0)
 	var have: PackedStringArray = ws_tabs.call("ids")
+	var built_in: PackedStringArray = PackedStringArray()
+	for w: Dictionary in WORKSPACES:
+		built_in.append(String(w["id"]))
 	for id: String in have:
-		if bool(dock.call("is_own", id)) and not (id in want):
+		if not built_in.has(id) and not (id in want):
 			ws_tabs.call("remove_tab", id)
+			if String(dock.get("layout_name")) == id:
+				switch_workspace("editing", false)
 
 
 func _switch_quiet(name_: String) -> bool:
@@ -325,6 +347,42 @@ func _on_menu_picked(id: String) -> void:
 		Events.toast(Cmd.label(id) + " is not available yet")
 
 
+func _module_cmd(id: String, label: String, handler: Callable) -> void:
+	if not Cmd.has(id):
+		Cmd.register(id, {"label": label, "category": "File", "scope": "global", "keys": {}, "handler": handler, "owner": OWNER})
+	(load("res://host/module_extras.gd").call("shared") as Object).call("add_menu_item", OWNER, "file", id)
+
+
+func _on_cmd_install_module() -> void:
+	var dlg: FileDialog = FileDialog.new()
+	dlg.access = FileDialog.ACCESS_FILESYSTEM
+	dlg.use_native_dialog = true
+	dlg.file_mode = FileDialog.FILE_MODE_OPEN_ANY
+	dlg.filters = PackedStringArray(["*.zip ; Module zip"])
+	dlg.title = "Pick a module folder or zip"
+	var take: Callable = func(p: String) -> void:
+		(load("res://modules/core_panels/file_drop_router.gd") as GDScript).call("install_and_show", p, get_window())
+		dlg.queue_free()
+	dlg.file_selected.connect(take)
+	dlg.dir_selected.connect(take)
+	dlg.canceled.connect(dlg.queue_free)
+	add_child(dlg)
+	dlg.popup_centered_ratio(0.6)
+
+
+func _on_cmd_reload_modules() -> void:
+	var host: Node = get_node_or_null("/root/Host")
+	if host != null:
+		host.call("reload_modules")
+	var ev: Node = get_node_or_null("/root/Events")
+	if ev != null:
+		ev.call("toast", "Modules reloaded")
+
+
+func _on_cmd_modules_list() -> void:
+	ModulesList.open_window(self)
+
+
 func _cmd(id: String, handler: Callable, scope: String = "global", enabled: Callable = Callable(), toggle: Callable = Callable()) -> void:
 	var cat: Dictionary = Cmd.catalogue()
 	var label: String = id
@@ -344,6 +402,9 @@ func _register_commands() -> void:
 	for i: int in range(WORKSPACES.size()):
 		_cmd("window.workspace_" + str(i + 1), _on_cmd_workspace.bind(String(WORKSPACES[i]["id"])))
 	_cmd("window.workspace_reset", _on_cmd_workspace_reset)
+	_module_cmd("modules.install", "Install a Module...", _on_cmd_install_module)
+	_module_cmd("modules.reload", "Reload Modules", _on_cmd_reload_modules)
+	_module_cmd("modules.list", "Modules...", _on_cmd_modules_list)
 	_cmd("window.workspace_reset_saved", _on_cmd_reset_saved)
 	_cmd("window.workspace_save_as", _on_cmd_save_as)
 	_cmd("window.workspace_rename", _on_cmd_rename, "global", _is_own_current)

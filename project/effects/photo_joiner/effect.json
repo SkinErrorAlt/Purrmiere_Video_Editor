@@ -1,0 +1,23 @@
+{
+ "id": "photo_joiner",
+ "label": "Photo Joiner",
+ "category": "Time",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "The scene rebuilt as a collage of overlapping prints, the way David Hockney pieced a view together from dozens of snapshots. Each print is a little tilted and not quite lined up with its neighbours, and each one was taken at a different moment, so a walker is cut into pieces from different steps, a dancer's arm is in two places at once and the crowd never quite agrees with itself. The prints keep playing, each at its own moment behind the clip, with white borders, slight colour differences between prints and soft shadows where they overlap.",
+ "history": {"max": 62, "reach": ["span"], "seconds": ["span"]},
+ "params": [
+  {"key": "across", "label": "Prints across", "type": "int", "min": 2, "max": 10, "step": 1, "default": 5},
+  {"key": "span", "label": "Time between first and last print", "type": "float", "min": 0.1, "max": 2.0, "step": 0.01, "default": 1.6, "unit": " s"},
+  {"key": "order", "label": "Taken", "type": "enum", "choices": ["In any order", "Left to right", "Row by row"], "default": 0},
+  {"key": "tilt", "label": "Tilt", "type": "float", "min": 0.0, "max": 20.0, "step": 0.1, "default": 5.0, "unit": " deg"},
+  {"key": "scatter", "label": "Scatter", "type": "float", "min": 0.0, "max": 0.5, "step": 0.01, "default": 0.16},
+  {"key": "misalign", "label": "Prints disagree", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "border", "label": "White border", "type": "float", "min": 0.0, "max": 0.1, "step": 0.001, "default": 0.03},
+  {"key": "print_variation", "label": "Print to print colour", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45},
+  {"key": "shadow", "label": "Shadows", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.55},
+  {"key": "board", "label": "Board colour", "type": "color", "default": [0.11, 0.105, 0.1, 1.0]},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": [{"shader": "effect.gdshader"}]
+}

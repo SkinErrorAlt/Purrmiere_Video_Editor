@@ -1,0 +1,34 @@
+{
+ "id": "depth_relief",
+ "label": "Depth Relief",
+ "category": "Distort",
+ "tags": ["3d"],
+ "version": 1,
+ "blurb": "Pushes the picture out into a real 3D relief, raised by its brightness or by one channel, and looks at it from any angle: nearer parts move against farther ones as you turn it, raised shapes throw soft shadows across the lower ground, and the light can be moved round it with a shine on every slope. Key Height from 0 to grow the relief out of the flat picture, and key Tilt and Swivel to swing the camera round it.",
+ "params": [
+  {"key": "source", "label": "Height from", "type": "enum", "choices": ["Brightness", "Darkness", "Red", "Green", "Blue", "Saturation", "Alpha"], "default": 0},
+  {"key": "height", "label": "Height", "type": "float", "min": 0.0, "max": 100.0, "step": 0.1, "default": 35.0},
+  {"key": "smoothness", "label": "Smoothness", "type": "float", "min": 0.0, "max": 60.0, "step": 0.1, "default": 6.0, "unit": " px"},
+  {"key": "detail", "label": "Fine detail", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "tilt", "label": "Tilt", "type": "float", "min": -80.0, "max": 80.0, "step": 0.1, "default": 22.0, "unit": " deg"},
+  {"key": "swivel", "label": "Swivel", "type": "float", "min": -80.0, "max": 80.0, "step": 0.1, "default": -18.0, "unit": " deg"},
+  {"key": "roll", "label": "Roll", "type": "float", "min": -180.0, "max": 180.0, "step": 0.1, "default": 0.0, "unit": " deg"},
+  {"key": "camera_distance", "label": "Camera distance", "type": "float", "min": 0.5, "max": 8.0, "step": 0.01, "default": 1.3737},
+  {"key": "fov", "label": "Field of view", "type": "float", "min": 5.0, "max": 120.0, "step": 0.1, "default": 40.0, "unit": " deg"},
+  {"key": "scale", "label": "Scale", "type": "float", "min": 0.1, "max": 4.0, "step": 0.01, "default": 0.84},
+  {"key": "light_angle", "label": "Light from", "type": "float", "min": -180.0, "max": 180.0, "step": 1.0, "default": -135.0, "unit": " deg"},
+  {"key": "light_height", "label": "Light height", "type": "float", "min": 2.0, "max": 90.0, "step": 0.5, "default": 38.0, "unit": " deg"},
+  {"key": "shadows", "label": "Shadows", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.85},
+  {"key": "softness", "label": "Shadow softness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "shine", "label": "Shine", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "gloss", "label": "Gloss", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5}
+ ],
+ "handles": [{"kind": "angle", "key": "light_angle", "zero": "right", "turn": "cw"}],
+ "depth": {"kind": "plane", "tilt": "tilt", "swivel": "swivel", "roll": "roll", "distance": "camera_distance", "fov": "fov", "scale": "scale"},
+ "passes": [
+  {"shader": "height_x.gdshader", "scale": 0.5},
+  {"shader": "height_y.gdshader"},
+  {"shader": "cavity.gdshader"},
+  {"shader": "relief.gdshader", "scale": 2.0}
+ ]
+}

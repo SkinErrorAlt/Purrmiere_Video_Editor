@@ -19,6 +19,6 @@
   {"key": "shade", "label": "Shading", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
   {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
  ],
- "handles": [{"kind": "point", "key": "centre"}, {"kind": "angle", "key": "angle"}],
+ "handles": [{"kind": "point", "key": "centre", "when": {"key": "order", "is": [1]}}, {"kind": "angle", "key": "angle", "zero": "up", "turn": "cw", "when": {"key": "order", "is": [0]}}],
  "passes": "single"
 }

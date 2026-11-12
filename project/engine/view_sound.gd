@@ -128,6 +128,8 @@ static func on_history() -> void:
 		return
 	if quick_patch(d, seq, ids):
 		quick_patches += 1
+		return
+	push(d, seq, ids, true)
 
 
 static func refresh_signatures() -> void:

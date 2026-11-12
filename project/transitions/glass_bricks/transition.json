@@ -1,0 +1,19 @@
+{
+ "id": "glass_bricks",
+ "label": "Glass Bricks",
+ "group": "Distort",
+ "space": "2D",
+ "from": ["Sapphire Glass Blocks", "Boris Block Refract"],
+ "blurb": "A wall of thick glass bricks is laid up across the frame in front of the outgoing shot, course by course, and then the whole wall gives way and falls. Once the last brick is in, the wall is solid and the shot behind it has changed, so when the bricks drop they take the old picture down with them and leave the new one standing. The bottom courses go first and the ones above follow as their support disappears, each brick picking up speed under gravity and turning as it goes, so the wall comes apart from the floor up and the last pieces tumble out of the bottom of the frame. Every brick is a solid lens with a rounded face that pulls the picture towards its middle, cut off at the mortar line and smeared into a soft frosted core, with a bevel of light along its top and left edges and a shadow along its bottom and right. The courses are offset half a brick, the way a real glass block wall is laid.",
+ "default_duration": 1.4,
+ "params": [
+  {"key": "columns", "label": "Bricks across", "type": "float", "min": 2.0, "max": 24.0, "step": 0.5, "default": 7.0},
+  {"key": "courses", "label": "Courses", "type": "float", "min": 2.0, "max": 18.0, "step": 0.5, "default": 5.0},
+  {"key": "lens", "label": "Lens", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.85},
+  {"key": "frost", "label": "Frost", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "bevel", "label": "Bevel", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.85},
+  {"key": "mortar", "label": "Mortar", "type": "float", "min": 0.0, "max": 0.25, "step": 0.005, "default": 0.04},
+  {"key": "tumble", "label": "Tumble", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "stagger", "label": "Collapse spread", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.85}
+ ]
+}

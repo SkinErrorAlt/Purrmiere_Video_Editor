@@ -12,11 +12,15 @@ const TitleStyle := preload("res://doc/title_style.gd")
 const PmMenu := preload("res://ui/kit/pm_menu.gd")
 const PmUI := preload("res://ui/kit/pm_ui.gd")
 const MediaLoader := preload("res://modules/core_panels/media_loader.gd")
+const MadeSound := preload("res://doc/made_sound.gd")
+const MadePicture := preload("res://engine/made_picture.gd")
+const AdjustSize := preload("res://engine/adjust_size.gd")
+const Relink := preload("res://modules/core_panels/relink.gd")
 const PREF_LIKE_PREMIERE := "bin.like_premiere"
 const MENU_SETTINGS := "made_settings"
 const EAR_MENU_PATH := "res://modules/core_panels/ear_safety_menu.gd"
 const EDITABLE: PackedStringArray = ["adjust", "generator", "title", "shape"]
-const SIZED: PackedStringArray = ["generator"]
+const SIZED: PackedStringArray = ["generator", "adjust"]
 const TIMED: PackedStringArray = ["adjust", "generator"]
 const KIND_WORDS: Dictionary = {"adjust": "Adjustment layer", "generator": "Colour matte", "title": "Title", "shape": "Shape"}
 const SPAWNS: Array[Dictionary] = [
@@ -25,7 +29,15 @@ const SPAWNS: Array[Dictionary] = [
 	{"id": "new.black", "kind": "generator", "label": "Black video", "icon": "image", "colour": [0.0, 0.0, 0.0, 1.0]},
 	{"id": "new.title", "kind": "title", "label": "Title", "icon": "type"},
 	{"id": "new.shape", "kind": "shape", "label": "Shape", "icon": "grid"},
+	{"id": "new.bars", "kind": "generator", "label": "Bars and tone", "icon": "image", "pattern": "bars", "sound": "tone"},
+	{"id": "new.clear", "kind": "generator", "label": "Transparent video", "icon": "image", "pattern": "clear"},
+	{"id": "new.leader", "kind": "generator", "label": "Countdown leader", "icon": "image", "pattern": "countdown", "sound": "pop"},
 ]
+const PATTERN_WORDS: Dictionary = {"bars": "Bars and tone", "clear": "Transparent video", "countdown": "Countdown leader"}
+const LEADER_SECONDS := 8.0
+const POP_AT := 6.0
+const OWN_SIZE_CHOICES: Array = ["Covers the whole frame", "Its own size"]
+const SOUND_FIELD: Dictionary = {"bars": "Play the 1 kHz tone", "countdown": "Beep on the two"}
 const MIN_SIDE := 16
 const MAX_SIDE := 16384
 const MIN_FPS := 1.0
@@ -34,7 +46,10 @@ const MAX_SECONDS := 86400.0
 const FALLBACK_W := 1920
 const FALLBACK_H := 1080
 const FALLBACK_FPS := 30.0
-const ADJUST_NOTE := "An adjustment layer always covers the whole frame of the sequence it sits in."
+const ADJUST_NOTE := "An adjustment layer covers the whole frame of the sequence it sits in, or with its own size only a box of that size in the middle of the frame (move or scale it with Motion like any clip). Put it on a sound track and its sound effects change the sound of the tracks above it instead."
+const BARS_NOTE := "SMPTE colour bars. The tone is a steady 1 kHz sine at minus 20 dBFS on both channels."
+const CLEAR_NOTE := "An empty see-through clip, for effects that make their own picture."
+const LEADER_NOTE := "Counts 8 down to 2 with a sweep, one second a number. The 2 shows for one frame, with the beep when it is on, then black until the end."
 
 
 static func register_prefs() -> void:
@@ -66,6 +81,9 @@ static func menu_items(with_sequence: bool) -> Array:
 	for sp: Dictionary in SPAWNS:
 		var keys: String = Cmd.keys_text("file.new_title") if String(sp["id"]) == "new.title" else ""
 		items.append(PmMenu.item(String(sp["id"]), String(sp["label"]), keys, String(sp["icon"])))
+	if Cmd.has("audio.hide_picture"):
+		items.append(PmMenu.separator())
+		items.append(PmMenu.item("audio.hide_picture", "Picture or words hidden in sound...", "", "audio"))
 	return items
 
 
@@ -73,8 +91,19 @@ static func is_editable(m: MediaItem) -> bool:
 	return m != null and m.kind in EDITABLE
 
 
+static func pattern_of(m: MediaItem) -> String:
+	return MadePicture.pattern_of(m.props) if m != null else ""
+
+
+static func kind_word(m: MediaItem) -> String:
+	var p: String = pattern_of(m)
+	if not p.is_empty():
+		return String(PATTERN_WORDS.get(p, "Colour matte"))
+	return String(KIND_WORDS.get(m.kind if m != null else "", "Item"))
+
+
 static func settings_label(m: MediaItem) -> String:
-	return String(KIND_WORDS.get(m.kind if m != null else "", "Item")) + " settings"
+	return kind_word(m) + " settings"
 
 
 static func sequence_base(seq: Sequence) -> Dictionary:
@@ -97,6 +126,14 @@ static func defaults_for(spawn_id: String, seq: Sequence) -> Dictionary:
 		out["fps"] = float(base["fps"])
 	if sp.has("colour"):
 		out["colour"] = (sp["colour"] as Array).duplicate()
+	if sp.has("pattern"):
+		out["pattern"] = String(sp["pattern"])
+	if sp.has("sound"):
+		out["sound_on"] = true
+	if String(sp.get("pattern", "")) == "countdown":
+		out["duration"] = LEADER_SECONDS
+	if kind == "adjust":
+		out["own_size"] = false
 	return out
 
 
@@ -113,8 +150,18 @@ static func make_dict(d: Project, spawn_id: String, bin: String, values: Diction
 		md["fps"] = float(values.get("fps", FALLBACK_FPS))
 	if kind == "generator":
 		md["props"] = {"colour": (values.get("colour", TitleStyle.matte_defaults()["colour"]) as Array).duplicate()}
+		var pattern: String = String(values.get("pattern", sp.get("pattern", "")))
+		if not pattern.is_empty():
+			(md["props"] as Dictionary)[MadePicture.PATTERN_PROP] = pattern
+			if sp.has("sound") and bool(values.get("sound_on", true)):
+				(md["props"] as Dictionary)[MadeSound.SOUND_PROP] = String(sp["sound"])
+				if String(sp["sound"]) == MadeSound.SOUND_POP:
+					(md["props"] as Dictionary)[MadeSound.POP_AT_PROP] = POP_AT
+			md = MadeSound.stamp(md)
 	elif kind == "title":
 		md["props"] = {"text": label}
+	elif kind == "adjust" and bool(values.get("own_size", false)):
+		md["props"] = {AdjustSize.OWN_SIZE_PROP: true}
 	return md
 
 
@@ -143,17 +190,28 @@ static func fps_text(r: float) -> String:
 
 static func fields_for(kind: String, values: Dictionary) -> Array[Dictionary]:
 	var r: float = float(values.get("fps", FALLBACK_FPS))
+	var pattern: String = String(values.get("pattern", ""))
 	var out: Array[Dictionary] = [{"key": "label", "label": "Name", "type": "string", "default": String(values.get("label", ""))}]
+	if kind == "adjust":
+		out.append({"key": "own_size", "label": "Size", "type": "enum", "choices": OWN_SIZE_CHOICES, "default": 1 if bool(values.get("own_size", false)) else 0})
 	if kind in SIZED:
 		out.append({"key": "width", "label": "Width", "type": "string", "default": str(int(values.get("width", FALLBACK_W)))})
 		out.append({"key": "height", "label": "Height", "type": "string", "default": str(int(values.get("height", FALLBACK_H)))})
 	if kind in TIMED:
 		out.append({"key": "fps", "label": "Frame rate", "type": "string", "default": fps_text(r)})
 	out.append({"key": "duration", "label": "Duration", "type": "string", "default": Timecode.format(float(values.get("duration", MediaLoader.still_seconds())), r if r > 0.0 else FALLBACK_FPS)})
-	if kind == "generator":
+	if kind == "generator" and pattern.is_empty():
 		out.append({"key": "colour", "label": "Colour", "type": "string", "default": colour_hex(values.get("colour", null))})
+	if SOUND_FIELD.has(pattern):
+		out.append({"key": "sound_on", "label": String(SOUND_FIELD[pattern]), "type": "bool", "default": bool(values.get("sound_on", true))})
 	if kind == "adjust":
 		out.append({"key": "note", "label": "", "type": "note", "default": ADJUST_NOTE})
+	elif pattern == "bars":
+		out.append({"key": "note", "label": "", "type": "note", "default": BARS_NOTE})
+	elif pattern == "clear":
+		out.append({"key": "note", "label": "", "type": "note", "default": CLEAR_NOTE})
+	elif pattern == "countdown":
+		out.append({"key": "note", "label": "", "type": "note", "default": LEADER_NOTE})
 	return out
 
 
@@ -181,6 +239,10 @@ static func read_answer(kind: String, answer: Dictionary, current: Dictionary) -
 		if Color.html_is_valid(hex):
 			var c: Color = Color.html(hex)
 			out["colour"] = [c.r, c.g, c.b, 1.0]
+	if answer.has("sound_on"):
+		out["sound_on"] = bool(answer["sound_on"])
+	if kind == "adjust" and answer.has("own_size"):
+		out["own_size"] = int(answer["own_size"]) == 1
 	return out
 
 
@@ -192,6 +254,12 @@ static func values_of(m: MediaItem) -> Dictionary:
 		out["fps"] = m.fps if m.fps > 0.0 else FALLBACK_FPS
 	if m.kind == "generator":
 		out["colour"] = m.props.get("colour", TitleStyle.matte_defaults()["colour"])
+		var pattern: String = pattern_of(m)
+		if not pattern.is_empty():
+			out["pattern"] = pattern
+			out["sound_on"] = not String(m.props.get(MadeSound.SOUND_PROP, "")).is_empty()
+	if m.kind == "adjust":
+		out["own_size"] = AdjustSize.has_own_size(m)
 	return out
 
 
@@ -213,14 +281,63 @@ static func edit_cmds(m: MediaItem, values: Dictionary) -> Array[Command]:
 		var r: float = float(values.get("fps", m.fps))
 		if absf(r - m.fps) > 0.0001:
 			cmds.append(MediaCmds.SetMediaField.new(m.id, "fps", r))
+	var props: Dictionary = m.props.duplicate(true)
 	if m.kind == "generator" and values.has("colour"):
 		var now: Color = TitleStyle.colour_of(m.props.get("colour", null), Color(0.5, 0.5, 0.5, 1.0))
 		var want: Color = TitleStyle.colour_of(values["colour"], now)
 		if not now.is_equal_approx(want):
-			var props: Dictionary = m.props.duplicate(true)
 			props["colour"] = [want.r, want.g, want.b, want.a]
-			cmds.append(MediaCmds.SetMediaField.new(m.id, "props", props))
+	var pattern: String = pattern_of(m)
+	var sound_kind: String = String(spawn_of_pattern(pattern).get("sound", ""))
+	if not sound_kind.is_empty() and values.has("sound_on"):
+		if bool(values["sound_on"]):
+			props[MadeSound.SOUND_PROP] = sound_kind
+			if sound_kind == MadeSound.SOUND_POP:
+				props[MadeSound.POP_AT_PROP] = float(props.get(MadeSound.POP_AT_PROP, POP_AT))
+		else:
+			props.erase(MadeSound.SOUND_PROP)
+			props.erase(MadeSound.POP_AT_PROP)
+	if m.kind == "adjust" and values.has("own_size"):
+		if bool(values["own_size"]):
+			props[AdjustSize.OWN_SIZE_PROP] = true
+		else:
+			props.erase(AdjustSize.OWN_SIZE_PROP)
+	if props != m.props:
+		cmds.append(MediaCmds.SetMediaField.new(m.id, "props", props))
+	cmds.append_array(sound_cmds(m, values, props))
 	return cmds
+
+
+static func spawn_of_pattern(pattern: String) -> Dictionary:
+	if pattern.is_empty():
+		return {}
+	for sp: Dictionary in SPAWNS:
+		if String(sp.get("pattern", "")) == pattern:
+			return sp
+	return {}
+
+
+static func sound_cmds(m: MediaItem, values: Dictionary, props: Dictionary) -> Array[Command]:
+	var out: Array[Command] = []
+	if m.kind != "generator":
+		return out
+	var after: MediaItem = MediaItem.from_dict(m.to_dict())
+	after.props = props
+	after.duration = float(values.get("duration", m.duration))
+	after.fps = float(values.get("fps", m.fps))
+	if not MadeSound.has_sound(after):
+		if m.has_audio:
+			out.append(MediaCmds.SetMediaField.new(m.id, "has_audio", false))
+		return out
+	var path: String = MadeSound.write_for(after)
+	if path.is_empty():
+		return out
+	if not m.has_audio:
+		out.append(MediaCmds.SetMediaField.new(m.id, "has_audio", true))
+		out.append(MediaCmds.SetMediaField.new(m.id, "audio_streams", [{"index": 0, "channels": MadeSound.CHANNELS, "sample_rate": MadeSound.RATE, "lang": "", "title": "", "selected": true}]))
+	if path != m.path:
+		out.append(Relink.RelinkCmd.new(m.id, path))
+	return out
 
 
 static func apply_values(d: Project, media_id: String, values: Dictionary) -> bool:
@@ -283,3 +400,13 @@ static func on_clip_menu(host: Node, id: String, clip_id: String) -> bool:
 	if d != null and c != null:
 		open_settings(host, d, c.media_id)
 	return true
+
+
+static func thumb(m: MediaItem, width: int) -> Texture2D:
+	if m == null or m.kind != "generator":
+		return null
+	var w: int = maxi(width, 16)
+	var aspect: float = float(m.width) / float(m.height) if m.width > 0 and m.height > 0 else 16.0 / 9.0
+	var h: int = maxi(int(round(float(w) / maxf(aspect, 0.01))), 9)
+	var colour: Color = TitleStyle.colour_of(m.props.get("colour", null), Color(0.5, 0.5, 0.5, 1.0))
+	return ImageTexture.create_from_image(MadePicture.thumb_image(pattern_of(m), colour, w, h))

@@ -1,0 +1,21 @@
+{
+ "id": "mirage",
+ "label": "Mirage",
+ "category": "Distort",
+ "tags": ["light", "look"],
+ "version": 1,
+ "blurb": "Bends the light of the shot through layers of hot and cold air, ray traced row by row through a real air profile. Hot ground lifts every low ray back up, so a shimmering upside down copy of what stands above the horizon appears below it, as on a desert road, and low things vanish into the line where the two meet. Cold water puts warm air on top, so distant things loom up and stretch, and Fata Morgana stacks thin layers at eye level that pile the horizon into towers of upright and flipped strips. Turbulence in the hot air breaks it all into quick, flickering bands that drift with the wind. With no heat the picture is untouched.",
+ "params": [
+  {"key": "mode", "label": "Air", "type": "enum", "choices": ["Hot ground", "Cold water", "Fata Morgana"], "default": 0},
+  {"key": "horizon", "label": "Horizon", "type": "float", "min": 0.0, "max": 1.0, "step": 0.001, "default": 0.6},
+  {"key": "heat", "label": "Heat", "type": "float", "min": 0.0, "max": 0.3, "step": 0.001, "default": 0.08},
+  {"key": "layer", "label": "Air layer", "type": "float", "min": 0.05, "max": 3.0, "step": 0.01, "default": 0.35},
+  {"key": "shimmer", "label": "Shimmer", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "shimmer_size", "label": "Shimmer size", "type": "float", "min": 0.2, "max": 5.0, "step": 0.01, "default": 1.0},
+  {"key": "wind", "label": "Wind", "type": "float", "min": -4.0, "max": 4.0, "step": 0.01, "default": 0.6},
+  {"key": "speed", "label": "Speed", "type": "float", "min": 0.0, "max": 4.0, "step": 0.01, "default": 1.0},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "handles": [{"kind": "band", "key": "horizon", "width": "heat"}],
+ "passes": "single"
+}

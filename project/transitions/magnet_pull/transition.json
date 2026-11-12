@@ -1,0 +1,17 @@
+{
+ "id": "magnet_pull",
+ "label": "Magnet Pull",
+ "group": "Zoom and Camera",
+ "space": "2D",
+ "from": ["Alight Motion Suck In", "CapCut Vacuum"],
+ "blurb": "The outgoing shot is dragged into a single point as though something behind the frame had pulled it through: it shrinks towards the spot, winds round on itself as it goes and smears into radial streaks, until nothing is left. Then the incoming shot is thrown back out of the same point, unwinding the other way and springing a little past full size before it settles. Set where the point is, how much the picture twists on the way in, how long the streaks are and how hard the new shot springs out.",
+ "default_duration": 1.1,
+ "params": [
+  {"key": "centre", "label": "Point", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "swirl", "label": "Twist", "type": "float", "min": 0.0, "max": 4.0, "step": 0.01, "default": 1.0},
+  {"key": "streak", "label": "Streaks", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.55},
+  {"key": "spring", "label": "Spring out", "type": "float", "min": 0.0, "max": 0.6, "step": 0.01, "default": 0.18},
+  {"key": "backdrop", "label": "Behind", "type": "color", "default": [0.0, 0.0, 0.0, 1.0]}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}]
+}

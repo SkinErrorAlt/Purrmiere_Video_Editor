@@ -15,5 +15,6 @@
   {"key": "ink", "label": "Ink", "type": "color", "default": [0.08, 0.1, 0.18, 1.0]},
   {"key": "paper", "label": "Paper", "type": "color", "default": [0.95, 0.93, 0.86, 1.0]}
  ],
+ "handles": [{"kind": "angle", "key": "angle", "zero": "right", "turn": "cw"}, {"kind": "angle", "key": "cross_angle", "zero": "right", "turn": "cw", "when": {"key": "cross_hatch", "is": [true]}}],
  "passes": "single"
 }

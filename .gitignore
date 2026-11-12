@@ -23,3 +23,10 @@ OUTSTANDING.md
 # Dev build helpers (need the native build tree)
 build_and_run.bat
 scripts/
+Push to GitHub.bat
+
+# Exported standalone build output
+build/
+project/export_presets.cfg
+EFFECTS_AND_TRANSITIONS.md
+project/override.cfg

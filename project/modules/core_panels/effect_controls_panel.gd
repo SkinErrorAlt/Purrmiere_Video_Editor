@@ -3,12 +3,22 @@ extends "res://modules/core_panels/panel_base.gd"
 const KeyframeStrip := preload("res://ui/timeline/keyframe_strip.gd")
 const PmSlide := preload("res://ui/kit/pm_slide.gd")
 const FrameJobs := preload("res://host/frame_jobs.gd")
+const FreeKeys := preload("res://doc/free_keys.gd")
+const FxPick := preload("res://modules/core_panels/ec_fx_pick.gd")
+const ManyKeys := preload("res://modules/core_panels/many_keys.gd")
 const REGION_MAX := 8
 const EffectSource := preload("res://modules/core_panels/effect_source.gd")
+const EcRange := preload("res://modules/core_panels/ec_range.gd")
+const EcGroups := preload("res://modules/core_panels/ec_groups.gd")
+const EcSpeedBlur := preload("res://modules/core_panels/ec_speed_blur.gd")
 const ClipCmds := preload("res://doc/commands/clip_cmds.gd")
 const EffectCmds := preload("res://doc/commands/effect_cmds.gd")
 const Command := preload("res://doc/commands/command.gd")
 const TitleStyle := preload("res://doc/title_style.gd")
+const TextEcBlock := preload("res://modules/core_panels/text_ec_block.gd")
+const ShapeGeometry := preload("res://doc/shape_geometry.gd")
+const LetterRigBlock := preload("res://modules/core_panels/letter_rig_block.gd")
+const TextRuns := preload("res://doc/text_runs.gd")
 const LayerChain := preload("res://engine/layer_chain.gd")
 const MediaCmds := preload("res://doc/commands/media_cmds.gd")
 const Subtitles := preload("res://doc/subtitles.gd")
@@ -17,11 +27,17 @@ const PREF_SIMPLE := "controls.simple"
 const PREF_SPLIT_POS := "controls.split_position"
 const BLENDS: Array = [["normal", "Normal"], ["darken", "Darken"], ["multiply", "Multiply"], ["colour_burn", "Colour burn"], ["linear_burn", "Linear burn"], ["lighten", "Lighten"], ["screen", "Screen"], ["colour_dodge", "Colour dodge"], ["add", "Add"], ["overlay", "Overlay"], ["soft_light", "Soft light"], ["hard_light", "Hard light"], ["vivid_light", "Vivid light"], ["linear_light", "Linear light"], ["pin_light", "Pin light"], ["difference", "Difference"], ["exclusion", "Exclusion"], ["subtract", "Subtract"], ["divide", "Divide"], ["hue", "Hue"], ["saturation", "Saturation"], ["colour", "Colour"], ["luminosity", "Luminosity"]]
 const EffectOps := preload("res://modules/core_panels/effect_ops.gd")
+const EffectPanelHost := preload("res://modules/core_panels/effect_panel_host.gd")
+const TextFxBox := preload("res://modules/core_panels/text_fx_box.gd")
 const EffectDrop := preload("res://modules/core_panels/effect_drop.gd")
 const EffectMoveDrop := preload("res://modules/core_panels/effect_move_drop.gd")
 const ValueStyle := preload("res://modules/core_panels/value_style.gd")
 const ValueClipboard := preload("res://modules/core_panels/value_clipboard.gd")
 const MaskShape := preload("res://doc/mask_shape.gd")
+const MaskExtrasUi := preload("res://modules/core_panels/mask_extras_ui.gd")
+const ObjectMask := preload("res://doc/object_mask.gd")
+const ObjModels := preload("res://engine/obj_models.gd")
+const ObjectMatte := preload("res://engine/object_matte.gd")
 const AnimTime := preload("res://doc/anim_time.gd")
 const AnimDriver := preload("res://doc/anim_driver.gd")
 const AnimLayerUi := preload("res://modules/core_panels/anim_layer_ui.gd")
@@ -134,6 +150,9 @@ func _build(root_: Control) -> void:
 
 
 func target_clip() -> Clip:
+	var held: Dictionary = Verbs.selected_transition(seq())
+	if not held.is_empty():
+		return seq().clip_by_id(String(held.get("clip_id", "")))
 	return Bus.selected_clip(seq())
 
 
@@ -158,6 +177,8 @@ func _apply_search() -> void:
 		var holder: Control = r["strip_holder"]
 		holder.visible = visible
 		holder.call("set_open", _open_strips.has(String(r["path"])) and not _many_on, false)
+	for h: Control in panel_hosts():
+		h.visible = search.is_empty()
 
 
 func _stamp() -> String:
@@ -166,7 +187,7 @@ func _stamp() -> String:
 		return _many_stamp(many)
 	var c: Clip = target_clip()
 	if c == null:
-		return ""
+		return TransitionEc.free_key(TransitionEc.free_holder(seq()))
 	return _stamp_of(c)
 
 
@@ -384,6 +405,10 @@ func rebuild() -> void:
 		_flash_pick = ""
 	_built_for = now_for
 	var s: Sequence = seq()
+	var fh: TransitionEc.FreeHolder = TransitionEc.free_holder(s) if c == null else null
+	if fh != null:
+		_build_free(fh, keep, scroll_y)
+		return
 	if c == null or s == null:
 		PmUI.clear(_list)
 		_head.text = "No clip selected"
@@ -398,12 +423,42 @@ func rebuild() -> void:
 		if scroll_y > 0:
 			PmUI.restore_scroll(_scroll, scroll_y)
 		return
-	var more: int = Verbs.selection(s).size() - 1
-	_head.text = (c.label if not c.label.is_empty() else c.id) + ("  +" + str(more) + " more" if more > 0 else "")
+	var held: Dictionary = Verbs.selected_transition(s)
+	if not held.is_empty():
+		_head.text = String(TrRegistry.shared().call("label_for", Verbs.transition_side_of(c, String(held.get("side", "in"))))) + ("  out of " if String(held.get("side", "in")) == "out" else "  into ") + (c.label if not c.label.is_empty() else c.id)
+	else:
+		var more: int = Verbs.selection(s).size() - 1
+		_head.text = (c.label if not c.label.is_empty() else c.id) + ("  +" + str(more) + " more" if more > 0 else "")
 	_build_sections(c, section_plan(c, s), keep)
 	if _staged:
 		return
 	_rebuild_tail(scroll_y)
+
+
+func _build_free(fh: TransitionEc.FreeHolder, keep: Array[Dictionary], scroll_y: int) -> void:
+	_head.text = String(TrRegistry.shared().call("label_for", fh.spec())) + "  on its own"
+	var plan: Array[Dictionary] = []
+	plan.append(_step("free_transition|" + TransitionEc.free_key(fh), [], TransitionEc.build_free.bind(self, fh)))
+	_build_sections(null, plan, keep)
+	if _staged:
+		return
+	_rebuild_tail(scroll_y)
+
+
+func _is_free_row(path: String) -> bool:
+	var r: Dictionary = _row_for(path)
+	return not r.is_empty() and (r["spec"] as Dictionary).has(TransitionEc.FREE)
+
+
+func _refresh_free_keys(r: Dictionary, fh: TransitionEc.FreeHolder, ph: float) -> void:
+	var path: String = String(r["path"])
+	var p: Dictionary = fh.get_param(path)
+	var animated: bool = AnimProp.is_animated(p)
+	(r["stopwatch"] as Button).set("active", animated or bus().is_armed(fh.ft_id, path))
+	(r["nav"] as Control).modulate.a = 1.0 if animated else 0.35
+	if animated:
+		var has: bool = AnimProp.has_key_at(p, fh.param_time(path, ph - fh.start()))
+		(r["diamond"] as Button).set("icon_name", "diamond" if has else "diamond_o")
 
 
 func _rebuild_tail(scroll_y: int) -> void:
@@ -436,6 +491,13 @@ func _step(key: String, ident: Array, build: Callable) -> Dictionary:
 func section_plan(c: Clip, s: Sequence) -> Array[Dictionary]:
 	var out: Array[Dictionary] = []
 	var t: Track = s.track_of(c.id)
+	var held: Dictionary = Verbs.selected_transition(s)
+	if not held.is_empty():
+		if String(held.get("side", "in")) == "out":
+			out.append(_step("transition_out|" + TransitionEc.key_out(c), [c.id], TransitionEc.build_out.bind(self, c)))
+		else:
+			out.append(_step("transition|" + TransitionEc.key(c), [c.id], TransitionEc.build.bind(self, c)))
+		return out
 	var is_video: bool = t != null and t.is_picture(c)
 	var m: MediaItem = doc().media_by_id(c.media_id) if doc() != null else null
 	var mode: String = "simple" if simple else "full"
@@ -461,6 +523,8 @@ func section_plan(c: Clip, s: Sequence) -> Array[Dictionary]:
 	if t != null and t.is_sound(c) or (t != null and is_video and _has_audio(c)):
 		var streams: int = m.audio_streams.size() if m != null and m.audio_streams.size() > 1 else 0
 		out.append(_step("audio|" + str(streams) + "|" + _speed_rows_key(c, PackedStringArray(["audio"])), [], _build_audio.bind(c, t)))
+	if SoundAdjustEc.shown(self, c):
+		out.append(_step(SoundAdjustEc.key(self, c), [c.id], SoundAdjustEc.build.bind(self, c)))
 	if c.is_nest():
 		out.append(_step(ONCE + "|nest|" + c.id + "|" + str(Time.get_ticks_usec()), [c.id], _build_nest.bind(c)))
 	if is_video and not simple:
@@ -509,9 +573,11 @@ func _fx_step(c: Clip, entries: Array, index: int, prefix: String, sound: bool) 
 	if not sound:
 		parts.append(_mask_chip_text(c, e))
 		parts.append(str(Clip.mask_spills(e)))
+		parts.append(DepthFadeUi.key(c, e))
 	parts.append(_speed_rows_key(c, PackedStringArray([prefix + "." + uid]), prefix + "." + uid))
 	parts.append(_value_order_key(uid))
 	parts.append(PuppetUi.key(c, e))
+	parts.append(EcGroups.key(c, entries, index, sound))
 	for p: Dictionary in EffectSource.param_specs(def):
 		if String(p.get("type", "")) == "layer":
 			var s: Sequence = seq()
@@ -519,7 +585,14 @@ func _fx_step(c: Clip, entries: Array, index: int, prefix: String, sound: bool) 
 				for lt: Track in Verbs.layer_tracks(s):
 					parts.append(lt.id + "=" + lt.shown_label())
 			break
-	return _step("|".join(parts), [uid], _build_stack_entry.bind(c, entries, index, prefix, sound))
+	return _step("|".join(parts), [uid], _build_fx_entry.bind(c, entries, index, prefix, sound))
+
+
+func _build_fx_entry(c: Clip, entries: Array, index: int, prefix: String, sound: bool) -> void:
+	EcGroups.before(self, _list, c, entries, index, sound)
+	var n0: int = _list.get_child_count()
+	await _build_stack_entry(c, entries, index, prefix, sound)
+	EcGroups.after(_list, entries, index, n0)
 
 
 func _build_nest(c: Clip) -> void:
@@ -659,7 +732,8 @@ func _finish_sections() -> void:
 	var used: Dictionary = _bs["used"]
 	var swap: Dictionary = {}
 	var reused_rows: Array[Dictionary] = []
-	for pair: Variant in (_bs["reuse"] as Array):
+	var reuse_pairs: Array = _bs["reuse"]
+	for pair: Variant in reuse_pairs:
 		var sec: Dictionary = (pair as Array)[0]
 		var now: Array = (pair as Array)[1]
 		var was: Array = sec["ident"]
@@ -709,6 +783,18 @@ func _finish_sections() -> void:
 			_swap_paths(spare2["rows"], swap)
 	_swap_paths(reused_rows, swap)
 	_retarget_rows(c, reused_rows)
+	EcGroups.refold(_list)
+	if not swap.is_empty():
+		var moved: Array[Node] = []
+		for pair2: Variant in reuse_pairs:
+			moved.append_array(((pair2 as Array)[0] as Dictionary)["nodes"] as Array[Node])
+		for spare3: Dictionary in _spare:
+			moved.append_array(spare3["nodes"] as Array[Node])
+		for host: Control in panel_hosts():
+			for n4: Node in moved:
+				if n4.is_ancestor_of(host):
+					host.call("swap", swap)
+					break
 
 
 static func swapped(a: Variant, swap: Dictionary) -> Variant:
@@ -836,6 +922,10 @@ func _fold(title: String, key: String) -> VBoxContainer:
 
 func _build_motion(c: Clip) -> void:
 	var f: VBoxContainer = _fold("Motion", "motion")
+	var motion_head: Control = f.get("header")
+	motion_head.gui_input.connect(func(ev: InputEvent) -> void:
+		if EffectHandlesUi.motion_header_input(ev, target_clip()):
+			motion_head.accept_event())
 	var body: VBoxContainer = f.get("body")
 	_add_section_speed(f, "motion", "Motion")
 	f.call("add_right", ParentUi.header_whip(c, many_clips() if _many_on else []))
@@ -876,6 +966,7 @@ func _build_motion(c: Clip) -> void:
 		_add_row(body, {"path": "motion_blur.samples", "label": "Samples", "kind": "int", "min": 1.0, "max": 64.0, "step": 1.0, "indent": 1, "keyable": true})
 		if await _gate():
 			return
+		body.add_child(EcSpeedBlur.row(self, _label_width("Samples", 1)))
 		_add_row(body, {"path": "motion_blur.rotation", "label": "Rotation blur", "kind": "bool", "field": "motion_blur", "key": "rotation", "indent": 1})
 		if await _gate():
 			return
@@ -889,8 +980,16 @@ func _build_props(c: Clip, m: MediaItem) -> void:
 	_add_section_speed(f, "props", title)
 	if kind == "title":
 		_add_style_row(body, c)
-		_add_row(body, {"path": "props.text", "prop": "text", "keyable": true, "label": "Text", "kind": "multiline"})
+		_add_row(body, {"path": "props.text", "prop": "text", "keyable": true, "label": "Source Text", "kind": "multiline"})
+		body.add_child(TextEcBlock.make(self, c.id))
+		if not _many_on:
+			var rig_fold: VBoxContainer = PmFold.make("Letter rig: pose and key each letter", "controls.props.title.rig", false)
+			body.add_child(rig_fold)
+			(rig_fold.get("body") as VBoxContainer).add_child(LetterRigBlock.make(self, c.id))
 		body.add_child(_text_preset_row(c) if not _many_on else ManyButtons.text_presets(self))
+		var each_fold: VBoxContainer = PmFold.make("Each value on its own, with keyframes", "controls.props.title.each", _many_on)
+		body.add_child(each_fold)
+		body = each_fold.get("body")
 		_add_row(body, {"path": "props.reveal", "prop": "reveal", "keyable": true, "label": "Revealed", "kind": "float", "min": 0.0, "max": 1.0, "step": 0.01, "suffix": " %", "display_mul": 100.0, "indent": 1})
 		_add_row(body, {"path": "props.cursor", "prop": "cursor", "keyable": true, "label": "Cursor", "kind": "string", "indent": 1})
 		var fonts: Array = [PmDrop.choice("default", "Figtree (built in)")]
@@ -919,15 +1018,34 @@ func _build_props(c: Clip, m: MediaItem) -> void:
 		_add_row(body, {"path": "props.box_colour", "prop": "box_colour", "keyable": true, "label": "Box colour", "kind": "color"})
 		_add_row(body, {"path": "props.box_pad", "prop": "box_pad", "keyable": true, "label": "Box padding", "kind": "float", "min": 0.0, "max": 200.0, "step": 1.0, "suffix": " px", "indent": 1})
 		_add_row(body, {"path": "props.box_radius", "prop": "box_radius", "keyable": true, "label": "Box radius", "kind": "float", "min": 0.0, "max": 200.0, "step": 1.0, "suffix": " px", "indent": 1})
+		_add_row(body, {"path": "props.baseline", "prop": "baseline", "keyable": true, "label": "Baseline shift", "kind": "float", "min": -500.0, "max": 500.0, "step": 1.0, "suffix": " px"})
+		_add_row(body, {"path": "props.shadow_size", "prop": "shadow_size", "keyable": true, "label": "Shadow size", "kind": "float", "min": 0.0, "max": 60.0, "step": 0.5, "suffix": " px", "indent": 1})
+		body = f.get("body")
 	elif kind == "shape":
-		var shapes: Array = [PmDrop.choice("rect", "Rectangle"), PmDrop.choice("ellipse", "Ellipse"), PmDrop.choice("line", "Line")]
+		var shapes: Array = []
+		for si: int in ShapeGeometry.SHAPES.size():
+			shapes.append(PmDrop.choice(ShapeGeometry.SHAPES[si], ShapeGeometry.SHAPE_LABELS[si]))
 		_add_row(body, {"path": "props.shape", "prop": "shape", "keyable": true, "label": "Shape", "kind": "enum", "choices": shapes})
+		_add_row(body, {"path": "props.sides", "prop": "sides", "keyable": true, "label": "Polygon sides", "kind": "float", "min": 3.0, "max": 64.0, "step": 1.0, "default": 6.0, "indent": 1})
+		_add_row(body, {"path": "props.points", "prop": "points", "keyable": true, "label": "Star points", "kind": "float", "min": 3.0, "max": 64.0, "step": 1.0, "default": 5.0, "indent": 1})
+		_add_row(body, {"path": "props.inner", "prop": "inner", "keyable": true, "label": "Star inner size", "kind": "float", "min": 0.02, "max": 1.0, "step": 0.01, "suffix": " %", "display_mul": 100.0, "default": 0.45, "indent": 1})
+		_add_row(body, {"path": "props.spin", "prop": "spin", "keyable": true, "label": "Turn", "kind": "float", "min": -3600.0, "max": 3600.0, "step": 1.0, "suffix": "°", "default": 0.0})
+		var fills: Array = []
+		for fi: int in ShapeGeometry.FILLS.size():
+			fills.append(PmDrop.choice(ShapeGeometry.FILLS[fi], ShapeGeometry.FILL_LABELS[fi]))
+		_add_row(body, {"path": "props.fill", "prop": "fill", "keyable": false, "label": "Fill", "kind": "enum", "choices": fills, "default": "solid"})
 		_add_row(body, {"path": "props.colour", "prop": "colour", "keyable": true, "label": "Colour", "kind": "color"})
+		_add_row(body, {"path": "props.colour2", "prop": "colour2", "keyable": true, "label": "Second colour", "kind": "color", "indent": 1})
+		_add_row(body, {"path": "props.gradient_angle", "prop": "gradient_angle", "keyable": true, "label": "Gradient angle", "kind": "float", "min": -360.0, "max": 360.0, "step": 1.0, "suffix": "°", "default": 90.0, "indent": 1})
+		_add_row(body, {"path": "props.gradient_mid", "prop": "gradient_mid", "keyable": true, "label": "Gradient middle", "kind": "float", "min": 0.02, "max": 0.98, "step": 0.01, "suffix": " %", "display_mul": 100.0, "default": 0.5, "indent": 1})
 		_add_row(body, {"path": "props.width", "prop": "width", "keyable": true, "label": "Width", "kind": "float", "min": 0.001, "max": 1.0, "step": 0.01, "suffix": " %", "display_mul": 100.0})
 		_add_row(body, {"path": "props.height", "prop": "height", "keyable": true, "label": "Height", "kind": "float", "min": 0.001, "max": 1.0, "step": 0.01, "suffix": " %", "display_mul": 100.0})
 		_add_row(body, {"path": "props.radius", "prop": "radius", "keyable": true, "label": "Corner radius", "kind": "float", "min": 0.0, "max": 500.0, "step": 1.0, "suffix": " px"})
 		_add_row(body, {"path": "props.border", "prop": "border", "keyable": true, "label": "Border", "kind": "float", "min": 0.0, "max": 100.0, "step": 1.0, "suffix": " px"})
 		_add_row(body, {"path": "props.border_colour", "prop": "border_colour", "keyable": true, "label": "Border colour", "kind": "color", "indent": 1})
+		_add_row(body, {"path": "props.trim_start", "prop": "trim_start", "keyable": true, "label": "Trim start", "kind": "float", "min": 0.0, "max": 1.0, "step": 0.01, "suffix": " %", "display_mul": 100.0, "default": 0.0})
+		_add_row(body, {"path": "props.trim_end", "prop": "trim_end", "keyable": true, "label": "Trim end", "kind": "float", "min": 0.0, "max": 1.0, "step": 0.01, "suffix": " %", "display_mul": 100.0, "default": 1.0, "indent": 1})
+		_add_row(body, {"path": "props.trim_offset", "prop": "trim_offset", "keyable": true, "label": "Trim offset", "kind": "float", "min": -10.0, "max": 10.0, "step": 0.01, "suffix": " %", "display_mul": 100.0, "default": 0.0, "indent": 1})
 	else:
 		_add_row(body, {"path": "props.colour", "prop": "colour", "keyable": true, "label": "Colour", "kind": "color"})
 	if not c.props.is_empty() and not _many_on:
@@ -1575,6 +1693,7 @@ func _build_masks(c: Clip) -> void:
 		PmUI.tip(b, "Add a centred " + String(spec[1]).to_lower() + " mask, then set its position and size below")
 		b.pressed.connect(_on_add_mask.bind(String(spec[0])))
 		row.add_child(b)
+	MaskExtrasUi.add_buttons(self, row)
 	body.add_child(row)
 	_fit_lead_row(row, [spacer] as Array[Control], 2)
 	var modes: Array = [PmDrop.choice("add", "Add"), PmDrop.choice("subtract", "Subtract"), PmDrop.choice("intersect", "Intersect")]
@@ -1596,9 +1715,15 @@ func _build_masks(c: Clip) -> void:
 		body.add_child(mrow)
 		if mid.is_empty():
 			continue
+		if ObjectMask.is_object(mask):
+			_add_object_rows(body, mask)
+			_add_row(body, {"path": "masks." + mid + ".edge_contrast", "label": "Edge sharpness", "kind": "float", "min": 1.0, "max": 24.0, "step": 0.1, "keyable": true, "indent": 1})
+			_add_row(body, {"path": "masks." + mid + ".edge_shift", "label": "Edge shift", "kind": "float", "min": -0.5, "max": 0.5, "step": 0.01, "keyable": true, "indent": 1})
+			_add_row(body, {"path": "masks." + mid + ".cuts", "label": "Cut the clip to the object", "kind": "bool", "keyable": false, "indent": 1})
 		mrow.add_child(_section_speed_ui(body, "masks." + mid, MaskShape.label_of(mask, i), {}, 1))
 		var base: String = "masks." + mid + "."
 		_add_row(body, {"path": base + "mode", "label": "Mode", "kind": "enum", "choices": modes, "keyable": true, "indent": 1})
+		MaskExtrasUi.mask_rows(self, body, mask)
 		if MaskShape.is_box(mask) and String(mask.get("region_of", "")).is_empty():
 			_add_row(body, {"path": base + "centre", "label": "Position", "kind": "vec2", "step": 0.001, "display_mul": 100.0, "suffix": " %", "keyable": true, "indent": 1})
 			_add_row(body, {"path": base + "size", "label": "Size", "kind": "vec2", "step": 0.001, "display_mul": 100.0, "suffix": " %", "keyable": true, "indent": 1})
@@ -1607,6 +1732,100 @@ func _build_masks(c: Clip) -> void:
 		_add_row(body, {"path": base + "expand", "label": "Expand", "kind": "float", "min": -500.0, "max": 500.0, "step": 0.5, "suffix": " px", "keyable": true, "indent": 1})
 		_add_row(body, {"path": base + "opacity", "label": "Opacity", "kind": "float", "min": 0.0, "max": 1.0, "step": 0.01, "suffix": " %", "display_mul": 100.0, "keyable": true, "indent": 1})
 		_add_row(body, {"path": base + "invert", "label": "Invert", "kind": "bool", "keyable": true, "indent": 1})
+
+
+func _add_object_rows(body: Node, mask: Dictionary) -> void:
+	var keys: PackedInt32Array = ObjectMask.key_frames(mask)
+	var model: String = String(mask.get("model", ""))
+	var told: String = ObjModels.label(model) if not model.is_empty() else "not worked out yet"
+	var info: HBoxContainer = PmUI.hbox(Tk.px(4.0))
+	info.add_child(_spacer(float(Tk.px(Tk.sz("button_h")))))
+	var tracked: int = int(ObjectMatte.frames_of_mask(mask))
+	var tail: String = ", " + str(tracked) + " tracked" if tracked > 0 else ""
+	info.add_child(PmLabel.small("Model: " + told + ", " + str(keys.size()) + (" frame picked" if keys.size() == 1 else " frames picked") + tail))
+	info.add_child(PmUI.spacer())
+	var back: Button = PmButton.make("Track back")
+	PmUI.tip(back, "Track the object backward through the clip from this frame")
+	back.pressed.connect(_on_object_track.bind("backward"))
+	info.add_child(back)
+	var forward: Button = PmButton.make("Track the object")
+	PmUI.tip(forward, "Track the object forward through the clip from this frame")
+	forward.pressed.connect(_on_object_track.bind("forward"))
+	info.add_child(forward)
+	var again: Button = PmButton.make("Work out again")
+	PmUI.tip(again, "Work the object out again on this frame from the clicks that made it")
+	again.pressed.connect(_on_object_again)
+	info.add_child(again)
+	var clear: Button = PmButton.make("Clear")
+	PmUI.tip(clear, "Take the object off this clip")
+	clear.pressed.connect(_on_object_clear)
+	info.add_child(clear)
+	body.add_child(info)
+	_add_edit_row(body, mask)
+
+
+func _add_edit_row(body: Node, mask: Dictionary) -> void:
+	var edited: PackedInt32Array = ObjectMask.edited_frames(mask)
+	var row: HBoxContainer = PmUI.hbox(Tk.px(4.0))
+	row.add_child(_spacer(float(Tk.px(Tk.sz("button_h")))))
+	if edited.is_empty():
+		row.add_child(PmLabel.small("No hand edits. Pick the Mask Brush to shave this mask back or add to it, Alt to shave"))
+		body.add_child(row)
+		return
+	var c: Clip = target_clip()
+	var s: Sequence = seq()
+	var here: int = int(load("res://modules/core_panels/object_ui.gd").call("frame_of", c, s, s.playhead)) if c != null and s != null else -1
+	var mine: bool = ObjectMask.has_edit(mask, here)
+	var held_from: int = ObjectMask.edit_holder(mask, here)
+	var state: String = ""
+	if mine:
+		state = ", painted on this one"
+	elif held_from >= 0:
+		state = ", and this frame is holding the one from frame " + str(held_from)
+	else:
+		state = ", none reaching this frame"
+	row.add_child(PmLabel.small("Hand edits on " + str(edited.size()) + (" frame" if edited.size() == 1 else " frames") + state))
+	row.add_child(PmUI.spacer())
+	var holds: CheckBox = CheckBox.new()
+	holds.text = "Hold until the next edit"
+	holds.button_pressed = ObjectMask.holds_on(mask)
+	PmUI.tip(holds, "An edit carries on to the frames after it until you paint another. Turn this off to make each edit its own frame only. A held edit is in the mask's own pixels, so on a fast moving object paint a fresh one rather than letting it drift")
+	holds.toggled.connect(_on_edit_holds)
+	row.add_child(holds)
+	if mine:
+		var one: Button = PmButton.make("Undo this frame")
+		PmUI.tip(one, "Drop the hand edits of this frame and go back to what the model worked out")
+		one.pressed.connect(_on_drop_edits.bind(true))
+		row.add_child(one)
+	var all: Button = PmButton.make("Drop every edit")
+	PmUI.tip(all, "Drop the hand edits of every frame and go back to what the model worked out. Tracking the object again keeps them, so this is the only thing that takes them off")
+	all.pressed.connect(_on_drop_edits.bind(false))
+	row.add_child(all)
+	body.add_child(row)
+
+
+func _on_edit_holds(on: bool) -> void:
+	load("res://modules/core_panels/object_ui.gd").call("set_edit_holds", on)
+
+
+func _on_drop_edits(this_frame_only: bool) -> void:
+	load("res://modules/core_panels/object_ui.gd").call("drop_edits", this_frame_only)
+
+
+func _on_object_track(direction: String) -> void:
+	var ui: GDScript = load("res://modules/core_panels/object_ui.gd")
+	if bool(ui.call("tracking")):
+		ui.call("stop_track")
+		return
+	ui.call("track", direction, 0)
+
+
+func _on_object_again() -> void:
+	load("res://modules/core_panels/object_ui.gd").call("again")
+
+
+func _on_object_clear() -> void:
+	load("res://modules/core_panels/object_ui.gd").call("clear_object")
 
 
 func add_mask(kind: String) -> bool:
@@ -1722,6 +1941,7 @@ func _build_stack_entry(c: Clip, entries: Array, index: int, prefix: String, sou
 	header.set_meta("uid", uid)
 	header.gui_input.connect(_on_header_input.bind(uid, header))
 	PmUI.tip(header, "Right click for copy, paste, duplicate and reset")
+	FxPick.register(header, c.id, uid, sound, c.id)
 	if not sound:
 		MonitorHandles.add_switch(f, c, e)
 	var bypass: Button = toggle_icon("check", "Effect on", bool(e.get("enabled", true)))
@@ -1742,7 +1962,7 @@ func _build_stack_entry(c: Clip, entries: Array, index: int, prefix: String, sou
 	grip.mouse_default_cursor_shape = Control.CURSOR_MOVE
 	grip.gui_input.connect(_on_grip_input.bind(grip))
 	f.call("add_right", grip)
-	if not sound:
+	if not sound and not TextFxBox.applies(def):
 		var chip: Button = PmButton.make(_mask_chip_text(c, e))
 		chip.set("quiet", true)
 		chip.pressed.connect(_on_mask_chip.bind(uid, chip))
@@ -1780,8 +2000,14 @@ func _build_stack_entry(c: Clip, entries: Array, index: int, prefix: String, sou
 		body.add_child(_pair_note(c, e, pairs))
 	if not sound and _shows_mask_edge(c, e):
 		body.add_child(_mask_edge_row(c, e, uid))
+	EffectPanelHost.add_for(self, body, def, uid)
+	TextFxBox.add_for(self, body, def, uid)
 	if await _build_value_rows(body, c, uid):
 		return
+	if not sound and not def.is_empty() and not TextFxBox.applies(def):
+		body.add_child(DepthFadeUi.row(c, e, _label_width(DepthFadeUi.TITLE, 0)))
+		for fade_spec: Dictionary in DepthFadeUi.specs(e, uid):
+			_add_row(body, fade_spec)
 	if eid == PuppetUi.TOOL_ID and not sound:
 		body.add_child(PuppetUi.rows(c, e, _label_width("Pins", 0)))
 	if eid == "pair_view" and not sound:
@@ -1856,6 +2082,9 @@ func _effect_param_spec(p: Dictionary, path: String, uid: String, eid: String, s
 
 
 func _region_cap(eid: String, key: String, e: Dictionary) -> float:
+	var grouped_cap: float = PvGroupRows.cap(eid, key, e)
+	if grouped_cap >= 0.0:
+		return grouped_cap
 	if eid == "pair_view" and key == "view":
 		return maxf(float(_crops_of(e).size() - 1), 0.0)
 	if eid == "grid" and key.begins_with("c") and key.ends_with("_crop"):
@@ -2072,10 +2301,13 @@ func _build_regions(body: VBoxContainer, c: Clip, e: Dictionary) -> bool:
 			body.add_child(_view_audio_row(c, uid, i) if not PvStreamRows.on(e) else PvStreamRows.view_row(self, c, uid, i))
 		_add_offset_row(body, uid, i)
 		_add_place_rows(body, c, e, uid, i)
+		load("res://modules/core_panels/view_border_rows.gd").call("add_rows", self, body, c, uid, i)
 		if await _gate():
 			return true
 	if PairLayouts.PairLayout.solo_of(e) < 0:
 		PvStreamRows.add_rows(self, body, c, e)
+	if crops.size() > 1:
+		body.add_child(load("res://modules/core_panels/named_offset_rows.gd").call("make", c, e))
 	body.add_child(PvAudio.always_row({c.id: uid}, float(Tk.px(Tk.sz("button_h")))))
 	_add_shared_sound_row(body, c, e)
 	body.add_child(_view_tools_row(uid))
@@ -2772,12 +3004,17 @@ func _on_header_input(event: InputEvent, uid: String, header: Control) -> void:
 			header.accept_event()
 			open_effect_menu(uid, header)
 		elif mb.button_index == MOUSE_BUTTON_LEFT and mb.pressed and not mb.double_click:
+			var pc: Clip = target_clip()
+			if pc != null and FxPick.handle_press(event, header, pc.id, uid, pc.is_audio_effect(uid), pc.id, FxPick.order_of(pc, pc.is_audio_effect(uid))):
+				return
 			if EffectHandlesUi.header_pressed(target_clip(), uid, header):
 				header.accept_event()
 
 
 func effect_menu_items(uid: String) -> Array:
-	var items: Array = [PmMenu.item("fx_copy", "Copy effect")]
+	var pc: Clip = target_clip()
+	var items: Array = FxPick.menu_items(pc.id, uid) if pc != null else []
+	items.append(PmMenu.item("fx_copy", "Copy effect"))
 	var paste: Dictionary = PmMenu.item("fx_paste", "Paste " + EffectOps.copied_label() + " onto the selected clips" if EffectOps.has_copied() else "Paste effect onto the selected clips")
 	if not EffectOps.has_copied():
 		paste["disabled"] = true
@@ -2806,6 +3043,12 @@ func effect_menu_picked(id: String, uid: String) -> void:
 	var d: Project = doc()
 	var s: Sequence = seq()
 	if c == null or d == null or s == null:
+		return
+	if id == FxPick.MENU_SAVE:
+		FxPick.open_save(self, c.id)
+		return
+	if id == FxPick.MENU_GROUP:
+		EcGroups.EffectGroups.make_group(d, s, c.id, FxPick.picked(c.id), FxPick.sound, "Effect group")
 		return
 	if id == "fx_copy":
 		if EffectOps.copy_effect(c, uid):
@@ -2923,6 +3166,7 @@ func _on_input(event: InputEvent) -> void:
 		return
 	if mb.button_index == MOUSE_BUTTON_LEFT:
 		pick_value("")
+		EffectHandlesUi.back_from(target_clip())
 		return
 	if mb.button_index != MOUSE_BUTTON_RIGHT:
 		return
@@ -3316,6 +3560,11 @@ func _row_by_pick(pick: String) -> Dictionary:
 
 func picked_value() -> String:
 	return _picked
+
+
+func _on_editor_pick(event: InputEvent, path: String) -> void:
+	if event is InputEventMouseButton and (event as InputEventMouseButton).pressed and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
+		EffectHandlesUi.pick_path(target_clip(), path)
 
 
 func pick_value(pick: String) -> void:
@@ -3736,6 +3985,8 @@ func value_items(c: Clip, uid: String) -> Array[Dictionary]:
 		out.append({"key": "mix", "group": "", "spec": _mix_spec(uid)})
 	for p: Dictionary in EffectSource.param_specs(def):
 		var key: String = String(p.get("key", ""))
+		if PvGroupRows.hides(eid, key, e):
+			continue
 		var spec: Dictionary = _effect_param_spec(p, prefix + "." + uid + "." + key, uid, eid, sound, e)
 		out.append({"key": key, "group": String(p.get("group", "")), "spec": spec})
 	return out
@@ -3949,7 +4200,7 @@ func _add_row(body: VBoxContainer, spec: Dictionary) -> void:
 	fold_btn.visible = keyable
 	fold_btn.pressed.connect(_on_fold.bind(path))
 	row.add_child(fold_btn)
-	if not keyable or _many_on:
+	if not keyable or _many_on or spec.has("members"):
 		fold_btn.visible = true
 		_ghost(fold_btn)
 	var label_box: HBoxContainer = PmUI.hbox(0)
@@ -4050,8 +4301,8 @@ func _add_row(body: VBoxContainer, spec: Dictionary) -> void:
 	rec["strip"] = null
 	rec["mods"] = null
 	_rows.append(rec)
-	rec["rec_dot"] = _add_record_dot(label_box, keyable)
-	if keyable and _open_strips.has(path) and c != null and not _many_on:
+	rec["rec_dot"] = _add_record_dot(label_box, keyable and not spec.has(TransitionEc.FREE))
+	if keyable and _open_strips.has(path) and (c != null or spec.has(TransitionEc.FREE)) and not _many_on:
 		_open_strip(rec)
 	if keyable and not AnimTime.is_inner(path):
 		_add_speed_row_for(body, spec)
@@ -4226,6 +4477,7 @@ func _make_editors(editors: HBoxContainer, spec: Dictionary, rec: Dictionary) ->
 		f.connect("value_changed", _on_field.bind(path, 0))
 		f.connect("edit_begun", _on_edit_begun)
 		f.connect("edit_ended", _on_edit_ended)
+		EcRange.attach(self, f, spec)
 		editors.add_child(f)
 		list.append(f)
 	elif kind == "vec2":
@@ -4282,6 +4534,8 @@ func _make_editors(editors: HBoxContainer, spec: Dictionary, rec: Dictionary) ->
 		te.focus_exited.connect(_on_multiline_done)
 		if path == "props.text":
 			TokenComplete.attach(te, _token_context)
+			te.deselect_on_focus_loss_enabled = false
+			te.name = "SourceText"
 		editors.add_child(te)
 		list.append(te)
 		fit_text_area.call_deferred(te)
@@ -4314,6 +4568,10 @@ func _make_editors(editors: HBoxContainer, spec: Dictionary, rec: Dictionary) ->
 		editors.add_child(le2)
 		list.append(le2)
 	rec["editors"] = list
+	if path.begins_with("effects.") or path.begins_with("transform."):
+		for ed_pick: Variant in list:
+			if ed_pick is Control:
+				(ed_pick as Control).gui_input.connect(_on_editor_pick.bind(path))
 
 
 func _row_for(path: String) -> Dictionary:
@@ -4341,6 +4599,8 @@ func _clip_time() -> float:
 func current_value(spec: Dictionary) -> Variant:
 	if spec.has("members"):
 		return _many_lead_value(spec)
+	if spec.has(TransitionEc.FREE):
+		return TransitionEc.free_value(TransitionEc.free_holder(seq()), spec, playhead(), fps())
 	var c: Clip = target_clip()
 	if c == null:
 		return null
@@ -4372,14 +4632,16 @@ func _value_at(c: Clip, spec: Dictionary, path: String) -> Variant:
 
 func refresh_values() -> void:
 	var c: Clip = target_clip()
-	if c == null:
+	var fh: TransitionEc.FreeHolder = TransitionEc.free_holder(seq()) if c == null else null
+	if c == null and fh == null:
 		return
 	if _many_on:
 		_refresh_many(_rows)
 		return
-	_refresh_anim_note(c)
-	_sync_record_dots(c)
-	_refresh_drives()
+	if c != null:
+		_refresh_anim_note(c)
+		_sync_record_dots(c)
+		_refresh_drives()
 	var ph: float = playhead()
 	for r: Dictionary in _rows:
 		var spec: Dictionary = r["spec"]
@@ -4398,13 +4660,14 @@ func refresh_values() -> void:
 				if bool(spec.get("db", false)):
 					fv = 20.0 * log(maxf(fv, 0.0001)) / log(10.0) if fv > 0.0001 else -60.0
 				f.set("value", fv * mul)
+				EcRange.sync(self, f, spec)
 		elif kind == "vec2":
 			for i: int in 2:
 				var f2: Control = editors[i]
 				if not bool(f2.get("_dragging")) and f2.get("_editor") == null:
 					var comp: float = float((v as Array)[i]) if v is Array and (v as Array).size() > i else 0.0
 					f2.set("value", comp * mul)
-			if r.has("link"):
+			if r.has("link") and c != null:
 				(r["link"] as Button).button_pressed = bool(c.transform.get("scale_linked", true))
 		elif kind == "bool":
 			var cb: CheckBox = editors[0]
@@ -4433,7 +4696,11 @@ func refresh_values() -> void:
 			(editors[0] as Button).call("set_value", lv if not lv.is_empty() else "none", false)
 		elif kind == "sound":
 			SoundWell.refresh(editors[0], v, self)
-		if bool(spec.get("keyable", false)):
+		if bool(spec.get("keyable", false)) and fh != null:
+			_refresh_free_keys(r, fh, ph)
+		elif bool(spec.get("keyable", false)) and spec.has("members"):
+			LinkedSound.refresh_keys(self, r, ph)
+		elif bool(spec.get("keyable", false)):
 			var p: Dictionary = c.get_param(String(spec["path"]))
 			var animated: bool = AnimProp.is_animated(p)
 			var armed: bool = animated or bus().is_armed(c.id, String(spec["path"]))
@@ -4452,6 +4719,7 @@ func refresh_values() -> void:
 				if int(mods_box.get_meta("mod_count", -1)) != mod_count and not _dragging_field:
 					_refresh_mods(r)
 	paint_values()
+	sync_panels()
 
 
 static func _as_colour(v: Variant) -> Color:
@@ -4466,6 +4734,9 @@ static func _as_colour(v: Variant) -> Color:
 func _write(spec: Dictionary, value: Variant) -> void:
 	if spec.has("members"):
 		_write_many(spec, value)
+		return
+	if spec.has(TransitionEc.FREE):
+		TransitionEc.write_free(self, TransitionEc.free_holder(seq()), spec, value)
 		return
 	var c: Clip = target_clip()
 	var d: Project = doc()
@@ -4524,6 +4795,46 @@ func _write(spec: Dictionary, value: Variant) -> void:
 	Verbs.set_clip_param(d, s, c.id, path, value, key_at, live)
 	if live:
 		_live_label = "Set " + String(spec["label"])
+
+
+var _panel_hosts: Array = []
+
+
+func adopt_panel(host: Control) -> void:
+	_panel_hosts.append(host)
+
+
+func panel_hosts() -> Array[Control]:
+	var alive: Array[Control] = []
+	var keep: Array = []
+	for h: Variant in _panel_hosts:
+		if is_instance_valid(h):
+			alive.append(h as Control)
+			keep.append(h)
+	_panel_hosts = keep
+	return alive
+
+
+func sync_panels() -> void:
+	for h: Control in panel_hosts():
+		if h.is_visible_in_tree():
+			h.call("sync")
+
+
+func panel_begin() -> void:
+	_on_edit_begun()
+
+
+func panel_write(spec: Dictionary, value: Variant, label: String) -> void:
+	_write(spec, value)
+	if _dragging_field:
+		_live_label = label
+
+
+func panel_end(label: String) -> void:
+	if not label.is_empty() and not _live_label.is_empty():
+		_live_label = label
+	_on_edit_ended()
 
 
 func _on_edit_begun() -> void:
@@ -4626,7 +4937,15 @@ func _on_multiline_changed(te: TextEdit, path: String) -> void:
 		_dragging_field = true
 		_live_label = ""
 	fit_text_area(te)
+	var c_was: Clip = target_clip()
+	var was: String = ""
+	if path == "props.text" and c_was != null:
+		var pop0: GDScript = load("res://modules/core_panels/text_popout.gd")
+		var raw0: Variant = TextRuns.plain((pop0.call("title_props", doc(), c_was) as Dictionary).get("text", ""))
+		was = String(raw0) if raw0 is String else ""
 	_write(r["spec"], te.text)
+	if path == "props.text" and c_was != null and was != te.text:
+		(load("res://modules/core_panels/text_popout.gd") as GDScript).call("shift_picks", doc(), seq().id, c_was.id, was, te.text)
 
 
 func _token_context() -> Dictionary:
@@ -4729,9 +5048,9 @@ func _on_browse_texture(path: String) -> void:
 		_texture_dialog.access = FileDialog.ACCESS_FILESYSTEM
 		_texture_dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
 		_texture_dialog.use_native_dialog = true
-		_texture_dialog.filters = PackedStringArray(["*.png,*.jpg,*.jpeg,*.webp,*.bmp,*.tga,*.cube ; Pictures and LUTs", "*.cube ; LUTs"])
 		_texture_dialog.file_selected.connect(_on_texture_picked)
 		_root.add_child(_texture_dialog)
+	_texture_dialog.filters = load("res://doc/border_reel.gd").call("dialog_filters", path)
 	_texture_target = {"path": path}
 	_texture_dialog.popup_centered(Vector2i(900, 600))
 
@@ -4741,8 +5060,11 @@ func _on_texture_picked(file: String) -> void:
 
 
 func _on_stopwatch(path: String) -> void:
-	if _many_on:
+	if _many_on or not _many_row(path).is_empty():
 		_stopwatch_many(path)
+		return
+	if _is_free_row(path):
+		TransitionEc.free_stopwatch(self, TransitionEc.free_holder(seq()), path)
 		return
 	var c: Clip = target_clip()
 	var d: Project = doc()
@@ -4787,8 +5109,11 @@ func _seed_for(c: Clip, path: String) -> Variant:
 
 
 func _on_key_toggle(path: String) -> void:
-	if _many_on:
+	if _many_on or not _many_row(path).is_empty():
 		_key_toggle_many(path)
+		return
+	if _is_free_row(path):
+		TransitionEc.free_key_toggle(self, TransitionEc.free_holder(seq()), path)
 		return
 	var c: Clip = target_clip()
 	if c != null:
@@ -4796,8 +5121,11 @@ func _on_key_toggle(path: String) -> void:
 
 
 func _on_key_nav(path: String, dir: int) -> void:
-	if _many_on:
+	if _many_on or not _many_row(path).is_empty():
 		_key_nav_many(path, dir)
+		return
+	if _is_free_row(path):
+		TransitionEc.free_key_nav(self, TransitionEc.free_holder(seq()), path, dir)
 		return
 	var c: Clip = target_clip()
 	if c == null:
@@ -4831,13 +5159,14 @@ func _on_fold(path: String) -> void:
 
 func _open_strip(r: Dictionary, animate: bool = false) -> void:
 	var c: Clip = target_clip()
-	if c == null:
+	var strip_id: String = c.id if c != null else FreeKeys.held_id(seq())
+	if strip_id.is_empty():
 		return
 	var holder: Control = r["strip_holder"]
 	var inner: VBoxContainer = holder.get("inner")
 	var fresh: bool = r["strip"] == null
 	if fresh:
-		var strip: Control = KeyframeStrip.make(c.id, String(r["path"]))
+		var strip: Control = KeyframeStrip.make(strip_id, String(r["path"]))
 		var rng: Vector2 = _declared_range(r["spec"])
 		strip.set("range_lo", rng.x)
 		strip.set("range_hi", rng.y)
@@ -5188,7 +5517,7 @@ func open_anim_sheet(path: String, kind: String) -> Control:
 
 
 func drivable(spec: Dictionary) -> bool:
-	if not bool(spec.get("keyable", false)) or AnimTime.is_inner(String(spec.get("path", ""))):
+	if not bool(spec.get("keyable", false)) or spec.has(TransitionEc.FREE) or AnimTime.is_inner(String(spec.get("path", ""))):
 		return false
 	var kind: String = String(spec.get("kind", ""))
 	return DRIVE_KINDS.has(kind) or (kind == "enum" and bool(spec.get("numeric", false)))
@@ -5597,6 +5926,9 @@ func _on_row_menu(path: String, anchor: Control) -> void:
 		return
 	var r: Dictionary = _row_for(path)
 	var keyable: bool = not r.is_empty() and bool((r["spec"] as Dictionary).get("keyable", false))
+	if _is_free_row(path):
+		TransitionEc.free_row_menu(self, TransitionEc.free_holder(seq()), path, keyable, anchor)
+		return
 	var items: Array = [PmMenu.item("reset", "Reset to default")]
 	items.append_array(value_clip_items(path))
 	items.append_array(_speed_menu_items(path, keyable))
@@ -5610,6 +5942,8 @@ func _on_row_menu(path: String, anchor: Control) -> void:
 			items.append(PmMenu.item("drive", "Drive this value"))
 		items.append(PmMenu.item("add_noise", "Add noise"))
 		items.append(PmMenu.item("add_wave", "Add wave"))
+		if String((r["spec"] as Dictionary).get("kind", "")) == "color":
+			items.append(PmMenu.sub_item("cspace_menu", "Colour blend between keys", colour_space_items(path)))
 		items.append_array(AnimLayerUi.menu_items(anim_layer_prop(path)))
 		var c: Clip = target_clip()
 		if c != null and AnimProp.has_modifiers(c.get_param(path)):
@@ -5623,7 +5957,34 @@ func _on_row_menu(path: String, anchor: Control) -> void:
 		m.connect("picked", _on_row_menu_picked.bind(path))
 
 
+const CSPACE_PICK := "cspace:"
+
+
+func colour_space_items(path: String) -> Array:
+	var c: Clip = target_clip()
+	var cur: String = AnimProp.colour_space(c.get_param(path)) if c != null else "rgb"
+	var out: Array = []
+	for i: int in AnimProp.COLOUR_SPACES.size():
+		out.append(PmMenu.check_item(CSPACE_PICK + AnimProp.COLOUR_SPACES[i], AnimProp.COLOUR_SPACE_LABELS[i], AnimProp.COLOUR_SPACES[i] == cur))
+	return out
+
+
+func set_colour_space(path: String, cs: String) -> bool:
+	var c: Clip = target_clip()
+	var r: Dictionary = _row_for(path)
+	if c == null or r.is_empty():
+		return false
+	var p: Dictionary = c.get_param(path)
+	if p.is_empty():
+		p = AnimProp.make(current_value(r["spec"]))
+	_write_prop(path, AnimProp.with_colour_space(p, cs), "Colour blend")
+	return true
+
+
 func _on_row_menu_picked(id: String, path: String) -> void:
+	if id.begins_with(CSPACE_PICK):
+		set_colour_space(path, id.substr(CSPACE_PICK.length()))
+		return
 	if AnimLayerUi.owns_menu(id):
 		open_anim_sheet(path, AnimLayerUi.kind_of_menu(id))
 		return
@@ -5890,11 +6251,15 @@ func _flush_live_values() -> void:
 const MultiField := preload("res://modules/core_panels/multi_field.gd")
 const ManyButtons := preload("res://modules/core_panels/many_buttons.gd")
 const PvGroups := preload("res://modules/core_panels/pv_groups.gd")
+const PvGroupRows := preload("res://modules/core_panels/pv_group_rows.gd")
 const ParentUi := preload("res://modules/core_panels/parent_ui.gd")
 const PuppetUi := preload("res://modules/core_panels/puppet_ui.gd")
+const DepthFadeUi := preload("res://modules/core_panels/depth_fade_ui.gd")
 const LinkedSound := preload("res://modules/core_panels/linked_sound.gd")
+const SoundAdjustEc := preload("res://modules/core_panels/sound_adjust_ec.gd")
 const TextEcRows := preload("res://modules/core_panels/text_ec_rows.gd")
 const TransitionEc := preload("res://modules/core_panels/transition_ec_rows.gd")
+const TrRegistry := preload("res://engine/transition_registry.gd")
 const ValueOffsetUi := preload("res://modules/core_panels/value_offset_ui.gd")
 const SoundWell := preload("res://modules/core_panels/sound_well.gd")
 const MANY_NOTE :="A change goes to every selected clip that has the value"
@@ -6030,6 +6395,7 @@ func _build_many(clips: Array[Clip]) -> void:
 	_many_total = clips.size()
 	_head.text = str(clips.size()) + " clips selected"
 	_list.add_child(_many_note_row(MANY_NOTE))
+	_list.add_child(ManyKeys.toggle_row(self))
 	var pictures: Array[Clip] = []
 	var sounds: Array[Clip] = []
 	var nests: Array[Clip] = []
@@ -6231,6 +6597,7 @@ func _refresh_many(rows: Array[Dictionary]) -> void:
 		var rd: Variant = r.get("rec_dot", null)
 		if rd is Control and is_instance_valid(rd) and (rd as Control).visible != dot:
 			(rd as Control).visible = dot
+	sync_panels()
 
 
 func _show_many(r: Dictionary, spec: Dictionary, vals: Array) -> void:
@@ -6365,7 +6732,7 @@ func _field_many(spec: Dictionary, real: float, component: int) -> void:
 		else:
 			arr[idx] = real
 		per[String(cid_v)] = arr
-	_write_many(spec, null, per)
+	_write_many(spec, null, ManyKeys.components(self, spec, real, idx, per))
 
 
 func _write_many(spec: Dictionary, value: Variant, per_clip: Dictionary = {}, flat: bool = false, label: String = "") -> void:
@@ -6374,6 +6741,8 @@ func _write_many(spec: Dictionary, value: Variant, per_clip: Dictionary = {}, fl
 	if d == null or s == null:
 		return
 	var members: Dictionary = spec["members"]
+	if per_clip.is_empty() and not flat:
+		per_clip = ManyKeys.relative(self, spec, value)
 	var what: String = label if not label.is_empty() else "Set " + String(spec["label"])
 	var live: bool = _dragging_field
 	if not flat and _record_many(spec, members, value, per_clip):
@@ -6754,6 +7123,7 @@ func _build_masks_many(clips: Array[Clip]) -> void:
 		PmUI.tip(b, "Add a centred " + String(spec[1]).to_lower() + " mask to every selected picture")
 		b.pressed.connect(add_mask_many.bind(String(spec[0])))
 		row.add_child(b)
+	MaskExtrasUi.add_buttons(self, row, true)
 	body.add_child(row)
 	_fit_lead_row(row, [spacer] as Array[Control], 2)
 	var most: int = 0
@@ -6988,11 +7358,14 @@ func _build_group_many(g: Dictionary, sound: bool) -> void:
 		by_key[Clip.MIX_KEY] = {"group": "", "spec": {"path": canon + "." + Clip.MIX_KEY, "label": "Amount", "kind": "float", "min": 0.0, "max": 1.0, "step": 0.01, "suffix": " %", "display_mul": 100.0, "keyable": true, "members": _group_paths(uids, prefix, Clip.MIX_KEY), "fx_uid": lead_uid, "fx_key": Clip.MIX_KEY, "fx_members": uids.duplicate()}}
 	for p: Dictionary in EffectSource.param_specs(def):
 		var key: String = String(p.get("key", ""))
+		if PvGroupRows.hides_all(eid, key, entries.values()):
+			continue
 		var spec: Dictionary = _effect_param_spec(p, canon + "." + key, lead_uid, eid, sound, lead_e)
 		spec["members"] = _group_paths(uids, prefix, key)
 		spec["fx_members"] = uids.duplicate()
 		keys.append(key)
 		by_key[key] = {"group": String(p.get("group", "")), "spec": spec}
+	EffectPanelHost.add_for(self, body, def, lead_uid, by_key)
 	var last_group: String = ""
 	for key2: String in _many_arrange(uids, keys):
 		if not by_key.has(key2):
@@ -7003,6 +7376,10 @@ func _build_group_many(g: Dictionary, sound: bool) -> void:
 			last_group = group
 			_add_group_label(body, group)
 		_add_row(body, item["spec"])
+	if not sound and not def.is_empty():
+		body.add_child(DepthFadeUi.many_row(uids, _label_width(DepthFadeUi.TITLE, 0)))
+		for fade_spec: Dictionary in DepthFadeUi.many_specs(uids, lead_e, lead_uid):
+			_add_row(body, fade_spec)
 	if eid == "pair_view" and not sound:
 		ManyButtons.pair_view(self, body, g)
 	_many_count = 0

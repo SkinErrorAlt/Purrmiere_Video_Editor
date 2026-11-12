@@ -1,0 +1,36 @@
+{
+ "id": "text_leetspeak",
+ "label": "Leetspeak",
+ "category": "Text",
+ "version": 1,
+ "applies_to": "text",
+ "text_transform": "leetspeak",
+ "tags": [
+  "text",
+  "cipher"
+ ],
+ "blurb": "Swaps letters for look-alike digits and symbols (4 for A, 3 for E).",
+ "params": [
+  {
+   "key": "level",
+   "label": "Strength",
+   "type": "enum",
+   "choices": [
+    "Basic: 4 3 1 0 5 7",
+    "Strong: more letters and symbols"
+   ],
+   "default": 0
+  },
+  {
+   "key": "direction",
+   "label": "Direction",
+   "type": "enum",
+   "choices": [
+    "Encode",
+    "Decode"
+   ],
+   "default": 0
+  }
+ ],
+ "passes": []
+}

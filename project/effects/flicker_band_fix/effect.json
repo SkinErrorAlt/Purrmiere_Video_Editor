@@ -1,0 +1,24 @@
+{
+ "id": "flicker_band_fix",
+ "label": "Flicker Band Fix",
+ "category": "Image Control",
+ "tags": ["repair"],
+ "version": 1,
+ "blurb": "Takes out the dark and bright bands that roll across a shot filmed under LED, fluorescent or stage lights, or of a screen, when the shutter does not match the light's flicker. A phone or camera reads its picture one row at a time, so the flicker lands as a brightness change that is the same all along each row: this measures that change row by row against the rows around it, ignoring edges, clipped parts and anything that is really in the scene, and divides it back out. Fix colour bands too handles lights whose flicker also shifts the colour. Turn the bands upright for footage shot with the phone on its side.",
+ "params": [
+  {"key": "band_size", "label": "Widest band spacing", "type": "float", "min": 16.0, "max": 270.0, "step": 1.0, "default": 160.0, "unit": " px"},
+  {"key": "direction", "label": "Bands run", "type": "enum", "choices": ["Across the frame", "Up and down"], "default": 0},
+  {"key": "colour", "label": "Fix colour bands too", "type": "bool", "default": true}
+ ],
+ "passes": [
+  {"shader": "down.gdshader", "scale": 0.5},
+  {"shader": "rows.gdshader", "scale": 1.0},
+  {"shader": "detrend.gdshader", "scale": 1.0},
+  {"shader": "spectrum.gdshader", "scale": 0.125},
+  {"shader": "coherence.gdshader", "scale": 1.0},
+  {"shader": "pick.gdshader", "scale": 1.0, "inputs": {"band_tex": 2}},
+  {"shader": "lockin.gdshader", "scale": 8.0, "inputs": {"band_tex": 2}},
+  {"shader": "median.gdshader", "scale": 1.0},
+  {"shader": "apply.gdshader", "scale": 2.0}
+ ]
+}

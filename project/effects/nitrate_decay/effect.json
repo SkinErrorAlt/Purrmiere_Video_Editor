@@ -1,0 +1,21 @@
+{
+ "id": "nitrate_decay",
+ "label": "Nitrate Decay",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Shows the shot as a reel of rotting nitrate film. Pools of decomposed emulsion eat into the picture with bubbled, crystalline edges and a brown crust, leaving a pale amber hollow where the image has gone or a dark sludge where it has rotted, and the picture around them is smeared where the emulsion slid. Every film frame rotted a little differently, so as the clip plays the pools boil and jump the way they do in old archive reels.",
+ "params": [
+  {"key": "decay", "label": "Decay", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "boil", "label": "Boil from frame to frame", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.55},
+  {"key": "frame_rate", "label": "Film frame rate", "type": "float", "min": 1.0, "max": 60.0, "step": 1.0, "default": 24.0, "unit": " fps"},
+  {"key": "blob_size", "label": "Pool size", "type": "float", "min": 20.0, "max": 800.0, "step": 1.0, "default": 260.0, "unit": " px"},
+  {"key": "bubbling", "label": "Bubbled edges", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "crust", "label": "Crust", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "melt", "label": "Emulsion slide", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "sludge", "label": "Dark rot", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "tone", "label": "Film stock", "type": "enum", "choices": ["Keep colour", "Faded colour", "Black and white"], "default": 0},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

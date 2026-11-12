@@ -19,7 +19,7 @@
   {"key": "animate", "label": "Comes in", "type": "enum", "choices": ["Already there", "Slides in and out", "Pops in and out", "Fades in and out"], "default": 1},
   {"key": "anim_time", "label": "Coming in time", "type": "float", "min": 0.05, "max": 2.0, "step": 0.01, "default": 0.4, "unit": " s"}
  ],
- "handles": [{"kind": "point", "key": "position"}],
+ "handles": [{"kind": "point", "key": "position", "when": {"key": "corner", "is": [5]}}],
  "passes": [
   {"shader": "pip.gdshader"}
  ]

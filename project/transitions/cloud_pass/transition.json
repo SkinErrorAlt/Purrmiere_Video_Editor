@@ -15,6 +15,6 @@
   {"key": "push", "label": "Push in", "type": "float", "min": 0, "max": 0.5, "step": 0.01, "default": 0.15}
  ],
  "handles": [
-  {"kind": "angle", "key": "sun_angle"}
+  {"kind": "angle", "key": "sun_angle", "zero": "right", "turn": "ccw"}
  ]
 }

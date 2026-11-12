@@ -4,6 +4,8 @@ const EffectSource := preload("res://modules/core_panels/effect_source.gd")
 const FOLDERS := "folders"
 const ORDER := "order"
 const PRESET_FAVS := "preset_favourites"
+## Preset folders live beside the effect folders under their own key; every folder call takes the key.
+const PRESET_FOLDERS := "preset_folders"
 const NEW_NAME := "New folder"
 
 static var _counter: int = 0
@@ -17,9 +19,9 @@ static func save() -> void:
 	EffectSource._save_lists()
 
 
-static func folders() -> Array[Dictionary]:
+static func folders(key: String = FOLDERS) -> Array[Dictionary]:
 	var out: Array[Dictionary] = []
-	var raw: Variant = data().get(FOLDERS, [])
+	var raw: Variant = data().get(key, [])
 	if not (raw is Array):
 		return out
 	for f: Variant in raw:
@@ -33,11 +35,11 @@ static func folders() -> Array[Dictionary]:
 	return out
 
 
-static func _write(list: Array[Dictionary]) -> void:
+static func _write(list: Array[Dictionary], key: String = FOLDERS) -> void:
 	var rows: Array = []
 	for f: Dictionary in list:
 		rows.append({"id": String(f["id"]), "name": String(f["name"]), "items": Array(f["items"] as PackedStringArray)})
-	data()[FOLDERS] = rows
+	data()[key] = rows
 	save()
 
 
@@ -48,8 +50,8 @@ static func _index(list: Array[Dictionary], id: String) -> int:
 	return -1
 
 
-static func find(id: String) -> Dictionary:
-	var list: Array[Dictionary] = folders()
+static func find(id: String, key: String = FOLDERS) -> Dictionary:
+	var list: Array[Dictionary] = folders(key)
 	var at: int = _index(list, id)
 	return list[at] if at >= 0 else {}
 
@@ -59,36 +61,36 @@ static func mint_id() -> String:
 	return "folder_" + str(Time.get_unix_time_from_system()).replace(".", "") + "_" + str(_counter)
 
 
-static func create(name: String = "") -> String:
-	var list: Array[Dictionary] = folders()
+static func create(name: String = "", key: String = FOLDERS) -> String:
+	var list: Array[Dictionary] = folders(key)
 	var id: String = mint_id()
 	list.append({"id": id, "name": name.strip_edges() if not name.strip_edges().is_empty() else NEW_NAME, "items": PackedStringArray()})
-	_write(list)
+	_write(list, key)
 	return id
 
 
-static func rename(id: String, name: String) -> bool:
-	var list: Array[Dictionary] = folders()
+static func rename(id: String, name: String, key: String = FOLDERS) -> bool:
+	var list: Array[Dictionary] = folders(key)
 	var at: int = _index(list, id)
 	if at < 0 or name.strip_edges().is_empty():
 		return false
 	list[at]["name"] = name.strip_edges()
-	_write(list)
+	_write(list, key)
 	return true
 
 
-static func remove(id: String) -> bool:
-	var list: Array[Dictionary] = folders()
+static func remove(id: String, key: String = FOLDERS) -> bool:
+	var list: Array[Dictionary] = folders(key)
 	var at: int = _index(list, id)
 	if at < 0:
 		return false
 	list.remove_at(at)
-	_write(list)
+	_write(list, key)
 	return true
 
 
-static func move(id: String, step: int) -> bool:
-	var list: Array[Dictionary] = folders()
+static func move(id: String, step: int, key: String = FOLDERS) -> bool:
+	var list: Array[Dictionary] = folders(key)
 	var at: int = _index(list, id)
 	var to: int = at + step
 	if at < 0 or to < 0 or to >= list.size():
@@ -96,12 +98,12 @@ static func move(id: String, step: int) -> bool:
 	var f: Dictionary = list[at]
 	list.remove_at(at)
 	list.insert(to, f)
-	_write(list)
+	_write(list, key)
 	return true
 
 
-static func add(folder_id: String, effect_id: String, before_id: String = "") -> bool:
-	var list: Array[Dictionary] = folders()
+static func add(folder_id: String, effect_id: String, before_id: String = "", key: String = FOLDERS) -> bool:
+	var list: Array[Dictionary] = folders(key)
 	var at: int = _index(list, folder_id)
 	if at < 0 or effect_id.is_empty():
 		return false
@@ -119,12 +121,12 @@ static func add(folder_id: String, effect_id: String, before_id: String = "") ->
 	if had >= 0 and items.find(effect_id) == had:
 		return false
 	list[at]["items"] = items
-	_write(list)
+	_write(list, key)
 	return true
 
 
-static func take_out(folder_id: String, effect_id: String) -> bool:
-	var list: Array[Dictionary] = folders()
+static func take_out(folder_id: String, effect_id: String, key: String = FOLDERS) -> bool:
+	var list: Array[Dictionary] = folders(key)
 	var at: int = _index(list, folder_id)
 	if at < 0:
 		return false
@@ -134,7 +136,7 @@ static func take_out(folder_id: String, effect_id: String) -> bool:
 		return false
 	items.remove_at(had)
 	list[at]["items"] = items
-	_write(list)
+	_write(list, key)
 	return true
 
 

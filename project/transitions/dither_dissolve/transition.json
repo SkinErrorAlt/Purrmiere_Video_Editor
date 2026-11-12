@@ -1,0 +1,15 @@
+{
+ "id": "dither_dissolve",
+ "label": "Dither Dissolve",
+ "group": "Dissolve",
+ "space": "2D",
+ "from": ["Premiere Dither Dissolve", "After Effects Dither Dissolve"],
+ "blurb": "The swap happens through a hard ordered dither, no soft blending anywhere: pixels flip from one shot to the other in the fixed pattern of a printer's screen, so the middle of the handover looks like a halftone of the two pictures laid over each other. Choose a fine two by two grid, a classic four by four or eight by eight ordered screen, scanlines, or a loose random speckle, and set how big a dither cell is on screen.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "pattern", "label": "Pattern", "type": "enum", "choices": ["Fine 2x2", "Ordered 4x4", "Ordered 8x8", "Scanlines", "Random"], "default": 1},
+  {"key": "cell", "label": "Cell size", "type": "float", "min": 1.0, "max": 16.0, "step": 0.5, "default": 2.0, "unit": " px"},
+  {"key": "softness", "label": "Soft edge", "type": "float", "min": 0.0, "max": 0.5, "step": 0.005, "default": 0.0},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 0}
+ ]
+}

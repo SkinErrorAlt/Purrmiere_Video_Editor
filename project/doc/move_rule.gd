@@ -4,6 +4,7 @@ const Sequence := preload("res://doc/sequence.gd")
 const Track := preload("res://doc/track.gd")
 const Clip := preload("res://doc/clip.gd")
 const LinkAsOne := preload("res://doc/link_as_one.gd")
+const ViewMap := preload("res://doc/view_map.gd")
 const EPS := 0.00001
 const PREF_LINKED := "timeline.linked_selection"
 const PREF_MOVE_LINKS := "timeline.move_links"
@@ -66,9 +67,59 @@ static func own_partners(seq: Sequence, c: Clip) -> Array[Clip]:
 		var ft2: Track = seq.track_of(f.id)
 		if ft2 == null or ft2 == home:
 			continue
-		if _count_over(by_track.get(ft2.id, []), c) == 1 and home != null and _count_over(by_track.get(home.id, []), f) == 1:
+		var alone_over_c: bool = _count_over(by_track.get(ft2.id, []), c) == 1
+		var alone_over_f: bool = home != null and _count_over(by_track.get(home.id, []), f) == 1
+		if not alone_over_f:
+			continue
+		if alone_over_c or pair_leads(seq, c, f):
 			out.append(f)
 	return out
+
+
+static func pair_videos_over(seq: Sequence, c: Clip) -> Array[Clip]:
+	var out: Array[Clip] = []
+	if seq == null or c == null:
+		return out
+	for tr: Track in seq.picture_tracks():
+		for v: Clip in tr.clips:
+			if v.start >= c.end() - EPS:
+				break
+			if v.end() <= c.start + EPS:
+				continue
+			for e: Dictionary in v.effects:
+				if String(e.get("id", "")) == ViewMap.PAIR_VIEW_ID:
+					out.append(v)
+					break
+	return out
+
+
+static func pair_entry_of(c: Clip) -> Dictionary:
+	if c == null:
+		return {}
+	for one: Dictionary in c.effects:
+		if String(one.get("id", "")) == ViewMap.PAIR_VIEW_ID:
+			return one
+	return {}
+
+
+static func pair_leads(seq: Sequence, lead: Clip, under: Clip) -> bool:
+	if seq == null or lead == null or under == null or lead == under or not overlaps(lead, under):
+		return false
+	var e: Dictionary = pair_entry_of(lead)
+	if e.is_empty():
+		return false
+	if not pair_entry_of(under).is_empty():
+		return false
+	return _reached(seq, ViewMap.of(e), lead, under)
+
+
+static func _reached(seq: Sequence, map: Dictionary, video: Clip, c: Clip) -> bool:
+	var tr: Track = seq.track_of(c.id)
+	if tr == null:
+		return false
+	if not map.is_empty() and ViewMap.reaches(map, video, c, tr.id):
+		return true
+	return ViewMap.in_family(video, c) and overlaps(video, c)
 
 
 static func _count_over(list: Array, c: Clip) -> int:

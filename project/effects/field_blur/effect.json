@@ -1,0 +1,24 @@
+{
+ "id": "field_blur",
+ "label": "Field Blur",
+ "category": "Blur & Sharpen",
+ "version": 1,
+ "blurb": "Photoshop's Field Blur: drop up to four pins on the picture and give each its own amount of blur, and the blur flows smoothly between them, sharp where a pin says 0 and soft where a pin says more. Use it to fake a shallow focus that falls off in any direction, keep a face sharp while the room melts away, or blur one corner only. Drag the pins on the Program monitor. Light bokeh lets bright spots bloom into soft highlights as they blur.",
+ "params": [
+  {"key": "pins", "label": "Pins in use", "type": "int", "min": 1, "max": 4, "step": 1, "default": 2},
+  {"key": "pin_a", "label": "Pin 1", "type": "vec2", "default": [0.3, 0.35]},
+  {"key": "blur_a", "label": "Pin 1 blur", "type": "float", "min": 0.0, "max": 120.0, "step": 0.1, "default": 0.0, "unit": " px"},
+  {"key": "pin_b", "label": "Pin 2", "type": "vec2", "default": [0.75, 0.75]},
+  {"key": "blur_b", "label": "Pin 2 blur", "type": "float", "min": 0.0, "max": 120.0, "step": 0.1, "default": 40.0, "unit": " px"},
+  {"key": "pin_c", "label": "Pin 3", "type": "vec2", "default": [0.8, 0.2]},
+  {"key": "blur_c", "label": "Pin 3 blur", "type": "float", "min": 0.0, "max": 120.0, "step": 0.1, "default": 20.0, "unit": " px"},
+  {"key": "pin_d", "label": "Pin 4", "type": "vec2", "default": [0.2, 0.85]},
+  {"key": "blur_d", "label": "Pin 4 blur", "type": "float", "min": 0.0, "max": 120.0, "step": 0.1, "default": 20.0, "unit": " px"},
+  {"key": "light_bokeh", "label": "Light bokeh", "type": "float", "min": 0.0, "max": 100.0, "step": 0.1, "default": 0.0}
+ ],
+ "handles": [{"kind": "point", "keys": ["pin_a", "pin_b", "pin_c", "pin_d"]}],
+ "passes": [
+  {"shader": "field.gdshader", "set": {"direction": [1.0, 0.0]}},
+  {"shader": "field.gdshader", "set": {"direction": [0.0, 1.0]}}
+ ]
+}

@@ -1,0 +1,22 @@
+{
+ "id": "water_damage",
+ "label": "Water Damage",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Treats the shot as a photo print that has got wet. Water soaks in from a few places, mostly from the edges, with a ragged front. Inside the soaked part the dyes loosen and run outwards, so the picture fades, warms and smears, and the colour piles up in a brown tide line where the water stopped. Older tide lines stay where it paused before, and the swollen emulsion dries into a cockled, wrinkled skin that flakes off to bare paper in places near the edge. Key Spread, or set Soaks in over to watch the water creep in.",
+ "params": [
+  {"key": "spread", "label": "Spread", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "grow_time", "label": "Soaks in over", "type": "float", "min": 0.0, "max": 30.0, "step": 0.1, "default": 0.0, "unit": " s"},
+  {"key": "sources", "label": "Wet patches", "type": "int", "min": 1, "max": 8, "step": 1, "default": 3},
+  {"key": "wash", "label": "Dyes washed out", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "run", "label": "Colours run", "type": "float", "min": 0.0, "max": 80.0, "step": 0.5, "default": 16.0, "unit": " px"},
+  {"key": "tide", "label": "Tide line", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "rings", "label": "Older tide lines", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "cockle", "label": "Cockled emulsion", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "flaking", "label": "Emulsion flaking", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "paper", "label": "Paper colour", "type": "color", "default": [0.95, 0.93, 0.87, 1.0]},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

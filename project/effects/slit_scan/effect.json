@@ -1,0 +1,18 @@
+{
+ "id": "slit_scan",
+ "label": "Slit Scan",
+ "category": "Time",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Each line of the picture shows a different moment: one edge is now and the far edge is up to two seconds ago, so moving things bend, stretch and smear the way a slit scan camera records them. Bands turns the smooth sweep into steps.",
+ "history": {"max": 62, "reach": ["span"], "seconds": ["span"]},
+ "params": [
+  {"key": "span", "label": "Time across the picture", "type": "float", "min": 0.05, "max": 2.0, "step": 0.01, "default": 1.0, "unit": " s"},
+  {"key": "direction", "label": "Now starts at", "type": "enum", "choices": ["Top", "Bottom", "Left", "Right", "Centre", "Edges", "An angle"], "default": 0},
+  {"key": "angle", "label": "Angle", "type": "float", "min": -180, "max": 180, "step": 1, "default": 30, "unit": " deg"},
+  {"key": "bands", "label": "Bands", "type": "int", "min": 0, "max": 64, "step": 1, "default": 0},
+  {"key": "curve", "label": "Time curve", "type": "float", "min": 0.25, "max": 4.0, "step": 0.05, "default": 1.0},
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]}
+ ],
+ "passes": [{"shader": "effect.gdshader"}]
+}

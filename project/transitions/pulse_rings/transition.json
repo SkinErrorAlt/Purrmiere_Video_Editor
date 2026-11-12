@@ -1,0 +1,18 @@
+{
+ "id": "pulse_rings",
+ "label": "Pulse Rings",
+ "group": "Light and Film",
+ "space": "2D",
+ "from": ["Sapphire Shockwave", "Motion Pulse"],
+ "blurb": "A train of bright rings pulses out from a point and carries the cut with it: the leading ring bends the picture in front of it like a pressure wave, flares along its crest, and leaves the incoming shot behind as it passes, while the rings that follow ripple what has already changed. Not one water drop ring but a repeating pulse, so it reads as energy, sonar or a speaker thumping. Set the centre, how many crests ride the front, how hard they bend the picture and how hot the crest burns.",
+ "default_duration": 1.1,
+ "params": [
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "crests", "label": "Crests", "type": "float", "min": 1.0, "max": 14.0, "step": 0.5, "default": 4.0},
+  {"key": "bend", "label": "Bend", "type": "float", "min": 0.0, "max": 0.12, "step": 0.001, "default": 0.03},
+  {"key": "glow", "label": "Crest light", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.7},
+  {"key": "tint", "label": "Crest colour", "type": "color", "default": [0.65, 0.85, 1.0, 1.0]},
+  {"key": "width", "label": "Front width", "type": "float", "min": 0.02, "max": 0.6, "step": 0.005, "default": 0.16}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}]
+}

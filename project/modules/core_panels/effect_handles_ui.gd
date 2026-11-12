@@ -20,6 +20,8 @@ const BAND_KNOB_F := 0.62
 const RING_STEPS := 72
 const DASH_EVERY := 2
 const KNOB := 6.5
+const SHADE := Color(0.0, 0.0, 0.0, 0.55)
+const FILL := Color(1.0, 1.0, 1.0, 1.0)
 const PICK_REACH := 22.0
 const ARM_MIN := 0.0001
 const INSIDE_PAD := 0.03
@@ -32,9 +34,16 @@ const POINT_WORDS: PackedStringArray = ["centre", "center", "position", "pos", "
 const NOT_POINT_WORDS: PackedStringArray = ["offset", "drift", "travel", "shift", "scale", "size", "speed", "dir", "direction", "velocity", "red", "green", "blue", "amount", "stretch", "tiles", "repeat", "count", "range"]
 const ANGLE_WORDS: PackedStringArray = ["angle", "direction", "rotation", "heading"]
 const RADIUS_KEYS: PackedStringArray = ["radius", "size"]
+const RADIUS_WORDS: PackedStringArray = ["radius"]
 const CENTRE_WORDS: PackedStringArray = ["centre", "center", "position", "pos", "origin", "focus"]
+const COLOUR_WORDS: PackedStringArray = ["colour", "color", "colours", "colors", "tint", "hue", "saturation", "red", "green", "blue", "cyan", "magenta", "yellow", "luma", "chroma", "gamma", "lift", "gain", "midtones", "highlights", "temperature", "grey", "gray", "black", "white", "rgb"]
+const COLOUR_TYPES: PackedStringArray = ["color", "colour", "gradient"]
+const SKIP_CATEGORIES: PackedStringArray = ["colour correction", "color correction", "colour", "color", "channel", "keying", "audio"]
+const LINE_PAIRS: Array = [["start", "end"], ["from", "to"], ["begin", "finish"], ["a", "b"], ["head", "tail"], ["source", "target"], ["1", "2"]]
 
 static var _registered: bool = false
+static var _seen_clip: int = 0
+static var _seen_uids: PackedStringArray = PackedStringArray()
 
 
 static func _script() -> GDScript:
@@ -105,6 +114,36 @@ static func back_to_clip(clip_id: String) -> bool:
 		return false
 	hs.call("set_focus", clip_id, uid, false)
 	return true
+
+
+static func back_from(c: Clip) -> bool:
+	return c != null and back_to_clip(c.id)
+
+
+static func motion_header_input(event: InputEvent, c: Clip) -> bool:
+	if not (event is InputEventMouseButton):
+		return false
+	var mb: InputEventMouseButton = event
+	return mb.pressed and mb.button_index == MOUSE_BUTTON_LEFT and not mb.double_click and back_from(c)
+
+
+static func watch_added(c: Clip) -> bool:
+	if c == null:
+		_seen_clip = 0
+		_seen_uids = PackedStringArray()
+		return false
+	var uids: PackedStringArray = PackedStringArray()
+	for e: Dictionary in c.effects:
+		uids.append(String(e.get("uid", "")))
+	var fresh: String = ""
+	if c.get_instance_id() == _seen_clip:
+		for i: int in range(uids.size() - 1, -1, -1):
+			if not _seen_uids.has(uids[i]):
+				fresh = uids[i]
+				break
+	_seen_clip = c.get_instance_id()
+	_seen_uids = uids
+	return not fresh.is_empty() and pick(c, fresh)
 
 
 static func pick(c: Clip, uid: String) -> bool:
@@ -229,8 +268,53 @@ static func _any(words: PackedStringArray, pool: PackedStringArray) -> bool:
 	return false
 
 
+static func refuses(def: Dictionary) -> bool:
+	if bool(def.get("audio", false)):
+		return true
+	return SKIP_CATEGORIES.has(String(def.get("category", "")).strip_edges().to_lower())
+
+
+static func colourish(p: Dictionary) -> bool:
+	if COLOUR_TYPES.has(String(p.get("type", "")).strip_edges().to_lower()):
+		return true
+	return _any(_words(String(p.get("key", ""))), COLOUR_WORDS)
+
+
+static func _partner(key: String, from: String, to: String) -> String:
+	if from.is_valid_int():
+		if key.length() < 2 or not key.ends_with(from) or key.substr(key.length() - 2, 1).is_valid_int():
+			return ""
+		return key.substr(0, key.length() - 1) + to
+	var words: PackedStringArray = key.split("_", false)
+	for i: int in words.size():
+		if words[i].to_lower() == from:
+			words[i] = to
+			return "_".join(words)
+	return ""
+
+
+static func line_pairs(keys: PackedStringArray) -> Array:
+	var out: Array = []
+	var used: Dictionary = {}
+	for k: String in keys:
+		if used.has(k):
+			continue
+		for pair: Variant in LINE_PAIRS:
+			var from: String = String((pair as Array)[0])
+			var other: String = _partner(k, from, String((pair as Array)[1]))
+			if other.is_empty() or other == k or not keys.has(other) or used.has(other):
+				continue
+			if from.is_valid_int() and keys.has(_partner(k, from, "3")):
+				continue
+			out.append([k, other])
+			used[k] = true
+			used[other] = true
+			break
+	return out
+
+
 static func _is_place(p: Dictionary) -> bool:
-	if String(p.get("type", "")) != "vec2":
+	if String(p.get("type", "")) != "vec2" or colourish(p):
 		return false
 	var words: PackedStringArray = _words(String(p.get("key", "")))
 	if not _any(words, POINT_WORDS) or _any(words, NOT_POINT_WORDS):
@@ -249,7 +333,7 @@ static func _is_place(p: Dictionary) -> bool:
 
 
 static func _is_angle(p: Dictionary) -> bool:
-	if String(p.get("type", "")) != "float":
+	if String(p.get("type", "")) != "float" or colourish(p):
 		return false
 	var unit: String = String(p.get("unit", "")).strip_edges().to_lower()
 	if unit != "deg" and unit != "°":
@@ -259,25 +343,38 @@ static func _is_angle(p: Dictionary) -> bool:
 	return float(p.get("max", 360.0)) - float(p.get("min", 0.0)) >= 90.0
 
 
-static func _is_radius(p: Dictionary) -> bool:
-	if String(p.get("type", "")) != "float" or not RADIUS_KEYS.has(String(p.get("key", ""))):
-		return false
-	if not String(p.get("unit", "")).strip_edges().is_empty():
-		return false
-	return float(p.get("min", 0.0)) >= 0.0 and float(p.get("max", 1.0)) <= 2.0
+static func radius_unit(p: Dictionary, exact: bool) -> String:
+	if String(p.get("type", "")) != "float" or colourish(p):
+		return ""
+	var key: String = String(p.get("key", ""))
+	if not RADIUS_KEYS.has(key) and (exact or not _any(_words(key), RADIUS_WORDS)):
+		return ""
+	if float(p.get("min", 0.0)) < 0.0:
+		return ""
+	var unit: String = String(p.get("unit", "")).strip_edges().to_lower()
+	if unit.is_empty():
+		return "h" if float(p.get("max", 1.0)) <= 2.0 else ""
+	return "px" if unit == "px" else ""
 
 
 static func guess(def: Dictionary) -> Array:
 	var out: Array = []
-	var pts: PackedStringArray = PackedStringArray()
+	if refuses(def):
+		return out
+	var places: PackedStringArray = PackedStringArray()
 	var params: Array = def.get("params", []) if def.get("params") is Array else []
 	for p: Variant in params:
 		if p is Dictionary and _is_place(p):
-			pts.append(String((p as Dictionary)["key"]))
-	if pts.has("start") and pts.has("end"):
-		out.append({"kind": "line", "keys": ["start", "end"], "auto": true})
-		pts.remove_at(pts.find("start"))
-		pts.remove_at(pts.find("end"))
+			places.append(String((p as Dictionary)["key"]))
+	var paired: Dictionary = {}
+	for pr: Variant in line_pairs(places):
+		out.append({"kind": "line", "keys": [String((pr as Array)[0]), String((pr as Array)[1])], "auto": true})
+		paired[String((pr as Array)[0])] = true
+		paired[String((pr as Array)[1])] = true
+	var pts: PackedStringArray = PackedStringArray()
+	for k0: String in places:
+		if not paired.has(k0):
+			pts.append(k0)
 	for k: String in pts:
 		out.append({"kind": "point", "key": k, "auto": true})
 	var about: String = ""
@@ -294,11 +391,16 @@ static func guess(def: Dictionary) -> Array:
 				a["about"] = about
 			out.append(a)
 			break
-	if not about.is_empty():
+	if about.is_empty():
+		return out
+	for exact: bool in [true, false]:
 		for p3: Variant in params:
-			if p3 is Dictionary and _is_radius(p3):
-				out.append({"kind": KIND_RING, "key": String((p3 as Dictionary)["key"]), "about": about, "unit": "h", "auto": true})
-				break
+			if not (p3 is Dictionary):
+				continue
+			var unit: String = radius_unit(p3, exact)
+			if not unit.is_empty():
+				out.append({"kind": KIND_RING, "key": String((p3 as Dictionary)["key"]), "about": about, "unit": unit, "auto": true})
+				return out
 	return out
 
 
@@ -827,7 +929,6 @@ static func draw_lines(ci: CanvasItem, t: Dictionary, to_screen: Callable, ink: 
 	var lines: Variant = t.get("lines", [])
 	if not (lines is Array):
 		return
-	var shade: Color = Color(0.0, 0.0, 0.0, 0.45)
 	for ln: Variant in lines:
 		var pts: PackedVector2Array = (ln as Dictionary)["pts"]
 		var scr: PackedVector2Array = PackedVector2Array()
@@ -838,24 +939,28 @@ static func draw_lines(ci: CanvasItem, t: Dictionary, to_screen: Callable, ink: 
 		if bool((ln as Dictionary).get("dashed", false)):
 			for i: int in range(1, scr.size()):
 				if i % DASH_EVERY == 0:
-					ci.draw_line(scr[i - 1], scr[i], ink, 1.5, true)
+					ci.draw_line(scr[i - 1], scr[i], SHADE, 3.0, true)
+					ci.draw_line(scr[i - 1], scr[i], Color(ink, 0.9), 1.25, true)
 			continue
-		ci.draw_polyline(scr, shade, 3.5 if lit else 3.0, true)
-		ci.draw_polyline(scr, ink, 2.0 if lit else 1.5, true)
+		ci.draw_polyline(scr, SHADE, 3.5 if lit else 3.0, true)
+		ci.draw_polyline(scr, ink, 2.0 if lit else 1.25, true)
 
 
 static func draw_knob(ci: CanvasItem, at: Vector2, ink: Color, lit: bool, hollow: bool) -> void:
-	var r: float = KNOB + (1.5 if lit else 0.0)
-	ci.draw_circle(at, r + 1.5, Color(0.0, 0.0, 0.0, 0.55))
+	var r: float = KNOB - 1.0 + (1.5 if lit else 0.0)
+	ci.draw_circle(at, r + 1.5, SHADE)
 	if hollow:
-		ci.draw_arc(at, r - 1.0, 0.0, TAU, 24, ink, 2.5, true)
+		ci.draw_arc(at, r - 0.5, 0.0, TAU, 24, FILL, 2.5, true)
+		ci.draw_arc(at, r - 0.5, 0.0, TAU, 24, ink, 1.0, true)
 		return
-	ci.draw_circle(at, r, ink)
-	ci.draw_circle(at, r * 0.35, Color(0.0, 0.0, 0.0, 0.6))
+	ci.draw_circle(at, r, ink if lit else FILL)
+	ci.draw_arc(at, r, 0.0, TAU, 24, ink, 1.5, true)
+	ci.draw_circle(at, 1.5, ink if not lit else FILL)
 
 
 static func draw_pill(ci: CanvasItem, at: Vector2, dir: Variant, ink: Color, lit: bool) -> void:
 	var d: Vector2 = (dir as Vector2).normalized() if dir is Vector2 and (dir as Vector2).length() > ARM_MIN else Vector2.DOWN
-	var half: float = KNOB * 1.6 + (1.5 if lit else 0.0)
-	ci.draw_line(at - d * half, at + d * half, Color(0.0, 0.0, 0.0, 0.55), 8.0 + (1.5 if lit else 0.0), true)
-	ci.draw_line(at - d * (half - 1.0), at + d * (half - 1.0), ink, 5.0 + (1.0 if lit else 0.0), true)
+	var half: float = KNOB * 1.4 + (1.5 if lit else 0.0)
+	ci.draw_line(at - d * half, at + d * half, SHADE, 8.0 + (1.5 if lit else 0.0), true)
+	ci.draw_line(at - d * (half - 0.5), at + d * (half - 0.5), ink, 6.0 + (1.0 if lit else 0.0), true)
+	ci.draw_line(at - d * (half - 1.5), at + d * (half - 1.5), ink if lit else FILL, 3.5, true)

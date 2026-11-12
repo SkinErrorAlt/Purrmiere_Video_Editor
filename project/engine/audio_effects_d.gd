@@ -202,26 +202,22 @@ const DEFS: Array[Dictionary] = [
 		"id": "helmet_comms",
 		"label": "Helmet Comms",
 		"group": GROUP_CHARACTER,
-		"blurb": "A voice on a helmet radio: squeezed into a narrow band, boxed in by the visor, with a short beep when talking starts and stops.",
+		"blurb": "A voice on a helmet radio: squeezed into a narrow band, compressed and driven like a radio link, and boxed in by the visor.",
 		"params": [
-			{"key": "beeps", "label": "Beeps", "default": 0.5, "min": 0.0, "max": 1.0, "step": 0.01},
 			{"key": "visor", "label": "Visor", "default": 0.5, "min": 0.0, "max": 1.0, "step": 0.01},
-			{"key": "static", "label": "Static", "default": 0.15, "min": 0.0, "max": 1.0, "step": 0.01},
 			{"key": "low_hz", "label": "Low cut", "default": 300.0, "min": 150.0, "max": 800.0, "step": 5.0, "unit": " Hz"},
 			{"key": "high_hz", "label": "High cut", "default": 4500.0, "min": 2000.0, "max": 8000.0, "step": 50.0, "unit": " Hz"},
-			{"key": "threshold_db", "label": "Talking above", "default": -45.0, "min": -70.0, "max": -10.0, "step": 0.5, "unit": " dB"},
 		],
 	},
 	{
 		"id": "radio_tuning",
 		"label": "Radio Tuning",
 		"group": GROUP_CHARACTER,
-		"blurb": "A radio being tuned: the station drifts in and out of static, the voice slides off pitch and whistles come and go. Key Tuning to sweep the dial.",
+		"blurb": "A radio being tuned: as the station drifts off the dial the voice slides off pitch, dulls and sinks into static, and comes back as it drifts in. The static lives in the voice and stops when the voice does. Key Tuning to sweep the dial.",
 		"params": [
 			{"key": "tuning", "label": "Tuning", "default": 0.8, "min": 0.0, "max": 1.0, "step": 0.01},
 			{"key": "drift", "label": "Drift", "default": 0.5, "min": 0.0, "max": 1.0, "step": 0.01},
 			{"key": "static", "label": "Static", "default": 0.5, "min": 0.0, "max": 1.0, "step": 0.01},
-			{"key": "whistle", "label": "Whistles", "default": 0.4, "min": 0.0, "max": 1.0, "step": 0.01},
 		],
 	},
 	{
@@ -274,6 +270,7 @@ const DEFS: Array[Dictionary] = [
 		"label": "Doppler Pass By",
 		"group": GROUP_STEREO,
 		"blurb": "A sound going past you, like a car or a jet: it rises in pitch as it comes, drops as it leaves, gets louder as it passes and moves across the speakers.",
+		"panels": [{"kind": "pass_by", "bind": {"closest": "distance_m", "direction": "direction", "speed": "speed_kmh", "bend": "doppler", "pass_at": "pass_at_s"}}],
 		"params": [
 			{"key": "pass_at_s", "label": "Passes at", "default": 1.5, "min": 0.0, "max": 60.0, "step": 0.01, "unit": " s"},
 			{"key": "speed_kmh", "label": "Speed", "default": 100.0, "min": 5.0, "max": 400.0, "step": 1.0, "unit": " km/h"},

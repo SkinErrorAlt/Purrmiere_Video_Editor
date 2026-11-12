@@ -6,6 +6,7 @@ const ReactShape := preload("res://engine/react_shape.gd")
 const ReactFeed := preload("res://engine/react_feed.gd")
 const ReactRecord := preload("res://engine/react_record.gd")
 const VeryLoud := preload("res://engine/very_loud.gd")
+const SoundFeatures := preload("res://engine/sound_features.gd")
 const AnimProp := preload("res://doc/anim_prop.gd")
 const SOURCE_KEY := "snd_source"
 const GROUP := "Sound settings"
@@ -20,6 +21,7 @@ const KIND_NONE := "none"
 const KIND_MIX := "mix"
 const KIND_VIEWS := "views"
 const KIND_VIEW := "view"
+const KIND_NEST := "nest"
 const BANDS: PackedStringArray = ["Full", "Bass", "Low mid", "High mid", "Treble", "Custom"]
 const BAND_CUSTOM := 5
 const CURVES: PackedStringArray = ["Linear", "Soft", "Hard", "Very hard", "S curve"]
@@ -97,6 +99,17 @@ static func wrap_params(own: Variant, defaults: Variant, spec: Variant = {}) -> 
 		{"key": HAND_LEVEL_KEY, "label": "Hand amount", "type": "float", "min": 0.0, "max": 100.0, "step": 0.5, "default": _f(d, HAND_LEVEL_KEY, 100.0), "unit": " %", "keyable": true},
 		{"key": RECORD_KEY, "label": "Record while playing", "type": "bool", "default": false, "keyable": false},
 	]
+	if SoundFeatures.listen_only(sp):
+		var out_l: Array = head
+		if own is Array:
+			out_l.append_array(own as Array)
+		out_l.append_array([
+			{"key": "snd_offset", "label": "Offset", "type": "float", "min": -10.0, "max": 10.0, "step": 0.01, "default": _f(d, "snd_offset", 0.0), "unit": " s", "keyable": true, "group": GROUP},
+			{"key": "snd_gain", "label": "Sensitivity", "type": "float", "min": 0.0, "max": 1000.0, "step": 1.0, "default": _f(d, "snd_gain", 100.0), "unit": " %", "keyable": true, "group": GROUP},
+			{"key": "snd_threshold", "label": "Threshold", "type": "float", "min": 0.0, "max": 100.0, "step": 0.5, "default": _f(d, "snd_threshold", 5.0), "unit": " %", "keyable": true, "group": GROUP},
+			{"key": "snd_decay", "label": "Hit decay", "type": "float", "min": 20.0, "max": 3000.0, "step": 1.0, "default": _f(d, "snd_decay", 300.0), "unit": " ms", "keyable": true, "group": GROUP},
+		])
+		return out_l
 	var tail: Array = [
 		{"key": "snd_offset", "label": "Offset", "type": "float", "min": -10.0, "max": 10.0, "step": 0.01, "default": _f(d, "snd_offset", 0.0), "unit": " s", "keyable": true, "group": GROUP},
 		{"key": "snd_mode", "label": "Follow", "type": "enum", "choices": Array(MODES), "default": int(_f(d, "snd_mode", 0.0)), "keyable": true, "group": GROUP},
@@ -155,6 +168,8 @@ static func encode(src: Dictionary) -> String:
 		return JSON.stringify({"kind": KIND_VIEW, "view": int(src.get("view", 0)), "clip": String(src.get("clip", ""))})
 	if kind == KIND_CLIP:
 		return JSON.stringify({"kind": KIND_CLIP, "clip": String(src.get("clip", ""))})
+	if kind == KIND_NEST:
+		return JSON.stringify({"kind": KIND_NEST, "clip": String(src.get("clip", ""))})
 	if kind == KIND_MEDIA:
 		return JSON.stringify({"kind": KIND_MEDIA, "media": String(src.get("media", "")), "stream": int(src.get("stream", 0)), "in": snappedf(float(src.get("in", 0.0)), 0.0001), "out": snappedf(float(src.get("out", -1.0)), 0.0001)})
 	return ""
@@ -177,6 +192,8 @@ static func parse(text: String) -> Dictionary:
 			out = {"kind": kind}
 		elif kind == KIND_VIEW:
 			out = {"kind": KIND_VIEW, "view": int(d.get("view", 0)), "clip": String(d.get("clip", ""))}
+		elif kind == KIND_NEST:
+			out = {"kind": KIND_NEST, "clip": String(d.get("clip", ""))}
 	if _parsed.size() > 1024:
 		_parsed = {}
 	_parsed[text] = out
@@ -190,6 +207,9 @@ static func source_from_payload(doc: Object, payload: Dictionary) -> String:
 		var cid: String = String(ids[0]) if not ids.is_empty() else String(payload.get("id", ""))
 		if cid.is_empty():
 			return ""
+		var dropped: Object = doc.call("clip_by_id", cid) if doc != null else null
+		if dropped != null and _clip_with_sound(doc, dropped) == null and not ReactFeed.nest_sid(doc, dropped).is_empty():
+			return encode({"kind": KIND_NEST, "clip": cid})
 		return encode({"kind": KIND_CLIP, "clip": cid})
 	if kind != "media":
 		return ""
@@ -250,6 +270,9 @@ static func resolve(doc: Object, clip: Object, text: String, t: float) -> Dictio
 		return out
 	var src: Dictionary = parse(text)
 	var kind: String = String(src["kind"])
+	if kind == KIND_OWN and _clip_with_sound(doc, clip) == null and not ReactFeed.nest_sid(doc, clip).is_empty():
+		src = {"kind": KIND_NEST, "clip": String(clip.get("id"))}
+		kind = KIND_NEST
 	out["kind"] = kind
 	if kind == KIND_NONE:
 		return out
@@ -287,6 +310,8 @@ static func resolve(doc: Object, clip: Object, text: String, t: float) -> Dictio
 			out["at"] = -1.0
 		else:
 			out["at"] = float(sc.call("source_time", t))
+		out["from"] = float(sc.call("source_time", st))
+		out["rate"] = absf(float(sc.call("speed_at", clampf(t - st, 0.0, float(sc.get("duration"))))))
 		out["ok"] = true
 		return out
 	var mm: Object = doc.call("media_by_id", String(src.get("media", "")))
@@ -301,6 +326,8 @@ static func resolve(doc: Object, clip: Object, text: String, t: float) -> Dictio
 	if at < a or (b > a and at > b):
 		at = -1.0
 	out["at"] = at
+	out["from"] = a
+	out["rate"] = 1.0
 	out["label"] = "Media: " + String(mm.get("label")) + (" (" + _clock(a) + " to " + _clock(b) + ")" if b > a else "")
 	out["ok"] = true
 	return out
@@ -1016,7 +1043,11 @@ static func fill(values: Dictionary, def: Dictionary, e: Dictionary, layer: Node
 	var hand: bool = by_hand(values)
 	var hand_k: float = hand_level(values)
 	var look_t: float = hand_from(e, clip, t) if hand else t
-	var level: float = PREVIEW_LEVEL if preview else level_at(doc, clip, values, t, comp, animated)
+	var level: float = 0.0
+	if not SoundFeatures.listen_only(spec):
+		level = PREVIEW_LEVEL if preview else level_at(doc, clip, values, t, comp, animated)
+	if SoundFeatures.wanted(spec):
+		_listen(values, spec, doc, clip, comp, layer, String(e.get("uid", "")), t, preview, hand, hand_k)
 	if not preview and _f(values, RECORD_KEY, 0.0) > 0.5 and comp != null and bool(comp.get("playing")) and clip != null:
 		ReactRecord.note(doc, clip, String(e.get("uid", "")), t, sound_level(doc, clip, values, t, comp, animated))
 	var drive: Dictionary = spec.get("drive", {})
@@ -1075,6 +1106,63 @@ static func fill(values: Dictionary, def: Dictionary, e: Dictionary, layer: Node
 		values[String(bd.get("uniform", "beat_tex"))] = _raw_texture(layer, uid + ":beats", full, BEATS_MAX)
 
 
+static func listen_state(doc: Object, clip: Object, values: Dictionary, t: float, comp: Node, hits_max: int, past_span: float, past_points: int) -> Dictionary:
+	var settings: Dictionary = settings_of(values)
+	var r: Dictionary = resolve(doc, clip, String(values.get(SOURCE_KEY, "")), t - _offset(settings))
+	if not bool(r["ok"]) or bool(r["mix"]) or float(r["at"]) < 0.0 or String(r["path"]).is_empty():
+		var none: Dictionary = {}
+		SoundFeatures.blank(none)
+		none["list"] = PackedFloat32Array()
+		return none
+	var env: Dictionary = SoundEnvelopes.entry(String(r["path"]), int(r["stream"]), SoundFeatures.edges())
+	if not bool(env["done"]):
+		SoundEnvelopes.note_waiting(comp, String(env["key"]))
+		var wait: Dictionary = {}
+		SoundFeatures.blank(wait)
+		wait["list"] = PackedFloat32Array()
+		wait["waiting"] = true
+		return wait
+	var a: Dictionary = SoundFeatures.table_for(env)
+	var gain: float = maxf(_f(values, "snd_gain", 100.0), 0.0) / 100.0
+	var thr: float = clampf(_f(values, "snd_threshold", 0.0) / 100.0, 0.0, 0.99)
+	var decay: float = maxf(_f(values, "snd_decay", 300.0), 1.0) / 1000.0
+	return SoundFeatures.state(a, float(r["at"]), float(r.get("from", 0.0)), float(r.get("rate", 1.0)), gain, thr, decay, hits_max, past_span, past_points)
+
+
+static func _listen(values: Dictionary, spec: Dictionary, doc: Object, clip: Object, comp: Node, layer: Node, uid: String, t: float, preview: bool, hand: bool, hand_k: float) -> void:
+	var ls: Dictionary = spec["listen"] if spec["listen"] is Dictionary else {}
+	var hits_max: int = clampi(int(ls.get("hits", 0)), 0, SoundFeatures.HITS_MAX)
+	var past_points: int = SoundFeatures.PAST_POINTS if ls.has("past") else 0
+	var past_span: float = maxf(float(_value(values, ls.get("past", 1.0))), 0.05)
+	var st: Dictionary
+	if preview:
+		st = SoundFeatures.preview_state(hits_max, past_points)
+	elif hand:
+		st = SoundFeatures.hand_state(hand_k, t - (float(clip.get("start")) if clip != null else 0.0), past_points)
+	else:
+		st = listen_state(doc, clip, values, t, comp, hits_max, past_span, past_points)
+	for k: Variant in st.keys():
+		if k == "list" or k == "past" or k == "waiting":
+			continue
+		values[String(k)] = st[k]
+	if hits_max > 0:
+		var list: PackedFloat32Array = st.get("list", PackedFloat32Array())
+		var full: PackedFloat32Array = PackedFloat32Array()
+		full.resize(hits_max * 4)
+		for i: int in hits_max:
+			full[i * 4] = -1.0
+		for j: int in mini(list.size(), full.size()):
+			full[j] = list[j]
+		values["snd_hits_tex"] = _raw_texture(layer, uid + ":hits", full, hits_max)
+		values["snd_hits_n"] = float(mini(list.size() / 4, hits_max))
+	if past_points > 0:
+		var past: PackedFloat32Array = st.get("past", PackedFloat32Array())
+		if past.size() < past_points * 4:
+			past = PackedFloat32Array()
+			past.resize(past_points * 4)
+		values["snd_past_tex"] = _raw_texture(layer, uid + ":past", past, past_points)
+
+
 static func _texture(layer: Node, key: String, data: PackedFloat32Array) -> ImageTexture:
 	return _raw_texture(layer, key, data, maxi(data.size() / 4, 1))
 
@@ -1122,3 +1210,4 @@ static func forget() -> void:
 	_box = {}
 	_mutex.unlock()
 	ReactFeed.forget()
+	SoundFeatures.forget()

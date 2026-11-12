@@ -1,0 +1,18 @@
+{
+ "id": "snd_harsh_grain",
+ "label": "Harsh Grain",
+ "category": "Audio Reactive",
+ "tags": ["audio", "reactive", "grain", "look"],
+ "version": 1,
+ "blurb": "The film gets rough when the sound gets rough. It listens to how noisy the sound is rather than how loud: explosions, static, distortion, wind, crowd hiss and gunfire thicken and coarsen the grain, blotch the colour and crush the blacks, while a clean voice, a melody or a pure tone at the same loudness leaves the picture clean.",
+ "params": [
+  {"key": "grain", "label": "Grain", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "size", "label": "Grain size", "type": "float", "min": 0.5, "max": 6.0, "step": 0.01, "default": 1.8, "unit": " px"},
+  {"key": "colour_noise", "label": "Colour blotches", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "crush", "label": "Crush", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "jolt", "label": "Gate jolt", "type": "float", "min": 0.0, "max": 10.0, "step": 0.1, "default": 2.0, "unit": " px"},
+  {"key": "calm", "label": "Grain when clean", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.0}
+ ],
+ "passes": [{"shader": "effect.gdshader"}],
+ "reactive": {"listen": true, "defaults": {"snd_threshold": 0.0}}
+}

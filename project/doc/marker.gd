@@ -1,9 +1,11 @@
 extends RefCounted
 
 const SELF := preload("res://doc/marker.gd")
-const KINDS: PackedStringArray = ["comment", "chapter", "segment", "web", "todo", "warning", "tag"]
-const KIND_LABELS: PackedStringArray = ["Comment", "Chapter", "Segment", "Web", "To do", "Warning", "Tag"]
+const KINDS: PackedStringArray = ["comment", "chapter", "segment", "web", "todo", "warning", "tag", "sync"]
+const KIND_LABELS: PackedStringArray = ["Comment", "Chapter", "Segment", "Web", "To do", "Warning", "Tag", "Sync"]
 const DEFAULT_KIND := "comment"
+const SHAPES: PackedStringArray = ["pennant", "flag", "bar", "diamond", "dot"]
+const SHAPE_LABELS: PackedStringArray = ["Pennant", "Flag", "Bar", "Diamond", "Dot"]
 
 var id: String = ""
 var time: float = 0.0
@@ -17,6 +19,9 @@ var anchor_clip: String = ""
 var anchor_offset: float = 0.0
 var layer: String = ""
 var rgb: String = ""
+var shape: String = ""
+var icon: String = ""
+var run: String = ""
 
 
 func end() -> float:
@@ -44,6 +49,11 @@ static func clean_rgb(v: Variant) -> String:
 	if not Color.html_is_valid(text):
 		return ""
 	return "#" + Color.html(text).to_html(false)
+
+
+static func clean_shape(v: Variant) -> String:
+	var text: String = str(v).strip_edges().to_lower()
+	return text if SHAPES.has(text) else ""
 
 
 static func kind_index(k: String) -> int:
@@ -88,6 +98,12 @@ func to_dict() -> Dictionary:
 		d["layer"] = layer
 	if not rgb.is_empty():
 		d["rgb"] = rgb
+	if not shape.is_empty():
+		d["shape"] = shape
+	if not icon.is_empty():
+		d["icon"] = icon
+	if not run.is_empty():
+		d["run"] = run
 	return d
 
 
@@ -110,3 +126,6 @@ func apply_dict(d: Dictionary) -> void:
 	anchor_offset = float(d.get("anchor_offset", 0.0))
 	layer = str(d.get("layer", ""))
 	rgb = clean_rgb(d.get("rgb", ""))
+	shape = clean_shape(d.get("shape", ""))
+	icon = str(d.get("icon", "")).strip_edges()
+	run = str(d.get("run", "")).strip_edges()

@@ -3,10 +3,12 @@
  "label": "Puppet",
  "category": "Distort",
  "version": 1,
- "blurb": "Bends the picture like a puppet: pin it with the Puppet tool on the Program monitor and drag the pins. The rest of the picture follows as stiffly as it can.",
+ "blurb": "Bends the picture like a puppet: pin it with the Puppet tool on the Program monitor and drag the pins. Position, Bend and Advanced pins, hold, overlap and linked pins, and a lock brush that keeps painted parts still or stiff.",
  "tags": ["puppet", "pins", "warp", "bend", "animate"],
  "params": [
-  {"key": "density", "label": "Mesh density", "type": "int", "min": 4, "max": 64, "step": 1, "default": 16, "keyable": false}
+  {"key": "density", "label": "Mesh density", "type": "int", "min": 4, "max": 64, "step": 1, "default": 16, "keyable": false},
+  {"key": "expansion", "label": "Mesh expansion", "type": "float", "min": 0, "max": 400, "step": 1, "default": 0, "keyable": false, "unit": " px"},
+  {"key": "lock_amount", "label": "Lock amount", "type": "float", "min": 0, "max": 100, "step": 1, "default": 100, "keyable": true, "unit": " %"}
  ],
  "passes": "single"
 }

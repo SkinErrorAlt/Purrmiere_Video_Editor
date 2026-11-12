@@ -1,0 +1,17 @@
+{
+ "id": "slide_projector",
+ "label": "Slide Projector",
+ "group": "Light and Film",
+ "space": "2D",
+ "from": ["Kodak carousel projector", "Motion Slide Change"],
+ "blurb": "A carousel projector changing slides. The outgoing slide is lifted up out of the gate, the lamp burns on an empty gate for a moment so the screen goes hot and white at the edges, and the next slide drops in from above and settles with the small bounce a real carriage gives. The gate crops the picture with slightly rounded corners, the lamp falls off towards them, and there is dust in the light. Set how long the empty gate is held, how hot the lamp burns, the bounce and how much dust there is.",
+ "default_duration": 1.3,
+ "params": [
+  {"key": "hold", "label": "Empty gate", "type": "float", "min": 0.0, "max": 0.4, "step": 0.01, "default": 0.14},
+  {"key": "lamp", "label": "Lamp", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.55},
+  {"key": "bounce", "label": "Bounce", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "gate", "label": "Gate corners", "type": "float", "min": 0.0, "max": 0.12, "step": 0.002, "default": 0.03},
+  {"key": "dust", "label": "Dust", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "warm", "label": "Lamp colour", "type": "color", "default": [1.0, 0.95, 0.84, 1.0]}
+ ]
+}

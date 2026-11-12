@@ -3,13 +3,20 @@
  "label": "Pixel Sort",
  "category": "Stylize",
  "tags": ["look"],
- "version": 1,
- "blurb": "Smears each row towards its brightest neighbour, the streaked look of a sorted image.",
+ "version": 2,
+ "blurb": "Really sorts the pixels. Every run of pixels whose brightness sits between Start above and Stop above is put in order along the row (or down the column), so bright runs melt into smooth streaks while the darker parts of the picture hold still and cut the runs apart. Sort by brightness, hue or saturation, either way round. Longest run caps how far one run can stretch, and each row starts its runs at a different place picked by the seed, so the streaks break up naturally instead of lining up.",
  "params": [
   {"key": "threshold", "label": "Start above", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.55},
-  {"key": "reach", "label": "How far it smears", "type": "float", "min": 0.0, "max": 400.0, "step": 1.0, "default": 80.0},
-  {"key": "taps", "label": "Quality", "type": "int", "min": 2, "max": 32, "step": 1, "default": 16},
-  {"key": "vertical_sort", "label": "Down the picture instead", "type": "bool", "default": false}
+  {"key": "upper", "label": "Stop above", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "reach", "label": "Longest run", "type": "float", "min": 2.0, "max": 400.0, "step": 1.0, "default": 80.0, "unit": " px"},
+  {"key": "sort_by", "label": "Sort by", "type": "enum", "choices": ["Brightness", "Hue", "Saturation"], "default": 0},
+  {"key": "reverse", "label": "Brightest first", "type": "bool", "default": false},
+  {"key": "vertical_sort", "label": "Down the picture instead", "type": "bool", "default": false},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "default": 0},
+  {"key": "taps", "label": "Quality", "type": "int", "min": 2, "max": 32, "step": 1, "default": 16, "hidden": true}
  ],
- "passes": "single"
+ "passes": [
+  {"shader": "rank.gdshader"},
+  {"shader": "gather.gdshader"}
+ ]
 }

@@ -2,14 +2,14 @@
  "id": "corner_pin",
  "label": "Corner Pin",
  "category": "Transform",
- "version": 1,
- "blurb": "Drags the four corners of the picture wherever you want, for putting it onto a screen or a sign.",
+ "version": 2,
+ "blurb": "Drags the four corners of the picture wherever you want, for putting it onto a screen or a sign. The picture is mapped with a true perspective (a homography), so lines that are straight stay straight and the far end of a tilted screen is squeezed the way a camera sees it, with clean antialiased edges.",
  "params": [
   {"key": "top_left", "label": "Top left", "type": "vec2", "default": [0.0, 0.0]},
   {"key": "top_right", "label": "Top right", "type": "vec2", "default": [1.0, 0.0]},
   {"key": "bottom_right", "label": "Bottom right", "type": "vec2", "default": [1.0, 1.0]},
   {"key": "bottom_left", "label": "Bottom left", "type": "vec2", "default": [0.0, 1.0]},
-  {"key": "steps", "label": "Quality", "type": "int", "min": 4, "max": 32, "step": 1, "default": 12}
+  {"key": "steps", "label": "Quality", "type": "int", "min": 4, "max": 32, "step": 1, "default": 12, "hidden": true}
  ],
  "handles": [{"kind": "quad", "keys": ["top_left", "top_right", "bottom_right", "bottom_left"]}],
  "passes": "single"

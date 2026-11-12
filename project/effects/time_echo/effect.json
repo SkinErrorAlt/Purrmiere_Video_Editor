@@ -1,0 +1,19 @@
+{
+ "id": "time_echo",
+ "label": "Time Echo",
+ "category": "Time",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Lays earlier frames of the clip over the current one, each fainter than the last, so anything that moves leaves a row of echoes behind it. The echoes are real earlier frames, worked out from the frame times, so playback, stepping and export show the same picture.",
+ "history": {"max": 62, "reach": ["echoes", "echo_time"], "seconds": ["echo_time"]},
+ "params": [
+  {"key": "echo_time", "label": "Time between echoes", "type": "float", "min": 0.01, "max": 1.0, "step": 0.005, "default": 0.067, "unit": " s"},
+  {"key": "echoes", "label": "Echoes", "type": "int", "min": 1, "max": 16, "step": 1, "default": 6},
+  {"key": "intensity", "label": "Starting strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "decay", "label": "Each echo keeps", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "operator", "label": "Combine", "type": "enum", "choices": ["Blend", "Add", "Screen", "Lighten", "Darken", "Behind the clip", "In front of the clip"], "default": 0},
+  {"key": "tint", "label": "Echo colour", "type": "color", "default": [0.45, 0.7, 1.0, 1.0]},
+  {"key": "tint_amount", "label": "Colour the echoes", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.0}
+ ],
+ "passes": [{"shader": "effect.gdshader"}]
+}

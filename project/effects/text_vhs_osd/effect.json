@@ -1,0 +1,195 @@
+{
+ "id": "text_vhs_osd",
+ "label": "VHS Display",
+ "category": "Text",
+ "version": 1,
+ "applies_to": "text",
+ "text_transform": "vhs_osd",
+ "tags": [
+  "text",
+  "horror",
+  "look"
+ ],
+ "blurb": "A camcorder's on screen display: REC with a blinking dot, tape counter, channel, date and time. The counter and clock run with the clip, and every value can be keyed.",
+ "params": [
+  {
+   "key": "show_mode",
+   "label": "Show the tape mode",
+   "type": "bool",
+   "default": true
+  },
+  {
+   "key": "mode",
+   "label": "Tape mode",
+   "type": "enum",
+   "choices": [
+    "REC",
+    "PLAY",
+    "PAUSE",
+    "STOP",
+    "FAST FORWARD",
+    "REWIND"
+   ],
+   "default": 0
+  },
+  {
+   "key": "blink",
+   "label": "Blink the REC dot",
+   "type": "bool",
+   "default": true
+  },
+  {
+   "key": "dot_colour",
+   "label": "REC dot colour",
+   "type": "color",
+   "default": [
+    1,
+    0.1,
+    0.1,
+    1
+   ]
+  },
+  {
+   "key": "show_counter",
+   "label": "Show the tape counter",
+   "type": "bool",
+   "default": true,
+   "group": "Counter"
+  },
+  {
+   "key": "show_speed",
+   "label": "Show the tape speed",
+   "type": "bool",
+   "default": true,
+   "group": "Counter"
+  },
+  {
+   "key": "tape_speed",
+   "label": "Tape speed",
+   "type": "enum",
+   "choices": [
+    "SP",
+    "LP",
+    "EP"
+   ],
+   "default": 0,
+   "group": "Counter"
+  },
+  {
+   "key": "counter_start",
+   "label": "Counter starts at",
+   "type": "float",
+   "min": 0,
+   "max": 360000,
+   "step": 1,
+   "default": 0,
+   "unit": " s",
+   "group": "Counter"
+  },
+  {
+   "key": "show_channel",
+   "label": "Show the channel",
+   "type": "bool",
+   "default": false,
+   "group": "Counter"
+  },
+  {
+   "key": "channel",
+   "label": "Channel",
+   "type": "int",
+   "min": 0,
+   "max": 999,
+   "step": 1,
+   "default": 3,
+   "group": "Counter"
+  },
+  {
+   "key": "show_date",
+   "label": "Show the date",
+   "type": "bool",
+   "default": true,
+   "group": "Date and time"
+  },
+  {
+   "key": "date",
+   "label": "Date (year-month-day)",
+   "type": "string",
+   "default": "1997-10-31",
+   "keyable": true,
+   "group": "Date and time"
+  },
+  {
+   "key": "date_format",
+   "label": "Date looks like",
+   "type": "enum",
+   "choices": [
+    "OCT 31 1997",
+    "31.10.1997",
+    "10/31/97",
+    "1997-10-31"
+   ],
+   "default": 0,
+   "group": "Date and time"
+  },
+  {
+   "key": "show_time",
+   "label": "Show the time",
+   "type": "bool",
+   "default": true,
+   "group": "Date and time"
+  },
+  {
+   "key": "time",
+   "label": "Time (hours:minutes:seconds)",
+   "type": "string",
+   "default": "23:57:00",
+   "keyable": true,
+   "group": "Date and time"
+  },
+  {
+   "key": "clock",
+   "label": "Clock",
+   "type": "enum",
+   "choices": [
+    "12 hour, AM and PM",
+    "24 hour"
+   ],
+   "default": 0,
+   "group": "Date and time"
+  },
+  {
+   "key": "clock_rate",
+   "label": "Clock speed",
+   "type": "float",
+   "min": -100,
+   "max": 100,
+   "step": 0.01,
+   "default": 1,
+   "group": "Date and time"
+  },
+  {
+   "key": "layout",
+   "label": "Layout",
+   "type": "enum",
+   "choices": [
+    "One item per line",
+    "All on one line"
+   ],
+   "default": 0,
+   "group": "Layout"
+  },
+  {
+   "key": "keep_text",
+   "label": "The title's own text",
+   "type": "enum",
+   "choices": [
+    "Leave it out",
+    "Above the display",
+    "Below the display"
+   ],
+   "default": 0,
+   "group": "Layout"
+  }
+ ],
+ "passes": []
+}

@@ -1,0 +1,14 @@
+{
+ "id": "diffuse",
+ "label": "Diffuse",
+ "category": "Stylize",
+ "version": 1,
+ "blurb": "Photoshop's Diffuse: shuffles each pixel with one a short random step away, so edges dissolve into a grainy, frosted softness without blurring. Darken only lets only darker pixels move in, Lighten only only lighter ones; Anisotropic shuffles each pixel with the neighbour closest in colour, which softens texture while edges hold. Shimmer re-rolls the shuffle every frame, like heat or film grain crawling; the seed picks the pattern when it holds still.",
+ "params": [
+  {"key": "mode", "label": "Mode", "type": "enum", "choices": ["Normal", "Darken only", "Lighten only", "Anisotropic"], "default": 0},
+  {"key": "amount", "label": "Spread", "type": "float", "min": 0.5, "max": 20.0, "step": 0.1, "default": 3.0, "unit": " px"},
+  {"key": "shimmer", "label": "Shimmer", "type": "bool", "default": false},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "default": 0}
+ ],
+ "passes": "single"
+}

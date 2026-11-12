@@ -1,0 +1,10 @@
+{
+ "id": "anamorphic_flare", "label": "Anamorphic Flare", "group": "Light and Film", "space": "2D",
+ "from": ["anamorphic lens flare"],
+ "blurb": "A cinematic anamorphic lens flare sweeps across the cut: a thin horizontal streak of blue light with a soft halo tracks over the frame, flaring to a bright core at the handover as the next shot comes out of the light. Set the colour and how hard it burns.",
+ "default_duration": 0.8,
+ "params": [
+  {"key": "intensity", "label": "Burn", "type": "float", "min": 0.0, "max": 2.5, "step": 0.01, "default": 1.2},
+  {"key": "flare_color", "label": "Flare colour", "type": "color", "default": [0.42, 0.62, 1.0, 1.0]}
+ ]
+}

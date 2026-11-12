@@ -1,7 +1,7 @@
 extends RefCounted
 
 const COUNT_KEY := "ta_count"
-const MAX_ANIMATORS := 8
+const MAX_ANIMATORS := 16
 const UNITS: PackedStringArray = ["characters", "characters_no_spaces", "words", "lines"]
 const UNIT_LABELS: PackedStringArray = ["Characters", "Characters, not spaces", "Words", "Lines"]
 const SHAPES: PackedStringArray = ["square", "ramp_up", "ramp_down", "triangle", "round", "smooth", "wave", "random"]
@@ -37,6 +37,9 @@ static func defaults() -> Dictionary:
 		"skew": 0.0,
 		"run": false,
 		"whole": false,
+		"pick": false,
+		"pick_from": 0.0,
+		"pick_to": 0.0,
 	}
 
 
@@ -72,7 +75,7 @@ static func animator(props: Dictionary, i: int) -> Dictionary:
 		if v == null:
 			continue
 		out[String(f)] = v
-	if not UNITS.has(String(out["units"])):
+	if not UNITS.has(String(out["units"])) or bool(out["pick"]):
 		out["units"] = "characters"
 	if not SHAPES.has(String(out["shape"])):
 		out["shape"] = "square"
@@ -155,8 +158,15 @@ static func weight(a: Dictionary, unit: int, total: int) -> float:
 	var off: float = float(a["offset"]) / 100.0
 	var shape: String = String(a["shape"])
 	var slide: float = 0.0 if shape == "wave" else off
-	var lo: float = minf(float(a["start"]), float(a["end"])) / 100.0 + slide
-	var hi: float = maxf(float(a["start"]), float(a["end"])) / 100.0 + slide
+	var lo: float = minf(float(a["start"]), float(a["end"])) / 100.0
+	var hi: float = maxf(float(a["start"]), float(a["end"])) / 100.0
+	if bool(a.get("pick", false)):
+		var pf: float = clampf(minf(float(a.get("pick_from", 0.0)), float(a.get("pick_to", 0.0))), 0.0, n) / n
+		var pt: float = clampf(maxf(float(a.get("pick_from", 0.0)), float(a.get("pick_to", 0.0))), 0.0, n) / n
+		lo = pf + (pt - pf) * lo
+		hi = pf + (pt - pf) * hi
+	lo += slide
+	hi += slide
 	var w: float = 0.0
 	if shape == "wave":
 		var inside: float = clampf((minf(u1, hi) - maxf(u0, lo)) * n, 0.0, 1.0)
@@ -232,6 +242,31 @@ static func glyph_state(anims: Array[Dictionary], maps: Array[Dictionary], char_
 			tint = colour(a["colour"]) if tint_w <= 0.0 else tint.lerp(colour(a["colour"]), cw)
 			tint_w = maxf(tint_w, cw)
 	return {"pos": pos, "scale": scale, "rot": rot, "opacity": opacity, "tint": tint, "tint_w": tint_w, "tracking": tracking, "blur": blur, "skew": skew}
+
+
+static func shifted_picks(props: Dictionary, at: int, removed: int, added: int) -> Dictionary:
+	var out: Dictionary = {}
+	for i: int in count(props):
+		var a: Dictionary = animator(props, i)
+		if not bool(a["pick"]):
+			continue
+		var f: int = int(float(a["pick_from"]))
+		var t: int = int(float(a["pick_to"]))
+		var nf: int = _moved(f, at, removed, added, false)
+		var nt: int = _moved(t, at, removed, added, true)
+		if nf != f:
+			out[key(i, "pick_from")] = float(nf)
+		if nt != t:
+			out[key(i, "pick_to")] = float(nt)
+	return out
+
+
+static func _moved(v: int, at: int, removed: int, added: int, is_end: bool) -> int:
+	if v < at or (v == at and not is_end):
+		return v
+	if v < at + removed:
+		return at + (added if is_end else 0)
+	return v - removed + added
 
 
 static func with_added(props: Dictionary, preset: Dictionary = {}) -> Dictionary:

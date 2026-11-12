@@ -1,0 +1,27 @@
+{
+ "id": "smoke",
+ "label": "Smoke",
+ "category": "Generate",
+ "version": 1,
+ "blurb": "Billowing volumetric smoke built from layered curling noise that rolls and expands as it rises from a source, thinning and dissipating towards the top, self shaded so the plumes read as rounded, lit volumes rather than a flat wash. It drifts continuously from the clip clock and is the same on a still. Colour it grey or black for battle smoke, white for steam, or any colour for a smoke bomb. A low density leaves clean wisps, a high density a thick choking column; a new seed rolls differently.",
+ "params": [
+  {"key": "position", "label": "Source", "type": "vec2", "default": [0.5, 0.95]},
+  {"key": "height", "label": "Height", "type": "float", "min": 0.1, "max": 1.5, "step": 0.01, "default": 0.85},
+  {"key": "width", "label": "Width", "type": "float", "min": 0.04, "max": 1.0, "step": 0.01, "default": 0.2},
+  {"key": "rise_speed", "label": "Rise speed", "type": "float", "min": 0.0, "max": 3.0, "step": 0.01, "default": 0.6},
+  {"key": "billow", "label": "Billow", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.7},
+  {"key": "density", "label": "Density", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "spread", "label": "Spread", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.7},
+  {"key": "dissipation", "label": "Dissipation", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "drift", "label": "Drift", "type": "float", "min": -1.0, "max": 1.0, "step": 0.01, "default": 0.1},
+  {"key": "lit_from", "label": "Lit from", "type": "float", "min": -180.0, "max": 180.0, "step": 1.0, "default": 50.0, "unit": " deg"},
+  {"key": "shade", "label": "Self shadow", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "colour", "label": "Colour", "type": "color", "default": [0.52, 0.52, 0.55, 1.0]},
+  {"key": "opacity", "label": "Opacity", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.85},
+  {"key": "blend", "label": "How it mixes", "type": "enum", "choices": ["Replace", "Multiply", "Screen", "Overlay", "Add", "Soft light", "Over"], "default": 6},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "handles": [{"kind": "point", "key": "position"}, {"kind": "angle", "key": "lit_from", "about": "position", "zero": "right", "turn": "ccw"}],
+ "passes": "single"
+}

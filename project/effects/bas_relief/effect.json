@@ -12,6 +12,8 @@
   {"key": "dark_colour", "label": "Dark colour", "type": "color", "default": [0.25, 0.23, 0.21, 1.0]},
   {"key": "light_colour", "label": "Light colour", "type": "color", "default": [0.92, 0.9, 0.86, 1.0]}
  ],
+ "handles": [{"kind": "angle", "key": "light_angle", "zero": "right", "turn": "ccw"}],
+ "panels": [{"kind": "light_ball", "bind": {"angle": "light_angle"}, "options": {"zero": "right", "turn": "ccw"}}],
  "passes": [
   {"shader": "soften.gdshader", "set": {"direction": [1, 0]}},
   {"shader": "soften.gdshader", "set": {"direction": [0, 1]}},

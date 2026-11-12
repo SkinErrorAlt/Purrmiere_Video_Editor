@@ -1,6 +1,7 @@
 extends "res://modules/core_panels/panel_base.gd"
 
 const EffectSource := preload("res://modules/core_panels/effect_source.gd")
+const TextFx := preload("res://doc/text_fx/text_fx.gd")
 const Folders := preload("res://modules/core_panels/effect_folders.gd")
 const COMPACT_ROW_H := 22.0
 const EffectPreview := preload("res://modules/core_panels/effect_preview.gd")
@@ -37,6 +38,7 @@ const PREF_KINDS: PackedStringArray = ["all", "video", "audio"]
 const PREF_HANDLES := "effects.filter_handles"
 const PREF_USER := "effects.filter_user"
 const PREF_SCALE := "effects.tile_scale"
+const PREF_SOUND := "effects.show_sound"
 const CATEGORY_ICONS: Dictionary = {
 	"Audio": "audio",
 	"Audio Transitions": "bleep",
@@ -51,8 +53,10 @@ const CATEGORY_ICONS: Dictionary = {
 	"Keying": "target_off",
 	"Light & Shadow": "sun",
 	"Noise & Grain": "more",
+	"Physics": "grid",
 	"Purrmiere": "paw",
 	"Stylize": "fx",
+	"Text": "type",
 	"Time": "stopwatch",
 	"Transform": "roll",
 	"Transition": "slip",
@@ -166,6 +170,8 @@ func _register_prefs() -> void:
 		Prefs.register(PREF_SORT_DESC, false, {"label": "Effects sort reversed", "type": "bool"})
 	if not Prefs.is_registered(PREF_TAG):
 		Prefs.register(PREF_TAG, "", {"label": "Effects tag filter", "type": "string"})
+	if not Prefs.is_registered(PREF_SOUND):
+		Prefs.register(PREF_SOUND, false, {"label": "Effects panel lists sound effects", "type": "bool"})
 	if not Prefs.is_registered(PREF_KIND):
 		Prefs.register(PREF_KIND, PREF_KINDS[0], {"label": "Effects kind filter", "type": "enum", "choices": PREF_KINDS})
 		if String(Prefs.get_value(PREF_KIND)).is_empty():
@@ -189,6 +195,8 @@ func _load_prefs() -> void:
 	filter_tag = String(Prefs.get_value(PREF_TAG))
 	filter_kind = from_pref(String(Prefs.get_value(PREF_KIND)), PREF_KINDS)
 	if not (filter_kind in KINDS):
+		filter_kind = ""
+	if filter_kind == "audio" and not sound_shown():
 		filter_kind = ""
 	filter_handles = bool(Prefs.get_value(PREF_HANDLES))
 	filter_user = bool(Prefs.get_value(PREF_USER))
@@ -373,7 +381,19 @@ func _matches(d: Dictionary) -> bool:
 	return false
 
 
+static func sound_shown() -> bool:
+	return bool(Prefs.get_value(PREF_SOUND)) if Prefs.is_registered(PREF_SOUND) else false
+
+
+## Voice effects stay in the Effects panel even with the other sound effects hidden (Ava, 2026-11-12: "the voice
+## effects aren't in the effects panel so add them back"); the rest of the sound effects follow the switch.
+static func always_listed(d: Dictionary) -> bool:
+	return EffectSource.media_kind(d) == "audio" and EffectSource.audio_group(d) == "Voice"
+
+
 func passes_filters(d: Dictionary) -> bool:
+	if not sound_shown() and EffectSource.media_kind(d) == "audio" and not always_listed(d):
+		return false
 	if not filter_tag.is_empty() and not EffectSource.has_tag(d, filter_tag):
 		return false
 	if not filter_kind.is_empty() and EffectSource.media_kind(d) != filter_kind:
@@ -573,7 +593,7 @@ func _dress_folder(fold: VBoxContainer, folder_id: String) -> void:
 	fold.call("add_right", more)
 	var header: Variant = fold.get("header")
 	if header is Control:
-		var slot: Control = PmSlot.make(PackedStringArray(["effect"]))
+		var slot: Control = PmSlot.make(PackedStringArray(["effect", "effect_reorder"]))
 		slot.name = "FolderDrop_" + folder_id
 		slot.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		slot.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -592,8 +612,13 @@ func _add_row_slot(row: Control, folder_id: String) -> void:
 	row.add_child(slot)
 
 
+## An effect dropped on a folder's header: from this panel (its id) or dragged off a clip in Effect Controls
+## (its effect id), so a look you made on a clip can be filed straight away.
 func _on_folder_drop(payload: Dictionary, _local: Vector2, folder_id: String) -> void:
-	drop_into_folder(String(payload.get("id", "")), folder_id)
+	var id: String = String(payload.get("id", ""))
+	if id.is_empty():
+		id = String(payload.get("eid", ""))
+	drop_into_folder(id, folder_id)
 
 
 func _on_row_drop(payload: Dictionary, _local: Vector2, before_id: String, folder_id: String) -> void:
@@ -751,6 +776,9 @@ func _gap(w: float) -> Control:
 
 
 func row_tip(d: Dictionary) -> String:
+	if TextFx.text_only(d):
+		return TextFx.about(d) + "
+Double click to add to the selected titles, or drag onto a title. Right click to star it"
 	var blurb: String = String(d.get("blurb", ""))
 	return (blurb + " " if not blurb.is_empty() else "") + "Double click to add to the selected clips. Drag onto a clip to put it on that clip only, or on every clip you picked when it is one of them. Right click to star it"
 
@@ -909,6 +937,8 @@ func filter_menu_items() -> Array:
 		items.append(PmMenu.check_item("tag:" + t, t.capitalize(), filter_tag == t))
 	items.append(PmMenu.separator())
 	for k: String in KINDS:
+		if k == "audio" and not sound_shown():
+			continue
 		items.append(PmMenu.check_item("kind:" + k, String(KIND_LABELS[k]), filter_kind == k))
 	items.append(PmMenu.separator())
 	items.append(PmMenu.check_item("handles", "Has handles on the monitor", filter_handles))
@@ -1050,6 +1080,7 @@ func row_menu_items(id: String) -> Array:
 		items.append(PmMenu.item("fav_off" if EffectSource.is_favourite(id) else "fav_on", "Remove from Favourites" if EffectSource.is_favourite(id) else "Add to Favourites"))
 		items.append(PmMenu.sub_item("folders", "Add to a folder", folder_pick_items(id)))
 		items.append_array(load("res://modules/core_panels/shader_import.gd").call("row_menu_items", id))
+		items.append_array(load("res://modules/core_panels/effect_file.gd").call("row_menu_items", id))
 	items.append(PmMenu.separator())
 	items.append(PmMenu.sub_item("view", "View", view_menu_items()))
 	items.append(PmMenu.sub_item("sort", "Sort", sort_menu_items()))
@@ -1084,6 +1115,8 @@ func _on_row_menu(pick: String, id: String) -> void:
 		_on_panel_menu(pick)
 		return
 	if bool(load("res://modules/core_panels/shader_import.gd").call("row_menu_picked", self, pick, id)):
+		return
+	if bool(load("res://modules/core_panels/effect_file.gd").call("row_menu_picked", self, pick, id)):
 		return
 	if pick.begins_with("folder_add:"):
 		var fid: String = pick.substr(11)
@@ -1139,7 +1172,9 @@ func add_to_selection(id: String) -> void:
 			Events.toast("Select " + String(def.get("track", "video")) + " clips for this transition")
 		return
 	if Verbs.drop_effect(d, s, ids, def) == 0:
-		if bool(def.get("audio", false)):
+		if TextFx.text_only(def):
+			Events.toast(TextFx.REFUSAL)
+		elif bool(def.get("audio", false)):
 			Events.toast("Select a clip that has sound, or one linked to its audio")
 		else:
 			Events.toast("Select a clip first")
@@ -1201,7 +1236,7 @@ func _tick_hover(dt: float) -> void:
 
 func can_preview(id: String) -> bool:
 	var def: Dictionary = def_for(id)
-	return not def.is_empty() and not def.has("transition") and not bool(def.get("audio", false)) and EffectPreview.available()
+	return not def.is_empty() and not def.has("transition") and not bool(def.get("audio", false)) and not TextFx.text_only(def) and EffectPreview.available()
 
 
 func _current_frame() -> Image:

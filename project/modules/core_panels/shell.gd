@@ -17,6 +17,7 @@ const Bus := preload("res://modules/core_panels/panel_bus.gd")
 const EditTools := preload("res://doc/commands/edit_tools.gd")
 const SaveAfterEdit := preload("res://modules/core_panels/save_after_edit.gd")
 const OWNER := "core_panels"
+const EXIT_GUARD_SECONDS := 20.0
 const OVERRIDE_IDS: PackedStringArray = ["file.new_project", "file.open", "file.close", "file.quit"]
 const PREF_AUTOSAVE := "project.autosave_seconds"
 const PROJECT_EXT := "purrmiere"
@@ -353,6 +354,8 @@ func _open_path(path: String, show: bool) -> void:
 	if show or _main() != null and (_main().get("editor") == null):
 		_show_editor(p.name)
 	Events.toast("Opened " + p.name)
+	if not Io.last_warning.is_empty():
+		Events.warn("Opened a project from a newer Purrmiere", Io.last_warning)
 
 
 func _on_new_project() -> void:
@@ -505,6 +508,10 @@ func _on_save() -> void:
 	if Session.doc.path.is_empty():
 		_on_save_as()
 		return
+	if Io.NewerFiles.is_held(Session.doc.path):
+		Events.warn("Save this project under a new name", Io.NewerFiles.refused_text(Session.doc.path))
+		_on_save_as()
+		return
 	_save_to(Session.doc.path, true)
 
 
@@ -570,6 +577,7 @@ func _on_quit() -> void:
 		answered.connect(_on_quit_answered)
 		return
 	_release_for_exit()
+	_guard_exit()
 	get_tree().quit()
 
 
@@ -583,6 +591,7 @@ func _on_quit_answered(choice: Variant) -> void:
 		_saver.call("discard", Session.doc)
 	_quit_confirmed = true
 	_release_for_exit()
+	_guard_exit()
 	get_tree().quit()
 
 
@@ -593,6 +602,11 @@ func _flush_saver() -> void:
 
 func save_after_edit() -> Node:
 	return _saver
+
+
+func _guard_exit() -> void:
+	if PurrBridge.available:
+		PurrBridge.arm_exit_guard(EXIT_GUARD_SECONDS)
 
 
 func _release_for_exit() -> void:

@@ -4,7 +4,7 @@ const PmLabel := preload("res://ui/kit/pm_label.gd")
 const PmIcon := preload("res://ui/kit/pm_icon.gd")
 const PmUI := preload("res://ui/kit/pm_ui.gd")
 const TOAST_HOLD := 3.0
-const TOOL_NAMES: Dictionary = {"select": "Selection", "track_select": "Track Select", "ripple": "Ripple Edit", "roll": "Rolling Edit", "rate": "Rate Stretch", "razor": "Razor", "slip": "Slip", "slide": "Slide", "pen": "Pen", "hand": "Hand", "zoom": "Zoom", "type": "Type", "realign": "Realign"}
+const TOOL_NAMES: Dictionary = {"select": "Selection", "track_select": "Track Select", "ripple": "Ripple Edit", "roll": "Rolling Edit", "rate": "Rate Stretch", "razor": "Razor", "slip": "Slip", "slide": "Slide", "pen": "Pen", "hand": "Hand", "zoom": "Zoom", "type": "Type", "realign": "Realign", "object_select": "Object Select", "mask_brush": "Mask Brush"}
 
 var _row: HBoxContainer = null
 var _tool: Label = null

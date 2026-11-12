@@ -3,6 +3,7 @@ extends RefCounted
 const SELF := preload("res://doc/track.gd")
 const Clip := preload("res://doc/clip.gd")
 const AnimProp := preload("res://doc/anim_prop.gd")
+const FreeTransition := preload("res://doc/free_transition.gd")
 
 var id: String = ""
 var kind: String = "video"
@@ -38,6 +39,7 @@ var height: float = 0.0
 var volume: Dictionary = AnimProp.make(1.0)
 var pan: Dictionary = AnimProp.make(0.0)
 var effects: Array[Dictionary] = []
+var free_transitions: Array[Dictionary] = []
 var clips: Array[Clip] = []
 var free: bool = false
 var free_number: int = 0
@@ -427,6 +429,8 @@ func to_dict() -> Dictionary:
 		d["pan"] = pan.duplicate(true)
 	if not effects.is_empty():
 		d["effects"] = effects.duplicate(true)
+	if not free_transitions.is_empty():
+		d[FreeTransition.FIELD] = FreeTransition.to_array(free_transitions)
 	var cs: Array = []
 	for c: Clip in clips:
 		cs.append(c.to_dict())
@@ -467,6 +471,7 @@ func apply_dict(d: Dictionary) -> void:
 	volume = (d["volume"] as Dictionary).duplicate(true) if d.get("volume") is Dictionary else AnimProp.make(1.0)
 	pan = (d["pan"] as Dictionary).duplicate(true) if d.get("pan") is Dictionary else AnimProp.make(0.0)
 	effects = Clip._dicts(d.get("effects", []))
+	free_transitions = FreeTransition.normalise_list(d.get(FreeTransition.FIELD, []))
 	clips = []
 	for c: Variant in d.get("clips", []):
 		if c is Dictionary:
@@ -481,4 +486,5 @@ func apply_dict(d: Dictionary) -> void:
 func header_dict() -> Dictionary:
 	var d: Dictionary = to_dict()
 	d.erase("clips")
+	d.erase(FreeTransition.FIELD)
 	return d

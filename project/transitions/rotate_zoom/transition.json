@@ -12,5 +12,8 @@
   {"key": "timing", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth", "Strong"], "default": 0},
   {"key": "centre", "label": "Centre", "type": "vec2", "min": 0, "max": 1, "step": 0.01, "default": [0.5, 0.5]},
   {"key": "background", "label": "Background", "type": "color", "default": [0.15, 0.15, 0.15, 1]}
+ ],
+ "handles": [
+  {"kind": "point", "key": "centre"}
  ]
 }

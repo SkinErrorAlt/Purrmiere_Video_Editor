@@ -1,0 +1,21 @@
+{
+ "id": "afterimage",
+ "label": "Afterimage",
+ "category": "Time",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "What your own eyes do after staring at something bright: the parts of the picture that were bright or strongly coloured a moment ago leave a soft ghost in the opposite colour once they move on. A red coat leaves a cyan shadow, a yellow ball leaves blue, a bright window leaves a dark patch that slowly fades. The ghosts stay where they were on the screen, as they would on the back of the eye, and still parts of the picture are untouched.",
+ "history": {"max": 62, "reach": ["memory"], "seconds": ["memory"]},
+ "params": [
+  {"key": "memory", "label": "Eyes remember", "type": "float", "min": 0.2, "max": 2.0, "step": 0.01, "default": 1.6, "unit": " s"},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 4.0, "step": 0.01, "default": 2.6},
+  {"key": "colour_shift", "label": "Opposite colour", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 1.0},
+  {"key": "darken", "label": "Dark ghost", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "blur", "label": "Softness", "type": "float", "min": 0.5, "max": 4.0, "step": 0.05, "default": 1.2}
+ ],
+ "passes": [
+  {"shader": "adapt.gdshader", "scale": 0.25},
+  {"shader": "blur.gdshader", "scale": 1.0, "map": {"spread": "blur"}},
+  {"shader": "compose.gdshader", "scale": 4.0}
+ ]
+}

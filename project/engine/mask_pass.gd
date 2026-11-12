@@ -3,13 +3,21 @@ extends Node
 const AnimProp := preload("res://doc/anim_prop.gd")
 const EffectPass := preload("res://engine/effect_pass.gd")
 const MaskShape := preload("res://doc/mask_shape.gd")
+const ObjectMask := preload("res://doc/object_mask.gd")
+const ObjectMatte := preload("res://engine/object_matte.gd")
 const FEATHER_SHADER := "res://engine/mask_feather.gdshader"
 const COMBINE_SHADER := "res://engine/mask_combine.gdshader"
+const PLATE_SHADER := "res://engine/object_plate.gdshader"
+const PICTURE_SHADER := "res://engine/mask_picture.gdshader"
+const PICTURE_CACHE_MAX := 24
 const ELLIPSE_SEGMENTS := 64
 const MODES: Dictionary = {"add": 0, "subtract": 1, "intersect": 2}
 
 static var _feather_shader: Shader = null
 static var _combine_shader: Shader = null
+static var _plate_shader: Shader = null
+static var _picture_shader: Shader = null
+static var _pictures: Dictionary = {}
 
 var units: Dictionary = {}
 var combine_chain: Array[EffectPass] = []
@@ -25,6 +33,44 @@ static func feather_shader() -> Shader:
 	return _feather_shader
 
 
+static func plate_shader() -> Shader:
+	if _plate_shader == null:
+		_plate_shader = load(PLATE_SHADER)
+	return _plate_shader
+
+
+static func picture_shader() -> Shader:
+	if _picture_shader == null:
+		_picture_shader = load(PICTURE_SHADER)
+	return _picture_shader
+
+
+## The picture a picture mask uses, loaded once and kept while the file is unchanged. Null when it cannot be read.
+static func picture_texture(path: String) -> Texture2D:
+	if path.is_empty():
+		return null
+	var stamp: int = 0
+	if not path.begins_with("res://"):
+		if not FileAccess.file_exists(path):
+			return null
+		stamp = int(FileAccess.get_modified_time(path))
+	var key: String = path + "@" + str(stamp)
+	if _pictures.has(key):
+		return _pictures[key]
+	var tex: Texture2D = null
+	if path.begins_with("res://"):
+		tex = load(path) as Texture2D
+	else:
+		var img: Image = Image.load_from_file(path)
+		if img != null and not img.is_empty():
+			img.generate_mipmaps()
+			tex = ImageTexture.create_from_image(img)
+	if _pictures.size() >= PICTURE_CACHE_MAX:
+		_pictures.clear()
+	_pictures[key] = tex
+	return tex
+
+
 static func combine_shader() -> Shader:
 	if _combine_shader == null:
 		_combine_shader = load(COMBINE_SHADER)
@@ -38,19 +84,27 @@ static func mask_id(m: Dictionary, index: int) -> String:
 	return id
 
 
-static func signature(masks: Array, effect_bound: PackedStringArray) -> String:
+static func signature(masks: Array, effect_bound: PackedStringArray, spill_bound: PackedStringArray = PackedStringArray()) -> String:
 	var parts: PackedStringArray = PackedStringArray()
 	for i: int in masks.size():
 		var m: Dictionary = masks[i]
 		if not bool(m.get("enabled", true)):
 			continue
 		var id: String = mask_id(m, i)
-		parts.append(id + ":" + ("e" if effect_bound.has(id) else "a"))
+		parts.append(id + ":" + ("e" if effect_bound.has(id) else "a") + ("+c" if cuts_alpha(m, effect_bound.has(id), spill_bound.has(id)) else ""))
 	return ",".join(parts)
 
 
-func rebuild(masks: Array, effect_bound: PackedStringArray, size: Vector2i, force: bool = false) -> bool:
-	var sig: String = signature(masks, effect_bound)
+static func cuts_alpha(m: Dictionary, effect_bound: bool, spill_bound: bool = false) -> bool:
+	if not effect_bound:
+		return true
+	if not ObjectMask.is_object(m) or not bool(m.get("cuts", true)):
+		return false
+	return not spill_bound
+
+
+func rebuild(masks: Array, effect_bound: PackedStringArray, size: Vector2i, force: bool = false, spill_bound: PackedStringArray = PackedStringArray()) -> bool:
+	var sig: String = signature(masks, effect_bound, spill_bound)
 	if not force and sig == _signature and size == size_px:
 		return false
 	_signature = sig
@@ -64,7 +118,7 @@ func rebuild(masks: Array, effect_bound: PackedStringArray, size: Vector2i, forc
 		var id: String = mask_id(m, i)
 		var unit: Dictionary = _build_unit(id)
 		units[id] = unit
-		if not effect_bound.has(id):
+		if cuts_alpha(m, effect_bound.has(id), spill_bound.has(id)):
 			alpha_ids.append(id)
 	var prev: EffectPass = null
 	for id: String in alpha_ids:
@@ -128,6 +182,17 @@ func _build_unit(id: String) -> Dictionary:
 	poly.color = Color.WHITE
 	poly.antialiased = true
 	raster.add_child(poly)
+	var plate := TextureRect.new()
+	plate.name = "Plate_" + id
+	plate.visible = false
+	plate.position = Vector2.ZERO
+	plate.size = Vector2(size_px)
+	plate.stretch_mode = TextureRect.STRETCH_SCALE
+	plate.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	var plate_mat := ShaderMaterial.new()
+	plate_mat.shader = plate_shader()
+	plate.material = plate_mat
+	raster.add_child(plate)
 	var fh: EffectPass = _make_pass(feather_shader())
 	fh.name = "FeatherH_" + id
 	fh.set_size_px(size_px)
@@ -140,7 +205,7 @@ func _build_unit(id: String) -> Dictionary:
 	fv.add_child(fh)
 	fv.set_input(fh.output())
 	fv.set_param("direction", Vector2(0.0, 1.0))
-	return {"raster": raster, "poly": poly, "feather_h": fh, "feather_v": fv}
+	return {"raster": raster, "poly": poly, "plate": plate, "plate_mat": plate_mat, "feather_h": fh, "feather_v": fv}
 
 
 func unit_root(id: String) -> Node:
@@ -228,6 +293,7 @@ static func shape_points(m: Dictionary, t: float, dur: float, fps: float, aspect
 		var n: int = flat.size() / 2
 		for i: int in n:
 			pts.append(Vector2(flat[i * 2], flat[i * 2 + 1]))
+		pts = MaskShape.curve_path(pts, MaskShape.handles_at(m, t, dur, fps))
 	if pts.size() < 3:
 		return PackedVector2Array()
 	var centre: Vector2 = Vector2.ZERO
@@ -306,7 +372,51 @@ func update(masks: Array, t: float, dur: float, fps: float, q_scale: float) -> v
 			continue
 		var unit: Dictionary = units[id]
 		var poly: Polygon2D = unit["poly"]
+		var plate: TextureRect = unit["plate"]
 		var expand: float = _eval_float(m, "expand", 0.0, t, dur, fps) * quality_scale
+		if ObjectMask.is_object(m):
+			poly.polygon = PackedVector2Array()
+			poly.visible = false
+			plate.visible = true
+			plate.size = px_size
+			var frame: int = int(round(t * maxf(fps, 1.0)))
+			var tex: Texture2D = ObjectMatte.texture_for(m, frame)
+			plate.texture = tex
+			var mat: ShaderMaterial = plate.material
+			if mat != null:
+				var reg: Rect2 = ObjectMask.region_of(m)
+				mat.set_shader_parameter("region", Vector4(reg.position.x, reg.position.y, maxf(reg.size.x, 0.0001), maxf(reg.size.y, 0.0001)))
+				var matte_side: float = float(tex.get_width()) if tex != null else 128.0
+				mat.set_shader_parameter("matte_size", Vector2(matte_side, matte_side))
+				mat.set_shader_parameter("edge_contrast", maxf(_eval_float(m, "edge_contrast", 1.6, t, dur, fps), 1.0))
+				mat.set_shader_parameter("edge_shift", clampf(_eval_float(m, "edge_shift", 0.0, t, dur, fps), -0.5, 0.5))
+			var ofh: EffectPass = unit["feather_h"]
+			var ofv: EffectPass = unit["feather_v"]
+			var ofeather: float = maxf(_eval_float(m, "feather", 0.0, t, dur, fps), 0.0) * quality_scale
+			for fp: EffectPass in [ofh, ofv]:
+				fp.set_param("radius", ofeather)
+				fp.set_param("expand", expand)
+				fp.set_param("tex_size", px_size)
+			if alpha_ids.has(id) and chain_index < combine_chain.size():
+				var oc: EffectPass = combine_chain[chain_index]
+				oc.set_param("mode", mode_of(m, t, dur, fps))
+				oc.set_param("opacity", clampf(_eval_float(m, "opacity", 1.0, t, dur, fps), 0.0, 1.0))
+				oc.set_param("invert", invert_of(m, t, dur, fps))
+				chain_index += 1
+			continue
+		if MaskShape.is_picture(m):
+			_update_picture(unit, m, t, dur, fps, px_size, aspect, expand)
+			if alpha_ids.has(id) and chain_index < combine_chain.size():
+				var pc: EffectPass = combine_chain[chain_index]
+				pc.set_param("mode", mode_of(m, t, dur, fps))
+				pc.set_param("opacity", clampf(_eval_float(m, "opacity", 1.0, t, dur, fps), 0.0, 1.0))
+				pc.set_param("invert", invert_of(m, t, dur, fps))
+				chain_index += 1
+			continue
+		if plate.material != unit["plate_mat"]:
+			plate.material = unit["plate_mat"]
+		poly.visible = true
+		plate.visible = false
 		var box_kind: bool = MaskShape.BOX_KINDS.has(str(m.get("kind", "")))
 		var grow: Vector2 = Vector2(expand / px_size.x, expand / px_size.y) if box_kind else Vector2.ZERO
 		var pts: PackedVector2Array = shape_points(m, t, dur, fps, aspect, grow)
@@ -329,3 +439,33 @@ func update(masks: Array, t: float, dur: float, fps: float, q_scale: float) -> v
 			c.set_param("opacity", clampf(_eval_float(m, "opacity", 1.0, t, dur, fps), 0.0, 1.0))
 			c.set_param("invert", invert_of(m, t, dur, fps))
 			chain_index += 1
+
+
+func _update_picture(unit: Dictionary, m: Dictionary, t: float, dur: float, fps: float, px_size: Vector2, aspect: float, expand: float) -> void:
+	var poly: Polygon2D = unit["poly"]
+	var plate: TextureRect = unit["plate"]
+	poly.polygon = PackedVector2Array()
+	poly.visible = false
+	var tex: Texture2D = picture_texture(str(m.get("image", "")))
+	plate.visible = tex != null
+	plate.size = px_size
+	plate.texture = tex
+	var mat: ShaderMaterial = unit.get("pic_mat")
+	if mat == null:
+		mat = ShaderMaterial.new()
+		mat.shader = picture_shader()
+		unit["pic_mat"] = mat
+	if plate.material != mat:
+		plate.material = mat
+	var box: Rect2 = MaskShape.box_at(m, t, dur, fps)
+	mat.set_shader_parameter("box", Vector4(box.get_center().x, box.get_center().y, maxf(box.size.x, 0.0001), maxf(box.size.y, 0.0001)))
+	mat.set_shader_parameter("rotation", deg_to_rad(_eval_float(m, "rotation", 0.0, t, dur, fps)))
+	mat.set_shader_parameter("aspect", aspect)
+	mat.set_shader_parameter("channel", maxi(MaskShape.PICTURE_CHANNELS.find(str(m.get("channel", "luma"))), 0))
+	mat.set_shader_parameter("low", clampf(_eval_float(m, "low", 0.0, t, dur, fps), 0.0, 1.0))
+	mat.set_shader_parameter("high", clampf(_eval_float(m, "high", 1.0, t, dur, fps), 0.0, 1.0))
+	var feather: float = maxf(_eval_float(m, "feather", 0.0, t, dur, fps), 0.0) * quality_scale
+	for fp: EffectPass in [unit["feather_h"], unit["feather_v"]]:
+		fp.set_param("radius", feather)
+		fp.set_param("expand", expand)
+		fp.set_param("tex_size", px_size)

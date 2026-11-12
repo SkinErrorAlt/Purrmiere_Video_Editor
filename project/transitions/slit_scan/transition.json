@@ -1,0 +1,3 @@
+{"id":"slit_scan","label":"Slit-Scan","group":"Glitch","space":"2D","from":["slit-scan time smear"],
+"blurb":"A slit-scan sweep: each slice of the frame crosses over at a slightly different moment, so the handover smears across the picture in a leaning band of time, the outgoing shot stretching into the incoming one along it. Pick the direction and how long the smear stretches.","default_duration":0.9,
+"params":[{"key":"dir","label":"Direction","type":"enum","choices":["Left to right","Right to left","Top to bottom","Bottom to top"],"default":0},{"key":"spread","label":"Smear","type":"float","min":0.0,"max":1.0,"step":0.01,"default":0.6}]}

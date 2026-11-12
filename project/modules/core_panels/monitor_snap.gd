@@ -320,6 +320,10 @@ func _gather(c: Clip, s: Sequence, d: Project) -> void:
 				q = got
 		if q.size() != 4:
 			q = MonitorPick.quad_of_clip(other, s, d, s.playhead)
+		if MonitorPick.snaps_by_words(other, d):
+			var words: PackedVector2Array = MonitorPick.words_quad_of_clip(other, s, d, s.playhead)
+			if words.size() == 4:
+				q = words
 		var b: Rect2 = box_of(q)
 		if b.size.x <= 0.0 and b.size.y <= 0.0:
 			continue

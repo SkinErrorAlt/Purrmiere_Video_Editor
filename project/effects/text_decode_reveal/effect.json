@@ -1,0 +1,96 @@
+{
+ "id": "text_decode_reveal",
+ "label": "Decode Reveal",
+ "category": "Text",
+ "version": 1,
+ "applies_to": "text",
+ "text_transform": "decode_reveal",
+ "tags": [
+  "text",
+  "horror"
+ ],
+ "blurb": "Scrambled letters settle into the real text one by one, or the text breaks up into noise. Runs on its own from the start time.",
+ "params": [
+  {
+   "key": "start",
+   "label": "Starts at",
+   "type": "float",
+   "min": 0,
+   "max": 600,
+   "step": 0.01,
+   "default": 0,
+   "unit": " s"
+  },
+  {
+   "key": "speed",
+   "label": "Letters per second",
+   "type": "float",
+   "min": 0,
+   "max": 200,
+   "step": 0.1,
+   "default": 12
+  },
+  {
+   "key": "order",
+   "label": "Order",
+   "type": "enum",
+   "choices": [
+    "Left to right",
+    "Right to left",
+    "From the middle out",
+    "Random"
+   ],
+   "default": 0
+  },
+  {
+   "key": "pool",
+   "label": "Scramble with",
+   "type": "enum",
+   "choices": [
+    "Letters",
+    "Digits",
+    "Symbols",
+    "Blocks",
+    "The text's own letters",
+    "These characters"
+   ],
+   "default": 0
+  },
+  {
+   "key": "chars",
+   "label": "These characters",
+   "type": "string",
+   "default": "",
+   "keyable": false
+  },
+  {
+   "key": "rate",
+   "label": "Scramble changes per second",
+   "type": "float",
+   "min": 0,
+   "max": 60,
+   "step": 0.1,
+   "default": 20
+  },
+  {
+   "key": "seed",
+   "label": "Seed",
+   "type": "int",
+   "min": 0,
+   "max": 9999,
+   "step": 1,
+   "default": 0
+  },
+  {
+   "key": "direction",
+   "label": "Direction",
+   "type": "enum",
+   "choices": [
+    "Scrambled to plain",
+    "Plain to scrambled"
+   ],
+   "default": 0
+  }
+ ],
+ "passes": []
+}

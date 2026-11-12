@@ -1,0 +1,18 @@
+{
+ "id": "minimum",
+ "label": "Minimum",
+ "category": "Stylize",
+ "version": 1,
+ "blurb": "Photoshop's Minimum: every pixel takes the darkest value around it, so dark areas spread and bright details shrink or vanish. Use it to thicken dark lines and outlines, spread a matte or close small light gaps. Square spreads in a box; Round spreads in a circle (built from eight directions). By brightness keeps each pixel's colour together instead of taking the darkest red, green and blue separately.",
+ "params": [
+  {"key": "radius", "label": "Radius", "type": "float", "min": 0.0, "max": 100.0, "step": 0.1, "default": 4.0, "unit": " px"},
+  {"key": "shape", "label": "Shape", "type": "enum", "choices": ["Square", "Round"], "default": 1},
+  {"key": "by_brightness", "label": "By brightness", "type": "bool", "default": false}
+ ],
+ "passes": [
+  {"shader": "res://effects/maximum/morph.gdshader", "set": {"direction": [1, 0], "mode": 1}},
+  {"shader": "res://effects/maximum/morph.gdshader", "set": {"direction": [0, 1], "mode": 1}},
+  {"shader": "res://effects/maximum/morph.gdshader", "set": {"direction": [1, 1], "mode": 1}, "when": {"param": "shape", "eq": 1}},
+  {"shader": "res://effects/maximum/morph.gdshader", "set": {"direction": [1, -1], "mode": 1}, "when": {"param": "shape", "eq": 1}}
+ ]
+}

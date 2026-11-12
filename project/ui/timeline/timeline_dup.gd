@@ -19,6 +19,9 @@ static func ghost(canvas: Control, s: Sequence, t: Track, c: Clip, x0: float, x1
 	var dx: float = float(drag.get("delta_t")) * pps
 	var gx0: float = x0 + dx
 	var gx1: float = x1 + dx
+	if canvas.has_method("fold") and not (canvas.call("fold") as Dictionary).is_empty():
+		gx0 = float(canvas.call("x_of", c.start + float(drag.get("delta_t"))))
+		gx1 = float(canvas.call("x_of", c.end() + float(drag.get("delta_t"))))
 	var body_y: float = lane_y
 	var own_steps: int = s.visual_track_delta(t.kind, move_steps) if move_steps != 0 and s.was_picked(c.id) else 0
 	if own_steps != 0:

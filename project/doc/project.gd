@@ -6,7 +6,8 @@ const Sequence := preload("res://doc/sequence.gd")
 const Track := preload("res://doc/track.gd")
 const Clip := preload("res://doc/clip.gd")
 const Undo := preload("res://doc/undo.gd")
-const FORMAT_VERSION := 1
+const Migrations := preload("res://doc/migrations.gd")
+const FORMAT_VERSION := Migrations.CURRENT_VERSION
 
 signal changed(kind: String)
 signal history_changed

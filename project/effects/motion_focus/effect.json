@@ -1,0 +1,223 @@
+{
+ "id": "motion_focus",
+ "label": "Motion Focus",
+ "category": "Time",
+ "tags": [
+  "look"
+ ],
+ "version": 1,
+ "blurb": "A lens that focuses on movement. Whatever moves stays sharp and the still world melts into a soft, creamy out of focus blur with round highlights, as if the shot had been filmed with a fast lens focused exactly on the action, and the focus follows the action by itself as it crosses the frame. Turn it round to keep the still scene sharp and blur the passers by into soft ghosts. Haze adds a little air in front of the soft parts so the sharp ones stand out even more. Ignore camera movement takes out a pan, so in a shot that follows a runner the runner stays sharp and the sliding background goes soft.",
+ "history": {
+  "max": 1
+ },
+ "params": [
+  {
+   "key": "keep_sharp",
+   "label": "Keep sharp",
+   "type": "enum",
+   "choices": [
+    "What moves",
+    "What holds still"
+   ],
+   "default": 0
+  },
+  {
+   "key": "blur",
+   "label": "Blur",
+   "type": "float",
+   "min": 0.0,
+   "max": 60.0,
+   "step": 0.1,
+   "default": 14.0,
+   "unit": " px"
+  },
+  {
+   "key": "ignore_under",
+   "label": "Ignore movement under",
+   "type": "float",
+   "min": 0.0,
+   "max": 10.0,
+   "step": 0.1,
+   "default": 0.6,
+   "unit": " px"
+  },
+  {
+   "key": "full_at",
+   "label": "Fully sharp at",
+   "type": "float",
+   "min": 0.2,
+   "max": 40.0,
+   "step": 0.1,
+   "default": 3.0,
+   "unit": " px"
+  },
+  {
+   "key": "spread",
+   "label": "Sharp area spreads",
+   "type": "float",
+   "min": 0.0,
+   "max": 80.0,
+   "step": 0.5,
+   "default": 18.0,
+   "unit": " px"
+  },
+  {
+   "key": "camera",
+   "label": "Ignore camera movement",
+   "type": "bool",
+   "default": true
+  },
+  {
+   "key": "bokeh",
+   "label": "Bright highlights",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.5
+  },
+  {
+   "key": "haze",
+   "label": "Haze",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.0
+  },
+  {
+   "key": "haze_colour",
+   "label": "Haze colour",
+   "type": "color",
+   "default": [
+    0.8,
+    0.84,
+    0.9,
+    1.0
+   ]
+  }
+ ],
+ "passes": [
+  {
+   "shader": "res://effects/pixel_motion_blur/luma.gdshader",
+   "scale": 0.5,
+   "set": {
+    "stage": 0,
+    "age": 1.0
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/luma.gdshader",
+   "scale": 0.5,
+   "set": {
+    "stage": 1
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/luma.gdshader",
+   "scale": 0.5,
+   "set": {
+    "stage": 1
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/luma.gdshader",
+   "scale": 0.5,
+   "set": {
+    "stage": 1
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/search.gdshader",
+   "scale": 1.0,
+   "set": {
+    "radius": 6,
+    "level_scale": 16.0,
+    "patch": 2,
+    "lambda": 0.004
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/refine.gdshader",
+   "scale": 2.0,
+   "set": {
+    "level_scale": 8.0,
+    "patch": 1,
+    "lambda": 0.004
+   },
+   "inputs": {
+    "luma_tex": 2
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/refine.gdshader",
+   "scale": 2.0,
+   "set": {
+    "level_scale": 4.0,
+    "patch": 1,
+    "lambda": 0.004,
+    "half_step": true
+   },
+   "inputs": {
+    "luma_tex": 1
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/refine.gdshader",
+   "scale": 2.0,
+   "set": {
+    "level_scale": 2.0,
+    "patch": 1,
+    "lambda": 0.004,
+    "half_step": true
+   },
+   "inputs": {
+    "luma_tex": 0
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/smooth.gdshader",
+   "scale": 1.0
+  },
+  {
+   "shader": "res://effects/_motion_kit/global.gdshader",
+   "scale": 0.0625
+  },
+  {
+   "shader": "res://effects/_motion_kit/clean.gdshader",
+   "scale": 16.0,
+   "inputs": {
+    "flow_tex": 8,
+    "luma_tex": 0,
+    "global_tex": 9
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/smooth.gdshader",
+   "scale": 1.0
+  },
+  {
+   "shader": "mask.gdshader",
+   "scale": 0.5,
+   "inputs": {
+    "flow_tex": 11,
+    "global_tex": 9
+   }
+  },
+  {
+   "shader": "grow.gdshader",
+   "scale": 1.0
+  },
+  {
+   "shader": "grow.gdshader",
+   "scale": 1.0,
+   "set": {
+    "stage": 1
+   }
+  },
+  {
+   "shader": "lens.gdshader",
+   "scale": 4.0
+  }
+ ]
+}

@@ -1,0 +1,228 @@
+{
+ "id": "motion_paint",
+ "label": "Painted Motion",
+ "category": "Time",
+ "tags": [
+  "look"
+ ],
+ "version": 1,
+ "blurb": "Turns the clip into a moving oil painting where the brushwork follows the movement. Still things are painted in short strokes that follow their shapes, and everything that moves is painted in long sweeping strokes laid along the way it is going, longer the faster it goes, with the paint dragged out behind it like a wet brush pulled across the canvas. A runner becomes a streak of strokes pointing back along the run, a swinging arm leaves a fan of strokes and the still street stays calm, like an impressionist painting that knows what is moving.",
+ "history": {
+  "max": 1
+ },
+ "params": [
+  {
+   "key": "stroke_len",
+   "label": "Still stroke length",
+   "type": "float",
+   "min": 2.0,
+   "max": 60.0,
+   "step": 0.5,
+   "default": 14.0,
+   "unit": " px"
+  },
+  {
+   "key": "motion_len",
+   "label": "Stroke length per speed",
+   "type": "float",
+   "min": 0.0,
+   "max": 30.0,
+   "step": 0.1,
+   "default": 6.0
+  },
+  {
+   "key": "max_len",
+   "label": "Longest stroke",
+   "type": "float",
+   "min": 10.0,
+   "max": 300.0,
+   "step": 1.0,
+   "default": 120.0,
+   "unit": " px"
+  },
+  {
+   "key": "trail",
+   "label": "Drag behind",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.7
+  },
+  {
+   "key": "spacing",
+   "label": "Stroke spacing",
+   "type": "float",
+   "min": 2.0,
+   "max": 30.0,
+   "step": 0.1,
+   "default": 6.0,
+   "unit": " px"
+  },
+  {
+   "key": "width",
+   "label": "Stroke width",
+   "type": "float",
+   "min": 1.5,
+   "max": 40.0,
+   "step": 0.1,
+   "default": 8.0,
+   "unit": " px"
+  },
+  {
+   "key": "bristles",
+   "label": "Bristles",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.5
+  },
+  {
+   "key": "relief",
+   "label": "Paint relief",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.5
+  },
+  {
+   "key": "colour_jitter",
+   "label": "Colour variation",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.35
+  },
+  {
+   "key": "ignore_under",
+   "label": "Ignore movement under",
+   "type": "float",
+   "min": 0.0,
+   "max": 10.0,
+   "step": 0.1,
+   "default": 0.8,
+   "unit": " px"
+  },
+  {
+   "key": "camera",
+   "label": "Ignore camera movement",
+   "type": "bool",
+   "default": true
+  }
+ ],
+ "passes": [
+  {
+   "shader": "res://effects/pixel_motion_blur/luma.gdshader",
+   "scale": 0.5,
+   "set": {
+    "stage": 0,
+    "age": 1.0
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/luma.gdshader",
+   "scale": 0.5,
+   "set": {
+    "stage": 1
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/luma.gdshader",
+   "scale": 0.5,
+   "set": {
+    "stage": 1
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/luma.gdshader",
+   "scale": 0.5,
+   "set": {
+    "stage": 1
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/search.gdshader",
+   "scale": 1.0,
+   "set": {
+    "radius": 6,
+    "level_scale": 16.0,
+    "patch": 2,
+    "lambda": 0.004
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/refine.gdshader",
+   "scale": 2.0,
+   "set": {
+    "level_scale": 8.0,
+    "patch": 1,
+    "lambda": 0.004
+   },
+   "inputs": {
+    "luma_tex": 2
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/refine.gdshader",
+   "scale": 2.0,
+   "set": {
+    "level_scale": 4.0,
+    "patch": 1,
+    "lambda": 0.004,
+    "half_step": true
+   },
+   "inputs": {
+    "luma_tex": 1
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/refine.gdshader",
+   "scale": 2.0,
+   "set": {
+    "level_scale": 2.0,
+    "patch": 1,
+    "lambda": 0.004,
+    "half_step": true
+   },
+   "inputs": {
+    "luma_tex": 0
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/smooth.gdshader",
+   "scale": 1.0
+  },
+  {
+   "shader": "res://effects/_motion_kit/global.gdshader",
+   "scale": 0.0625
+  },
+  {
+   "shader": "res://effects/_motion_kit/clean.gdshader",
+   "scale": 16.0,
+   "inputs": {
+    "flow_tex": 8,
+    "luma_tex": 0,
+    "global_tex": 9
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/smooth.gdshader",
+   "scale": 1.0
+  },
+  {
+   "shader": "field.gdshader",
+   "scale": 0.5,
+   "inputs": {
+    "flow_tex": 11,
+    "global_tex": 9
+   }
+  },
+  {
+   "shader": "paint.gdshader",
+   "scale": 4.0
+  }
+ ]
+}

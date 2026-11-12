@@ -1,0 +1,15 @@
+{
+ "id": "frame_blend",
+ "label": "Frame Blend",
+ "category": "Time",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Mixes the current frame with the frames just before it, like leaving the shutter open longer: movement turns into soft streaks while still parts stay sharp. Recent first lets the newest frame lead; Even gives every frame the same weight.",
+ "history": {"max": 62, "reach": ["frames", "spacing"]},
+ "params": [
+  {"key": "frames", "label": "Frames mixed", "type": "int", "min": 2, "max": 31, "step": 1, "default": 6},
+  {"key": "spacing", "label": "Frames apart", "type": "int", "min": 1, "max": 4, "step": 1, "default": 1},
+  {"key": "weighting", "label": "Weighting", "type": "enum", "choices": ["Even", "Recent first", "Long tail"], "default": 0}
+ ],
+ "passes": [{"shader": "effect.gdshader"}]
+}

@@ -1,0 +1,17 @@
+{
+ "id": "blobbylize",
+ "label": "Blobbylize",
+ "category": "Distort",
+ "version": 1,
+ "blurb": "The bright parts of the picture swell into rounded blobs of clear jelly and run together where they touch, the way drops of water do on glass. Each blob has a curved surface, so it bends the picture underneath it, catches a hard highlight where the light hits and darkens round its rim. What becomes a blob is set by brightness, so you can have only the highlights bead up or the whole frame turn to jelly. Set how big the blobs grow, how softly they join, how strongly they bend the picture and how wet they look.",
+ "params": [
+  {"key": "size", "label": "Blob size", "type": "float", "min": 0.5, "max": 24.0, "step": 0.5, "default": 9.0, "unit": " px"},
+  {"key": "level", "label": "Blobs above", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45},
+  {"key": "join", "label": "Join softness", "type": "float", "min": 0.01, "max": 0.6, "step": 0.005, "default": 0.16},
+  {"key": "bend", "label": "Lens bend", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "wet", "label": "Wet look", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.9},
+  {"key": "rim", "label": "Rim shade", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.55},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0}
+ ],
+ "passes": "single"
+}

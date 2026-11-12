@@ -15,6 +15,8 @@ const Hit := preload("res://ui/timeline/timeline_hit.gd")
 const Paint := preload("res://ui/timeline/timeline_paint.gd")
 const PmMenu := preload("res://ui/kit/pm_menu.gd")
 const RegionClipUi := preload("res://modules/core_panels/organizer/region_clip_ui.gd")
+const ViewSoundUi := preload("res://modules/core_panels/view_sound_ui.gd")
+const SyncAlign := preload("res://doc/sync_align.gd")
 const SELF_PATH := "res://ui/timeline/timeline_edit.gd"
 const COMMANDS_PATH := "res://modules/core_panels/edit_commands.gd"
 const HANDLE := 7.0
@@ -268,16 +270,23 @@ static func clip_items(canvas: Control, c: Clip, t: float, items: Array) -> Arra
 	var extra: Array = []
 	if tr != null and tr.is_picture(c):
 		extra.append(PmMenu.item("freeze_frame", "Freeze frame", Cmd.keys_text("clip.freeze_frame")))
+		extra.append(PmMenu.item("rewind_buildup", "Rewind build-up", Cmd.keys_text("clip.rewind_buildup")))
 		extra.append(PmMenu.item("hold_end", "Hold this frame to the end"))
 	extra.append(PmMenu.item("match_frame", "Match frame", Cmd.keys_text("clip.match_frame")))
 	var rep: Dictionary = PmMenu.item("replace_footage", "Replace with the selected bin item")
 	rep["disabled"] = String(_commands().call("bin_choice")).is_empty()
 	extra.append(rep)
+	var lined: Dictionary = PmMenu.item("replace_footage_synced", "Replace with it, lined up on the sync marks")
+	lined["disabled"] = bool(rep["disabled"]) or not SyncAlign.has_sync(canvas.call("doc").media_by_id(c.media_id))
+	extra.append(lined)
 	if not Tools.audio_clip_ids(s, Verbs.selection(s)).is_empty():
 		extra.append(PmMenu.item("audio_gain", "Audio gain", Cmd.keys_text("clip.audio_gain")))
 	var regions_items: Array = RegionClipUi.clip_items(canvas.call("doc"), c, t)
 	if not regions_items.is_empty():
 		out = regions_items + out
+	var view_items: Array = ViewSoundUi.clip_items(s, c)
+	if not view_items.is_empty():
+		out = view_items + out
 	return _insert_after(out, "speed", extra)
 
 
@@ -294,6 +303,8 @@ static func on_clip_menu(canvas: Control, id: String, clip_id: String, t: float)
 	var cmds: GDScript = _commands()
 	if RegionClipUi.on_clip_menu(canvas, d, s, id, clip_id):
 		return true
+	if ViewSoundUi.on_clip_menu(d, s, id, clip_id):
+		return true
 	if id == ClipLoop.MENU_ID:
 		ClipLoop.toggle(d, s, clip_id)
 		return true
@@ -305,6 +316,9 @@ static func on_clip_menu(canvas: Control, id: String, clip_id: String, t: float)
 	if id == "freeze_frame":
 		cmds.call("open_freeze_form", clip_id, use_time(s, c, t))
 		return true
+	if id == "rewind_buildup":
+		cmds.call("open_rewind_form", clip_id)
+		return true
 	if id == "hold_end":
 		cmds.call("hold_to_end_at", clip_id, use_time(s, c, t))
 		return true
@@ -313,6 +327,9 @@ static func on_clip_menu(canvas: Control, id: String, clip_id: String, t: float)
 		return true
 	if id == "replace_footage":
 		cmds.call("replace_clip_with_bin", clip_id)
+		return true
+	if id == "replace_footage_synced":
+		cmds.call("replace_clip_with_bin", clip_id, true)
 		return true
 	if id == "audio_gain":
 		Cmd.run("clip.audio_gain")

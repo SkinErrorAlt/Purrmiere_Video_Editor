@@ -16,19 +16,21 @@ const ALIGN_EPS := 0.0005
 class BandStep extends "res://doc/commands/composite.gd":
 	var clip_id: String = ""
 	var prop: Dictionary = {}
-	var static_v: float = -1.0
+	var static_v: float = 0.0
+	var is_static: bool = false
 	var plan: Dictionary = {}
 	var solved: Dictionary = {}
 	var solve_ok: bool = true
 	var family: PackedStringArray = PackedStringArray()
 	var hint: Dictionary = {}
 
-	func _init(p_seq_id: String, p_clip_id: String, p_prop: Dictionary, p_static: float) -> void:
+	func _init(p_seq_id: String, p_clip_id: String, p_prop: Dictionary, p_static: float, p_is_static: bool = false) -> void:
 		label = "Speed band"
 		seq_id = p_seq_id
 		clip_id = p_clip_id
 		prop = p_prop.duplicate(true)
 		static_v = p_static
+		is_static = p_is_static
 
 	static func aligned_family(s: Sequence, c: Clip) -> Array[Clip]:
 		var out: Array[Clip] = [c]
@@ -93,7 +95,7 @@ class BandStep extends "res://doc/commands/composite.gd":
 		if tr == null or tr.locked:
 			return false
 		var fam: Array[Clip] = []
-		if static_v >= 0.0:
+		if is_static:
 			for cmd: Command in SpeedLength.typed_speed_commands(s, PackedStringArray([c.id]), static_v):
 				apply(doc, cmd)
 			plan = SpeedCurve.compile(AnimProp.make(static_v))
@@ -210,10 +212,10 @@ class ShiftStarts extends "res://doc/commands/command.gd":
 
 
 static func step(seq_id: String, clip_id: String, prop: Dictionary, hint: Dictionary = {}) -> BandStep:
-	var out: BandStep = BandStep.new(seq_id, clip_id, prop, -1.0)
+	var out: BandStep = BandStep.new(seq_id, clip_id, prop, 0.0, false)
 	out.hint = hint
 	return out
 
 
 static func step_static(seq_id: String, clip_id: String, v: float) -> BandStep:
-	return BandStep.new(seq_id, clip_id, {}, v)
+	return BandStep.new(seq_id, clip_id, {}, v, true)

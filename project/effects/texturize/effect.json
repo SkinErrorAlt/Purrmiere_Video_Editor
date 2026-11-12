@@ -13,5 +13,6 @@
   {"key": "tile_scale", "label": "Tile scale", "type": "float", "min": 0.05, "max": 8, "step": 0.01, "default": 1.0}
  ],
  "handles": [{"kind": "angle", "key": "light_angle", "zero": "right", "turn": "ccw"}],
+ "panels": [{"kind": "light_ball", "bind": {"angle": "light_angle"}, "options": {"zero": "right", "turn": "ccw"}}],
  "passes": "single"
 }

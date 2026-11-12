@@ -1,0 +1,80 @@
+{
+ "id": "text_aes",
+ "label": "AES",
+ "category": "Text",
+ "version": 1,
+ "applies_to": "text",
+ "text_transform": "aes",
+ "tags": [
+  "text",
+  "cipher",
+  "crypto"
+ ],
+ "blurb": "Real AES-256 in CBC mode with a key made from a passphrase, in the OpenSSL format that CryptoJS, it-tools and encrypt-online use, or with your own key and IV. Written as base64 or hex; decrypts too.",
+ "params": [
+  {
+   "key": "direction",
+   "label": "Direction",
+   "type": "enum",
+   "choices": [
+    "Encrypt",
+    "Decrypt"
+   ],
+   "default": 0
+  },
+  {
+   "key": "key_from",
+   "label": "Key from",
+   "type": "enum",
+   "choices": [
+    "Passphrase (OpenSSL and CryptoJS, as it-tools)",
+    "Passphrase with PBKDF2 (openssl -pbkdf2)",
+    "Key and IV typed in hex"
+   ],
+   "default": 0
+  },
+  {
+   "key": "passphrase",
+   "label": "Passphrase",
+   "type": "string",
+   "default": "",
+   "keyable": true
+  },
+  {
+   "key": "salt",
+   "label": "Salt (16 hex digits, or empty)",
+   "type": "string",
+   "default": "",
+   "keyable": true,
+   "group": "Advanced"
+  },
+  {
+   "key": "key_hex",
+   "label": "Key in hex",
+   "type": "string",
+   "default": "",
+   "keyable": true,
+   "group": "Advanced"
+  },
+  {
+   "key": "iv_hex",
+   "label": "IV in hex",
+   "type": "string",
+   "default": "",
+   "keyable": true,
+   "group": "Advanced"
+  },
+  {
+   "key": "format",
+   "label": "Written as",
+   "type": "enum",
+   "choices": [
+    "Base64",
+    "Hex",
+    "Hex, capitals"
+   ],
+   "default": 0
+  }
+ ],
+ "passes": []
+}

@@ -1,0 +1,204 @@
+{
+ "id": "motion_ahead",
+ "label": "Ahead of Itself",
+ "category": "Time",
+ "tags": [
+  "look"
+ ],
+ "version": 1,
+ "blurb": "Shows where everything is about to be. Each moving thing is carried forward along its own path, as far as it will get in the next moment if it keeps going, and drawn there as a faint cool ghost, so a walker is led by a ghost of her next steps, a car by a ghost of itself further down the road and a swing by where it is swinging to. Several ghosts make a row leading out in front, the opposite of an echo. Still things have no future ghost.",
+ "history": {
+  "max": 1
+ },
+ "params": [
+  {
+   "key": "ahead",
+   "label": "Look ahead",
+   "type": "float",
+   "min": 0.05,
+   "max": 1.5,
+   "step": 0.01,
+   "default": 0.4,
+   "unit": " s"
+  },
+  {
+   "key": "ghosts",
+   "label": "Ghosts",
+   "type": "int",
+   "min": 1,
+   "max": 6,
+   "step": 1,
+   "default": 3
+  },
+  {
+   "key": "opacity",
+   "label": "Opacity",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.85
+  },
+  {
+   "key": "glow",
+   "label": "Glow",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.4
+  },
+  {
+   "key": "tint",
+   "label": "Ghost tint",
+   "type": "color",
+   "default": [
+    0.62,
+    0.85,
+    1.0,
+    1.0
+   ]
+  },
+  {
+   "key": "ignore_under",
+   "label": "Ignore movement under",
+   "type": "float",
+   "min": 0.0,
+   "max": 10.0,
+   "step": 0.1,
+   "default": 0.8,
+   "unit": " px"
+  },
+  {
+   "key": "camera",
+   "label": "Ignore camera movement",
+   "type": "bool",
+   "default": true
+  }
+ ],
+ "passes": [
+  {
+   "shader": "res://effects/pixel_motion_blur/luma.gdshader",
+   "scale": 0.5,
+   "set": {
+    "stage": 0,
+    "age": 1.0
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/luma.gdshader",
+   "scale": 0.5,
+   "set": {
+    "stage": 1
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/luma.gdshader",
+   "scale": 0.5,
+   "set": {
+    "stage": 1
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/luma.gdshader",
+   "scale": 0.5,
+   "set": {
+    "stage": 1
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/search.gdshader",
+   "scale": 1.0,
+   "set": {
+    "radius": 6,
+    "level_scale": 16.0,
+    "patch": 2,
+    "lambda": 0.004
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/refine.gdshader",
+   "scale": 2.0,
+   "set": {
+    "level_scale": 8.0,
+    "patch": 1,
+    "lambda": 0.004
+   },
+   "inputs": {
+    "luma_tex": 2
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/refine.gdshader",
+   "scale": 2.0,
+   "set": {
+    "level_scale": 4.0,
+    "patch": 1,
+    "lambda": 0.004,
+    "half_step": true
+   },
+   "inputs": {
+    "luma_tex": 1
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/refine.gdshader",
+   "scale": 2.0,
+   "set": {
+    "level_scale": 2.0,
+    "patch": 1,
+    "lambda": 0.004,
+    "half_step": true
+   },
+   "inputs": {
+    "luma_tex": 0
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/smooth.gdshader",
+   "scale": 1.0
+  },
+  {
+   "shader": "res://effects/_motion_kit/global.gdshader",
+   "scale": 0.0625
+  },
+  {
+   "shader": "res://effects/_motion_kit/clean.gdshader",
+   "scale": 16.0,
+   "inputs": {
+    "flow_tex": 8,
+    "luma_tex": 0,
+    "global_tex": 9
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/smooth.gdshader",
+   "scale": 1.0
+  },
+  {
+   "shader": "res://effects/_motion_kit/tilemax.gdshader",
+   "scale": 0.125,
+   "inputs": {
+    "flow_tex": 11,
+    "global_tex": 9
+   }
+  },
+  {
+   "shader": "res://effects/_motion_kit/neighbour.gdshader",
+   "scale": 1.0,
+   "set": {
+    "length_gain": 45.0,
+    "reach_px": 360.0
+   }
+  },
+  {
+   "shader": "ahead.gdshader",
+   "scale": 16.0,
+   "inputs": {
+    "flow_tex": 11,
+    "global_tex": 9,
+    "near_tex": 13
+   }
+  }
+ ]
+}

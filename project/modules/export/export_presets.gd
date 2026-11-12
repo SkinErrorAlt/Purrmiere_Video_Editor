@@ -1,6 +1,7 @@
 extends RefCounted
 
 const MarkerLayers := preload("res://doc/marker_layers.gd")
+const MarkerKinds := preload("res://doc/marker_kinds.gd")
 const MarkerTags := preload("res://doc/marker_tags.gd")
 const Presets := preload("res://doc/presets.gd")
 const Sequence := preload("res://doc/sequence.gd")
@@ -99,6 +100,7 @@ static func default_settings() -> Dictionary:
 		"pix_fmt": "yuv420p",
 		"audio": {"enabled": true, "codec": "aac", "bitrate_kbps": 192, "sample_rate": 48000, "channels": 2, "layout": "mix", "groups": ""},
 		"thumbnail": {"source": "poster", "time": 0.0, "embed": true, "sidecar": false},
+		"captions": {"sidecar": false, "format": "srt"},
 		"metadata": {"title": "", "comment": ""},
 		"chapters_from_markers": true,
 		"interpolation": false,
@@ -1034,7 +1036,7 @@ static func chapters_from(seq: Sequence, range_v: Vector2) -> Array:
 	if seq == null:
 		return out
 	for m: Marker in MarkerLayers.usable(seq):
-		if m.kind != "chapter":
+		if not MarkerKinds.makes_chapter(m):
 			continue
 		if m.time >= range_v.x and m.time <= range_v.y:
 			out.append({"t": m.time - range_v.x, "label": m.label if not m.label.is_empty() else "Chapter " + str(out.size() + 1)})

@@ -23,6 +23,7 @@
   {"key": "blend", "label": "How it mixes", "type": "enum", "choices": ["Add", "Screen", "Lighten", "Replace"], "default": 0},
   {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
  ],
+ "handles": [{"kind": "band", "key": "launch_x", "axis": "x", "width": "launch_area"}, {"kind": "band", "key": "height", "axis": "y"}],
  "passes": [
   {"shader": "mask.gdshader", "scale": 0.125},
   {"shader": "stars.gdshader", "scale": 8.0},

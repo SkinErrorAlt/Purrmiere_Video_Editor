@@ -14,6 +14,12 @@ const PackH := preload("res://engine/audio_effects_h.gd")
 const PackI := preload("res://engine/audio_effects_i.gd")
 const PackJ := preload("res://engine/audio_effects_j.gd")
 const PackK := preload("res://engine/audio_effects_k.gd")
+const PackVoxB := preload("res://engine/audio_effects_voxb.gd")
+const PackVoxA := preload("res://engine/audio_effects_vox_a.gd")
+const PackVoxC := preload("res://engine/audio_effects_vox_c.gd")
+const PackVoxD := preload("res://engine/audio_effects_voxd.gd")
+const PackVoxF := preload("res://engine/audio_effects_voxf.gd")
+const PackVoxE := preload("res://engine/audio_effects_voxe.gd")
 
 const DEFS: Array[Dictionary] = [
 	{
@@ -30,6 +36,7 @@ const DEFS: Array[Dictionary] = [
 		"group": "Stereo",
 		"label": "Pan",
 		"blurb": "Moves the clip between the speakers, constant power, so the middle is not louder.",
+		"panels": [{"kind": "stereo_field", "bind": {"pan": "pan"}}],
 		"params": [
 			{"key": "pan", "label": "Pan", "default": 0.0, "min": -1.0, "max": 1.0, "step": 0.01},
 		],
@@ -111,6 +118,7 @@ const DEFS: Array[Dictionary] = [
 		"group": "Delay and Reverb",
 		"label": "Reverb",
 		"blurb": "Puts the sound in a room, from a small booth to a hall.",
+		"panels": [{"kind": "room_box", "bind": {"size": "size", "decay": "decay", "damp": "damp_hz"}}],
 		"params": [
 			{"key": "size", "label": "Room size", "default": 1.0, "min": 0.1, "max": 2.0, "step": 0.01},
 			{"key": "decay", "label": "Tail", "default": 0.6, "min": 0.0, "max": 0.95, "step": 0.01},
@@ -267,6 +275,12 @@ static func all_raw() -> Array[Dictionary]:
 	out.append_array(PackI.DEFS)
 	out.append_array(PackJ.DEFS)
 	out.append_array(PackK.DEFS)
+	out.append_array(PackVoxB.DEFS)
+	out.append_array(PackVoxA.DEFS)
+	out.append_array(PackVoxC.DEFS)
+	out.append_array(PackVoxD.DEFS)
+	out.append_array(PackVoxF.DEFS)
+	out.append_array(PackVoxE.DEFS)
 	return out
 
 
@@ -310,7 +324,7 @@ static func get_def(id: String) -> Dictionary:
 		var params: Array = []
 		for p: Variant in raw["params"]:
 			params.append(_param(p))
-		return {
+		var out: Dictionary = {
 			"id": id,
 			"label": String(raw["label"]),
 			"category": CATEGORY,
@@ -325,6 +339,9 @@ static func get_def(id: String) -> Dictionary:
 			"audio": true,
 			"pairs_with": PackedStringArray(),
 		}
+		if raw.get("panels") is Array:
+			out["panels"] = (raw["panels"] as Array).duplicate(true)
+		return out
 	return {}
 
 

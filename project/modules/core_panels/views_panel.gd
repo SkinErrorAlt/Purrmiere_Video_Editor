@@ -1,17 +1,21 @@
 extends "res://modules/core_panels/panel_base.gd"
 
 const ViewMap := preload("res://doc/view_map.gd")
+const ViewsCommands := preload("res://modules/core_panels/views_commands.gd")
 const ViewSwitch := preload("res://doc/view_switch.gd")
 const PairCmds := preload("res://doc/commands/pair_cmds.gd")
 const EffectSource := preload("res://modules/core_panels/effect_source.gd")
 const Command := preload("res://doc/commands/command.gd")
 const PvAudio := preload("res://modules/core_panels/pv_audio.gd")
+const Solo := preload("res://ui/timeline/timeline_view_solo.gd")
 const PANEL_ID := "views"
 const VIEW_PREFIX := "clip.view_"
 const VIEW_KEYS := 8
 const NARROW_W := 260.0
 const MENU_SWITCH := "switch"
 const MENU_SHOW := "show_ec"
+const MENU_COLOUR := "view_colour:"
+const COLOUR_COUNT := 16
 const PROVIDER_LAYOUT_ITEMS := "views_layout_items"
 const PROVIDER_LAYOUT_PICKED := "views_layout_picked"
 const PROVIDER_REGION_ITEMS := "views_region_items"
@@ -53,6 +57,8 @@ var _rebuilds: int = 0
 var _sound: VBoxContainer = null
 var _sound_box: Control = null
 var _sound_sig: String = ""
+var _groups_strip: Control = null
+const GroupStrip := preload("res://modules/core_panels/views_group_strip.gd")
 
 
 static func add_menu_provider(provider: Object) -> void:
@@ -89,6 +95,8 @@ func _build(root_: Control) -> void:
 	_more_btn = quiet_icon("more", "More")
 	_more_btn.pressed.connect(_on_more)
 	head.add_child(_more_btn)
+	_groups_strip = GroupStrip.new()
+	col.add_child(PmUI.inset(_groups_strip, float(Tk.px(6.0)), 2.0))
 	_scroll = vscroll_area(col)
 	_grid = _ViewGrid.new()
 	_grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -303,6 +311,8 @@ func _refresh_now() -> void:
 	_scroll.visible = true
 	_empty.visible = false
 	_update_head(c, t)
+	_groups_strip.call("show_for", s, c, e)
+	(_groups_strip.get_parent() as Control).visible = _groups_strip.visible
 	var now: int = _view_now(c, e, t)
 	if now != _active:
 		_active = now
@@ -335,6 +345,9 @@ func _refresh_sound(c: Clip, e: Dictionary) -> void:
 
 
 func _show_empty(head: String, detail: String, clip_id: String) -> void:
+	if _groups_strip != null:
+		_groups_strip.call("clear_strip")
+		(_groups_strip.get_parent() as Control).visible = false
 	_clip_id = ""
 	_uid = ""
 	_names = PackedStringArray()
@@ -531,6 +544,8 @@ func _on_button_menu(index: int, at: Vector2) -> void:
 	if c == null or index < 0 or index >= _names.size():
 		return
 	var items: Array = [PmMenu.item(MENU_SWITCH, "Switch to " + _names[index], key_text(index)), PmMenu.item(MENU_SHOW, "Show in Effect Controls")]
+	items.append(PmMenu.check_item(Solo.MENU_SOLO + _names[index], "Solo " + _names[index] + " on the timeline", Solo.view_name(seq()) == _names[index]))
+	items.append(PmMenu.sub_item("view_colour_menu", "Colour", colour_items(index)))
 	var extra: Array = []
 	for p: Object in _providers:
 		if is_instance_valid(p) and p.has_method(PROVIDER_REGION_ITEMS):
@@ -546,12 +561,27 @@ func _on_button_menu(index: int, at: Vector2) -> void:
 		m.connect("picked", _on_region_menu_picked.bind(index, c.id, _uid))
 
 
+func colour_items(index: int) -> Array:
+	var e: Dictionary = ViewSwitch.pair_entry(target_clip())
+	var picked: int = ViewMap.picked_colour(ViewMap.of(e), index) if not e.is_empty() else -1
+	var out: Array = [PmMenu.check_item(MENU_COLOUR + "-1", "Pick its own", picked < 0)]
+	out.append(PmMenu.separator())
+	for i: int in COLOUR_COUNT:
+		out.append(PmMenu.check_item(MENU_COLOUR + str(i), Tk.label_name(i), picked == i))
+	return out
+
+
 func _on_region_menu_picked(id: String, index: int, clip_id: String, uid: String) -> void:
+	if id.begins_with(MENU_COLOUR):
+		ViewsCommands.set_view_colour(clip_id, uid, index, int(id.substr(MENU_COLOUR.length())))
+		return
 	if id == MENU_SWITCH:
 		switch_to(index)
 		return
 	if id == MENU_SHOW:
 		show_in_effect_controls(clip_id)
+		return
+	if Solo.on_menu(doc(), seq(), id):
 		return
 	for p: Object in _providers:
 		if is_instance_valid(p) and p.has_method(PROVIDER_REGION_PICKED) and bool(p.call(PROVIDER_REGION_PICKED, id, clip_id, uid, index)):
@@ -599,6 +629,12 @@ func _on_more() -> void:
 	var show: Dictionary = PmMenu.item(MENU_SHOW, "Show in Effect Controls")
 	show["disabled"] = target_clip() == null
 	items.append(show)
+	var tc: Clip = target_clip()
+	items.append_array(GroupStrip.more_items(tc, ViewSwitch.pair_entry(tc) if tc != null else {}))
+	var solo_items: Array = Solo.menu_items(seq(), Solo.overlap_count(doc(), seq()))
+	if not solo_items.is_empty():
+		items.append(PmMenu.separator())
+		items.append_array(solo_items)
 	var m: Control = PmMenu.open(_more_btn, items)
 	if m != null:
 		m.connect("picked", _on_more_picked)
@@ -607,6 +643,10 @@ func _on_more() -> void:
 func _on_more_picked(id: String) -> void:
 	if id == MENU_SHOW:
 		show_in_effect_controls(_clip_id)
+		return
+	if GroupStrip.more_picked(id, _clip_id, _uid):
+		return
+	Solo.on_menu(doc(), seq(), id)
 
 
 func show_in_effect_controls(clip_id: String) -> void:

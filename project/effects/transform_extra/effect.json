@@ -15,5 +15,7 @@
   {"key": "edge", "label": "Repeat Edge Pixels", "type": "bool", "default": false}
  ],
  "handles": [{"kind": "plane3d", "tilt": "tilt", "swivel": "swivel", "scale": "scale", "distance": "distance", "lens": "lens", "skew_x": "skew_x", "skew_y": "skew_y"}],
+ "depth": {"kind": "plane", "tilt": "tilt", "swivel": "swivel", "distance": "distance", "focal": "lens", "zoom": "scale", "unit": 0.5},
+ "panels": [{"kind": "tilt_plane", "bind": {"tilt": "tilt", "swivel": "swivel", "distance": "distance", "lens": "lens", "scale": "scale"}}],
  "passes": "single"
 }

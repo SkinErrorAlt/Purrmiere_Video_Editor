@@ -3,6 +3,7 @@ extends Button
 const Icons := preload("res://ui/kit/icons.gd")
 const PmTheme := preload("res://ui/kit/pm_theme.gd")
 const PRESS_SCALE := 0.985
+const LINES_META := "pm_icon_lines"
 
 signal activated
 
@@ -267,6 +268,8 @@ func _on_down() -> void:
 	var d: float = Tk.dur("fast")
 	if d <= 0.0 or not is_inside_tree():
 		return
+	set_meta(LINES_META, true)
+	queue_redraw()
 	pivot_offset = size * 0.5
 	_press_tween = Tk.ease(create_tween())
 	_press_tween.tween_property(self, "scale", Vector2(PRESS_SCALE, PRESS_SCALE), d * 0.5)
@@ -277,9 +280,17 @@ func _on_up() -> void:
 	var d: float = Tk.dur("fast")
 	if d <= 0.0 or not is_inside_tree():
 		scale = Vector2.ONE
+		_lines_done()
 		return
 	_press_tween = Tk.ease(create_tween())
 	_press_tween.tween_property(self, "scale", Vector2.ONE, d)
+	_press_tween.finished.connect(_lines_done)
+
+
+func _lines_done() -> void:
+	if has_meta(LINES_META):
+		remove_meta(LINES_META)
+		queue_redraw()
 
 
 func _icon_tint() -> Color:

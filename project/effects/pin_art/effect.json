@@ -1,0 +1,37 @@
+{
+ "id": "pin_art",
+ "label": "Pin Art",
+ "category": "Distort",
+ "tags": ["3d"],
+ "version": 1,
+ "blurb": "Raises the picture out of a pin art board: thousands of round pins packed in a honeycomb slide out towards you, each by how bright the picture is behind it, so the shapes stand up as a relief of pins with flat tops where the picture is even. Every domed head catches its own glint, raised pins throw shadows across the lower ones and their steel shafts show along the edges of each step. The heads can be bare steel, painted with the picture or steel tinted by it. Key Rise to push the picture up and let it fall back, and use Spread to make the pins go up in a wave from a point.",
+ "params": [
+  {"key": "finish", "label": "Pin heads", "type": "enum", "choices": ["Bare steel", "Painted with the picture", "Steel tinted by the picture"], "default": 1},
+  {"key": "rise", "label": "Rise", "type": "float", "min": 0.0, "max": 1.0, "step": 0.001, "default": 1.0},
+  {"key": "source", "label": "Raised by", "type": "enum", "choices": ["Brightness", "Darkness", "Red", "Green", "Blue", "Saturation", "Alpha"], "default": 0},
+  {"key": "height", "label": "Pin travel", "type": "float", "min": 0.0, "max": 100.0, "step": 0.1, "default": 30.0},
+  {"key": "pin_size", "label": "Pin size", "type": "float", "min": 4.0, "max": 60.0, "step": 0.1, "default": 12.0, "unit": " px"},
+  {"key": "smoothness", "label": "Smoothness", "type": "float", "min": 0.0, "max": 60.0, "step": 0.1, "default": 3.0, "unit": " px"},
+  {"key": "origin", "label": "Wave starts at", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "spread", "label": "Spread", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.0},
+  {"key": "friction", "label": "Friction", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "tilt", "label": "Tilt", "type": "float", "min": -80.0, "max": 80.0, "step": 0.1, "default": 24.0, "unit": " deg"},
+  {"key": "swivel", "label": "Swivel", "type": "float", "min": -80.0, "max": 80.0, "step": 0.1, "default": -18.0, "unit": " deg"},
+  {"key": "roll", "label": "Roll", "type": "float", "min": -180.0, "max": 180.0, "step": 0.1, "default": 0.0, "unit": " deg"},
+  {"key": "camera_distance", "label": "Camera distance", "type": "float", "min": 0.5, "max": 8.0, "step": 0.01, "default": 1.3737},
+  {"key": "fov", "label": "Field of view", "type": "float", "min": 5.0, "max": 120.0, "step": 0.1, "default": 40.0, "unit": " deg"},
+  {"key": "scale", "label": "Scale", "type": "float", "min": 0.1, "max": 4.0, "step": 0.01, "default": 0.86},
+  {"key": "light_angle", "label": "Light from", "type": "float", "min": -180.0, "max": 180.0, "step": 1.0, "default": -130.0, "unit": " deg"},
+  {"key": "light_height", "label": "Light height", "type": "float", "min": 2.0, "max": 90.0, "step": 0.5, "default": 35.0, "unit": " deg"},
+  {"key": "shadows", "label": "Shadows", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.85},
+  {"key": "shine", "label": "Glint", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 999, "step": 1, "default": 0}
+ ],
+ "handles": [{"kind": "point", "key": "origin"}, {"kind": "angle", "key": "light_angle", "zero": "right", "turn": "cw"}],
+ "depth": {"kind": "plane", "tilt": "tilt", "swivel": "swivel", "roll": "roll", "distance": "camera_distance", "fov": "fov", "scale": "scale"},
+ "passes": [
+  {"shader": "res://effects/depth_relief/height_x.gdshader", "scale": 0.5},
+  {"shader": "res://effects/depth_relief/height_y.gdshader"},
+  {"shader": "pins.gdshader", "scale": 2.0}
+ ]
+}

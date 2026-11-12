@@ -1,6 +1,7 @@
 extends RefCounted
 
 const MarkerLayers := preload("res://doc/marker_layers.gd")
+const MarkerKinds := preload("res://doc/marker_kinds.gd")
 const TAG_KIND := "tag"
 const Project := preload("res://doc/project.gd")
 const Sequence := preload("res://doc/sequence.gd")
@@ -333,7 +334,7 @@ static func markers_of(seq: Sequence) -> PackedFloat64Array:
 	if seq == null:
 		return out
 	for m: Marker in MarkerLayers.usable(seq):
-		if m.kind == TAG_KIND:
+		if m.kind == TAG_KIND or not MarkerKinds.scatters(m):
 			continue
 		out.append(m.time)
 	out.sort()

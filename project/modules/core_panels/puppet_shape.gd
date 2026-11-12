@@ -115,6 +115,7 @@ static func info_with(info: Dictionary, got: Dictionary) -> Dictionary:
 	next.erase(Puppet.SHAPE_FIELD)
 	next.erase("sw")
 	next.erase("sh")
+	next.erase(Puppet.FRAMES_FIELD)
 	next["from"] = float(got.get("at", 0.0))
 	if not Puppet.shape_code(got).is_empty():
 		next[Puppet.SHAPE_FIELD] = got[Puppet.SHAPE_FIELD]
@@ -138,6 +139,9 @@ static func first_info(d: Project, s: Sequence, c: Clip, size: Vector2, alpha_pa
 
 
 static func describe(info: Dictionary, fps: float) -> String:
+	var frames: Variant = info.get(Puppet.FRAMES_FIELD, null)
+	if frames is Array and not (frames as Array).is_empty():
+		return "Mesh follows the video, " + str((frames as Array).size()) + (" outline" if (frames as Array).size() == 1 else " outlines")
 	if not Puppet.shape_code(info).is_empty():
 		return "Mesh follows the picture at " + _clock(float(info.get("from", 0.0)), fps)
 	if not String(info.get("alpha", "")).is_empty():

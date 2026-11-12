@@ -1,0 +1,42 @@
+{
+ "id": "wildfire",
+ "label": "Wildfire",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Sets the picture alight and lets the fire find its own way. The bright, dry parts of the shot are the fuel: the fire races through them, creeps slowly through the dull parts and leaves the darkest parts standing as unburnt islands, climbing faster uphill and leaning with the wind. Flames lick up from the front, the ground ahead of it scorches and shimmers, embers glow and die in the char behind it, the burnt picture turns to black coal and white ash, and smoke rolls up from everything still burning. The path is worked out fresh from every frame, so a different shot burns a different way.",
+ "params": [
+  {"key": "start", "label": "Starts at", "type": "vec2", "default": [0.5, 0.85]},
+  {"key": "fires", "label": "More fires", "type": "int", "min": 0, "max": 6, "step": 1, "default": 1},
+  {"key": "speed", "label": "Spread speed", "type": "float", "min": 0.02, "max": 1.0, "step": 0.005, "default": 0.25},
+  {"key": "start_time", "label": "Lights at", "type": "float", "min": 0.0, "max": 30.0, "step": 0.05, "default": 0.0, "unit": " s"},
+  {"key": "fuel_from", "label": "What burns", "type": "enum", "choices": ["Bright parts", "Dark parts", "Everything"], "default": 0},
+  {"key": "dryness", "label": "Dry", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "climb", "label": "Runs uphill", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "wind", "label": "Wind", "type": "float", "min": -1.0, "max": 1.0, "step": 0.01, "default": 0.2},
+  {"key": "flames", "label": "Flames", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.8},
+  {"key": "smoke", "label": "Smoke", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "charring", "label": "Char", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.85},
+  {"key": "embers", "label": "Embers", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "handles": [{"kind": "point", "key": "start"}],
+ "passes": [
+  {"shader": "fuel.gdshader", "scale": 0.125},
+  {"shader": "relax.gdshader", "set": {"hop": 16.0}},
+  {"shader": "relax.gdshader", "set": {"hop": 8.0}},
+  {"shader": "relax.gdshader", "set": {"hop": 4.0}},
+  {"shader": "relax.gdshader", "set": {"hop": 2.0}},
+  {"shader": "relax.gdshader", "set": {"hop": 1.0}},
+  {"shader": "relax.gdshader", "set": {"hop": 12.0}},
+  {"shader": "relax.gdshader", "set": {"hop": 6.0}},
+  {"shader": "relax.gdshader", "set": {"hop": 3.0}},
+  {"shader": "relax.gdshader", "set": {"hop": 1.5}},
+  {"shader": "relax.gdshader", "set": {"hop": 8.0}},
+  {"shader": "relax.gdshader", "set": {"hop": 4.0}},
+  {"shader": "relax.gdshader", "set": {"hop": 2.0}},
+  {"shader": "relax.gdshader", "set": {"hop": 1.0}},
+  {"shader": "relax.gdshader", "set": {"hop": 1.0}},
+  {"shader": "compose.gdshader", "scale": 8.0}
+ ]
+}

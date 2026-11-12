@@ -1,0 +1,25 @@
+{
+ "id": "kinetic_colour",
+ "label": "Colour in Motion",
+ "category": "Time",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Only what moves keeps its colour. The still world drains to black and white while anyone walking, dancing or driving through it stays in full colour, picked out by its movement rather than by its colour, so a red coat and a red wall are told apart. The still background is found from the last moments of the clip itself. Reverse it to freeze the colour into the scenery and turn the passers by grey. Works best with a camera that holds still.",
+ "history": {"max": 62, "reach": ["span"], "seconds": ["span"]},
+ "params": [
+  {"key": "keep", "label": "Colour stays on", "type": "enum", "choices": ["What moves", "What holds still"], "default": 0},
+  {"key": "span", "label": "Background from the last", "type": "float", "min": 0.3, "max": 2.0, "step": 0.01, "default": 1.2, "unit": " s"},
+  {"key": "threshold", "label": "What counts as moving", "type": "float", "min": 0.01, "max": 0.5, "step": 0.005, "default": 0.07},
+  {"key": "softness", "label": "Edge softness", "type": "float", "min": 0.005, "max": 0.4, "step": 0.005, "default": 0.06},
+  {"key": "grow", "label": "Fill the movers", "type": "float", "min": 0.0, "max": 4.0, "step": 0.05, "default": 1.5},
+  {"key": "boost", "label": "Extra colour", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.25},
+  {"key": "grey_contrast", "label": "Black and white contrast", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "grey_tint", "label": "Black and white tint", "type": "color", "default": [1.0, 1.0, 1.0, 1.0]}
+ ],
+ "passes": [
+  {"shader": "mask.gdshader", "scale": 0.25},
+  {"shader": "grow.gdshader", "scale": 1.0, "set": {"stage": 0}},
+  {"shader": "grow.gdshader", "scale": 1.0, "set": {"stage": 1}},
+  {"shader": "compose.gdshader", "scale": 4.0}
+ ]
+}

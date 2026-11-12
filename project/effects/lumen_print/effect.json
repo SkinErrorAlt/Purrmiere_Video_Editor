@@ -1,0 +1,18 @@
+{
+ "id": "lumen_print",
+ "label": "Lumen Print",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Prints the picture the way a lumen print is made: black and white photo paper left out in the sun under the image, never developed, only fixed, so the silver itself turns colour. The shadows come up in plum, rose and aubergine or slate and violet depending on the paper, the light parts stay pale peach or lemon cream, the image bleeds a little into the paper around strong shapes, moisture leaves blooms with a darker tide line, and the sun lands unevenly across the sheet.",
+ "params": [
+  {"key": "paper", "label": "Paper", "type": "enum", "choices": ["Warm fibre paper", "Cool resin paper", "Expired paper", "Lilac matte paper"], "default": 0},
+  {"key": "exposure", "label": "Hours in the sun", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 1.0},
+  {"key": "bleed", "label": "Bleed", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "blooms", "label": "Moisture blooms", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "unevenness", "label": "Uneven sun", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "grain", "label": "Paper grain", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

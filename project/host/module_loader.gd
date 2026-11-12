@@ -1,12 +1,14 @@
 extends RefCounted
 
 const Io := preload("res://doc/io.gd")
+const PurrApi := preload("res://host/purr_api.gd")
 const OFFICIAL_ROOT := "res://modules/"
 const MANIFEST := "module.json"
 const MAIN_SCRIPT := "module_main.gd"
 const KILL_FILE := "res://modules/OFF.txt"
 const KINDS: PackedStringArray = ["data", "code"]
 const ID_CHARS := "abcdefghijklmnopqrstuvwxyz0123456789_"
+const DEV_FOLDER_PREF := "modules.dev_folder"
 
 var records: Array[Dictionary] = []
 var _by_id: Dictionary = {}
@@ -29,6 +31,9 @@ static func manifest_defaults() -> Dictionary:
 		"actions": [],
 		"wants": [],
 		"core": false,
+		"purr_api": "",
+		"icon": "",
+		"homepage": "",
 	}
 
 
@@ -110,7 +115,15 @@ func _scan_root(root: String, official: bool) -> Array[Dictionary]:
 	dir.list_dir_end()
 	names.sort()
 	for folder: String in names:
-		var path: String = root + folder + "/"
+		var one: Dictionary = _scan_one(root + folder + "/", folder, official)
+		if not one.is_empty():
+			found.append(one)
+	return found
+
+
+func _scan_one(path: String, folder: String, official: bool) -> Dictionary:
+	var found: Array[Dictionary] = []
+	for _once: int in 1:
 		var manifest_path: String = path + MANIFEST
 		if not FileAccess.file_exists(manifest_path):
 			continue
@@ -124,7 +137,7 @@ func _scan_root(root: String, official: bool) -> Array[Dictionary]:
 			found.append(_record(folder, String(m["label"]), String(m["kind"]), String(m["version"]), "broken", "the id in module.json is missing or has characters outside a-z, 0-9 and _", path, official, m))
 			continue
 		found.append(_record(String(m["id"]), String(m["label"]), String(m["kind"]), String(m["version"]), "ready", "", path, official, m))
-	return found
+	return found[0] if not found.is_empty() else {}
 
 
 func scan(no_modules: bool) -> Array[Dictionary]:
@@ -133,7 +146,26 @@ func scan(no_modules: bool) -> Array[Dictionary]:
 	if no_modules or FileAccess.file_exists(KILL_FILE):
 		return records
 	var all: Array[Dictionary] = _scan_root(OFFICIAL_ROOT, true)
-	all.append_array(_scan_root(Io.data_path("modules") + "/", false))
+	all.append_array(_scan_others())
+	_take(all)
+	return records
+
+
+## Drops the installed and developer modules' records and scans their folders again, leaving the official ones
+## (and their running code) alone. Callers unload the dropped ones first.
+func rescan_others() -> Array[Dictionary]:
+	var kept: Array[Dictionary] = []
+	for r: Dictionary in records:
+		if bool(r["official"]):
+			kept.append(r)
+	records.clear()
+	_by_id.clear()
+	kept.append_array(_scan_others())
+	_take(kept)
+	return records
+
+
+func _take(all: Array[Dictionary]) -> void:
 	for r: Dictionary in all:
 		var id: String = r["id"]
 		if String(r["state"]) != "broken" and _by_id.has(id):
@@ -143,7 +175,42 @@ func scan(no_modules: bool) -> Array[Dictionary]:
 		elif String(r["state"]) != "broken":
 			_by_id[id] = r
 		records.append(r)
-	return records
+
+
+func _scan_others() -> Array[Dictionary]:
+	var all: Array[Dictionary] = _scan_root(user_root(), false)
+	for dev: String in dev_roots():
+		if FileAccess.file_exists(dev + MANIFEST):
+			var one: Dictionary = _scan_one(dev, dev.trim_suffix("/").get_file(), false)
+			if not one.is_empty():
+				all.append(one)
+		else:
+			all.append_array(_scan_root(dev, false))
+	return all
+
+
+## Where installed modules live: Documents\Purrmiere\modules.
+static func user_root() -> String:
+	return Io.data_path("modules").trim_suffix("/") + "/"
+
+
+## Folders set in Settings to also load modules from, so a module runs from its own repository while it is built.
+## A folder that holds a module.json is that one module; otherwise each folder inside it with one is a module.
+static func dev_roots() -> PackedStringArray:
+	var out: PackedStringArray = PackedStringArray()
+	var loop: MainLoop = Engine.get_main_loop()
+	var prefs: Node = (loop as SceneTree).root.get_node_or_null("/root/Prefs") if loop is SceneTree else null
+	if prefs == null or not bool(prefs.call("is_registered", DEV_FOLDER_PREF)):
+		return out
+	var raw: String = String(prefs.call("get_value", DEV_FOLDER_PREF)).strip_edges()
+	if raw.is_empty():
+		return out
+	for part: String in raw.split(";", false):
+		var p: String = part.strip_edges().replace("\\", "/").trim_suffix("/")
+		if p.is_empty() or not DirAccess.dir_exists_absolute(p):
+			continue
+		out.append(p + "/")
+	return out
 
 
 func record_for(id: String) -> Dictionary:
@@ -176,7 +243,20 @@ func load_code(r: Dictionary, host: Node) -> bool:
 			(inst as Node).free()
 		return false
 	r["instance"] = inst
-	inst.call("register", host)
+	var wanted: String = String((r["manifest"] as Dictionary).get("purr_api", ""))
+	if not wanted.is_empty():
+		if not PurrApi.accepts(wanted):
+			r["state"] = "broken"
+			r["reason"] = "it was made for module API " + wanted + " and this Purrmiere has " + PurrApi.version() + "; look for a newer version of the module"
+			r.erase("instance")
+			if inst is Node:
+				(inst as Node).free()
+			return false
+		var api: RefCounted = PurrApi.make(host, String(r["id"]), String(r["label"]), String(r["path"]))
+		r["api"] = api
+		inst.call("register", api)
+	else:
+		inst.call("register", host)
 	r["state"] = "on"
 	r["reason"] = ""
 	return true
@@ -190,5 +270,8 @@ func unload(r: Dictionary) -> void:
 		if inst is Node:
 			(inst as Node).free()
 		r.erase("instance")
+	if r.has("api"):
+		(r["api"] as RefCounted).call("release")
+		r.erase("api")
 	if String(r["state"]) == "on":
 		r["state"] = "off"

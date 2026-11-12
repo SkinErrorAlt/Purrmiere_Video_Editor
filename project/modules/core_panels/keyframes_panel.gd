@@ -2,10 +2,17 @@ extends "res://modules/core_panels/panel_base.gd"
 
 const KeyframeEditor := preload("res://ui/timeline/keyframe_editor.gd")
 const EffectSource := preload("res://modules/core_panels/effect_source.gd")
+const TransitionRegistry := preload("res://engine/transition_registry.gd")
 const MaskShape := preload("res://doc/mask_shape.gd")
 const AnimTime := preload("res://doc/anim_time.gd")
 const AnimLayerUi := preload("res://modules/core_panels/anim_layer_ui.gd")
+const KeyframeGroups := preload("res://doc/keyframe_groups.gd")
+const TextEcRows := preload("res://modules/core_panels/text_ec_rows.gd")
+const TextAnimators := preload("res://doc/text_animators.gd")
+const LetterRig := preload("res://doc/letter_rig.gd")
+const FreeKeys := preload("res://doc/free_keys.gd")
 const MASK_KEYS: Array = [["centre", "Position"], ["size", "Size"], ["rotation", "Rotation"], ["feather", "Feather"], ["expand", "Expand"], ["opacity", "Opacity"]]
+const SKIP_PROPS: PackedStringArray = ["path_points", "runs"]
 const PREF_AUTO := "keys.auto_key"
 const PREF_SHIFT := "keys.shift_is_value"
 const PREF_SNAP := "keys.snap_frames"
@@ -24,6 +31,8 @@ var _shift_btn: Button = null
 var _snap_btn: Button = null
 var _played_btn: Button = null
 var _items: Array[Dictionary] = []
+var _rows: Array[Dictionary] = []
+var _open: Dictionary = {}
 var _rebuild_queued: bool = false
 var _list_stamp: String = ""
 
@@ -138,7 +147,8 @@ func target_clip() -> Clip:
 		var c: Clip = s.clip_by_id(_clip_id)
 		if c != null and s.selected_clip_ids.has(c.id):
 			return c
-	return Bus.selected_clip(s)
+	var picked: Clip = Bus.selected_clip(s)
+	return picked if picked != null else FreeKeys.held_stand_in(s)
 
 
 func show_property(clip_id: String, path: String) -> void:
@@ -155,8 +165,12 @@ func properties_of(c: Clip) -> Array[Dictionary]:
 	var out: Array[Dictionary] = []
 	if c == null:
 		return out
+	if FreeKeys.is_free(c.id):
+		var treg0: RefCounted = TransitionRegistry.shared()
+		return FreeKeys.properties(c, String(treg0.call("label_for", c.transition_in)) if treg0 != null else "Transition")
 	for pair: Array in [["transform.pos", "Position"], ["transform.scale", "Scale"], ["transform.rotation", "Rotation"], ["transform.anchor", "Anchor"], ["transform.opacity", "Opacity"], ["speed", "Speed"], [AnimTime.SPEED_PATH, "Animation speed"], ["audio.volume", "Volume"]]:
 		out.append({"path": String(pair[0]), "label": String(pair[1]), "animated": AnimProp.is_animated(c.get_param(String(pair[0])))})
+	out.append_array(prop_items(c))
 	for e: Dictionary in c.effects:
 		var uid: String = String(e.get("uid", ""))
 		var def: Dictionary = EffectSource.get_def(String(e.get("id", "")))
@@ -175,7 +189,127 @@ func properties_of(c: Clip) -> Array[Dictionary]:
 		for pair2: Array in MASK_KEYS:
 			var mpath: String = "masks." + str(mask.get("id", "")) + "." + String(pair2[0])
 			out.append({"path": mpath, "label": mlabel + " · " + String(pair2[1]), "animated": AnimProp.is_animated(c.get_param(mpath))})
+	var treg: RefCounted = TransitionRegistry.shared()
+	for tfield: Array in [[Clip.TRANSITION_PATH, c.transition_in, c.has_transition()], [Clip.TRANSITION_OUT_PATH, c.transition_out, c.has_transition_out()]]:
+		if not bool(tfield[2]):
+			continue
+		var tr: Dictionary = tfield[1]
+		var tlabel: String = String(treg.call("label_for", tr)) if treg != null else "Transition"
+		var prefix: String = String(tfield[0])
+		out.append({"path": prefix + "progress", "label": tlabel + " · Progress", "animated": AnimProp.is_animated(c.get_param(prefix + "progress"))})
+		var tparams: Dictionary = tr.get("params", {}) if tr.get("params", null) is Dictionary else {}
+		for pkey: String in tparams.keys():
+			if String(pkey) == "progress":
+				continue
+			if not AnimProp.is_animated(c.get_param(prefix + String(pkey))):
+				continue
+			out.append({"path": prefix + String(pkey), "label": tlabel + " · " + String(pkey).capitalize(), "animated": true})
 	return with_speeds(c, out)
+
+
+static func prop_label(key: String) -> String:
+	if KeyframeGroups.is_animator_prop(key):
+		var field: String = KeyframeGroups.animator_field(key)
+		for row: Array in TextEcRows.ANIM_ROWS:
+			if String(row[0]) == field:
+				return String(row[1])
+		return field.capitalize()
+	for row2: Array in TextEcRows.EXTRA_ROWS:
+		if String(row2[0]) == key:
+			return String(row2[1])
+	return key.capitalize()
+
+
+static func group_titles(c: Clip) -> Dictionary:
+	var out: Dictionary = {}
+	if c == null:
+		return out
+	for i: int in TextAnimators.MAX_ANIMATORS:
+		var raw: Variant = TextAnimators.plain(c.props.get(TextAnimators.key(i, "name"), ""))
+		var text: String = String(raw).strip_edges() if raw is String else ""
+		if not text.is_empty():
+			out[KeyframeGroups.ANIM_PREFIX + str(i)] = text
+	return out
+
+
+func prop_items(c: Clip) -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	if c == null or c.props.is_empty():
+		return out
+	var keys: PackedStringArray = PackedStringArray()
+	for k: Variant in c.props.keys():
+		if not SKIP_PROPS.has(String(k)):
+			keys.append(String(k))
+	keys.sort()
+	var titles: Dictionary = group_titles(c)
+	var plain: Array[Dictionary] = []
+	var animators: Array[Dictionary] = []
+	var extras: Array[Dictionary] = []
+	var rig_text: String = String(LetterRig.plain(c.props.get("text", "")))
+	var rig: Array[Dictionary] = rig_items(c, rig_text)
+	for key: String in keys:
+		if LetterRig.is_rig_prop(key):
+			continue
+		var path: String = "props." + key
+		var group: String = KeyframeGroups.prop_group(key)
+		var head: String = String(titles.get(group, KeyframeGroups.title_of(group, "")))
+		var item: Dictionary = {"path": path, "label": head + KeyframeGroups.SEPARATOR + prop_label(key), "animated": AnimProp.is_animated(c.get_param(path))}
+		if group == KeyframeGroups.TEXT:
+			plain.append(item)
+		elif group == KeyframeGroups.EXTRAS:
+			extras.append(item)
+		else:
+			animators.append(item)
+	out.append_array(plain)
+	out.append_array(animators)
+	out.append_array(rig)
+	out.append_array(extras)
+	return out
+
+
+## Letter rig rows in rig-tree order: whole text, lines, then each word followed by its letters.
+func rig_items(c: Clip, text: String) -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	var bones: PackedStringArray = LetterRig.bones_in(c.props)
+	if bones.is_empty():
+		return out
+	var words: PackedInt32Array = LetterRig.word_map(text)
+	var order: Array = []
+	for b: String in bones:
+		var k: String = LetterRig.kind_of(b)
+		var i: int = LetterRig.index_of(b)
+		var w: int = -1
+		var rank: float = 0.0
+		if k == LetterRig.ROOT:
+			rank = -2.0
+		elif k == "l":
+			rank = -1.0 + float(i) * 0.0001
+		elif k == "w":
+			rank = float(i) * 2.0
+		else:
+			w = words[i] if i < words.size() else -1
+			rank = (float(w) * 2.0 + 1.0) if w >= 0 else 1.0e6 + float(i)
+		order.append([rank, i, b])
+	order.sort_custom(func(a: Array, b2: Array) -> bool: return float(a[0]) < float(b2[0]) or (float(a[0]) == float(b2[0]) and int(a[1]) < int(b2[1])))
+	for o: Array in order:
+		var bone_id: String = String(o[2])
+		var head: String = LetterRig.label(text, bone_id)
+		var parent: String = ""
+		if LetterRig.kind_of(bone_id) == "c":
+			var wi: int = words[LetterRig.index_of(bone_id)] if LetterRig.index_of(bone_id) < words.size() else -1
+			if wi >= 0:
+				parent = "w" + str(wi)
+		for f: String in LetterRig.FIELDS:
+			var key: String = LetterRig.key(bone_id, f)
+			if not c.props.has(key):
+				continue
+			var path: String = "props." + key
+			var item: Dictionary = {"path": path, "label": head + KeyframeGroups.SEPARATOR + LetterRig.field_label(f), "animated": AnimProp.is_animated(c.get_param(path))}
+			if not parent.is_empty():
+				item["rig_parent"] = KeyframeGroups.RIG_PREFIX + parent
+				item["rig_parent_label"] = LetterRig.label(text, parent)
+			out.append(item)
+	return out
 
 
 static func group_label(c: Clip, g: String) -> String:
@@ -233,6 +367,9 @@ func _stamp() -> String:
 	var parts: PackedStringArray = PackedStringArray([c.id])
 	for p: Dictionary in properties_of(c):
 		parts.append(String(p["path"]) + ("*" if bool(p["animated"]) else ""))
+	var titles: Dictionary = group_titles(c)
+	for key: Variant in titles.keys():
+		parts.append(String(key) + "=" + String(titles[key]))
 	return "|".join(parts)
 
 
@@ -244,6 +381,7 @@ func rebuild() -> void:
 	_items = properties_of(c)
 	_list_stamp = _stamp()
 	if c == null:
+		_rows = []
 		editor.call("set_target", "", "")
 		list.queue_redraw()
 		return
@@ -265,7 +403,38 @@ func rebuild() -> void:
 		if bool(it["animated"]):
 			paths.append(String(it["path"]))
 	editor.call("set_paths", paths)
+	regroup(c)
 	list.queue_redraw()
+
+
+func regroup(c: Clip) -> void:
+	if not property_path.is_empty():
+		_open[KeyframeGroups.key_of(property_path)] = true
+		for it: Dictionary in _items:
+			if String(it.get("path", "")) == property_path and not String(it.get("rig_parent", "")).is_empty():
+				_open[String(it["rig_parent"])] = true
+	_rows =KeyframeGroups.with_marks(c, KeyframeGroups.build(_items, _open, group_titles(c)))
+
+
+func rows() -> Array[Dictionary]:
+	return _rows
+
+
+func row_count() -> int:
+	return _rows.size()
+
+
+func group_open(key: String) -> bool:
+	return bool(_open.get(key, false))
+
+
+func toggle_group(key: String) -> void:
+	if key.is_empty():
+		return
+	_open[key] = not bool(_open.get(key, false))
+	regroup(target_clip())
+	if list != null:
+		list.queue_redraw()
 
 
 func pick(path: String) -> void:
@@ -273,6 +442,7 @@ func pick(path: String) -> void:
 	var c: Clip = target_clip()
 	if c != null:
 		editor.call("set_target", c.id, path)
+	regroup(c)
 	list.queue_redraw()
 
 
@@ -491,11 +661,19 @@ func handle_key(e: InputEventKey) -> bool:
 
 
 func save_state() -> Dictionary:
-	return {"path": property_path, "mode": String(editor.get("mode")) if editor != null else "value"}
+	var open_keys: PackedStringArray = PackedStringArray()
+	for k: Variant in _open.keys():
+		if bool(_open[k]):
+			open_keys.append(String(k))
+	return {"path": property_path, "mode": String(editor.get("mode")) if editor != null else "value", "open": open_keys}
 
 
 func restore_state(d: Dictionary) -> void:
 	property_path = String(d.get("path", ""))
+	_open = {}
+	if d.get("open") is PackedStringArray or d.get("open") is Array:
+		for k: Variant in d["open"]:
+			_open[String(k)] = true
 	if _alive():
 		editor.call("set_mode", String(d.get("mode", "value")))
 		rebuild()
@@ -507,6 +685,9 @@ class _PropList:
 	const PaintKit := preload("res://ui/timeline/timeline_paint.gd")
 	const PmTextKit := preload("res://ui/kit/pm_text.gd")
 	const ROW := 22.0
+	const CHEVRON := 16.0
+	const STRIP_MAX := 110.0
+	const STRIP_PART := 0.4
 
 	var panel: RefCounted = null
 	var scroll: float = 0.0
@@ -523,51 +704,114 @@ class _PropList:
 		hover = -1
 		queue_redraw()
 
+	func rows() -> Array:
+		return panel.call("rows")
+
+	func top_limit(count: int) -> float:
+		return maxf(float(count) * ROW - size.y, 0.0)
+
+	func clamp_scroll() -> void:
+		scroll = clampf(scroll, 0.0, top_limit(rows().size()))
+
+	func row_at(y: float, count: int) -> int:
+		var i: int = int(floor((y + scroll) / ROW))
+		return i if i >= 0 and i < count else -1
+
 	func _on_input(event: InputEvent) -> void:
-		var items: Array = panel.get("_items")
+		var list_rows: Array = rows()
 		if event is InputEventMouseMotion:
-			var i: int = int(floor(((event as InputEventMouseMotion).position.y + scroll) / ROW))
-			hover = i if i >= 0 and i < items.size() else -1
+			hover = row_at((event as InputEventMouseMotion).position.y, list_rows.size())
 			queue_redraw()
 			return
 		if event is InputEventMouseButton:
 			var mb: InputEventMouseButton = event
 			if mb.button_index == MOUSE_BUTTON_WHEEL_UP or mb.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 				if mb.pressed:
-					scroll = clampf(scroll + (ROW * 3.0 if mb.button_index == MOUSE_BUTTON_WHEEL_DOWN else -ROW * 3.0), 0.0, maxf(float(items.size()) * ROW - size.y, 0.0))
+					scroll = clampf(scroll + (ROW * 3.0 if mb.button_index == MOUSE_BUTTON_WHEEL_DOWN else -ROW * 3.0), 0.0, top_limit(list_rows.size()))
 					queue_redraw()
 				accept_event()
 				return
 			if mb.button_index == MOUSE_BUTTON_LEFT and mb.pressed:
-				var i: int = int(floor((mb.position.y + scroll) / ROW))
-				if i >= 0 and i < items.size():
-					panel.call("pick", String((items[i] as Dictionary)["path"]))
+				var i: int = row_at(mb.position.y, list_rows.size())
+				if i >= 0:
+					var it: Dictionary = list_rows[i]
+					if String(it.get("kind", "")) == "group":
+						panel.call("toggle_group", String(it.get("key", "")))
+					else:
+						panel.call("pick", String(it.get("path", "")))
 				accept_event()
 			if mb.button_index == MOUSE_BUTTON_RIGHT and mb.pressed:
-				var j: int = int(floor((mb.position.y + scroll) / ROW))
-				if j >= 0 and j < items.size():
-					panel.call("open_row_menu", String((items[j] as Dictionary)["path"]), self, mb.position)
+				var j: int = row_at(mb.position.y, list_rows.size())
+				if j >= 0:
+					var jt: Dictionary = list_rows[j]
+					if String(jt.get("kind", "")) == "group":
+						panel.call("toggle_group", String(jt.get("key", "")))
+					else:
+						panel.call("open_row_menu", String(jt.get("path", "")), self, mb.position)
 				accept_event()
+
+	func _draw_chevron(at: Vector2, open: bool, col: Color) -> void:
+		var pts: PackedVector2Array = PackedVector2Array()
+		if open:
+			pts.append(at + Vector2(-4.0, -2.0))
+			pts.append(at + Vector2(4.0, -2.0))
+			pts.append(at + Vector2(0.0, 3.0))
+		else:
+			pts.append(at + Vector2(-2.0, -4.0))
+			pts.append(at + Vector2(3.0, 0.0))
+			pts.append(at + Vector2(-2.0, 4.0))
+		draw_colored_polygon(pts, col)
+
+	func _draw_strip(it: Dictionary, y: float) -> float:
+		var marks: PackedFloat32Array = it.get("marks", PackedFloat32Array())
+		var width: float = minf(STRIP_MAX, size.x * STRIP_PART)
+		if marks.is_empty() or width < 24.0:
+			return 0.0
+		var box := Rect2(size.x - width - PmTextKit.pad(), y + 5.0, width, ROW - 10.0)
+		draw_rect(box, Tk.c["bg_panel_alt"], true)
+		for u: float in marks:
+			var x: float = box.position.x + 1.0 + clampf(u, 0.0, 1.0) * maxf(box.size.x - 3.0, 1.0)
+			draw_rect(Rect2(x, box.position.y, 2.0, box.size.y), Tk.c["accent"], true)
+		return width + PmTextKit.pad()
 
 	func _draw() -> void:
 		draw_rect(Rect2(Vector2.ZERO, size), Tk.c["bg_panel"], true)
-		var items: Array = panel.get("_items")
+		var list_rows: Array = rows()
 		var current: String = String(panel.get("property_path"))
 		var f: Font = Tk.font("body")
 		var fs: int = Tk.fs(Tk.sz("font_body"))
-		if items.is_empty():
+		if list_rows.is_empty():
 			PmTextKit.draw(self, f, Rect2(0.0, 0.0, size.x, ROW + 4.0), "Select a clip", fs, Tk.c["text_dim"], HORIZONTAL_ALIGNMENT_LEFT, 8.0, 18.0)
 			return
-		for i: int in items.size():
-			var it: Dictionary = items[i]
+		clamp_scroll()
+		for i: int in list_rows.size():
+			var it: Dictionary = list_rows[i]
 			var y: float = float(i) * ROW - scroll
 			if y + ROW < 0.0 or y > size.y:
 				continue
-			var is_cur: bool = String(it["path"]) == current
+			var row_box := Rect2(0.0, y, size.x, ROW)
+			var group: bool = String(it.get("kind", "")) == "group"
+			var is_cur: bool = not group and String(it.get("path", "")) == current
 			if is_cur:
-				draw_rect(Rect2(0.0, y, size.x, ROW), Tk.c["selection_fill"], true)
+				draw_rect(row_box, Tk.c["selection_fill"], true)
+			elif group:
+				draw_rect(row_box, Tk.c["bg_panel_high"] if i == hover else Tk.c["bg_panel_alt"], true)
 			elif i == hover:
-				draw_rect(Rect2(0.0, y, size.x, ROW), Tk.c["bg_panel_high"], true)
-			var animated: bool = bool(it["animated"])
-			PaintKit.draw_diamond(self, Vector2(12.0, y + ROW * 0.5), 3.5, Tk.c["text_bright"] if animated else Tk.c["text_faint"], animated)
-			PmTextKit.draw_in(self, f, Rect2(24.0, y, size.x - 24.0 - PmTextKit.pad(), ROW), String(it["label"]), fs, Tk.c["text_bright"] if is_cur else (Tk.c["text"] if animated else Tk.c["text_dim"]), HORIZONTAL_ALIGNMENT_LEFT, y + ROW * 0.5 + fs * 0.35, PmTextKit.ELIDE, Rect2(0.0, y, size.x, ROW))
+				draw_rect(row_box, Tk.c["bg_panel_high"], true)
+			var animated: bool = bool(it.get("animated", false))
+			var tree: float = float(int(it.get("indent", 0))) * 12.0
+			var indent: float = (CHEVRON if int(it.get("depth", 0)) > 0 else 0.0) + tree
+			var right: float = 0.0
+			if group:
+				_draw_chevron(Vector2(10.0 + tree, y + ROW * 0.5), bool(it.get("open", false)), Tk.c["text"] if animated else Tk.c["text_dim"])
+				right = _draw_strip(it, y)
+				if right == 0.0:
+					var tally: String = str(int(it.get("keyed", 0))) + "/" + str(int(it.get("count", 0)))
+					var tally_box := Rect2(size.x - 48.0 - PmTextKit.pad(), y, 48.0, ROW)
+					PmTextKit.draw_in(self, f, tally_box, tally, fs, Tk.c["text_faint"], HORIZONTAL_ALIGNMENT_RIGHT, y + ROW * 0.5 + fs * 0.35, PmTextKit.ELIDE, row_box)
+					right = 48.0 + PmTextKit.pad()
+			else:
+				PaintKit.draw_diamond(self, Vector2(12.0 + indent, y + ROW * 0.5), 3.5, Tk.c["text_bright"] if animated else Tk.c["text_faint"], animated)
+			var text_x: float = (22.0 + tree) if group else 24.0 + indent
+			var col: Color = Tk.c["text_bright"] if (is_cur or group) else (Tk.c["text"] if animated else Tk.c["text_dim"])
+			PmTextKit.draw_in(self, f, Rect2(text_x, y, maxf(size.x - text_x - right - PmTextKit.pad(), 8.0), ROW), String(it.get("label", "")), fs, col, HORIZONTAL_ALIGNMENT_LEFT, y + ROW * 0.5 + fs * 0.35, PmTextKit.ELIDE, row_box)

@@ -1,0 +1,11 @@
+{
+ "id": "purr_hello",
+ "label": "Hello Module",
+ "kind": "code",
+ "version": "1.0.0",
+ "purr_api": "1.0",
+ "author": "Purrmiere",
+ "blurb": "The living example of a Purrmiere module. It adds a panel, a workspace, a command in the Help menu, a setting, an effect, a file type it opens and a kind of document, all through the module API, and takes them all back when it is turned off.",
+ "homepage": "https://github.com/ (its own repository)",
+ "provides": ["IPanel"]
+}

@@ -1,0 +1,26 @@
+{
+ "id": "focus_hunt",
+ "label": "Focus Hunting",
+ "category": "Blur & Sharpen",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "A camera's autofocus losing the shot and finding it again: the lens racks one way, reverses through focus, overshoots smaller and smaller and settles, the way contrast detect focus searches. The blur is a real lens blur, with bright spots opening into discs that have a hard bright rim on one side of focus and a soft centre on the other, purple and green fringes on their edges, and the picture breathing a little larger and smaller as the focus moves. Hunt once, hunt again and again, or key the focus yourself.",
+ "params": [
+  {"key": "depth", "label": "Blur at the far point", "type": "float", "min": 0.0, "max": 60.0, "step": 0.1, "default": 18.0, "unit": " px"},
+  {"key": "timing", "label": "Timing", "type": "enum", "choices": ["Hunt once", "Hunt again and again", "Follow Focus offset"], "default": 0},
+  {"key": "start", "label": "Hunt starts at", "type": "float", "min": 0.0, "max": 60.0, "step": 0.01, "default": 0.2, "unit": " s"},
+  {"key": "hunt_length", "label": "Hunt length", "type": "float", "min": 0.2, "max": 10.0, "step": 0.01, "default": 1.8, "unit": " s"},
+  {"key": "interval", "label": "Hunt every", "type": "float", "min": 0.5, "max": 30.0, "step": 0.01, "default": 4.0, "unit": " s"},
+  {"key": "offset", "label": "Focus offset", "type": "float", "min": -1.0, "max": 1.0, "step": 0.01, "default": 0.0},
+  {"key": "breathing", "label": "Focus breathing", "type": "float", "min": 0.0, "max": 6.0, "step": 0.05, "default": 1.5, "unit": " %"},
+  {"key": "fringe", "label": "Bokeh fringes", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "highlight", "label": "Highlight discs", "type": "float", "min": 0.0, "max": 3.0, "step": 0.01, "default": 1.2},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": [
+  {"shader": "down.gdshader", "scale": 0.5},
+  {"shader": "down.gdshader", "scale": 0.5},
+  {"shader": "defocus.gdshader", "scale": 2.0, "set": {"pass_mode": 0}, "inputs": {"half_tex": 0, "quarter_tex": 1}},
+  {"shader": "defocus.gdshader", "scale": 2.0, "set": {"pass_mode": 1}}
+ ]
+}

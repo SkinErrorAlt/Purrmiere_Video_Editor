@@ -1,0 +1,41 @@
+{
+ "id": "text_hash",
+ "label": "Hash",
+ "category": "Text",
+ "version": 1,
+ "applies_to": "text",
+ "text_transform": "hash",
+ "tags": [
+  "text",
+  "crypto",
+  "hash"
+ ],
+ "blurb": "A fingerprint of the text: MD5, SHA-1, SHA-256, SHA-512 or CRC32. One way: it can't be turned back.",
+ "params": [
+  {
+   "key": "algorithm",
+   "label": "Algorithm",
+   "type": "enum",
+   "choices": [
+    "MD5",
+    "SHA-1",
+    "SHA-256",
+    "SHA-512",
+    "CRC32"
+   ],
+   "default": 2
+  },
+  {
+   "key": "output",
+   "label": "Written as",
+   "type": "enum",
+   "choices": [
+    "Hex",
+    "Hex, capitals",
+    "Base64"
+   ],
+   "default": 0
+  }
+ ],
+ "passes": []
+}

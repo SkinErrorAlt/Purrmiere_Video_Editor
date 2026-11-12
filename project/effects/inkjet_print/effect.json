@@ -1,0 +1,20 @@
+{
+ "id": "inkjet_print",
+ "label": "Inkjet Print",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Prints the picture on a tired home inkjet onto plain paper: a scatter of cyan, magenta, yellow and black droplets that wick into the fibres, bands where each pass of the head meets the next, thin missing lines from clogged nozzles that repeat every pass, and the colour going wrong as one cartridge runs dry.",
+ "params": [
+  {"key": "droplet", "label": "Droplet size", "type": "float", "min": 1.0, "max": 6.0, "step": 0.05, "default": 2.0, "unit": " px"},
+  {"key": "swath", "label": "Head height", "type": "float", "min": 16.0, "max": 240.0, "step": 1.0, "default": 72.0, "unit": " px"},
+  {"key": "banding", "label": "Head banding", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "clogs", "label": "Clogged nozzles", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "low_ink", "label": "Running low", "type": "enum", "choices": ["None", "Cyan", "Magenta", "Yellow", "Black"], "default": 1},
+  {"key": "dry", "label": "How dry", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45},
+  {"key": "bleed", "label": "Ink bleed", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "paper", "label": "Paper", "type": "color", "default": [0.96, 0.965, 0.975, 1.0]},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 999, "step": 1, "default": 7}
+ ],
+ "passes": "single"
+}

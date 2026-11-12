@@ -18,6 +18,7 @@ const ID_VIEWS := "views"
 const CLIP_PREFIX := "clip:"
 const VIEW_PREFIX := "view:"
 const ReactFeed := preload("res://engine/react_feed.gd")
+const SoundWellMore := preload("res://modules/core_panels/sound_well_more.gd")
 const TIP := "The sound this effect follows. Drag a clip from the timeline, a file from the bin or the Source monitor's drag handle onto it, or click for a menu"
 
 
@@ -104,6 +105,7 @@ static func menu_items(panel: Object) -> Array:
 				continue
 			var name: String = String(c.get("label")) if not String(c.get("label")).is_empty() else String(m.get("label"))
 			listed.append(PmMenu.item(CLIP_PREFIX + String(c.get("id")), String(track.call("shown_label")) + ": " + name))
+	listed.append_array(SoundWellMore.items(panel, Callable(PmMenu, "item")))
 	if not listed.is_empty():
 		items.append(PmMenu.separator())
 		items.append_array(listed)
@@ -136,6 +138,8 @@ static func picked(id: String, panel: Object, path: String) -> void:
 		apply(panel, path, AudioReact.encode({"kind": AudioReact.KIND_MIX}))
 	elif id == ID_VIEWS:
 		apply(panel, path, AudioReact.encode({"kind": AudioReact.KIND_VIEWS}))
+	elif not SoundWellMore.text_for(id, panel).is_empty():
+		apply(panel, path, SoundWellMore.text_for(id, panel))
 	elif id.begins_with(VIEW_PREFIX):
 		var rest: String = id.substr(VIEW_PREFIX.length())
 		var cut: int = rest.rfind(":")

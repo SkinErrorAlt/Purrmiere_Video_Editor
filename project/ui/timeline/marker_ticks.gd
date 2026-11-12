@@ -3,6 +3,7 @@ extends RefCounted
 const Marker := preload("res://doc/marker.gd")
 const MediaItem := preload("res://doc/media_item.gd")
 const Kind := preload("res://ui/timeline/marker_lane_kind.gd")
+const Shapes := preload("res://ui/timeline/marker_shapes.gd")
 const TILE_TICK_W := 2.0
 const TILE_TICK_H := 6.0
 const TILE_CROWD_PX := 3.0
@@ -45,5 +46,5 @@ static func draw_strip(ci: CanvasItem, r: Rect2, item: MediaItem, length: float,
 		var col: Color = Kind.colour_of(m, {})
 		if w > 0.0:
 			ci.draw_rect(Rect2(x, r.end.y - 4.0, minf(w, r.end.x - x), 3.0), col, true)
-		Kind.pennant(ci, x, r.position.y + 1.0, col, not m.comment.is_empty(), false)
+		Shapes.draw(ci, m, x, r.position.y + 1.0, col, not m.comment.is_empty(), false)
 		strip_marks += 1

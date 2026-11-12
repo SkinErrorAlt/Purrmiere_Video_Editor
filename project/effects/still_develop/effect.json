@@ -1,0 +1,24 @@
+{
+ "id": "still_develop",
+ "label": "Stillness Develops",
+ "category": "Time",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Rewards the shot for holding still. The longer nothing moves, the richer the picture develops, like a print coming up in the tray: the still frames are stacked so grain and noise melt away, colours deepen, detail stands out and highlights take on a soft warm glow. The moment anything moves, it snaps back to the plain footage and starts again. Lovely on locked off shots, landscapes and anything that pauses for a moment.",
+ "history": {"max": 60, "reach": ["develop", 1.05], "seconds": ["develop"]},
+ "params": [
+  {"key": "develop", "label": "Fully developed after", "type": "float", "min": 0.3, "max": 1.9, "step": 0.01, "default": 1.6, "unit": " s"},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "richness", "label": "Richness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.75},
+  {"key": "clean", "label": "Melt the grain", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.8},
+  {"key": "glow", "label": "Glow", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "sensitivity", "label": "Ignore small movement", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5}
+ ],
+ "passes": [
+  {"shader": "res://effects/_events/thumbs.gdshader", "scale": 0.125},
+  {"shader": "res://effects/_events/stats_change.gdshader", "scale": 0.25},
+  {"shader": "res://effects/_events/stats_motion.gdshader", "scale": 1.0, "inputs": {"thumb_tex": 0}},
+  {"shader": "res://effects/_events/track_motion.gdshader", "scale": 1.0, "inputs": {"change_tex": 1, "motion_tex": 2}, "set": {"mode": 0}},
+  {"shader": "apply.gdshader", "scale": 32.0}
+ ]
+}

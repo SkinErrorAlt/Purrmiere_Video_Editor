@@ -1,0 +1,26 @@
+{
+ "id": "snd_voice_focus",
+ "label": "Voice Focus",
+ "category": "Audio Reactive",
+ "tags": ["audio", "reactive", "voice", "blur"],
+ "version": 1,
+ "blurb": "The lens leans in to listen. When someone starts talking the focus pulls onto the spot you choose, the rest of the frame melts into soft lens blur and the camera eases in a little; when they stop, the focus relaxes back to the whole scene. It reacts to speech only, so music, footsteps and gunfire under the talking do not pull it.",
+ "params": [
+  {"key": "centre", "label": "Focus on", "type": "vec2", "default": [0.5, 0.45]},
+  {"key": "size", "label": "Sharp area", "type": "float", "min": 0.05, "max": 1.5, "step": 0.005, "default": 0.42},
+  {"key": "stretch", "label": "Width to height", "type": "float", "min": 0.25, "max": 4.0, "step": 0.01, "default": 0.8},
+  {"key": "feather", "label": "Softness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "blur", "label": "Blur", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.85},
+  {"key": "push_in", "label": "Lean in", "type": "float", "min": 0.0, "max": 15.0, "step": 0.1, "default": 3.0, "unit": " %"},
+  {"key": "linger", "label": "Hold between words", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "dim", "label": "Dim around", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.15}
+ ],
+ "passes": [
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "focus.gdshader", "scale": 8.0, "inputs": {"mid_tex": 1}}
+ ],
+ "reactive": {"listen": true, "defaults": {"snd_threshold": 0.0}},
+ "handles": [{"kind": "point", "key": "centre"}, {"kind": "ring", "key": "size", "about": "centre", "unit": "h", "scale": 2.0, "stretch": "stretch", "feather": "feather", "feather_mode": "outer", "feather_scale": 1.2}]
+}

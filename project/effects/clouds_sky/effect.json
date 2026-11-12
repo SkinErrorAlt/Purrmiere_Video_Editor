@@ -1,0 +1,29 @@
+{
+ "id": "clouds_sky",
+ "label": "Clouds and Sky",
+ "category": "Generate",
+ "tags": ["sky", "light"],
+ "version": 1,
+ "blurb": "A real sky to put behind a cut out or over a flat shot: a graded dome from horizon haze to deep zenith, with layered clouds built from domain warped noise that are lit from the sun rather than tinted flat, so their tops catch the light and their undersides hold shadow. Four skies: fair weather cumulus, a flat overcast lid, a storm front with heavy bases, and thin high cirrus. The sun has a disc, a glow and a colour, and the whole sky drifts with the wind on the clip clock. A new seed gives a different sky.",
+ "params": [
+  {"key": "style", "label": "Sky", "type": "enum", "choices": ["Fair weather", "Overcast", "Storm", "High cirrus"], "default": 0},
+  {"key": "coverage", "label": "Cloud cover", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.55},
+  {"key": "softness", "label": "Softness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45},
+  {"key": "detail", "label": "Detail", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "height", "label": "Horizon", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.72},
+  {"key": "depth", "label": "Looking out", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "sun", "label": "Sun", "type": "vec2", "default": [0.72, 0.3]},
+  {"key": "sun_size", "label": "Sun size", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "sun_colour", "label": "Sun colour", "type": "color", "default": [1.0, 0.93, 0.78, 1.0]},
+  {"key": "sky_colour", "label": "Sky colour", "type": "color", "default": [0.25, 0.47, 0.85, 1.0]},
+  {"key": "haze_colour", "label": "Horizon colour", "type": "color", "default": [0.78, 0.84, 0.92, 1.0]},
+  {"key": "wind", "label": "Wind", "type": "float", "min": -2.0, "max": 2.0, "step": 0.01, "default": 0.35},
+  {"key": "drift", "label": "Drift", "type": "float", "min": 0.0, "max": 4.0, "step": 0.01, "default": 1.0},
+  {"key": "brightness", "label": "Brightness", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 1.0},
+  {"key": "blend", "label": "How it mixes", "type": "enum", "choices": ["Replace", "Multiply", "Screen", "Overlay", "Add", "Soft light", "Over"], "default": 6},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "handles": [{"kind": "point", "key": "sun"}],
+ "passes": "single"
+}

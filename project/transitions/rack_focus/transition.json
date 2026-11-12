@@ -1,0 +1,13 @@
+{
+ "id": "rack_focus",
+ "label": "Rack Focus",
+ "group": "Zoom and Camera",
+ "space": "2D",
+ "from": ["camera focus pull"],
+ "blurb": "A focus pull between the two shots, the way a camera racks focus: the first shot drifts out of focus as the second, starting soft, pulls into sharp focus, the handover happening while both are blurred. Set how far out of focus it goes.",
+ "default_duration": 0.8,
+ "params": [
+  {"key": "timing", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth", "Strong", "Slow end", "Overshoot", "Bounce"], "default": 1},
+  {"key": "max_blur", "label": "Defocus", "type": "float", "min": 4.0, "max": 90.0, "step": 1.0, "default": 34.0, "unit": " px"}
+ ]
+}

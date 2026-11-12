@@ -2,7 +2,7 @@ extends RefCounted
 
 const BODY_FONT := "res://fonts/body.ttf"
 const FONT_LIBRARY := "res://doc/font_library.gd"
-const ALIGNS: PackedStringArray = ["left", "center", "right"]
+const ALIGNS: PackedStringArray = ["left", "center", "right", "justify", "justify_center", "justify_right", "justify_all"]
 const VALIGNS: PackedStringArray = ["top", "center", "bottom"]
 
 static var _fonts: Dictionary = {}
@@ -36,6 +36,20 @@ static func title_defaults() -> Dictionary:
 		"uppercase": false,
 		"reveal": 1.0,
 		"cursor": "",
+		"fill_on": true,
+		"stroke_on": true,
+		"box_on": true,
+		"shadow_size": 0.0,
+		"underline": false,
+		"small_caps": false,
+		"baseline": 0.0,
+		"script": "",
+		"highlight": [1.0, 0.85, 0.1, 0.0],
+		"text_opacity": 100.0,
+		"box_lines": false,
+		"stroke2_on": false,
+		"stroke2_width": 6.0,
+		"stroke2_colour": [1.0, 1.0, 1.0, 1.0],
 	}
 
 
@@ -48,6 +62,17 @@ static func shape_defaults() -> Dictionary:
 		"radius": 0.0,
 		"border": 0.0,
 		"border_colour": [0.0, 0.0, 0.0, 1.0],
+		"sides": 6.0,
+		"points": 5.0,
+		"inner": 0.45,
+		"spin": 0.0,
+		"fill": "solid",
+		"colour2": [0.1, 0.1, 0.1, 1.0],
+		"gradient_angle": 90.0,
+		"gradient_mid": 0.5,
+		"trim_start": 0.0,
+		"trim_end": 1.0,
+		"trim_offset": 0.0,
 	}
 
 

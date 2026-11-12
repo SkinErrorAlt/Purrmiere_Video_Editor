@@ -1,5 +1,6 @@
 extends RefCounted
 
+const Fold := preload("res://ui/timeline/timeline_fold.gd")
 const Project := preload("res://doc/project.gd")
 const Sequence := preload("res://doc/sequence.gd")
 const Track := preload("res://doc/track.gd")
@@ -15,6 +16,11 @@ const TagApply := preload("res://doc/tag_apply.gd")
 const Censor := preload("res://doc/censor.gd")
 const EFFECT_SOURCE := "res://modules/core_panels/effect_source.gd"
 const Kind := preload("res://ui/timeline/marker_lane_kind.gd")
+const Shapes := preload("res://ui/timeline/marker_shapes.gd")
+const MenuExtra := preload("res://ui/timeline/marker_menu_extra.gd")
+const PlayheadLook := preload("res://ui/timeline/playhead_look.gd")
+const MarkerRuns := preload("res://doc/marker_runs.gd")
+const MarkerKinds := preload("res://doc/marker_kinds.gd")
 const Icons := preload("res://ui/kit/icons.gd")
 const PmMenu := preload("res://ui/kit/pm_menu.gd")
 const PmUI := preload("res://ui/kit/pm_ui.gd")
@@ -94,12 +100,13 @@ static func draw(canvas: Control) -> void:
 	var font: Font = Tk.font("body")
 	var fs: int = _font_size()
 	var picked: PackedStringArray = canvas.get("selected_marker_ids")
+	var runs_by: Dictionary = MarkerRuns.by_lane(s, serial_of(canvas))
 	for r: Dictionary in list:
 		var y: float = float(r["y"])
 		var h: float = float(r["h"])
 		var layer: Dictionary = idx.get(r["id"], r["layer"])
 		var body: Rect2 = Rect2(header_w, y, canvas.size.x - header_w, h)
-		var ctx: Dictionary = {"layer": layer, "markers": Layers.in_view(bk.get(r["id"], {}), span.x if Kind.cull else -INF, span.y if Kind.cull else INF), "seq": s, "header_w": header_w, "pps": float(g["pps"]), "scroll_x": float(g["scroll_x"]), "picked": picked, "font": font, "fs": fs}
+		var ctx: Dictionary = {"layer": layer, "markers": Layers.in_view(bk.get(r["id"], {}), span.x if Kind.cull else -INF, span.y if Kind.cull else INF), "seq": s, "header_w": header_w, "pps": float(g["pps"]), "scroll_x": float(g["scroll_x"]), "fold": g.get("fold", {}), "picked": picked, "font": font, "fs": fs, "runs": runs_by.get(r["id"], [])}
 		Kind.paint(canvas, body, ctx)
 		draw_header(canvas, Rect2(0.0, y, header_w, h), layer, font, fs)
 		lanes_drawn += 1
@@ -122,7 +129,8 @@ static func view_span(canvas: Control) -> Vector2:
 	var pps: float = maxf(float(canvas.get("pps")), 0.000001)
 	var scroll_x: float = float(canvas.get("scroll_x"))
 	var pad: float = 8.0 / pps
-	return Vector2(scroll_x / pps - pad, (canvas.size.x - header_w + scroll_x) / pps + pad)
+	var f: Dictionary = canvas.call("fold") if canvas.has_method("fold") else {}
+	return Vector2(Fold.real(f, scroll_x / pps - pad), Fold.real(f, (canvas.size.x - header_w + scroll_x) / pps + pad))
 
 
 static func draw_header(canvas: Control, r: Rect2, layer: Dictionary, font: Font, fs: int) -> void:
@@ -150,14 +158,21 @@ static func draw_ruler_markers(canvas: Control, s: Sequence, rh: float) -> void:
 	var picked: PackedStringArray = canvas.get("selected_marker_ids")
 	var x_max: float = canvas.size.x
 	var span: Vector2 = view_span(canvas)
+	var rf: Dictionary = canvas.call("fold") if canvas.has_method("fold") else {}
 	var last_px: float = -INF
 	var list: Array = Layers.in_view(Layers.buckets(s, serial_of(canvas)).get(Layers.RULER, {}), span.x, span.y)
+	for run: Dictionary in MarkerRuns.by_lane(s, serial_of(canvas)).get(Layers.RULER, []) as Array:
+		var first: Marker = run["first"]
+		var rcol: Color = plain_colour(first)
+		var x_of: Callable = func(t: float) -> float: return Fold.x_of(rf, t, header_w, pps, scroll_x)
+		Shapes.draw_run(canvas, rh - 8.0, 7.0, x_of, run, rcol, header_w, x_max, null, 0)
 	var dense: bool = Kind.is_dense(list.size(), x_max - header_w)
 	var plain: Color = Tk.c["text"]
 	var crowd: float = Kind.DENSE_CROWD_PX if dense else Kind.CROWD_PX
 	for m: Marker in list:
-		var mx: float = header_w + (Follow.resolved_time(s, m) if m.follows() else m.time) * pps - scroll_x
-		var mw: float = maxf(m.duration, 0.0) * pps
+		var mt: float = Follow.resolved_time(s, m) if m.follows() else m.time
+		var mx: float = Fold.x_of(rf, mt, header_w, pps, scroll_x)
+		var mw: float = maxf(m.duration, 0.0) * pps if rf.is_empty() else Fold.px_between(rf, mt, mt + maxf(m.duration, 0.0), pps)
 		if mx + mw < header_w - 6.0 or mx > x_max + 6.0:
 			continue
 		var on: bool = not picked.is_empty() and picked.has(m.id)
@@ -180,7 +195,11 @@ static func draw_ruler_markers(canvas: Control, s: Sequence, rh: float) -> void:
 				canvas.draw_rect(Rect2(mx + mw - 1.0, rh - 9.0, 2.0, 9.0), col, true)
 		if m.follows():
 			canvas.draw_circle(Vector2(mx, 13.5), 1.5, col)
-		Kind.pennant(canvas, mx, 1.0, col, not m.comment.is_empty(), on)
+		Shapes.draw(canvas, m, mx, 1.0, col, not m.comment.is_empty(), on)
+
+
+static func plain_colour(m: Marker) -> Color:
+	return Tk.c["text"] if m.colour < 0 and m.rgb.is_empty() else Kind.colour_of(m, {})
 
 
 static func doc_of(canvas: Control) -> Project:
@@ -556,6 +575,7 @@ static func marker_items(canvas: Control, mk: Marker, tail: String) -> Array:
 		out.append(PmMenu.item("mapply", "Apply to the " + str(picked_regions.size()) + " picked regions...", "", "fx"))
 	if Tags.is_tag(mk):
 		out.append(PmMenu.sub_item("tagall", "Every " + Tags.name_of(mk) + " tag (" + str(Tags.of_name(s, Tags.name_of(mk)).size()) + ")", tag_items()))
+	out.append_array(MenuExtra.items(canvas, mk, tail))
 	return out
 
 
@@ -620,6 +640,8 @@ static func on_rename_tags(result: Variant, canvas: Control, name: String) -> vo
 
 
 static func on_marker_menu(canvas: Control, id: String, marker_id: String) -> bool:
+	if MenuExtra.on_pick(canvas, id, marker_id):
+		return true
 	if id.begins_with("mlane:"):
 		move_markers(canvas, marker_id, id.substr(6))
 		return true
@@ -728,12 +750,12 @@ static func colour_close(a: Color, b: Color) -> bool:
 static func tint_rows(canvas: Control, ph: float) -> Array[Vector2]:
 	var out: Array[Vector2] = []
 	var s: Sequence = canvas.call("seq")
-	if s == null or not tint_on or s.markers.is_empty():
+	if s == null or not tint_on or not PlayheadLook.tint_on() or s.markers.is_empty():
 		return out
 	var g: Dictionary = canvas.call("geometry")
 	var pps: float = maxf(float(g["pps"]), 0.000001)
 	var reach: float = 5.0 / pps
-	var sol: Color = Tk.c["sol"]
+	var sol: Color = PlayheadLook.colour()
 	var idx: Dictionary = Layers.index(s)
 	var rh: float = float(g["ruler_h"])
 	var bk: Dictionary = Layers.buckets(s, serial_of(canvas))
@@ -755,24 +777,11 @@ static func tint_rows(canvas: Control, ph: float) -> Array[Vector2]:
 
 
 static func draw_playhead(ci: CanvasItem, canvas: Control, px: float, y0: float, y1: float, ph: float) -> void:
-	var col: Color = Tk.c["sol"]
-	var x: float = round(px)
-	var w: float = float(Tk.px(PLAYHEAD_W))
-	var x0: float = x - floor(w * 0.5)
-	ci.draw_rect(Rect2(x0, y0, w, y1 - y0), col, true)
-	var clash: Array[Vector2] = tint_rows(canvas, ph)
-	var head_clash: bool = false
-	var inv: Color = Tk.c["inv"]
-	for span: Vector2 in clash:
-		ci.draw_rect(Rect2(x0 - 1.0, span.x, w + 2.0, span.y - span.x), col, true)
-		ci.draw_rect(Rect2(x0, span.x, w, span.y - span.x), inv, true)
-		if span.x <= y0 + 0.5:
-			head_clash = true
-	var head := PackedVector2Array([Vector2(x - 5.0, y0), Vector2(x + 6.0, y0), Vector2(x + 6.0, y0 + 4.0), Vector2(x + 0.5, y0 + 9.0), Vector2(x - 5.0, y0 + 4.0)])
-	ci.draw_colored_polygon(head, inv if head_clash else col)
-	if head_clash:
-		head.append(head[0])
-		ci.draw_polyline(head, col, 1.0)
+	var s: Sequence = canvas.call("seq")
+	var fps: float = s.fps if s != null and s.fps > 0.0 else 30.0
+	var frame_px: float = float(canvas.get("pps")) / fps
+	var g: Dictionary = canvas.call("geometry")
+	PlayheadLook.draw(ci, px, y0, y1, {"clash": tint_rows(canvas, ph), "frame_px": frame_px, "band_top": float(g.get("ruler_h", y0))})
 
 
 static func editor_lane_ids(s: Sequence, m: Marker) -> PackedStringArray:

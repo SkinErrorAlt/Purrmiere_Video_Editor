@@ -14,6 +14,7 @@ const MENUS: Array[Dictionary] = [
 		"file.open", "file.close", SEP,
 		"file.save", "file.save_as", "file.save_copy", "file.restore", "file.project_card", SEP,
 		"file.import", "file.import_folder", "file.export", "file.export_frame", SEP,
+		"file.import_captions", "file.export_captions", SEP,
 		"file.properties", "file.reveal", "file.edit_original", SEP,
 		"file.relink", "file.remove_unused", SEP,
 		"file.quit"]},
@@ -30,7 +31,7 @@ const MENUS: Array[Dictionary] = [
 		"clip.link", "clip.group", "clip.ungroup", "group.select", "group.rename", "group.lock", "group.mute", "group.add_selection", "group.remove_selection", "group.panel", SEP,
 		"tracker.panel", "tool.track_area", "tracker.forward", "tracker.backward", "tracker.stop", SEP,
 		"clip.bring_to_front", "clip.send_to_back", SEP,
-		"clip.nest", "clip.see_inside", "clip.reveal_nested", "nest.hear_audio", "group.to_nest", "nest.unnest_to_group", SEP,
+		"clip.nest", "clip.see_inside", "clip.see_inside_all", "clip.reveal_nested", "nest.hear_audio", "group.to_nest", "nest.unnest_to_group", SEP,
 		"clip.subclip", "clip.subsequence", SEP,
 		"clip.audio_gain", "clip.audio_channels", SEP,
 		"clip.match_frame", "clip.reverse_match_frame", "clip.freeze_frame", "clip.hold_to_end", "clip.replace_footage", SEP,
@@ -41,6 +42,7 @@ const MENUS: Array[Dictionary] = [
 		"edit.add_edit", "edit.add_edit_all", "edit.cut_at_markers", "edit.close_all_gaps", SEP,
 		"edit.lift", "edit.extract", SEP,
 		"tool.censor", "seq.censor_in_out", "tool.realign", SEP,
+		"seq.lock_in_out", "seq.unlock_all", SEP,
 		"edit.ripple_trim_prev", "edit.ripple_trim_next", "edit.extend_selected", SEP,
 		"seq.default_video_transition", "seq.default_audio_transition", "seq.default_transitions", SEP,
 		"seq.snap", "view.program_snap", "view.motion_paths", "seq.linked_selection", "seq.pin_track", SEP,
@@ -131,6 +133,11 @@ func items_for(index: int) -> Array:
 			for e: Variant in extra:
 				if typeof(e) == TYPE_DICTIONARY:
 					out.append(e)
+		var win_ids: PackedStringArray = (load("res://host/module_extras.gd").call("shared") as Object).call("menu_items", "window")
+		if not win_ids.is_empty():
+			out.append(PmMenu.separator())
+			for wid: String in win_ids:
+				out.append(command_item(wid))
 		return out
 	var last_sep: bool = true
 	for raw: Variant in (m["items"] as Array):
@@ -144,6 +151,12 @@ func items_for(index: int) -> Array:
 		last_sep = false
 		if id == "file.open":
 			out.append(_recent_item())
+	var extra_ids: PackedStringArray = (load("res://host/module_extras.gd").call("shared") as Object).call("menu_items", String(m["id"]))
+	if not extra_ids.is_empty():
+		if out.size() > 0 and not bool((out[out.size() - 1] as Dictionary).get("sep", false)):
+			out.append(PmMenu.separator())
+		for xid: String in extra_ids:
+			out.append(command_item(xid))
 	if out.size() > 0 and bool((out[out.size() - 1] as Dictionary).get("sep", false)):
 		out.remove_at(out.size() - 1)
 	return out

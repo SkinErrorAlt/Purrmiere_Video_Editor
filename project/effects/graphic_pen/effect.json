@@ -13,5 +13,6 @@
   {"key": "paper", "label": "Paper", "type": "color", "default": [0.97, 0.96, 0.93, 1.0]},
   {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
  ],
+ "handles": [{"kind": "angle", "key": "angle", "zero": "right", "turn": "ccw"}],
  "passes": "single"
 }

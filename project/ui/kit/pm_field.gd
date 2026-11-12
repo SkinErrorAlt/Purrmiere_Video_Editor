@@ -4,6 +4,8 @@ signal value_changed(v: float)
 signal edit_begun
 signal edit_ended
 signal typed(text: String)
+signal range_typed(lo: float, hi: float)
+signal dice_pressed
 
 const SLOP := 3.0
 const ALLOWED := "0123456789.+-*/() "
@@ -14,6 +16,7 @@ const PREF_BUDGET := "ui.drag_range_px"
 const PREF_SHIFT_FINE := "ui.shift_is_fine"
 const PREF_WHEEL := "ui.wheel_step_size"
 const PmPointer := preload("res://ui/kit/pm_pointer.gd")
+const Icons := preload("res://ui/kit/icons.gd")
 const TURN := 360.0
 const MS_PER_PX := 1.0
 const TIMES: PackedStringArray = ["x", "X", "×"]
@@ -56,6 +59,21 @@ var _hover: bool = false
 var _captured: bool = false
 var _anchor: Vector2i = Vector2i.ZERO
 var _editor: LineEdit = null
+var accepts_range: bool = false
+var range_text: String = "":
+	set(v):
+		if v == range_text:
+			return
+		range_text = v
+		update_minimum_size()
+		queue_redraw()
+var dice: bool = false:
+	set(v):
+		if v == dice:
+			return
+		dice = v
+		update_minimum_size()
+		queue_redraw()
 static var plant_skip_round_guard: bool = false
 
 
@@ -92,6 +110,26 @@ static func parse_expression(text: String) -> Dictionary:
 	if typeof(out) == TYPE_INT or typeof(out) == TYPE_FLOAT:
 		return {"ok": true, "value": float(out)}
 	return {"ok": false, "value": 0.0}
+
+
+static func parse_range(text: String, turns_on: bool = false) -> Dictionary:
+	var t: String = text.strip_edges()
+	if t.begins_with("(") and t.ends_with(")"):
+		t = t.substr(1, t.length() - 2)
+	var cut: int = t.find(",")
+	if cut < 0:
+		cut = t.find(";")
+	if cut < 0 or t.count(",") + t.count(";") != 1:
+		return {"ok": false, "lo": 0.0, "hi": 0.0}
+	var a: Dictionary = parse_text(t.substr(0, cut), turns_on)
+	var b: Dictionary = parse_text(t.substr(cut + 1), turns_on)
+	if not bool(a["ok"]) or not bool(b["ok"]):
+		return {"ok": false, "lo": 0.0, "hi": 0.0}
+	return {"ok": true, "lo": minf(float(a["value"]), float(b["value"])), "hi": maxf(float(a["value"]), float(b["value"]))}
+
+
+static func range_label(lo: float, hi: float, d: int) -> String:
+	return "(" + String.num(lo, d) + ", " + String.num(hi, d) + ")"
 
 
 static func pref_rotation_typing() -> String:
@@ -261,6 +299,8 @@ func decimals() -> int:
 
 
 func display_text() -> String:
+	if not range_text.is_empty():
+		return range_text
 	var d: int = decimals()
 	if turns:
 		return turns_text(value, d, suffix)
@@ -425,6 +465,10 @@ func _on_input(event: InputEvent) -> void:
 				accept_event()
 			return
 		if mb.button_index == MOUSE_BUTTON_LEFT:
+			if mb.pressed and dice and mb.position.x >= size.x - dice_w():
+				dice_pressed.emit()
+				accept_event()
+				return
 			if mb.pressed:
 				if mb.double_click:
 					_finish_drag()
@@ -458,6 +502,7 @@ func _on_input(event: InputEvent) -> void:
 				return
 			_dragging = true
 			_accum = 0.0
+			range_text = ""
 			_budget = pref_budget()
 			edit_begun.emit()
 			_capture()
@@ -512,7 +557,7 @@ func begin_typing() -> void:
 		return
 	edit_begun.emit()
 	var le := LineEdit.new()
-	le.text = String.num(value, decimals())
+	le.text = range_text if not range_text.is_empty() else String.num(value, decimals())
 	le.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	le.context_menu_enabled = false
 	le.add_theme_font_size_override("font_size", Tk.fs(Tk.sz("font_body")))
@@ -542,7 +587,17 @@ func _on_editor_input(event: InputEvent) -> void:
 
 
 func _on_typed(text: String) -> void:
-	var parsed: Dictionary = parse_text(text.replace(suffix, ""), turns)
+	var bare: String = text.replace(suffix, "") if not suffix.strip_edges().is_empty() else text
+	if accepts_range:
+		var rg: Dictionary = parse_range(bare, turns)
+		if bool(rg["ok"]):
+			typed.emit(text)
+			var lo: float = float(rg["lo"]) if reach else clampf(float(rg["lo"]), min_value, max_value)
+			var hi: float = float(rg["hi"]) if reach else clampf(float(rg["hi"]), min_value, max_value)
+			range_typed.emit(lo, hi)
+			_close_editor()
+			return
+	var parsed: Dictionary = parse_text(bare, turns)
 	typed.emit(text)
 	if bool(parsed["ok"]):
 		commit(float(parsed["value"]), true)
@@ -606,6 +661,9 @@ func _draw() -> void:
 	var y: float = (size.y - (asc + desc)) * 0.5 + asc
 	var mtext: String = mult_label()
 	var mroom: float = 0.0 if mtext.is_empty() else _text_w(mtext) + float(Tk.px(Tk.sz("gap")))
+	mroom += dice_w()
+	if not range_text.is_empty():
+		col = Tk.c["sol"] if editable else Tk.c["text_dim"]
 	var room: float = maxf(size.x - pad * 2.0 - mroom, 0.0)
 	if not label_text.is_empty():
 		draw_string(font, Vector2(pad, y), label_text, HORIZONTAL_ALIGNMENT_LEFT, -1, fsz, Tk.c["text_dim"])
@@ -613,11 +671,19 @@ func _draw() -> void:
 	else:
 		draw_string(font, Vector2(pad, y), text, HORIZONTAL_ALIGNMENT_LEFT, room, fsz, col)
 	if not mtext.is_empty():
-		draw_string(font, Vector2(pad, y), mtext, HORIZONTAL_ALIGNMENT_RIGHT, size.x - pad * 2.0, fsz, Tk.c["text_faint"])
+		draw_string(font, Vector2(pad, y), mtext, HORIZONTAL_ALIGNMENT_RIGHT, size.x - pad * 2.0 - dice_w(), fsz, Tk.c["text_faint"])
+	if dice:
+		var side: float = minf(dice_w() - 2.0, size.y - 4.0)
+		var dr := Rect2(size.x - dice_w() + (dice_w() - side) * 0.5 - 1.0, (size.y - side) * 0.5, side, side)
+		Icons.draw(self, "dice", dr, Tk.c["text_bright"] if _hover else Tk.c["text_dim"])
 	_grow_for(text)
 
 
 var _text_min_w: float = -1.0
+
+
+func dice_w() -> float:
+	return float(Tk.px(Tk.sz("field_h"))) if dice else 0.0
 
 
 func _text_w(t: String) -> float:
@@ -637,7 +703,7 @@ func widest_value_text() -> String:
 
 func text_need() -> float:
 	var pad: float = float(Tk.px(Tk.sz("pad")))
-	var need: float = pad * 2.0 + _text_w(widest_value_text())
+	var need: float = pad * 2.0 + _text_w(widest_value_text()) + dice_w()
 	if not label_text.is_empty():
 		need += _text_w(label_text) + float(Tk.px(Tk.sz("gap"))) * 2.0
 	var mtext: String = mult_label()
@@ -653,7 +719,7 @@ func _get_minimum_size() -> Vector2:
 
 func _grow_for(shown: String) -> void:
 	var pad: float = float(Tk.px(Tk.sz("pad")))
-	var need: float = pad * 2.0 + _text_w(shown)
+	var need: float = pad * 2.0 + _text_w(shown) + dice_w()
 	if not label_text.is_empty():
 		need += _text_w(label_text) + float(Tk.px(Tk.sz("gap"))) * 2.0
 	var mtext: String = mult_label()

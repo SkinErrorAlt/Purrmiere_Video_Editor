@@ -5,6 +5,7 @@ const Track := preload("res://doc/track.gd")
 const Clip := preload("res://doc/clip.gd")
 const Marker := preload("res://doc/marker.gd")
 const MasterAnim := preload("res://doc/anim_prop.gd")
+const FreeTransition := preload("res://doc/free_transition.gd")
 const EDIT_EPS := 0.00001
 
 var id: String = ""
@@ -23,6 +24,12 @@ var playhead: float = 0.0
 var pinned: Dictionary = default_pinned()
 var master_volume: Dictionary = MasterAnim.make(1.0)
 var selected_clip_ids: PackedStringArray = PackedStringArray()
+var selected_free: Dictionary = {}
+var selected_transition: Dictionary = {}:
+	set(value):
+		selected_transition = value
+		if not selected_free.is_empty():
+			selected_free = {}
 var picked_clip_ids: PackedStringArray = PackedStringArray()
 var selected_track_ids: PackedStringArray = PackedStringArray()
 var groups: Array[Dictionary] = []
@@ -32,6 +39,8 @@ var marker_view: Dictionary = {}
 var track_view: Dictionary = {}
 var free_tracks: bool = false:
 	set = set_free_tracks
+## Locked regions, see doc/fences.gd: [{"id", "start", "end", "label"}], sorted by start.
+var fences: Array = []
 var overlap_clips: bool = false
 
 var _clip_map: Dictionary = {}
@@ -107,6 +116,49 @@ func track_index(track_id: String) -> int:
 		if audio_tracks[i].id == track_id:
 			return i
 	return -1
+
+
+func any_free_transition() -> bool:
+	for t: Track in video_tracks:
+		if not t.free_transitions.is_empty():
+			return true
+	for t: Track in audio_tracks:
+		if not t.free_transitions.is_empty():
+			return true
+	return false
+
+
+func track_of_free(ft_id: String) -> Track:
+	for t: Track in all_tracks():
+		if not FreeTransition.by_id(t.free_transitions, ft_id).is_empty():
+			return t
+	return null
+
+
+func free_transition_by_id(ft_id: String) -> Dictionary:
+	for t: Track in all_tracks():
+		var ft: Dictionary = FreeTransition.by_id(t.free_transitions, ft_id)
+		if not ft.is_empty():
+			return ft
+	return {}
+
+
+func hold_free(track_id: String, ft_id: String) -> void:
+	selected_transition = {}
+	selected_clip_ids = PackedStringArray()
+	picked_clip_ids = PackedStringArray()
+	selected_free = {"track_id": track_id, "id": ft_id}
+
+
+func held_free() -> Dictionary:
+	if selected_free.is_empty():
+		return {}
+	var tr: Track = track_by_id(String(selected_free.get("track_id", "")))
+	var ft_id: String = String(selected_free.get("id", ""))
+	if tr == null or FreeTransition.by_id(tr.free_transitions, ft_id).is_empty():
+		selected_free = {}
+		return {}
+	return selected_free
 
 
 func track_of(clip_id: String) -> Track:
@@ -700,6 +752,8 @@ func to_dict() -> Dictionary:
 		d["free_tracks"] = true
 	if overlap_clips:
 		d["overlap_clips"] = true
+	if not fences.is_empty():
+		d["fences"] = fences.duplicate(true)
 	return d
 
 
@@ -748,8 +802,14 @@ func apply_dict(d: Dictionary) -> void:
 	marker_view = (d["marker_view"] as Dictionary).duplicate(true) if d.get("marker_view") is Dictionary else {}
 	track_view = (d["track_view"] as Dictionary).duplicate(true) if d.get("track_view") is Dictionary else {}
 	free_tracks = bool(d.get("free_tracks", false))
+	fences = []
+	for fv: Variant in d.get("fences", []):
+		if fv is Dictionary and float((fv as Dictionary).get("end", 0.0)) > float((fv as Dictionary).get("start", 0.0)):
+			fences.append((fv as Dictionary).duplicate())
 	overlap_clips = bool(d.get("overlap_clips", false))
 	selected_clip_ids = PackedStringArray()
+	selected_transition = {}
+	selected_free = {}
 	picked_clip_ids = PackedStringArray()
 	selected_track_ids = PackedStringArray()
 	invalidate()

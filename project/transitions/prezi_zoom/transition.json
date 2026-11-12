@@ -15,5 +15,10 @@
   {"key": "timing", "label": "Timing", "type": "enum", "choices": ["Even", "Strong", "Smooth"], "default": 1},
   {"key": "frame_line", "label": "Frame outline", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0},
   {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ],
+ "handles": [
+  {"kind": "point", "key": "inset_centre"},
+  {"kind": "ring", "key": "inset_size", "about": "inset_centre", "shape": "box", "frame": true, "scale": 2, "rotate": "turn", "rotate_turn": "ccw"},
+  {"kind": "angle", "key": "turn", "about": "inset_centre", "turn": "ccw"}
  ]
 }

@@ -3,6 +3,7 @@ extends Node
 signal taken(token: String)
 
 const DataText := preload("res://doc/data_text.gd")
+const MoreTokens := preload("res://doc/data_text_tokens.gd")
 const TextExtras := preload("res://doc/text_extras.gd")
 const PmUI := preload("res://ui/kit/pm_ui.gd")
 const PmText := preload("res://ui/kit/pm_text.gd")
@@ -14,10 +15,11 @@ const MAX_INNER := 64
 const MAX_GHOSTS := 256
 const INSET := 5.0
 const NAME_CHARS := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"
-const DATE_TOKENS: PackedStringArray = ["date", "today"]
+const DATE_TOKENS: PackedStringArray = ["date", "today", "file_date"]
 const TIME_TOKENS: PackedStringArray = ["time", "clock", "end"]
 const SPAN_TOKENS: PackedStringArray = ["length", "into", "edit_time"]
 const SPAN_STYLES: PackedStringArray = ["plain", "words", "long", "minutes"]
+const NUMBER_STYLES: PackedStringArray = ["00", "000", "+1"]
 const LETTERS: PackedStringArray = ["YYYY", "MMMM", "MMM", "MM", "D", "Do", "DDDD", "h", "mm", "ss", "A"]
 const SHORT_NAMES: Dictionary = {
 	"date": "Date recorded",
@@ -28,6 +30,10 @@ const SHORT_NAMES: Dictionary = {
 	"length": "Length",
 	"into": "Time into it",
 	"edit_time": "Editing time",
+	"file_date": "The file's own date",
+	"clips": "How many clips",
+	"cuts": "How many cuts",
+	"clip_no": "Which clip this is",
 }
 const STYLE_NAMES: Dictionary = {
 	"short": "short",
@@ -49,6 +55,9 @@ const STYLE_NAMES: Dictionary = {
 	"plain": "plain, like 1:05",
 	"words": "in words",
 	"minutes": "whole minutes",
+	"00": "padded to two digits",
+	"000": "padded to three digits",
+	"+1": "one more",
 }
 const SPAN_LONG := "always with hours"
 const COUNTER_LABELS: Dictionary = {
@@ -130,6 +139,21 @@ static func with_sample(ctx: Dictionary) -> Dictionary:
 		out["into"] = 65.0
 		out["fps"] = 30.0
 		out["size"] = "1920 x 1080"
+		out["folder"] = "Footage"
+		out["track"] = "V1"
+		out["clip_timecode"] = "00:01:05:00"
+		out["clip_no"] = 3
+		out["file_date"] = sample_start()
+	if not out.has("sequence"):
+		out["sequence"] = "Sequence 1"
+		out["seq_size"] = "1920 x 1080"
+		out["seq_fps"] = "30"
+		out["timecode"] = "00:02:11:14"
+		out["marker"] = "Best bit"
+		out["marker_note"] = "the jump at the end"
+	if not out.has("clips"):
+		out["clips"] = 12
+		out["cuts"] = 7
 	if not out.has("project"):
 		out["project"] = "Untitled"
 	if not out.has("counter"):
@@ -213,6 +237,9 @@ static func all_rows(ctx: Dictionary) -> Array[Dictionary]:
 			for style: String in SPAN_STYLES:
 				if style != span_default(name_):
 					out.append(make_row(name_, style, ctx))
+		elif MoreTokens.is_number_token(name_):
+			for pad: String in NUMBER_STYLES:
+				out.append(make_row(name_, pad, ctx))
 	for tok: String in TextExtras.TOKENS:
 		var bare: String = tok.trim_prefix("{").trim_suffix("}")
 		var lab: String = String(COUNTER_LABELS.get(bare, bare))

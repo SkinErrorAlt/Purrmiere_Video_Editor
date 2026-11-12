@@ -1,0 +1,83 @@
+{
+ "id": "text_glitch",
+ "label": "Glitch Text",
+ "category": "Text",
+ "version": 1,
+ "applies_to": "text",
+ "text_transform": "glitch",
+ "tags": [
+  "text",
+  "horror"
+ ],
+ "blurb": "Letters break into symbols, blocks or mirrored letters for a moment, flickering at a rate, in bursts or all the time.",
+ "params": [
+  {
+   "key": "amount",
+   "label": "Broken letters",
+   "type": "float",
+   "min": 0,
+   "max": 100,
+   "step": 0.1,
+   "default": 25,
+   "unit": " %"
+  },
+  {
+   "key": "rate",
+   "label": "Changes per second",
+   "type": "float",
+   "min": 0,
+   "max": 60,
+   "step": 0.1,
+   "default": 12
+  },
+  {
+   "key": "bursts",
+   "label": "Time spent glitching",
+   "type": "float",
+   "min": 0,
+   "max": 100,
+   "step": 0.1,
+   "default": 100,
+   "unit": " %"
+  },
+  {
+   "key": "pool",
+   "label": "Break into",
+   "type": "enum",
+   "choices": [
+    "Symbols",
+    "Blocks and lines",
+    "Letters and digits",
+    "Mirrored letters"
+   ],
+   "default": 0
+  },
+  {
+   "key": "tint",
+   "label": "Colour the broken letters",
+   "type": "bool",
+   "default": false
+  },
+  {
+   "key": "colour",
+   "label": "Broken letter colour",
+   "type": "color",
+   "default": [
+    1,
+    0.1,
+    0.25,
+    1
+   ]
+  },
+  {
+   "key": "seed",
+   "label": "Seed",
+   "type": "int",
+   "min": 0,
+   "max": 9999,
+   "step": 1,
+   "default": 0
+  }
+ ],
+ "passes": []
+}

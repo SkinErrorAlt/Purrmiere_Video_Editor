@@ -1,0 +1,16 @@
+{
+ "id": "soft_edges",
+ "label": "Soft Edges",
+ "category": "Image Control",
+ "version": 1,
+ "blurb": "Feathers the edge of the picture away to nothing so it sits on whatever is behind it without a hard border, the way the soft edges setting does to a picture on a slide. The feather can follow the rectangle of the frame, a rectangle with rounded corners, or an oval drawn inside it, and you set how far in from the edge it reaches and how quickly it falls away, from a gentle haze to a crisp vignette of transparency. It takes the alpha down rather than painting the edge a colour, so anything layered underneath shows through properly.",
+ "params": [
+  {"key": "shape", "label": "Shape", "type": "enum", "choices": ["Rectangle", "Rounded", "Oval"], "default": 0},
+  {"key": "size", "label": "Feather", "type": "float", "min": 0.0, "max": 0.5, "step": 0.005, "default": 0.12},
+  {"key": "corner", "label": "Corner radius", "type": "float", "min": 0.0, "max": 0.5, "step": 0.005, "default": 0.12},
+  {"key": "curve", "label": "Falls away", "type": "float", "min": 0.2, "max": 4.0, "step": 0.05, "default": 1.0},
+  {"key": "inset", "label": "Inset", "type": "float", "min": 0.0, "max": 0.4, "step": 0.005, "default": 0.0},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0}
+ ],
+ "passes": "single"
+}

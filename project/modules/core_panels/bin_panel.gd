@@ -20,12 +20,15 @@ const CaptureTime := preload("res://modules/core_panels/bin_views/capture_time.g
 const Usage := preload("res://modules/core_panels/bin_views/usage.gd")
 const BoardCmds := preload("res://doc/commands/board_cmds.gd")
 const MadeItems := preload("res://modules/core_panels/bin_views/made_items.gd")
+const BinKeys := preload("res://modules/core_panels/bin_views/bin_keys.gd")
+const UsageBadges := preload("res://modules/core_panels/bin_views/usage_badges.gd")
 const MediaTags := preload("res://doc/media_tags.gd")
 const BinTagsMenu := preload("res://modules/core_panels/bin_views/bin_tags_menu.gd")
 const EAR_PATH := "res://engine/ear_safety.gd"
 const SourceReveal := preload("res://modules/core_panels/source_reveal.gd")
 const SubProjects := preload("res://doc/sub_projects.gd")
 const SubProjectMenu := preload("res://modules/core_panels/sub_project_menu.gd")
+const ShelfView := preload("res://modules/core_panels/bin_shelf_view.gd")
 const PREF_SCOPE := "bin.sub_project_only"
 const AREA := "bin"
 const VIEWS: PackedStringArray = ["list", "grid", "big", "board", "strips", "colours", "recorded", "used"]
@@ -83,6 +86,11 @@ var _view_buttons: Dictionary = {}
 var _crumbs: HBoxContainer = null
 var _crumb_bar: Control = null
 var _body: Control = null
+var _shelf: Control = null
+var _shelf_button: Button = null
+var _shelf_divider: Control = null
+var _shelf_dialog: FileDialog = null
+var _shelf_dir: String = ""
 var _footer: Label = null
 var _dialog: FileDialog = null
 var _folder_dialog: FileDialog = null
@@ -141,6 +149,9 @@ func _build(root_: Control) -> void:
 		head.add_child(b)
 		_view_buttons[v] = b
 	_add_view_switch(head)
+	_shelf_button = toggle_icon("pin", "Pinned folders and files, down the side", ShelfView.stored_open())
+	_shelf_button.toggled.connect(_on_shelf_toggled)
+	head.add_child(_shelf_button)
 	var nb: Button = quiet_icon("folder_new", "New bin", Cmd.keys_text("file.new_bin"))
 	nb.pressed.connect(_on_new_bin)
 	head.add_child(nb)
@@ -162,10 +173,23 @@ func _build(root_: Control) -> void:
 	_crumb_bar.visible = false
 	col.add_child(_crumb_bar)
 	_add_view_bar(col)
+	var middle: HBoxContainer = PmUI.hbox(0)
+	middle.name = "BinMiddle"
+	middle.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	middle.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	col.add_child(middle)
+	_shelf = ShelfView.new()
+	_shelf.set("panel", self)
+	middle.add_child(_shelf)
+	_shelf.call("begin")
+	_shelf_divider = PmUI.divider(true)
+	_shelf_divider.visible = _shelf.visible
+	middle.add_child(_shelf_divider)
 	_body = _Body.new()
 	_body.panel = self
 	_body.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	col.add_child(_body)
+	_body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	middle.add_child(_body)
 	var files_slot: Control = PmSlot.make(PackedStringArray(["files"]))
 	files_slot.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	files_slot.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -202,6 +226,9 @@ func _on_project_changed() -> void:
 	_apply_project_view()
 	_reset_view_caches()
 	forget_pack_cache()
+	if shelf_open():
+		_shelf.call("recheck")
+		_shelf.call("rebuild")
 	refresh()
 	call_deferred("refresh_watched_packs")
 
@@ -353,7 +380,7 @@ static func date_text(t: int) -> String:
 
 static func streams_text(m: MediaItem) -> String:
 	if MADE_KIND_WORDS.has(m.kind):
-		return String(MADE_KIND_WORDS[m.kind])
+		return MadeItems.kind_word(m).to_lower() if m.kind == "generator" else String(MADE_KIND_WORDS[m.kind])
 	if m.kind == "image":
 		return "picture"
 	var parts: PackedStringArray = PackedStringArray()
@@ -513,7 +540,7 @@ func meta_line(d: Project, m: MediaItem) -> String:
 		elif m.kind == "shape":
 			parts.append("shape")
 		elif m.kind == "generator":
-			parts.append("generator")
+			parts.append(MadeItems.kind_word(m).to_lower())
 		if m.is_timed():
 			if m.probed:
 				parts.append(Timecode.format(m.duration, m.fps if m.fps > 0.0 else fps(), false).substr(0, 8))
@@ -756,6 +783,9 @@ func _on_new_item_picked(id: String) -> void:
 	if id == "new.sequence":
 		Cmd.run("file.new_sequence")
 		return
+	if id == "audio.hide_picture":
+		Cmd.run(id)
+		return
 	spawn(id)
 
 
@@ -896,6 +926,93 @@ func _on_folder_picked(path: String) -> void:
 		refresh()
 
 
+func shelf() -> Control:
+	return _shelf
+
+
+func shelf_open() -> bool:
+	return _shelf != null and is_instance_valid(_shelf) and _shelf.visible
+
+
+func _on_shelf_toggled(on: bool) -> void:
+	if _shelf == null or not is_instance_valid(_shelf):
+		return
+	_shelf.call("set_open", on)
+	if _shelf_divider != null and is_instance_valid(_shelf_divider):
+		_shelf_divider.visible = on
+
+
+func shelf_sync_button() -> void:
+	if _shelf_button != null and is_instance_valid(_shelf_button):
+		_shelf_button.button_pressed = shelf_open()
+	if _shelf_divider != null and is_instance_valid(_shelf_divider):
+		_shelf_divider.visible = shelf_open()
+
+
+func toggle_shelf() -> void:
+	if _shelf_button != null and is_instance_valid(_shelf_button):
+		_shelf_button.button_pressed = not _shelf_button.button_pressed
+
+
+func shelf_import_file(path: String) -> void:
+	var ids: PackedStringArray = import_paths(PackedStringArray([path]))
+	if ids.is_empty():
+		Events.toast("Nothing in " + path.get_file() + " could be imported")
+
+
+func shelf_import_folder(path: String) -> void:
+	_on_folder_picked(path)
+
+
+func shelf_browse_folder(path: String) -> void:
+	if doc() == null:
+		Events.toast("Open a project first")
+		return
+	_shelf_dir = path
+	if _shelf_dialog == null or not is_instance_valid(_shelf_dialog):
+		_shelf_dialog = FileDialog.new()
+		_shelf_dialog.access = FileDialog.ACCESS_FILESYSTEM
+		_shelf_dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILES
+		_shelf_dialog.use_native_dialog = true
+		_shelf_dialog.title = "Import from " + path.get_file()
+		_shelf_dialog.filters = MediaLoader.filters()
+		_shelf_dialog.files_selected.connect(import_paths)
+		_shelf_dialog.file_selected.connect(_on_one_file)
+		_root.add_child(_shelf_dialog)
+	_shelf_dialog.title = "Import from " + path.get_file()
+	_shelf_dialog.current_dir = path
+	_shelf_dialog.current_path = path if path.ends_with("/") else path + "/"
+	_shelf_dialog.popup_centered(Vector2i(900, 600))
+
+
+func shelf_picker_dir() -> String:
+	return _shelf_dir
+
+
+func shelf_picker() -> FileDialog:
+	return _shelf_dialog
+
+
+func _shelf_drop_pos(w: Window, pos: Vector2) -> Vector2:
+	if not shelf_open():
+		return Vector2(-INF, -INF)
+	var own: Window = _shelf.get_window()
+	if own == null or own == w:
+		return pos
+	if own.get_embedder() == w:
+		return pos - Vector2(own.position)
+	return Vector2(-INF, -INF)
+
+
+func shelf_takes_in(w: Window, pos: Vector2) -> bool:
+	var at: Vector2 = _shelf_drop_pos(w, pos)
+	return is_finite(at.x) and bool(_shelf.call("takes_global", at))
+
+
+func shelf_pin_in(files: PackedStringArray, w: Window, pos: Vector2) -> int:
+	return int(_shelf.call("pin_global", files, _shelf_drop_pos(w, pos)))
+
+
 func import_paths(paths: PackedStringArray) -> PackedStringArray:
 	var d: Project = doc()
 	if d == null:
@@ -924,12 +1041,18 @@ func _on_files_payload(payload: Dictionary, _local: Vector2) -> void:
 
 
 func on_files_dropped_in(files: PackedStringArray, w: Window, pos: Vector2) -> void:
+	if shelf_takes_in(w, pos):
+		shelf_pin_in(files, w, pos)
+		return
 	var tl: Object = bus().panel("timeline")
 	var on_tl: bool = tl != null and tl.has_method("accepts_in") and bool(tl.call("accepts_in", w, pos))
 	_drop_files(files, tl if on_tl else null, tl.call("local_drop_pos", w, pos) if on_tl else pos)
 
 
 func on_files_dropped(files: PackedStringArray, global_pos: Vector2) -> void:
+	if shelf_open() and bool(_shelf.call("takes_global", global_pos)):
+		_shelf.call("pin_global", files, global_pos)
+		return
 	var tl: Object = bus().panel("timeline")
 	var on_tl: bool = tl != null and tl.has_method("accepts_global") and bool(tl.call("accepts_global", global_pos))
 	_drop_files(files, tl if on_tl else null, global_pos)
@@ -1174,6 +1297,8 @@ func thumb_for(m: MediaItem, t: float, keep: bool = false) -> Texture2D:
 	if m == null:
 		return null
 	var key: String = m.id + "|" + (String.num(t, 2) if t >= 0.0 else "poster" + String.num(m.poster_time, 3))
+	if m.kind == "generator":
+		key += "|" + str(m.props.hash()) + "|" + str(m.width) + "x" + str(m.height)
 	if _thumbs.has(key):
 		return _thumbs[key]
 	var tex: Texture2D = null
@@ -1184,6 +1309,8 @@ func thumb_for(m: MediaItem, t: float, keep: bool = false) -> Texture2D:
 			_jobs.call("request_load", key, m.path, THUMB_W, true)
 			_wake_body()
 			return null
+	elif m.kind == "generator":
+		tex = MadeItems.thumb(m, THUMB_W)
 	elif m.kind == "video" and PurrBridge.available:
 		var h: int = media_handle(m)
 		if h >= 0:
@@ -1457,6 +1584,7 @@ func file_menu_items(m: MediaItem) -> Array:
 	if MadeItems.is_editable(m):
 		items.append(PmMenu.item(MadeItems.MENU_SETTINGS, MadeItems.settings_label(m)))
 	items.append(PmMenu.item("properties", "Properties", Cmd.keys_text("file.properties")))
+	items.append_array(UsageBadges.menu_items(doc(), m.id))
 	if StreamRoles.count(m) > 0:
 		items.append(PmMenu.item("stream_roles", "Name the audio tracks"))
 	var switches: Array[Dictionary] = StreamOff.menu_items(m)
@@ -1605,6 +1733,8 @@ func _on_context_picked(id: String, entry_id: String) -> void:
 		return
 	if BinTagsMenu.on_pick(self, _body, d, id, entry_id, drag_ids_for(entry_id)):
 		return
+	if UsageBadges.on_pick(_root, d, id, drag_ids_for(entry_id)):
+		return
 	if id.begins_with(StreamOff.MENU_PREFIX):
 		toggle_stream(entry_id, StreamOff.ordinal_of_menu(id))
 		return
@@ -1687,7 +1817,7 @@ func _on_context_picked(id: String, entry_id: String) -> void:
 	elif id.begins_with("proxies:"):
 		_run_proxies(id.substr(8), drag_ids_for(entry_id))
 	elif id == "remove":
-		remove_entry(entry_id)
+		BinKeys.ask_remove(self, _root, entry_id)
 
 
 const AUTO_PROXIES_PATH := "res://engine/auto_proxies.gd"
@@ -1865,7 +1995,7 @@ func handle_key(e: InputEventKey) -> bool:
 			remove_entry(selected_role)
 			return true
 		if not selected_ids.is_empty():
-			remove_entry(selected_ids[0])
+			BinKeys.ask_remove(self, _root, selected_ids[0])
 			return true
 		if not selected_folder.is_empty():
 			remove_entry("bin:" + selected_folder)
@@ -1887,16 +2017,15 @@ func handle_key(e: InputEventKey) -> bool:
 		_body.queue_redraw()
 		_update_footer(_body.entries)
 		return true
-	if e.keycode == KEY_UP or e.keycode == KEY_DOWN:
-		var order: PackedStringArray = PackedStringArray()
-		for en: Dictionary in _body.entries:
-			order.append(String(en["id"]))
-		if order.is_empty():
+	var grid: bool = impl == null and view != "list"
+	if e.keycode == KEY_UP or e.keycode == KEY_DOWN or (grid and (e.keycode == KEY_LEFT or e.keycode == KEY_RIGHT)):
+		if _body.entries.is_empty():
 			return true
-		var cur: int = order.find(selected_ids[0]) if not selected_ids.is_empty() else -1
-		var nxt: int = clampi(cur + (1 if e.keycode == KEY_DOWN else -1), 0, order.size() - 1)
-		select_entry(order[nxt], "range" if e.shift_pressed else "replace")
-		_body.ensure_visible(order[nxt])
+		var nxt_id: String = BinKeys.step(_body.entries, _body.rects, selected_ids[0] if not selected_ids.is_empty() else "", e.keycode, grid)
+		if nxt_id.is_empty():
+			return true
+		select_entry(nxt_id, "range" if e.shift_pressed else "replace")
+		_body.ensure_visible(nxt_id)
 		return true
 	return false
 
@@ -2520,6 +2649,8 @@ class _Body:
 	const BinView := preload("res://modules/core_panels/bin_views/bin_view.gd")
 	const RoleDropKit := preload("res://doc/role_drop.gd")
 	const MarkerTicksKit := preload("res://ui/timeline/marker_ticks.gd")
+	const UsageBadgesKit := preload("res://modules/core_panels/bin_views/usage_badges.gd")
+	const MediaItemKit := preload("res://doc/media_item.gd")
 
 	var panel: RefCounted = null
 	var entries: Array[Dictionary] = []
@@ -2620,7 +2751,42 @@ class _Body:
 		if tip != null:
 			tip.call("arm", _tip_proxy)
 
+	func _badge_press(i: int, at: Vector2) -> bool:
+		if view == "list" or i >= entries.size() or String(entries[i].get("kind", "")) != "item":
+			return false
+		var item: Variant = entries[i].get("item", null)
+		if not (item is MediaItemKit):
+			return false
+		var r: Rect2 = screen_rect(i)
+		var pic: Rect2 = Rect2(r.position, Vector2(r.size.x, r.size.y - float(Tk.px(NAME_ROW))))
+		if not UsageBadgesKit.hit(pic, Session.doc, item, at):
+			return false
+		UsageBadgesKit.open_menu(self, Session.doc, (item as MediaItemKit).id, get_global_transform() * at)
+		return true
+
 	func _classic_tip(i: int) -> String:
+		var extra: String = _notes_tip(i)
+		var plain: String = _plain_tip(i)
+		if extra.is_empty():
+			return plain
+		return (plain if not plain.is_empty() else String(entries[i].get("label", ""))) + "
+" + extra
+
+	func _notes_tip(i: int) -> String:
+		var item: Variant = entries[i].get("item", null)
+		if not (item is MediaItemKit):
+			return ""
+		var lines: PackedStringArray = PackedStringArray()
+		var n: int = UsageBadgesKit.count_of(Session.doc, (item as MediaItemKit).id)
+		if n > 0:
+			lines.append(UsageBadgesKit.badge_text(n) + (" time, right click for where" if n == 1 else " times, right click for where"))
+		var note: String = (item as MediaItemKit).notes.strip_edges()
+		if not note.is_empty():
+			lines.append("Notes: " + note)
+		return "
+".join(lines)
+
+	func _plain_tip(i: int) -> String:
 		var e: Dictionary = entries[i]
 		var label: String = String(e.get("label", ""))
 		var f: Font = Tk.font("body")
@@ -2859,6 +3025,9 @@ class _Body:
 							panel.call("activate", String(entries[i]["id"]))
 						accept_event()
 						return
+					if i >= 0 and _badge_press(i, mb.position):
+						accept_event()
+						return
 					press_index = i
 					press_pos = mb.position
 					press_mods = {"ctrl": mb.ctrl_pressed or mb.meta_pressed, "shift": mb.shift_pressed}
@@ -3016,6 +3185,8 @@ class _Body:
 					draw_rect(Rect2(pic.position.x, pic.position.y, 3.0, pic.size.y), Tk.label_colour(int(item.get("colour"))), true)
 				if item != null and doc_ != null and not (item.get("markers") as Array).is_empty():
 					MarkerTicksKit.draw_tile(self, pic, item, float(doc_.call("media_duration", item)))
+				if item != null and not is_role:
+					UsageBadgesKit.draw_tile(self, pic, doc_, item)
 				if i == hover and view != "list" and item != null and String(item.get("kind")) == "video":
 					draw_rect(Rect2(pic.position.x + pic.size.x * hover_frac, pic.position.y, 1.0, pic.size.y), Tk.c["accent_dim"], true)
 				var ncol: Color = Tk.c["text_bright"] if selected else Tk.c["text"]

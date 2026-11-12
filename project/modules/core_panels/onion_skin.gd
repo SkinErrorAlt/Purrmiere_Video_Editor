@@ -195,6 +195,7 @@ static func plan(panel: Object) -> Array[Dictionary]:
 				pts.append(Vector2(float(s.width), float(s.height)) * 0.5 + w * (q - anchor))
 			row["mesh_pts"] = pts
 			row["mesh"] = made["mesh"]
+			row["drawn"] = made.get("drawn", (made["mesh"] as Dictionary)["tris"])
 		out.append(row)
 	return out
 
@@ -242,7 +243,7 @@ static func draw(ci: CanvasItem, pic: Rect2, panel: Object) -> void:
 			var cols: PackedColorArray = PackedColorArray()
 			cols.resize(pts.size())
 			cols.fill(col)
-			RenderingServer.canvas_item_add_triangle_array(ci.get_canvas_item(), mesh["tris"], pts, cols, mesh["uv"], PackedInt32Array(), PackedFloat32Array(), (tex["unbent"] as Texture2D).get_rid())
+			RenderingServer.canvas_item_add_triangle_array(ci.get_canvas_item(), row.get("drawn", mesh["tris"]), pts, cols, mesh["uv"], PackedInt32Array(), PackedFloat32Array(), (tex["unbent"] as Texture2D).get_rid())
 			continue
 		var q: PackedVector2Array = row["quad"]
 		if q.size() != 4:

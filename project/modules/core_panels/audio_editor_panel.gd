@@ -7,6 +7,7 @@ const Command := preload("res://doc/commands/command.gd")
 const Lanes := preload("res://ui/timeline/timeline_lanes.gd")
 const Paint := preload("res://ui/timeline/timeline_paint.gd")
 const Waves := preload("res://ui/timeline/timeline_wave.gd")
+const SpectroEmbed := preload("res://modules/core_panels/spectro/spectro_embed.gd")
 const RULER_H := 18.0
 const MIN_SPAN := 0.02
 const PREF_LOG := "audio_editor.log_wave"
@@ -76,6 +77,7 @@ func _build(root_: Control) -> void:
 	_wave.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_wave.custom_minimum_size = Vector2(0.0, float(Tk.px(120.0)))
 	col.add_child(_wave)
+	SpectroEmbed.attach(self, col, _wave, head)
 	var foot: HBoxContainer = header_row(col)
 	_status = PmLabel.trim("Select an audio clip on the timeline to edit its sound.", "text_dim")
 	_status.add_theme_font_size_override("font_size", Tk.fs(Tk.sz("font_small")))
@@ -593,6 +595,7 @@ func _commit_edit(c: Clip, op_id: String, params: Dictionary) -> void:
 	if whole:
 		entry["from"] = 0.0
 		entry["to"] = -1.0
+		entry["length"] = length
 	var kind: String = String(o.get("kind", "filter"))
 	entry["kind"] = kind
 	if kind == "filter":

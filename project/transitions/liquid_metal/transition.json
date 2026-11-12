@@ -1,0 +1,17 @@
+{
+ "id": "liquid_metal",
+ "label": "Liquid Metal",
+ "group": "Distort",
+ "space": "2D",
+ "from": ["Sapphire Chrome Flow", "Motion Mercury"],
+ "blurb": "The outgoing shot loses its surface and runs like mercury. The picture is carried along a swirling current, step by step, so it does not just wobble in place: it is dragged, folded and wound round itself, pooling into long slow curls the way poured metal does, and then unwinds and settles back into a flat surface as the incoming shot. The metal is kept wide and smooth rather than textured, so what you see is the picture morphing with a few broad highlights rolling over the swells and a faint sheen where the surface turns away. Swirl decides whether the current runs straight downhill or curls round on itself. The swap from one shot to the other happens inside the liquid and follows the surface, so the new shot comes up through the deep parts first instead of cutting across in a line. Set how far it flows, how much it curls, how molten the surface gets, how strong the highlights are, how wide the swells run and the colour of the metal.",
+ "default_duration": 1.4,
+ "params": [
+  {"key": "flow", "label": "Flow", "type": "float", "min": 0.0, "max": 0.45, "step": 0.005, "default": 0.17},
+  {"key": "swirl", "label": "Swirl", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.72},
+  {"key": "molten", "label": "Molten", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.55},
+  {"key": "highlight", "label": "Highlights", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.8},
+  {"key": "grain", "label": "Swell size", "type": "float", "min": 1.0, "max": 12.0, "step": 0.1, "default": 2.6},
+  {"key": "tint", "label": "Metal colour", "type": "color", "default": [0.86, 0.89, 0.95, 1.0]}
+ ]
+}

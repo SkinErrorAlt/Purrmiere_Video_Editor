@@ -1,0 +1,15 @@
+{
+ "id": "text_rot13",
+ "label": "ROT13",
+ "category": "Text",
+ "version": 1,
+ "applies_to": "text",
+ "text_transform": "rot13",
+ "tags": [
+  "text",
+  "cipher"
+ ],
+ "blurb": "Caesar shift by 13: running it twice gives the text back. Letters only.",
+ "params": [],
+ "passes": []
+}

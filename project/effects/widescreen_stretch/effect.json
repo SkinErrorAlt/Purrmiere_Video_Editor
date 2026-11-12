@@ -11,5 +11,6 @@
   {"key": "middle", "label": "Middle at", "type": "float", "min": 0.25, "max": 0.75, "step": 0.005, "default": 0.5},
   {"key": "show_guides", "label": "Show the natural area", "type": "bool", "default": false}
  ],
+ "handles": [{"kind": "band", "key": "middle", "axis": "x"}],
  "passes": "single"
 }

@@ -1,0 +1,24 @@
+{
+ "id": "snd_speaking_fog",
+ "label": "Speaking Fog",
+ "category": "Audio Reactive",
+ "tags": ["audio", "reactive", "voice", "lens"],
+ "version": 1,
+ "blurb": "Talking fogs up the lens like breath on cold glass. It listens for speech, not just sound: while someone talks, condensation blooms up from the bottom of the frame and thickens the longer they go on, beads into droplets that show the scene upside down, and evaporates from the edges in the pauses. Music, gunfire and engines leave the glass clear.",
+ "params": [
+  {"key": "density", "label": "Fog", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.85},
+  {"key": "linger", "label": "Linger", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "centre", "label": "Breath from", "type": "vec2", "default": [0.5, 0.78]},
+  {"key": "reach", "label": "Reach", "type": "float", "min": 0.2, "max": 2.0, "step": 0.01, "default": 1.0},
+  {"key": "droplets", "label": "Droplets", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "tint", "label": "Fog colour", "type": "color", "default": [0.86, 0.9, 0.95, 1.0]}
+ ],
+ "passes": [
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "fog.gdshader", "scale": 8.0, "inputs": {"mid_tex": 0}}
+ ],
+ "reactive": {"listen": true, "defaults": {"snd_threshold": 0.0}},
+ "handles": [{"kind": "point", "key": "centre"}, {"kind": "ring", "key": "reach", "about": "centre", "unit": "h"}]
+}

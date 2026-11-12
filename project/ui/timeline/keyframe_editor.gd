@@ -12,6 +12,8 @@ const AnimProp := preload("res://doc/anim_prop.gd")
 const Verbs := preload("res://doc/verbs.gd")
 const Command := preload("res://doc/commands/command.gd")
 const ClipCmds := preload("res://doc/commands/clip_cmds.gd")
+const FreeKeys := preload("res://doc/free_keys.gd")
+const KeyInstances := preload("res://ui/timeline/keyframe_instances.gd")
 const KeyDragCmds := preload("res://doc/commands/key_drag_cmds.gd")
 const PmMenu := preload("res://ui/kit/pm_menu.gd")
 const PmUI := preload("res://ui/kit/pm_ui.gd")
@@ -349,6 +351,8 @@ func clip() -> Clip:
 	var s: Sequence = seq()
 	if s == null or clip_id.is_empty():
 		return null
+	if FreeKeys.is_free(clip_id):
+		return FreeKeys.stand_in(s, clip_id)
 	return s.clip_by_id(clip_id)
 
 
@@ -1234,7 +1238,9 @@ func write_prop(p: Dictionary, label: String) -> bool:
 	var c: Clip = clip()
 	if d == null or s == null or c == null:
 		return false
-	var cmd: Command = ClipCmds.SetClipParam.new(s.id, clip_id, path, p)
+	var cmd: Command = FreeKeys.command(s, clip_id, path, p) if FreeKeys.is_free(clip_id) else ClipCmds.SetClipParam.new(s.id, clip_id, path, p)
+	if cmd == null:
+		return false
 	cmd.label = label
 	var ok: bool = Verbs.run(d, label, [cmd])
 	if ok:
@@ -1247,6 +1253,12 @@ func write_live(p: Dictionary) -> void:
 	var d: Project = doc()
 	var s: Sequence = seq()
 	if d == null or s == null:
+		return
+	if FreeKeys.is_free(clip_id):
+		var free_cmd: Command = FreeKeys.command(s, clip_id, path, p)
+		if free_cmd != null:
+			d.undo.live(free_cmd)
+		queue_redraw()
 		return
 	var cmd: KeyDragCmds.SetKeysLive = KeyDragCmds.SetKeysLive.new(s.id, clip_id, path, p)
 	if KeyDragCmds.apply_live(d, s, cmd, s.playhead, quiet_allowed(s)):
@@ -1445,7 +1457,7 @@ func write_prop_with(p: Dictionary, label: String, extra: Array[Command]) -> boo
 	var s: Sequence = seq()
 	if d == null or s == null or clip() == null:
 		return false
-	var cmds: Array[Command] = [ClipCmds.SetClipParam.new(s.id, clip_id, path, p)]
+	var cmds: Array[Command] = [FreeKeys.command(s, clip_id, path, p) if FreeKeys.is_free(clip_id) else ClipCmds.SetClipParam.new(s.id, clip_id, path, p)]
 	cmds.append_array(extra)
 	var ok: bool = Verbs.run(d, label, cmds)
 	if ok:
@@ -2493,8 +2505,7 @@ func _draw() -> void:
 	var ph: float = playhead_axis()
 	var px: float = x_of(ph)
 	if px >= r.position.x and px <= r.end.x:
-		draw_rect(Rect2(round(px), 0.0, 1.0, size.y - grip_h()), Tk.c["sol"], true)
-		draw_colored_polygon(PackedVector2Array([Vector2(px - 4.0, 0.0), Vector2(px + 4.0, 0.0), Vector2(px, 6.0)]), Tk.c["sol"])
+		load("res://ui/timeline/playhead_look.gd").call("draw", self, px, 0.0, size.y - grip_h(), {"frame_px": x_of(ph + 1.0 / fps()) - px})
 	if _drag == "box" and _drag_active:
 		draw_rect(_box, Tk.c["selection_fill"], true)
 		var pts := PackedVector2Array([_box.position, Vector2(_box.end.x, _box.position.y), _box.end, Vector2(_box.position.x, _box.end.y), _box.position])
@@ -2660,6 +2671,7 @@ func _draw_curve(r: Rect2, c: Clip) -> void:
 		if not AnimProp.is_animated(op):
 			continue
 		_draw_prop_curve(r, c, op, f, ghost, 1.0, false, other)
+	KeyInstances.draw(self, r, c)
 	var p: Dictionary = prop()
 	var comps: int = component_count(AnimProp.static_value(p))
 	var span: Vector2 = value_span(p)

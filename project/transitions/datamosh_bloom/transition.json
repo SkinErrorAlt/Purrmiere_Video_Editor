@@ -1,0 +1,15 @@
+{
+ "id": "datamosh_bloom",
+ "label": "Datamosh Bloom",
+ "group": "Glitch",
+ "space": "2D",
+ "from": ["P-frame datamosh bloom artefact"],
+ "blurb": "The compression-artefact look where a dropped keyframe lets the next shot's motion drag the old one's pixels into melting, blocky smears, before snapping hard to the new shot. Blocks of the first picture slide along fake motion vectors, mush down to flat colour, and the second shot bleeds in block by block until a hard cut lands. Set the block size, how far it smears, how much it mushes, and where the snap happens.",
+ "default_duration": 0.8,
+ "params": [
+  {"key": "block_px", "label": "Block size", "type": "float", "min": 6.0, "max": 64.0, "step": 1.0, "default": 18.0, "unit": " px"},
+  {"key": "smear", "label": "Smear", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "mush", "label": "Block mush", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "snap_point", "label": "Snap point", "type": "float", "min": 0.6, "max": 0.98, "step": 0.01, "default": 0.84}
+ ]
+}

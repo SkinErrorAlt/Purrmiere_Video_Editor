@@ -94,9 +94,9 @@ vec4 lens_blur(vec2 uv, float radius, float w) {
 		if (org[j].x < 0.0) {
 			c = use_to ? to_clamped(at) : from_clamped(at);
 		} else {
-			c = tr_pyr_tap(!use_to, org[j], siz[j], at * siz[j]);
+			c = tr_pyr_fetch(!use_to, org[j], siz[j], at);
 		}
-		vec4 bc = tr_pyr_levels <= 0 ? c : tr_pyr_tap(!use_to, org[j + 2], siz[j + 2], at * siz[j + 2]);
+		vec4 bc = tr_pyr_levels <= 0 ? c : tr_pyr_fetch(!use_to, org[j + 2], siz[j + 2], at);
 		vec3 s = c.a > 0.0001 ? clamp(c.rgb / c.a, 0.0, 1.0) : vec3(0.0);
 		vec3 sb = bc.a > 0.0001 ? clamp(bc.rgb / bc.a, 0.0, 1.0) : vec3(0.0);
 		vec3 lb = lens_expand(sb, h);

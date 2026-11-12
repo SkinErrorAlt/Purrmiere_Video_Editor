@@ -1,0 +1,23 @@
+{
+ "id": "newspaper_photo",
+ "label": "Newspaper Photo",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Prints the picture as a photo in an old newspaper: a coarse dot screen at a real line count for the printed size, dots that swell and go ragged as the ink soaks into the fibres, a grey black that never reaches true black, yellowed newsprint and the page on the other side showing faintly through.",
+ "params": [
+  {"key": "inks", "label": "Inks", "type": "enum", "choices": ["Black", "Four colour"], "default": 0},
+  {"key": "lpi", "label": "Screen ruling", "type": "float", "min": 45.0, "max": 133.0, "step": 1.0, "default": 65.0, "unit": " lpi"},
+  {"key": "width_in", "label": "Printed width", "type": "float", "min": 1.5, "max": 12.0, "step": 0.1, "default": 3.5, "unit": " in"},
+  {"key": "gain", "label": "Ink spread", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "density", "label": "Ink density", "type": "float", "min": 0.3, "max": 1.0, "step": 0.01, "default": 0.85},
+  {"key": "yellowing", "label": "Yellowing", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45},
+  {"key": "show", "label": "Show through", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "misregister", "label": "Misregistration", "type": "float", "min": 0.0, "max": 8.0, "step": 0.1, "default": 1.5, "unit": " px"},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 999, "step": 1, "default": 7}
+ ],
+ "passes": [
+  {"shader": "reverse.gdshader", "scale": 0.25},
+  {"shader": "print.gdshader", "scale": 4.0}
+ ]
+}

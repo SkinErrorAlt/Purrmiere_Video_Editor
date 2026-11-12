@@ -7,6 +7,7 @@ var scale_rel: float = 1.0
 var index: int = 0
 var effect_uid: String = ""
 var ok: bool = true
+var float_in: bool = false
 
 
 func _init() -> void:
@@ -35,6 +36,20 @@ func setup(material: ShaderMaterial, types: Dictionary) -> void:
 
 func set_input(tex: Texture2D) -> void:
 	rect.texture = tex
+	if not float_in:
+		return
+	if mat != null:
+		mat.set_shader_parameter("pm_in", tex)
+	var bypass: Variant = get_meta("bypass_mat", null)
+	if bypass is ShaderMaterial:
+		(bypass as ShaderMaterial).set_shader_parameter("pm_in", tex)
+
+
+func use_float(bypass: ShaderMaterial) -> void:
+	float_in = true
+	use_hdr_2d = true
+	set_meta("bypass_mat", bypass)
+	set_input(rect.texture)
 
 
 func set_size_px(sz: Vector2i) -> void:
@@ -72,6 +87,9 @@ static func coerce(type: int, value: Variant) -> Variant:
 	if type == TYPE_VECTOR3:
 		if value is Vector3:
 			return value
+		if value is Color:
+			var c3: Color = value
+			return Vector3(c3.r, c3.g, c3.b)
 		if value is Array and (value as Array).size() >= 3:
 			return Vector3(float(value[0]), float(value[1]), float(value[2]))
 		var f3: float = _to_float(value)
@@ -98,7 +116,7 @@ static func coerce(type: int, value: Variant) -> Variant:
 		var fc: float = _to_float(value)
 		return Color(fc, fc, fc, 1.0)
 	if type == TYPE_OBJECT:
-		if value is Texture2D:
+		if value is Texture2D or value is Texture2DArray:
 			return value
 		return null
 	return value

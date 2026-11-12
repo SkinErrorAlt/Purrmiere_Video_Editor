@@ -1,0 +1,135 @@
+{
+ "id": "wading_water",
+ "label": "Wading Water",
+ "category": "Physics",
+ "tags": [
+  "look"
+ ],
+ "version": 1,
+ "blurb": "As if the whole shot were seen through a thin sheet of still water, and everything moving in it waded through. Wherever something really moves, rings of ripples spread out from it across the picture at the speed of water waves, bending the picture under them and catching the light, and fade as they travel; a walker trails a wake, a car throws a wide wash, and where nothing moves the water lies flat and clear. Camera moves are left out.",
+ "history": {
+  "max": 61,
+  "reach": [
+   "travel"
+  ],
+  "seconds": [
+   "travel"
+  ]
+ },
+ "params": [
+  {
+   "key": "height",
+   "label": "Wave height",
+   "type": "float",
+   "min": 0.0,
+   "max": 3.0,
+   "step": 0.01,
+   "default": 0.8
+  },
+  {
+   "key": "speed",
+   "label": "Wave speed",
+   "type": "float",
+   "min": 0.03,
+   "max": 0.4,
+   "step": 0.001,
+   "default": 0.16
+  },
+  {
+   "key": "wavelength",
+   "label": "Ripple size",
+   "type": "float",
+   "min": 0.01,
+   "max": 0.12,
+   "step": 0.001,
+   "default": 0.05
+  },
+  {
+   "key": "travel",
+   "label": "Ripples last",
+   "type": "float",
+   "min": 0.4,
+   "max": 2.0,
+   "step": 0.01,
+   "default": 1.6,
+   "unit": " s"
+  },
+  {
+   "key": "glint",
+   "label": "Glints",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.25
+  },
+  {
+   "key": "tint",
+   "label": "Water tint",
+   "type": "color",
+   "default": [
+    0.86,
+    0.95,
+    1.0,
+    1.0
+   ]
+  }
+ ],
+ "passes": [
+  {
+   "shader": "res://effects/_frame_physics/atlas.gdshader",
+   "scale": 1.0
+  },
+  {
+   "shader": "res://effects/_frame_physics/prof.gdshader",
+   "scale": 1.0,
+   "inputs": {
+    "atlas_tex": 0
+   }
+  },
+  {
+   "shader": "res://effects/_frame_physics/match.gdshader",
+   "scale": 1.0,
+   "inputs": {
+    "atlas_tex": 0,
+    "prof_tex": 1
+   }
+  },
+  {
+   "shader": "res://effects/_frame_physics/global.gdshader",
+   "scale": 0.25,
+   "inputs": {
+    "atlas_tex": 0,
+    "prof_tex": 1
+   }
+  },
+  {
+   "shader": "res://effects/_frame_physics/flow.gdshader",
+   "scale": 1.0,
+   "inputs": {
+    "atlas_tex": 0
+   }
+  },
+  {
+   "shader": "res://effects/_frame_physics/resid.gdshader",
+   "scale": 1.0,
+   "inputs": {
+    "atlas_tex": 0,
+    "glob_tex": 3
+   }
+  },
+  {
+   "shader": "ripple.gdshader",
+   "scale": 1.0,
+   "inputs": {
+    "atlas_tex": 0,
+    "flow_tex": 4,
+    "glob_tex": 3
+   }
+  },
+  {
+   "shader": "water.gdshader",
+   "scale": 4.0
+  }
+ ]
+}

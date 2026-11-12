@@ -1,0 +1,25 @@
+{
+ "id": "text_keyboard_shift",
+ "label": "Keyboard Shift",
+ "category": "Text",
+ "version": 1,
+ "applies_to": "text",
+ "text_transform": "keyboard_shift",
+ "tags": [
+  "text",
+  "cipher"
+ ],
+ "blurb": "Moves each key along its row of a QWERTY keyboard, the trick of typing with your hands one key over.",
+ "params": [
+  {
+   "key": "shift",
+   "label": "Keys to move",
+   "type": "int",
+   "min": -5,
+   "max": 5,
+   "step": 1,
+   "default": 1
+  }
+ ],
+ "passes": []
+}

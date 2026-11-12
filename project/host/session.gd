@@ -8,6 +8,7 @@ signal about_to_play
 signal tool_changed(tool_id: String)
 signal compositor_changed
 signal audio_owner_changed(owner: String)
+signal hold_changed(seq_id: String)
 
 const Project := preload("res://doc/project.gd")
 const Sequence := preload("res://doc/sequence.gd")
@@ -39,6 +40,7 @@ var _last_scrub_sent: float = -1.0
 var _last_scrub_time: float = -1.0
 var _span_stop: float = -1.0
 var _span_back: float = -1.0
+var holds: Dictionary = {}
 
 
 const CURSOR_SHAPES: Dictionary = {
@@ -178,6 +180,9 @@ func set_project(p: Project, path: String = "") -> void:
 		if s != null:
 			seq_id = s.id
 	_sweep_voiceover()
+	load("res://engine/object_matte.gd").call("clear")
+	if doc != null:
+		load("res://engine/object_matte.gd").call("refresh", doc)
 	_on_project_swapped(was_playing)
 	project_changed.emit()
 	if not seq_id.is_empty():
@@ -206,6 +211,10 @@ func set_sequence(id: String) -> void:
 		return
 	seq_id = id
 	doc.active_sequence_id = id
+	if holds.has(id):
+		if playing and is_still(id):
+			set_playing(false)
+		set_playhead(playhead())
 	_sync_engine_time()
 	sequence_changed.emit(id)
 
@@ -222,6 +231,9 @@ func set_playhead(t: float, from_clock: bool = false) -> void:
 	if s == null:
 		return
 	var v: float = maxf(t, 0.0)
+	if holds.has(s.id):
+		var r: Vector2 = holds[s.id]
+		v = clampf(v, r.x, r.y)
 	if absf(s.playhead - v) < 0.000001:
 		return
 	s.playhead = v
@@ -304,6 +316,8 @@ func release_audio(owner: String) -> void:
 
 
 func set_playing(on: bool) -> void:
+	if on and is_still(seq_id):
+		return
 	_span_stop = -1.0
 	_span_back = -1.0
 	if on and not audio_owner.is_empty():
@@ -324,6 +338,27 @@ func set_playing(on: bool) -> void:
 	PurrBridge.set_rate(rate)
 	PurrBridge.set_playing(on)
 	playing_changed.emit(on)
+
+
+func hold_playhead(id: String, from_t: float, to_t: float) -> void:
+	holds[id] = Vector2(maxf(minf(from_t, to_t), 0.0), maxf(maxf(from_t, to_t), 0.0))
+	if id == seq_id:
+		if playing and is_still(id):
+			set_playing(false)
+		set_playhead(playhead())
+	hold_changed.emit(id)
+
+
+func release_playhead(id: String) -> void:
+	if holds.erase(id):
+		hold_changed.emit(id)
+
+
+func is_still(id: String) -> bool:
+	if not holds.has(id):
+		return false
+	var r: Vector2 = holds[id]
+	return is_equal_approx(r.x, r.y)
 
 
 func toggle_play() -> void:
@@ -674,6 +709,7 @@ func set_nest_context(nest_seq_id: String, parent_id: String, clip_id: String) -
 	if nest_seq_id.is_empty() or parent_id.is_empty() or clip_id.is_empty() or nest_seq_id == parent_id:
 		return
 	nest_contexts[nest_seq_id] = {"parent": parent_id, "clip": clip_id}
+	_whole_hint.erase(clip_id)
 	nest_view_changed.emit()
 	if nest_seq_id == seq_id:
 		push_playback_graph()
@@ -723,8 +759,15 @@ func whole_target(for_seq_id: String, t: float) -> Dictionary:
 		return {}
 	var parent: Sequence = doc.sequence_by_id(String(ctx["parent"]))
 	var c: RefCounted = parent.clip_by_id(String(ctx["clip"]))
-	var nest_audio: GDScript = load(NEST_AUDIO_PATH)
-	return {"seq": parent, "t": float(nest_audio.call("parent_time", c, t)), "clip": String(ctx["clip"])}
+	var key: String = String(ctx["clip"])
+	var hint: float = float(_whole_hint.get(key, parent.playhead))
+	var tw: float = float(load(NEST_WHOLE_PATH).call("parent_time", doc, c, t, hint))
+	_whole_hint[key] = tw
+	return {"seq": parent, "t": tw, "clip": key}
+
+
+const NEST_WHOLE_PATH := "res://engine/nest_whole.gd"
+var _whole_hint: Dictionary = {}
 
 
 func push_playback_graph() -> void:

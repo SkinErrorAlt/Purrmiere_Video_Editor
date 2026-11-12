@@ -94,10 +94,13 @@ func source_holder() -> SubViewport:
 	return levels[0]
 
 
-func set_source(tex: Texture2D, size_px: Vector2i) -> void:
+func set_source(tex: Texture2D, size_px: Vector2i, margin: Vector2i = Vector2i.ZERO) -> void:
 	if tex != source:
 		source = tex
 		mats[0].set_shader_parameter("src", tex)
+	var canvas: Vector2 = Vector2(size_px + margin * 2)
+	mats[0].set_shader_parameter("src_canvas", margin != Vector2i.ZERO)
+	mats[0].set_shader_parameter("src_map", Vector4(float(size_px.x) / maxf(canvas.x, 1.0), float(size_px.y) / maxf(canvas.y, 1.0), float(margin.x) / maxf(canvas.x, 1.0), float(margin.y) / maxf(canvas.y, 1.0)))
 	fit(size_px)
 
 

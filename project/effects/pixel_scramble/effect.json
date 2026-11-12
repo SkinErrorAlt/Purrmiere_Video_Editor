@@ -1,0 +1,15 @@
+{
+ "id": "pixel_scramble",
+ "label": "Pixel Scramble",
+ "category": "Stylize",
+ "tags": ["privacy", "encrypt", "pixelate", "scramble", "mosaic"],
+ "passes": "single",
+ "blurb": "Blocks the picture into big pixels and shuffles them around, like a scrambled or encrypted frame. Keep the shuffle local and it stays readable (a privacy mosaic you can still roughly make out); open it up and the blocks scatter across the whole frame into noise. Scramble shuffles the blocks every which way, or shift whole rows or columns instead. Amount mixes from a clean pixelation up to the full scramble, and the seed re-rolls the shuffle (hit a new seed to re-randomize).",
+ "params": [
+  {"key": "cell_px", "label": "Pixel size", "type": "float", "min": 2.0, "max": 160.0, "step": 1.0, "default": 18.0, "unit": " px"},
+  {"key": "amount", "label": "Scramble", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0},
+  {"key": "spread", "label": "Spread", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.22},
+  {"key": "mode", "label": "Mode", "type": "enum", "choices": ["Shuffle blocks", "Shift rows", "Shift columns"], "default": 0},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "default": 0}
+ ]
+}

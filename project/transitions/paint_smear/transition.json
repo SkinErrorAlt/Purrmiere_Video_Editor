@@ -1,0 +1,3 @@
+{"id":"paint_smear","label":"Paint Smear","group":"Distort","space":"2D","from":["paint smear / finger smudge"],
+"blurb":"The first shot is smeared away like wet paint dragged with a brush, the strokes following a wavy grain, and the next shot comes through underneath. Set the direction, how far it drags and how coarse the strokes are.","default_duration":0.8,
+"params":[{"key":"direction","label":"Direction","type":"enum","choices":["Right","Left","Down","Up"],"default":0},{"key":"amount","label":"Drag","type":"float","min":0.05,"max":0.6,"step":0.01,"default":0.28},{"key":"scale","label":"Stroke size","type":"float","min":1.0,"max":10.0,"step":0.1,"default":4.0}]}

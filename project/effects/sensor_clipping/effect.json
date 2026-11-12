@@ -1,0 +1,23 @@
+{
+ "id": "sensor_clipping",
+ "label": "Sensor Clipping",
+ "category": "Stylize",
+ "tags": ["look", "light"],
+ "version": 1,
+ "blurb": "Overexposes the shot the way a digital sensor actually fails: each colour channel hits its limit on its own, so a blue sky turns cyan, an orange light turns yellow and skin goes pale before it all burns to white; the charge from burnt out spots bleeds down the sensor columns as bright blooming streaks with a faint smear the full height of the frame, a purple fringe creeps onto dark edges against the glare, and in the raw modes the clipped parts take the magenta or cyan cast of a channel that stopped short.",
+ "params": [
+  {"key": "exposure", "label": "Overexposure", "type": "float", "min": -1.0, "max": 6.0, "step": 0.05, "default": 1.5, "unit": " stops"},
+  {"key": "balance", "label": "White balance", "type": "enum", "choices": ["Daylight", "Tungsten", "Fluorescent"], "default": 0},
+  {"key": "highlights", "label": "Clipped highlights", "type": "enum", "choices": ["White (camera)", "Magenta (raw)", "Cyan (raw, warm light)"], "default": 0},
+  {"key": "bloom", "label": "Blooming", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "bloom_length", "label": "Bloom length", "type": "float", "min": 2.0, "max": 300.0, "step": 0.5, "default": 40.0, "unit": " px"},
+  {"key": "smear", "label": "Column smear", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "fringe", "label": "Purple fringe", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "fringe_width", "label": "Fringe width", "type": "float", "min": 1.0, "max": 30.0, "step": 0.1, "default": 4.0, "unit": " px"}
+ ],
+ "passes": [
+  {"shader": "charge.gdshader"},
+  {"shader": "spread.gdshader", "scale": 0.5},
+  {"shader": "final.gdshader", "scale": 2.0}
+ ]
+}

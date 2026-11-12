@@ -10,7 +10,7 @@ const OFFICIAL_ROOT := "res://effects/"
 const MODULES_ROOT := "res://modules/"
 const DEF_FILE := "effect.json"
 const SINGLE_SHADER := "effect.gdshader"
-const ENGINE_UNIFORMS: PackedStringArray = ["tex_size", "seq_size", "time", "clip_time", "clip_duration", "source_tex", "layer_tex", "effect_tex", "px_scale", "pass_scale", "mask_tex", "screen_tex", "spill_out", "TEXTURE", "pm_compile_probe"]
+const ENGINE_UNIFORMS: PackedStringArray = ["tex_size", "seq_size", "time", "clip_time", "clip_duration", "source_tex", "layer_tex", "effect_tex", "px_scale", "pass_scale", "mask_tex", "screen_tex", "spill_out", "TEXTURE", "pm_compile_probe", "history_tex", "history_layer", "history_count", "history_fps"]
 const PARAM_TYPES: PackedStringArray = ["float", "int", "bool", "enum", "vec2", "vec3", "color", "texture", "layer", "curve", "string", "sound"]
 const AUDIO_REACT := "res://engine/audio_react.gd"
 const PROBE_LINE := "\nuniform float pm_compile_probe = 0.0;\n"
@@ -113,6 +113,9 @@ func load_all() -> void:
 	var mods: Dictionary = _list_dir(MODULES_ROOT)
 	for m: String in mods["dirs"]:
 		_scan_root(MODULES_ROOT + m + "/effects/", "module")
+	var extras: GDScript = load("res://host/module_extras.gd")
+	for extra_root: String in (extras.call("shared") as Object).call("effect_paths"):
+		_scan_root(extra_root, "module")
 	_scan_root(user_root(), "user")
 	_scan_loose_shaders(user_root())
 	_merge_embedded()
@@ -274,6 +277,15 @@ func _normalise(raw: Dictionary, folder: String, fallback_id: String, source: St
 		def["pairs_with"] = pairs
 	if typeof(raw.get("handles", null)) == TYPE_ARRAY:
 		def["handles"] = (raw["handles"] as Array).duplicate(true)
+	if typeof(raw.get("depth", null)) == TYPE_DICTIONARY:
+		def["depth"] = (raw["depth"] as Dictionary).duplicate(true)
+	if typeof(raw.get("panels", null)) == TYPE_ARRAY:
+		def["panels"] = (raw["panels"] as Array).duplicate(true)
+	if typeof(raw.get("history", null)) == TYPE_DICTIONARY:
+		def["history"] = (raw["history"] as Dictionary).duplicate(true)
+	if typeof(raw.get("applies_to", null)) == TYPE_STRING:
+		def["applies_to"] = String(raw["applies_to"])
+		def["text_transform"] = String(raw.get("text_transform", ""))
 	FrameCanvas.note(def, raw)
 	var raw_passes: Variant = raw.get("passes", [])
 	var passes: Array = []
@@ -384,7 +396,7 @@ static func _normalise_param(p: Dictionary) -> Dictionary:
 		"default": _default_for(type, p.get("default", null)),
 		"choices": [],
 		"writes": {},
-		"keyable": bool(p.get("keyable", true)) and type != "texture" and type != "layer" and type != "string" and type != "curve" and type != "sound",
+		"keyable": bool(p.get("keyable", true)) and type != "texture" and type != "layer" and (type != "string" or p.get("keyable") == true) and type != "curve" and type != "sound",
 		"unit": String(p.get("unit", "")),
 		"hidden": bool(p.get("hidden", false)),
 		"group": String(p.get("group", "")),
@@ -710,6 +722,38 @@ func make_material(id: String, pass_index: int) -> ShaderMaterial:
 	if pass_index < 0 or pass_index >= passes.size():
 		return null
 	var sh: Shader = shader_for(String(passes[pass_index]["shader"]))
+	if sh == null:
+		return null
+	var m := ShaderMaterial.new()
+	m.shader = sh
+	return m
+
+
+func float_shader_for(path: String) -> Shader:
+	var key: String = path + "#float"
+	if _shaders.has(key):
+		return _shaders[key]
+	var sh: Shader = null
+	if shader_for(path) != null:
+		var FloatPasses: GDScript = load("res://engine/float_passes.gd")
+		sh = Shader.new()
+		var caught: Dictionary = ShaderConvert.caught_uniforms(sh, String(FloatPasses.call("float_code", prepare_code(_read_text(path)))) + PROBE_LINE)
+		var found: bool = false
+		for u: Dictionary in caught["uniforms"]:
+			if String(u.get("name", "")) == "pm_compile_probe":
+				found = true
+				break
+		if not found:
+			sh = null
+	_shaders[key] = sh
+	return sh
+
+
+func make_float_material(id: String, pass_index: int) -> ShaderMaterial:
+	var passes: Array = get_def(id).get("passes", [])
+	if pass_index < 0 or pass_index >= passes.size():
+		return null
+	var sh: Shader = float_shader_for(String(passes[pass_index]["shader"]))
 	if sh == null:
 		return null
 	var m := ShaderMaterial.new()

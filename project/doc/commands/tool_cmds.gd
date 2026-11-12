@@ -108,6 +108,58 @@ class FreezeFrame extends "res://doc/commands/composite.gd":
 		return placed.ok
 
 
+class RewindBuildup extends "res://doc/commands/composite.gd":
+	var clip_id: String = ""
+	var window: float = 6.0
+	var build_len: float = 2.0
+	var slow_factor: float = 0.5
+	var copy_id: String = ""
+
+	func _init(p_seq_id: String, p_clip_id: String, p_window: float, p_build_len: float, p_slow_factor: float) -> void:
+		label = "Rewind build-up"
+		seq_id = p_seq_id
+		clip_id = p_clip_id
+		window = p_window
+		build_len = p_build_len
+		slow_factor = p_slow_factor
+
+	func _plan(doc: Project) -> bool:
+		var s: Sequence = seq(doc)
+		if s == null or build_len <= EditMath.EPS or window <= EditMath.EPS:
+			return false
+		var c: Clip = s.clip_by_id(clip_id)
+		var tr: Track = s.track_of(clip_id)
+		if c == null or tr == null or tr.locked or not tr.is_picture(c):
+			return false
+		var at: float = c.end()
+		var src_end: float = c.source_out()
+		var win: float = minf(window, maxf(src_end, 0.0))
+		if win <= EditMath.EPS:
+			return false
+		var avg: float = win / build_len
+		var s0: float = avg * clampf(slow_factor, 0.05, 1.0)
+		var s1: float = maxf(2.0 * avg - s0, s0 + 0.001)
+		var copy: Clip = c.copy()
+		copy.id = doc.mint_id("c")
+		copy.start = at
+		copy.duration = build_len
+		copy.in_offset = src_end
+		copy.transition_in = {}
+		copy.transition_out = {}
+		copy.link_id = ""
+		copy.markers = []
+		copy.props.erase("fade_in")
+		copy.props.erase("fade_out")
+		var ramp: Dictionary = AnimProp.make(-s0)
+		ramp = AnimProp.set_key(ramp, 0.0, -s0, "ease_both")
+		ramp = AnimProp.set_key(ramp, build_len, -s1, "ease_both")
+		copy.speed = ramp
+		copy_id = copy.id
+		apply(doc, EditCmds.InsertGap.new(seq_id, at, build_len, PackedStringArray([tr.id])))
+		var placed: Command = apply(doc, ClipCmds.PlaceClip.new(seq_id, tr.id, copy.to_dict()))
+		return placed.ok
+
+
 class HoldToEnd extends "res://doc/commands/composite.gd":
 	var clip_id: String = ""
 	var t: float = 0.0

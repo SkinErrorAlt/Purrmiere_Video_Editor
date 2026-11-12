@@ -713,6 +713,18 @@
   "tracker.step_backward": [
    "Alt+PageUp"
   ],
-  "tracker.stop": []
+  "tracker.stop": [],
+  "tool.object_select": [
+   "Alt+W"
+  ],
+  "object.clear": [],
+  "object.again": [],
+  "object.track_forward": [],
+  "object.track_backward": [],
+  "object.track_stop": [],
+  "tool.mask_brush": [
+   "Alt+B"
+  ],
+  "mask_brush.kind": []
  }
 }

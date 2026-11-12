@@ -18,6 +18,6 @@
   {"key": "rim_colour", "label": "Rim colour", "type": "color", "default": [1.0, 1.0, 1.0, 1.0]},
   {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
  ],
- "handles": [{"kind": "point", "key": "centre"}, {"kind": "angle", "key": "angle"}],
+ "handles": [{"kind": "point", "key": "centre", "when": {"key": "order", "is": [1]}}, {"kind": "angle", "key": "angle", "when": {"key": "order", "is": [0]}}],
  "passes": "single"
 }

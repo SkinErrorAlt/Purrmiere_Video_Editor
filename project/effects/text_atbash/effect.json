@@ -1,0 +1,15 @@
+{
+ "id": "text_atbash",
+ "label": "Atbash",
+ "category": "Text",
+ "version": 1,
+ "applies_to": "text",
+ "text_transform": "atbash",
+ "tags": [
+  "text",
+  "cipher"
+ ],
+ "blurb": "Mirrors the alphabet: A becomes Z, B becomes Y. Letters only; running it twice gives the text back.",
+ "params": [],
+ "passes": []
+}

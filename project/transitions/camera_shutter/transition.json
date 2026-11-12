@@ -14,5 +14,8 @@
   {"key": "blade_colour", "label": "Blade colour", "type": "color", "default": [0.13, 0.13, 0.14, 1]},
   {"key": "shading", "label": "Shading", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
   {"key": "softness", "label": "Soft edge", "type": "float", "min": 0, "max": 300, "step": 0.5, "default": 2, "unit": " px"}
+ ],
+ "handles": [
+  {"kind": "point", "key": "centre"}
  ]
 }

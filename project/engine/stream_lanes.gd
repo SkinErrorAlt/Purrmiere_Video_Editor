@@ -86,7 +86,7 @@ static func expand(seq: Sequence, tracks: Array) -> void:
 		var by_stream: Dictionary = {}
 		for ce: Variant in td.get("clips", []):
 			var cd: Dictionary = ce
-			if not String(cd.get("path", "")).is_empty():
+			if bool(cd.get("rendered", not String(cd.get("path", "")).is_empty())):
 				continue
 			var pair: Variant = by_id.get(String(cd.get("id", "")), null)
 			if not (pair is Array):

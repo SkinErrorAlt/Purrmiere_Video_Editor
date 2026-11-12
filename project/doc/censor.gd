@@ -322,6 +322,8 @@ static func edit_step(e: Dictionary) -> Dictionary:
 	if op_id == "reverse":
 		mode = "reverse"
 	var b: float = float(e.get("to", -1.0))
+	if b < 0.0 and mode == "reverse" and float(e.get("length", -1.0)) > 0.0:
+		b = float(e["length"])
 	return {"mode": mode, "a": float(e.get("from", 0.0)), "b": b if b >= 0.0 else INF, "factor": factor}
 
 

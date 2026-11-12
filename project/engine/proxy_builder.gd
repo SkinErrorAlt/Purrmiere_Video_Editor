@@ -15,6 +15,8 @@ var last_error: String = ""
 var _done: Dictionary = {}
 var _job_id: int = -1
 var pause_check: Callable = Callable()
+var use_native: bool = true
+static var native_builds: int = 0
 
 
 func _bridge() -> Node:
@@ -69,6 +71,35 @@ func build_segment(handle: int, root: String, index: int, fps: float, duration: 
 	var shown_pts: PackedFloat64Array = PackedFloat64Array()
 	var shown_starts: PackedFloat64Array = PackedFloat64Array()
 	var all_listed: bool = true
+	var native_id: int = -1
+	if use_native and bridge.has_method("has_proxy_build") and bool(bridge.call("has_proxy_build")):
+		native_id = int(bridge.call("proxy_build_begin", handle, _job_id, times, size_v.x, size_v.y))
+	if native_id >= 0:
+		native_builds += 1
+		at = times.size()
+		while true:
+			var st: Dictionary = bridge.call("proxy_build_state", native_id)
+			var state: String = String(st.get("state", "failed"))
+			if cancelled or (_done.has("ok") and not bool(_done["ok"])):
+				bridge.call("proxy_build_cancel", native_id)
+			if state != "running":
+				if state == "pushed":
+					shown_pts = st.get("pts", PackedFloat64Array())
+					shown_starts = st.get("starts", PackedFloat64Array())
+					sent = shown_pts.size()
+					for v: float in shown_pts:
+						if v < 0.0:
+							all_listed = false
+				bridge.call("proxy_build_forget", native_id)
+				if state != "pushed":
+					bridge.call("export_abort", _job_id)
+					out["why"] = "cancelled" if cancelled else (String(_done.get("message", "")) if _done.has("ok") and not String(_done.get("message", "")).is_empty() else String(st.get("why", "the engine could not build the proxy")))
+					_forget(part_path)
+					return out
+				break
+			await get_tree().process_frame
+			while pause_check.is_valid() and bool(pause_check.call()) and not cancelled:
+				await get_tree().create_timer(0.25).timeout
 	while at < times.size():
 		if cancelled:
 			bridge.call("export_abort", _job_id)

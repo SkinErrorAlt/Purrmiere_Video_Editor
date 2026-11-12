@@ -18,6 +18,7 @@ const EDGE_SLACK := 0.001
 const LANE_CLIP_MAX := 400
 const CROSSFADE_KIND := "crossfade"
 const ABUT_SLACK := 0.002
+const AudioGraph := preload("res://engine/audio_graph.gd")
 
 static var _memo: Dictionary = {}
 static var _lanes: Dictionary = {}
@@ -261,6 +262,13 @@ static func envelope(c: Clip, t: Track, s: Sequence = null, d: Project = null) -
 				parts.append((db_v as Dictionary).hash())
 			else:
 				g *= pow(10.0, _static_of(db_v, 0.0) / 20.0)
+	for vg: Dictionary in view_gains(s, c, t):
+		var vdb: Variant = (vg.get("params", {}) as Dictionary).get("db", 0.0)
+		if vdb is Dictionary and AnimProp.is_animated(vdb as Dictionary):
+			fx.append({"prop": vdb, "path": ""})
+			parts.append((vdb as Dictionary).hash())
+		else:
+			g *= pow(10.0, _static_of(vdb, 0.0) / 20.0)
 	var fin: float = maxf(_num(c.audio.get("fade_in", 0.0), 0.0), 0.0)
 	var fout: float = maxf(_num(c.audio.get("fade_out", 0.0), 0.0), 0.0)
 	var shape: int = int(SHAPES.get(String(c.audio.get("fade_shape", "linear")), 0))
@@ -323,6 +331,16 @@ static func fade_curve(shape: int, x: float) -> float:
 	if shape == 2:
 		return u * u * (3.0 - 2.0 * u)
 	return u
+
+
+static func view_gains(s: Sequence, c: Clip, t: Track) -> Array[Dictionary]:
+	var none: Array[Dictionary] = []
+	if s == null or c == null or t == null or not t.is_sound(c):
+		return none
+	AudioGraph._scan_depth += 1
+	var out: Array[Dictionary] = AudioGraph.view_gain_from(s, c, t.id)
+	AudioGraph._scan_depth -= 1
+	return out
 
 
 static func gain_at(env: Dictionary, local: float) -> float:

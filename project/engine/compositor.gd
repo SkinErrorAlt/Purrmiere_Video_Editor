@@ -14,6 +14,7 @@ const EffectRegistry := preload("res://engine/effect_registry.gd")
 const Backdrop := preload("res://engine/backdrop.gd")
 const PlaybackClock := preload("res://engine/playback_clock.gd")
 const DataText := preload("res://doc/data_text.gd")
+const TextFx := preload("res://doc/text_fx/text_fx.gd")
 const AnimDriver := preload("res://doc/anim_driver.gd")
 const DriveSources := preload("res://engine/drive_sources.gd")
 const ViewHide := preload("res://engine/view_hide.gd")
@@ -21,7 +22,9 @@ const Proxies := preload("res://engine/proxies.gd")
 const TransitionRegistry := preload("res://engine/transition_registry.gd")
 const TransitionUnit := preload("res://engine/transition_unit.gd")
 const TransitionTiming := preload("res://doc/transition_timing.gd")
+const FreeTransition := preload("res://doc/free_transition.gd")
 const OUT_CUT := "|out"
+const FREE_CUT := "|free|"
 const EXPORT_CHECK_MS := 250
 const MAX_NEST_DEPTH := 4
 const MIN_TRANSITION := 0.04
@@ -51,6 +54,7 @@ var freed_purged: int = 0
 var restaged: bool = false
 var restage_rereads: int = 0
 static var plant_no_rescue: bool = false
+static var plant_no_below: bool = false
 var stages: Array[SubViewport] = []
 var _pending: int = 0
 var _approx: int = 0
@@ -520,7 +524,83 @@ func _plan(t: float) -> Array[Dictionary]:
 			if tr.subtitle and m != null and m.kind == "title":
 				push = Vector2(0.0, -Subtitles.push_offset(seq, tr, main, t))
 			out.append({"clip": main, "track": ti, "stage": stage, "role": "main", "progress": 0.0, "kind": 0, "offset": push, "dip": {}})
+	_plan_free(t, picture_list, any_solo, out)
 	return out
+
+
+static func _plain_media_kind(m: MediaItem) -> String:
+	return m.kind if m != null else ""
+
+
+func _free_usable(e: Dictionary) -> bool:
+	if String(e.get("role", "")) != "main":
+		return false
+	if not String(e.get("lib", "")).is_empty():
+		return false
+	var c: Clip = e.get("clip", null)
+	if c == null:
+		return false
+	var m: MediaItem = doc.media_by_id(c.media_id) if doc != null else null
+	var kind: String = _plain_media_kind(m)
+	return kind != "adjust" and kind != "audio"
+
+
+func _plan_free(t: float, picture_list: Array[Track], any_solo: bool, out: Array[Dictionary]) -> void:
+	if seq == null or not seq.any_free_transition():
+		return
+	for ti: int in picture_list.size():
+		var tr: Track = picture_list[ti]
+		if tr.free_transitions.is_empty():
+			continue
+		if tr.muted or (any_solo and not tr.solo):
+			continue
+		var ft: Dictionary = FreeTransition.active(tr.free_transitions, t)
+		if ft.is_empty():
+			continue
+		var spec: Dictionary = FreeTransition.spec_of(ft)
+		var lib: String = TransitionRegistry.library_id(spec)
+		if lib.is_empty():
+			continue
+		var own: int = -1
+		var below: int = -1
+		for i: int in out.size():
+			var e: Dictionary = out[i]
+			var at: int = int(e.get("track", -1))
+			if at < 0 or at > ti or not _free_usable(e):
+				continue
+			if own >= 0 and at != int((out[own] as Dictionary).get("track", -1)):
+				below = own
+			own = i
+		if plant_no_below:
+			below = -1
+		if own < 0:
+			continue
+		var key: String = tr.id + FREE_CUT + FreeTransition.id_of(ft)
+		var window: Vector2 = FreeTransition.span(ft)
+		var stage: int = int((out[own] as Dictionary).get("stage", 0))
+		if below >= 0 and int((out[below] as Dictionary).get("stage", 0)) != stage:
+			below = -1
+		if below >= 0:
+			_free_mark(out[below], "incoming", key, lib, window, spec, stage)
+		_free_mark(out[own], "outgoing", key, lib, window, spec, stage)
+		if below >= 0 and own != below + 1:
+			var moved: Dictionary = out[own]
+			out.remove_at(own)
+			var seat: int = below if own > below else below - 1
+			out.insert(seat + 1, moved)
+
+
+static func _free_mark(e: Dictionary, role: String, key: String, lib: String, window: Vector2, spec: Dictionary, stage: int) -> void:
+	e["role"] = role
+	e["cut"] = key
+	e["lib"] = lib
+	e["window"] = window
+	e["spec"] = spec
+	e["stage"] = stage
+	e["progress"] = 0.0
+	e["kind"] = 0
+	e["offset"] = Vector2.ZERO
+	e["dip"] = {}
 
 
 const DRAW_SLOT := 64
@@ -718,8 +798,15 @@ func _layer_for(c: Clip, track_index: int = -1, allow_hand: bool = true) -> Laye
 		var now: Dictionary = c.props_at(last_time - c.start, seq.fps)
 		for k: Variant in now.keys():
 			merged[k] = now[k]
+		if not merged.has("decode_clock"):
+			merged["decode_clock"] = last_time - c.start
+		if m.kind == "generator" and merged.has(MadePicture.PATTERN_PROP):
+			merged[MadePicture.CLOCK_PROP] = l.source_time(last_time)
+			merged[MadePicture.FPS_PROP] = m.fps if m.fps > 0.0 else seq.fps
 		if m.kind == "title" and merged.get("text") is String and DataText.has_tokens(String(merged["text"])):
 			merged["text"] = DataText.expand(String(merged["text"]), DataText.context(doc, seq, c, last_time))
+		if m.kind == "title":
+			TextFx.apply_to_props(c, registry, merged, m.label, last_time - c.start, seq.fps)
 		l.source.call("set_props", merged)
 	return l
 
@@ -829,7 +916,7 @@ func _render_time_inner(t: float, exact: bool) -> void:
 		var unit: Node = _cut_unit(e, stage_node, order, wanted_cuts)
 		if unit != null:
 			stage_node = unit.call("side", String(e["role"]) == "outgoing")
-			l.overscan_px = Vector2i.ZERO
+			l.overscan_px = unit.call("drawn_margin")
 		if l.get_parent() != stage_node:
 			if l.get_parent() != null:
 				l.get_parent().remove_child(l)
@@ -845,7 +932,7 @@ func _render_time_inner(t: float, exact: bool) -> void:
 			else:
 				var child: Node = _nest_for(c, l)
 				if child != null:
-					child.call("render_time", l.source_time(t), exact)
+					child.call("render_time", l.source_time(l.history_lead(t, hint)), exact)
 					l.set_nest_texture(child.call("texture"), child.call("stage_size_native"))
 		l.ensure_structure()
 		l.request_source(t, quality, hint)
@@ -1007,7 +1094,7 @@ func _cut_unit(e: Dictionary, stage_node: Node, order: Dictionary, wanted_cuts: 
 		if unit.get_parent() != null:
 			unit.get_parent().remove_child(unit)
 		stage_node.add_child(unit)
-	unit.call("fit", stage_size())
+	unit.call("fit", stage_size(), overscan_px)
 	if not wanted_cuts.has(key):
 		wanted_cuts[key] = {"lib": lib, "window": e.get("window", Vector2(-1.0, -1.0))}
 		if not order.has(stage_node):
@@ -1017,6 +1104,8 @@ func _cut_unit(e: Dictionary, stage_node: Node, order: Dictionary, wanted_cuts: 
 	info["incoming" if String(e["role"]) == "incoming" else "outgoing"] = e["clip"]
 	info["owner"] = String(e.get("owner", key))
 	info["field"] = String(e.get("field", Clip.TRANSITION_FIELD + "_in"))
+	if e.get("spec") is Dictionary:
+		info["spec"] = e["spec"]
 	return unit
 
 
@@ -1044,8 +1133,9 @@ func _drive_cuts(t: float, wanted_cuts: Dictionary) -> void:
 			cuts.erase(key)
 			continue
 		var info: Dictionary = wanted_cuts[key]
-		var owner: Clip = seq.clip_by_id(String(info.get("owner", key)))
-		var tr_d: Dictionary = owner.transition_field(String(info.get("field", ""))) if owner != null else {}
+		var free_spec: bool = info.get("spec") is Dictionary
+		var owner: Clip = null if free_spec else seq.clip_by_id(String(info.get("owner", key)))
+		var tr_d: Dictionary = info["spec"] if free_spec else (owner.transition_field(String(info.get("field", ""))) if owner != null else {})
 		var w: Vector2 = info["window"]
 		var dur: float = maxf(w.y - w.x, 0.0001)
 		var p: float = TransitionTiming.progress_at(tr_d, t - w.x, dur, seq.fps)
@@ -1054,7 +1144,7 @@ func _drive_cuts(t: float, wanted_cuts: Dictionary) -> void:
 		unit.call("use", res)
 		unit.call("set_pyramid", bool(res.get("pyramid", false)))
 		var values: Dictionary = {}
-		if owner != null and not bool(res.get("fell_back", false)):
+		if (owner != null or free_spec) and not bool(res.get("fell_back", false)):
 			values = reg.call("values_at", lib, tr_d, t - w.x, dur, seq.fps)
 		unit.call("set_blend", _cut_blend(info))
 		unit.call("apply", p, quality_scale() * px_scale_bias, TransitionRegistry.seed_for(String(key)), dur, t, values)
@@ -1271,9 +1361,11 @@ func _size_stage(st: SubViewport) -> void:
 
 
 func _feed_adjust(l: LayerChain, below: SubViewport) -> void:
-	var tex: Texture2D = _stage_texture(below)
+	var full: Texture2D = _stage_texture(below)
+	AdjustSize.under(l, full, seq)
+	var tex: Texture2D = AdjustSize.region_of(l, full, seq)
 	var was: Texture2D = l.source.texture()
-	l.set_nest_texture(tex, Vector2i(seq.width, seq.height))
+	l.set_nest_texture(tex, AdjustSize.size_of(l.media, seq))
 	if was != tex:
 		l.forget_structure()
 
@@ -1418,6 +1510,8 @@ class _Ring:
 
 
 const PairRegions := preload("res://engine/pair_regions.gd")
+const MadePicture := preload("res://engine/made_picture.gd")
+const AdjustSize := preload("res://engine/adjust_size.gd")
 const PlayPace := preload("res://engine/play_pace.gd")
 
 var pair_regions: PairRegions = null
@@ -1886,7 +1980,7 @@ func _pick_ahead(c: Clip, m: MediaItem, busy: Dictionary) -> int:
 func _proxy_covers(c: Clip, m: MediaItem) -> bool:
 	if not _use_proxies or m == null or m.path.is_empty() or m.fps <= 0.0:
 		return false
-	return not Proxies.playback_segment(m.path, m.fps, maxf(c.source_time(_first_shown(c, 1.0)), 0.0)).is_empty()
+	return not Proxies.playback_segment(m.path, m.fps, maxf(c.source_time(_first_shown(c, 1.0)), 0.0), m.width).is_empty()
 
 
 func _handle_ready(h: int) -> bool:

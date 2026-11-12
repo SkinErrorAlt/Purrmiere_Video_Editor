@@ -1,0 +1,18 @@
+{
+ "id": "clean_plate",
+ "label": "Empty the Scene",
+ "category": "Time",
+ "tags": ["repair"],
+ "version": 1,
+ "blurb": "Takes the people out of a busy shot. For every point of the picture it looks back over the last couple of seconds and keeps the colour that was there most of the time, so anyone passing through melts away and the empty street, square or room is left, the way architects photograph a crowded building. Ghosts leaves the passers by as faint see through figures; Only what moves keeps just the people, cut out over transparency. Use it on a still camera: a moving one makes everything count as moving.",
+ "history": {"max": 62, "reach": ["span"], "seconds": ["span"]},
+ "params": [
+  {"key": "span", "label": "Look back over", "type": "float", "min": 0.2, "max": 2.0, "step": 0.01, "default": 2.0, "unit": " s"},
+  {"key": "samples", "label": "Moments compared", "type": "int", "min": 5, "max": 31, "step": 1, "default": 21},
+  {"key": "kind", "label": "Show", "type": "enum", "choices": ["The empty scene", "Only what moves", "Ghosts"], "default": 0},
+  {"key": "ghost", "label": "Ghost strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "threshold", "label": "What counts as moving", "type": "float", "min": 0.01, "max": 0.5, "step": 0.005, "default": 0.08},
+  {"key": "softness", "label": "Edge softness", "type": "float", "min": 0.005, "max": 0.4, "step": 0.005, "default": 0.06}
+ ],
+ "passes": [{"shader": "effect.gdshader"}]
+}

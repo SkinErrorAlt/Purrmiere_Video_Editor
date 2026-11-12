@@ -1,0 +1,19 @@
+{
+ "id": "shockwave_hit",
+ "label": "Shockwave",
+ "group": "Distort",
+ "space": "2D",
+ "from": ["shockwave / impact ripple"],
+ "blurb": "An impact at a point sends a ring of force rippling out across the frame, bending the picture as it passes and leaving the next shot behind it, with a bright flash riding the wavefront. Set the impact point, how hard it distorts, and how thick the wave is.",
+ "default_duration": 0.8,
+ "params": [
+  {"key": "timing", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth", "Strong", "Slow end", "Overshoot", "Bounce"], "default": 2},
+  {"key": "center", "label": "Impact point", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "strength", "label": "Distortion", "type": "float", "min": 0.0, "max": 0.25, "step": 0.005, "default": 0.07},
+  {"key": "width", "label": "Wave width", "type": "float", "min": 0.02, "max": 0.35, "step": 0.01, "default": 0.11},
+  {"key": "flash", "label": "Flash", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4}
+ ],
+ "handles": [
+  {"kind": "point", "key": "center"}
+ ]
+}

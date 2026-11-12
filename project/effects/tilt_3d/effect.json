@@ -1,0 +1,42 @@
+{
+ "id": "tilt_3d",
+ "label": "Tilt in 3D",
+ "category": "Transform",
+ "version": 1,
+ "blurb": "Stands the picture on a real plane in front of a camera and tilts, swivels and rolls it in true perspective. Edges can run on past the frame as an endless floor or wall (Repeat, Mirror or Extend). The camera's depth of field is worked out from the real depth of every pixel, so the part of the plane at the focus point is sharp and the rest blurs the way a lens blurs, faster towards the camera than away from it, with bright spots opening into bokeh. Fog thickens with depth, and far, steep parts of the picture are filtered so they never shimmer. Distances are in frame heights; at the defaults nothing moves.",
+ "params": [
+  {"key": "tilt", "label": "Tilt", "type": "float", "min": -180, "max": 180, "step": 0.1, "default": 0, "unit": " deg"},
+  {"key": "swivel", "label": "Swivel", "type": "float", "min": -180, "max": 180, "step": 0.1, "default": 0, "unit": " deg"},
+  {"key": "roll", "label": "Roll", "type": "float", "min": -360, "max": 360, "step": 0.1, "default": 0, "unit": " deg"},
+  {"key": "distance", "label": "Camera Distance", "type": "float", "min": 0.1, "max": 20, "step": 0.01, "default": 1.3737387097273113},
+  {"key": "fov", "label": "Field of View", "type": "float", "min": 5, "max": 150, "step": 0.1, "default": 40, "unit": " deg"},
+  {"key": "offset", "label": "Position Offset", "type": "vec2", "default": [0, 0]},
+  {"key": "scale", "label": "Scale", "type": "float", "min": 0.05, "max": 20, "step": 0.01, "default": 1},
+  {"key": "edges", "label": "Beyond the Picture", "type": "enum", "choices": ["Transparent", "Repeat", "Mirror", "Extend"], "default": 0},
+  {"key": "focus_by", "label": "Focus On", "type": "enum", "choices": ["Focus Point", "Focus Distance"], "default": 0},
+  {"key": "focus_point", "label": "Focus Point", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "focus_distance", "label": "Focus Distance", "type": "float", "min": 0.05, "max": 50, "step": 0.01, "default": 1.3737387097273113},
+  {"key": "aperture", "label": "Aperture", "type": "float", "min": 0, "max": 100, "step": 0.1, "default": 24, "unit": " px"},
+  {"key": "highlight", "label": "Bokeh Highlights", "type": "float", "min": 0, "max": 4, "step": 0.05, "default": 1},
+  {"key": "quality", "label": "Quality", "type": "enum", "choices": ["Draft", "Good", "Best"], "default": 1},
+  {"key": "fog_density", "label": "Fog Density", "type": "float", "min": 0, "max": 4, "step": 0.01, "default": 0},
+  {"key": "fog_start", "label": "Fog Starts At", "type": "float", "min": 0, "max": 50, "step": 0.01, "default": 1.5},
+  {"key": "fog_colour", "label": "Fog Colour", "type": "color", "default": [0.62, 0.67, 0.74, 1]}
+ ],
+ "depth": {"kind": "plane", "tilt": "tilt", "swivel": "swivel", "roll": "roll", "distance": "distance", "fov": "fov", "offset": "offset", "scale": "scale"},
+ "handles": [
+  {"kind": "point", "key": "focus_point", "when": {"key": "focus_by", "is": [0]}},
+  {"kind": "plane3d", "units": "frame", "tilt": "tilt", "swivel": "swivel", "roll": "roll", "distance": "distance", "fov": "fov", "offset": "offset", "scale": "scale"}
+ ],
+ "passes": [
+  {"shader": "res://effects/blur_gaussian/down.gdshader", "scale": 0.5},
+  {"shader": "res://effects/blur_gaussian/down.gdshader", "scale": 0.5},
+  {"shader": "res://effects/blur_gaussian/down.gdshader", "scale": 0.5},
+  {"shader": "res://effects/blur_gaussian/down.gdshader", "scale": 0.5},
+  {"shader": "res://effects/blur_gaussian/down.gdshader", "scale": 0.5},
+  {"shader": "plane.gdshader", "scale": 32.0, "inputs": {"mip1": 0, "mip2": 1, "mip3": 2, "mip4": 3, "mip5": 4}},
+  {"shader": "res://effects/blur_gaussian/down.gdshader", "scale": 0.5, "when": {"param": "aperture", "gt": 0}},
+  {"shader": "dof_blur.gdshader", "scale": 1.0, "when": {"param": "aperture", "gt": 0}},
+  {"shader": "dof_join.gdshader", "scale": 2.0, "when": {"param": "aperture", "gt": 0}, "inputs": {"sharp_tex": 5}}
+ ]
+}

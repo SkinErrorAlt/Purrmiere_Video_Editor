@@ -40,6 +40,7 @@ const PvCropRows := preload("res://modules/core_panels/pv_crop_rows.gd")
 const PvGroups := preload("res://modules/core_panels/pv_groups.gd")
 const PvAudio := preload("res://modules/core_panels/pv_audio.gd")
 const MonitorHandles := preload("res://modules/core_panels/monitor_handles.gd")
+const FxPick := preload("res://modules/core_panels/ec_fx_pick.gd")
 const REGION_MAX := 8
 const ONE_REGION_NOTE := "Names, sizes, Place and Hears: select one clip"
 const SYNC_TIP := "Select one clip to line up its regions on their own timeline"
@@ -116,6 +117,7 @@ static func effect_header(panel: Object, f: VBoxContainer, g: Dictionary, sound:
 	var header: Button = f.get("header")
 	header.gui_input.connect(Callable(SELF, "_on_header_input").bind(panel, uids, sound, header))
 	PmUI.tip(header, "Right click for copy, paste, duplicate and reset, for every selected clip that has it")
+	FxPick.register(header, FxPick.MANY, FxPick.many_key(uids), sound, uids)
 	if not sound:
 		MonitorHandles.add_switch_many(f, _clips_of(s, uids), uids)
 	var can_up: bool = false
@@ -257,9 +259,13 @@ static func set_mask(id: String, panel: Object, uids: Dictionary) -> bool:
 static func _on_header_input(event: InputEvent, panel: Object, uids: Dictionary, sound: bool, header: Control) -> void:
 	if event is InputEventMouseButton:
 		var mb: InputEventMouseButton = event
+		if FxPick.handle_press(event, header, FxPick.MANY, FxPick.many_key(uids), sound, uids, PackedStringArray()):
+			return
 		if mb.button_index == MOUSE_BUTTON_RIGHT and mb.pressed:
 			header.accept_event()
-			var m: Control = PmMenu.open(header, header_menu_items(), header.get_global_mouse_position())
+			var items: Array = FxPick.menu_items(FxPick.MANY, FxPick.many_key(uids))
+			items.append_array(header_menu_items())
+			var m: Control = PmMenu.open(header, items, header.get_global_mouse_position())
 			if m != null and m.is_inside_tree():
 				m.connect("picked", Callable(SELF, "header_menu_picked").bind(panel, uids, sound))
 
@@ -283,6 +289,9 @@ static func header_menu_picked(id: String, panel: Object, uids: Dictionary, soun
 	if d == null or s == null:
 		return false
 	var clips: Array[Clip] = _clips_of(s, uids)
+	if id == FxPick.MENU_SAVE:
+		FxPick.open_save(panel, FxPick.MANY)
+		return true
 	if id == "fx_copy":
 		if not clips.is_empty() and EffectOps.copy_effect(clips[0], String(uids[clips[0].id])):
 			Events.toast("Copied " + EffectOps.copied_label() + " from " + (clips[0].label if not clips[0].label.is_empty() else clips[0].id))
@@ -522,6 +531,9 @@ static func pair_view(panel: Object, body: VBoxContainer, g: Dictionary) -> void
 	note.add_child(PmLabel.dim(ONE_REGION_NOTE))
 	body.add_child(note)
 	body.add_child(PvStreamRows.many_row(panel, clips, uids))
+	if most > 1:
+		var named_lead: Clip = lead if lead != null and uids.has(lead.id) else clips[0]
+		body.add_child(load("res://modules/core_panels/named_offset_rows.gd").call("make", named_lead, named_lead.effect_by_uid(String(uids[named_lead.id]))))
 	body.add_child(PvAudio.always_row(uids, _lead_w()))
 	_shared_sound_row(panel, body, clips, uids)
 	body.add_child(_tools_row(panel, clips, uids))
@@ -632,6 +644,17 @@ static func _region_row(panel: Object, body: VBoxContainer, g: Dictionary, clips
 	var ms: bool = PvSync.unit() == "ms"
 	panel.call("_add_row", body, {"path": canon + "." + ViewMap.offset_key(i), "label": "Offset", "kind": "float", "keyable": true, "min": -ViewMap.OFFSET_MAX, "max": ViewMap.OFFSET_MAX, "step": 0.001 if ms else 0.01, "suffix": " ms" if ms else " s", "display_mul": 1000.0 if ms else 1.0, "indent": 1, "members": offs})
 	_unit_buttons(panel)
+	var vb: GDScript = load("res://doc/view_border.gd")
+	var borders: Dictionary = {}
+	for h3: Clip in holders:
+		borders[h3.id] = "effects." + String(uids[h3.id]) + "." + String(vb.call("border_key", i))
+	panel.call("_add_row", body, {"path": canon + "." + String(vb.call("border_key", i)), "label": "Frame picture", "kind": "texture", "keyable": false, "indent": 1, "members": borders, "eid": "pair_view", "key": String(vb.call("border_key", i))})
+	var loops: Dictionary = {}
+	for h4: Clip in holders:
+		if bool(load("res://doc/border_reel.gd").call("is_moving", String(load("res://modules/core_panels/view_border_rows.gd").call("path_of", h4, String(uids[h4.id]), i)))):
+			loops[h4.id] = "effects." + String(uids[h4.id]) + "." + String(vb.call("loop_key", i))
+	if not loops.is_empty():
+		panel.call("_add_row", body, {"path": canon + "." + String(vb.call("loop_key", i)), "label": "Loop the moving frame", "kind": "bool", "keyable": true, "indent": 1, "members": loops, "eid": "pair_view", "key": String(vb.call("loop_key", i))})
 	var places: Dictionary = {}
 	var sizes: Dictionary = {}
 	for h2: Clip in holders:

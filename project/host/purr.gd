@@ -309,11 +309,19 @@ func set_output_latency(seconds: float) -> void:
 	_call("set_output_latency", [seconds], null)
 
 
+var graph_pushes: int = 0
+var graph_clips: int = 0
+
+
 func clock_time() -> float:
 	return float(_call("clock_time", [], 0.0))
 
 
 func set_audio_graph(graph: Dictionary) -> void:
+	graph_pushes += 1
+	graph_clips = 0
+	for t: Variant in graph.get("tracks", []):
+		graph_clips += (t as Dictionary).get("clips", []).size()
 	var session: Node = get_node_or_null("/root/Session")
 	var seq: Variant = session.call("seq") if session != null and session.has_method("seq") else null
 	_call("set_audio_graph", [load("res://engine/listen_mute.gd").call("apply", graph, seq)], null)
@@ -321,6 +329,14 @@ func set_audio_graph(graph: Dictionary) -> void:
 
 func render_audio(from: float, to: float, wav_path: String, sample_rate: int, channels: int) -> bool:
 	return bool(_call("render_audio", [from, to, wav_path, sample_rate, channels], false))
+
+
+func has_audio_probe_live() -> bool:
+	return available and _native != null and _native.has_method("audio_probe_live")
+
+
+func audio_probe_live(from: float, seconds: float, sample_rate: int, pace: bool) -> Dictionary:
+	return _call("audio_probe_live", [from, seconds, sample_rate, pace], {}) as Dictionary
 
 
 func patch_audio_param(item_id: String, key: String, anim: Dictionary) -> void:
@@ -340,7 +356,7 @@ func set_view_gains(gains: Dictionary) -> int:
 func audio_graph_stats() -> Dictionary:
 	var raw: Variant = _call("audio_graph_stats", [], {})
 	var src: Dictionary = raw if typeof(raw) == TYPE_DICTIONARY else {}
-	return {"known": not src.is_empty(), "adopts": int(src.get("adopts", 0)), "value_swaps": int(src.get("value_swaps", 0)), "gain_patches": int(src.get("gain_patches", 0)), "taken_at": float(src.get("taken_at", -1.0)), "taken_frames": int(src.get("taken_frames", 0)), "frames_mixed": int(src.get("frames_mixed", 0)), "waiting": bool(src.get("waiting", false)), "readers_live": int(src.get("readers_live", 0)), "readers_pair_max": int(src.get("readers_pair_max", 0)), "readers_pair_peak": int(src.get("readers_pair_peak", 0)), "readers_opened": int(src.get("readers_opened", 0))}
+	return {"known": not src.is_empty(), "adopts": int(src.get("adopts", 0)), "value_swaps": int(src.get("value_swaps", 0)), "gain_patches": int(src.get("gain_patches", 0)), "taken_at": float(src.get("taken_at", -1.0)), "taken_frames": int(src.get("taken_frames", 0)), "frames_mixed": int(src.get("frames_mixed", 0)), "waiting": bool(src.get("waiting", false)), "readers_live": int(src.get("readers_live", 0)), "readers_pair_max": int(src.get("readers_pair_max", 0)), "readers_pair_peak": int(src.get("readers_pair_peak", 0)), "readers_opened": int(src.get("readers_opened", 0)), "joins": int(src.get("joins", 0)), "join_detail": src.get("join_detail", {})}
 
 
 func audio_stream() -> AudioStream:
@@ -640,6 +656,27 @@ func snapshot_run(h: int, seconds: PackedFloat64Array, width: int) -> Array:
 	return out if out is Array else []
 
 
+func has_proxy_build() -> bool:
+	return available and _native != null and _native.has_method("proxy_build_begin")
+
+
+func proxy_build_begin(h: int, export_id: int, times: PackedFloat64Array, width: int, height: int) -> int:
+	return int(_call("proxy_build_begin", [h, export_id, times, width, height], -1))
+
+
+func proxy_build_state(id: int) -> Dictionary:
+	var raw: Variant = _call("proxy_build_state", [id], {})
+	return raw if typeof(raw) == TYPE_DICTIONARY else {}
+
+
+func proxy_build_cancel(id: int) -> void:
+	_call("proxy_build_cancel", [id], null)
+
+
+func proxy_build_forget(id: int) -> void:
+	_call("proxy_build_forget", [id], null)
+
+
 func encoders() -> Array[Dictionary]:
 	var out: Array[Dictionary] = []
 	var raw: Variant = _call("encoders", [], [])
@@ -766,15 +803,60 @@ func track_key(spec: Dictionary) -> String:
 
 
 func track_synth(spec: Dictionary, from: int, count: int) -> Dictionary:
-	var out: Variant = _call("track_synth", [spec, from, count], {})
+	var out: Variant = _call("track_synth", [spec, from, count], null)
 	return out if typeof(out) == TYPE_DICTIONARY else {"ok": false, "error": "tracking is not available"}
 
 
 func track_bundle_check() -> Dictionary:
-	var out: Variant = _call("track_bundle_check", [], {})
-	return out if typeof(out) == TYPE_DICTIONARY else {"ok": false}
+	var out: Variant = _call("track_bundle_check", [], null)
+	return out if typeof(out) == TYPE_DICTIONARY else {"ok": false, "error": "tracking is not available"}
 
 
 func track_info() -> Dictionary:
-	var out: Variant = _call("track_info", [], {})
-	return out if typeof(out) == TYPE_DICTIONARY else {"ok": false, "gpu": false}
+	var out: Variant = _call("track_info", [], null)
+	return out if typeof(out) == TYPE_DICTIONARY else {"ok": false, "gpu": false, "error": "tracking is not available"}
+
+
+func obj_status() -> Dictionary:
+	var out: Variant = _call("obj_status", [], null)
+	return out if typeof(out) == TYPE_DICTIONARY else {"built": false, "ok": false, "gpu": false, "error": "object select is not available"}
+
+
+func obj_open(spec: Dictionary) -> Dictionary:
+	var out: Variant = _call("obj_open", [spec], null)
+	return out if typeof(out) == TYPE_DICTIONARY else {"ok": false, "error": "object select is not available"}
+
+
+func obj_pick(frame: Image, spec: Dictionary) -> Dictionary:
+	var out: Variant = _call("obj_pick", [frame, spec], null)
+	return out if typeof(out) == TYPE_DICTIONARY else {"ok": false, "error": "object select is not available"}
+
+
+func obj_follow(frame: Image, spec: Dictionary) -> Dictionary:
+	var out: Variant = _call("obj_follow", [frame, spec], null)
+	return out if typeof(out) == TYPE_DICTIONARY else {"ok": false, "error": "object select is not available"}
+
+
+func obj_reset() -> void:
+	_call("obj_reset", [], null)
+
+
+func obj_close() -> void:
+	_call("obj_close", [], null)
+
+
+func shutdown() -> void:
+	_call("shutdown", [], null)
+
+
+func arm_exit_guard(seconds: float) -> void:
+	_call("arm_exit_guard", [seconds], null)
+
+
+func disarm_exit_guard() -> void:
+	_call("disarm_exit_guard", [], null)
+
+
+func close_report() -> Dictionary:
+	var out: Variant = _call("close_report", [], null)
+	return out if typeof(out) == TYPE_DICTIONARY else {"closed": false, "total_ms": 0.0, "error": "the engine is not loaded"}

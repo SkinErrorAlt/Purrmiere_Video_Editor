@@ -1,0 +1,23 @@
+{
+ "id": "camera_catchup",
+ "label": "Camera Catches Up",
+ "category": "Time",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Makes the picture behave like a camera whose auto exposure and white balance are always a moment behind. Walk out of a dark room and the frame blows out to white, then pulls down, overshoots a little and settles; the lights go off and it sinks into black before it lifts again. Cut from a warm room to a blue street and the street comes in too blue and slowly turns neutral. It reacts to whatever the light in the footage does, cuts and flashes included, with no keyframes.",
+ "history": {"max": 62, "reach": ["settle", 2.6], "seconds": ["settle"]},
+ "params": [
+  {"key": "settle", "label": "Settle time", "type": "float", "min": 0.2, "max": 1.5, "step": 0.01, "default": 0.7, "unit": " s"},
+  {"key": "hunting", "label": "Hunting", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 1.0},
+  {"key": "wb_lag", "label": "White balance lag", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "delay", "label": "Reaction delay", "type": "float", "min": 0.0, "max": 0.3, "step": 0.01, "default": 0.07, "unit": " s"},
+  {"key": "bloom", "label": "Blown out glow", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6}
+ ],
+ "passes": [
+  {"shader": "res://effects/_events/thumbs.gdshader", "scale": 0.125},
+  {"shader": "res://effects/_events/stats_light.gdshader", "scale": 0.25},
+  {"shader": "res://effects/_events/track_light.gdshader", "scale": 1.0},
+  {"shader": "apply.gdshader", "scale": 32.0}
+ ]
+}

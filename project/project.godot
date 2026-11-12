@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 Tk="*res://host/tokens.gd"
 Prefs="*res://host/prefs.gd"
+KeyGuard="*res://host/key_guard.gd"
 Events="*res://host/events.gd"
 Cmd="*res://host/commands.gd"
 Jobs="*res://host/jobs.gd"

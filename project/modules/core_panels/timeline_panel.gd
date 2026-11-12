@@ -24,6 +24,8 @@ const TOOLS: Array = [
 	["type", "type", "Type", "tool.type"],
 	["censor", "bleep", "Censor", "tool.censor"],
 	["track_area", "region", "Track area", "tool.track_area"],
+	["object_select", "select", "Object Select", "tool.object_select"],
+	["mask_brush", "pen", "Mask Brush", "tool.mask_brush"],
 ]
 const VIEW_KEY := "timeline_view"
 
@@ -69,8 +71,10 @@ func _build(root_: Control) -> void:
 		var b: Button = PmButton.tool(String(spec[1]), "tools", true)
 		b.set("icon_px", 16.0)
 		b.custom_minimum_size = Vector2(float(Tk.px(26.0)), float(Tk.px(26.0)))
-		PmUI.tip(b, String(spec[2]), Cmd.keys_text(String(spec[3])))
+		PmUI.tip(b, String(spec[2]) + (". Right click or hold for its shapes: polygon, freehand, rectangle, ellipse" if String(spec[0]) == "pen" else ""), Cmd.keys_text(String(spec[3])))
 		b.pressed.connect(_on_tool_pressed.bind(String(spec[0])))
+		if String(spec[0]) == "pen":
+			b.gui_input.connect(_on_pen_button_input.bind(b))
 		tools.call("add_item", b, String(spec[0]), String(spec[2]))
 		_tool_buttons[String(spec[0])] = b
 	var sep: Control = PmUI.divider(true)
@@ -82,7 +86,7 @@ func _build(root_: Control) -> void:
 	_linked_btn = toggle_icon("link", "Linked selection", true)
 	_linked_btn.pressed.connect(_on_linked)
 	tools.call("add_item", _linked_btn, "linked", "Linked selection")
-	_inside_btn = quiet_icon("inside", "See inside the selected nests", Cmd.keys_text("clip.see_inside"))
+	_inside_btn = quiet_icon("inside", "See inside the selected nests. Shift click: every nest in the sequence", Cmd.keys_text("clip.see_inside"))
 	_inside_btn.pressed.connect(_on_see_inside)
 	tools.call("add_item", _inside_btn, "inside", "See inside")
 	_mode_btn = toggle_icon("region", "Insert mode for drops (off means overwrite)", false)
@@ -139,6 +143,39 @@ func _on_tool_pressed(id: String) -> void:
 	_sync_toggles()
 
 
+var _pen_hold: SceneTreeTimer = null
+
+
+## The Pen tool's shape flyout: right click it, or hold the mouse on it, to pick what the Pen draws.
+func _on_pen_button_input(event: InputEvent, b: Button) -> void:
+	if not (event is InputEventMouseButton):
+		return
+	var mb: InputEventMouseButton = event
+	if mb.button_index == MOUSE_BUTTON_RIGHT and mb.pressed:
+		open_pen_shapes(b)
+		b.accept_event()
+	elif mb.button_index == MOUSE_BUTTON_LEFT:
+		if mb.pressed:
+			_pen_hold = (Engine.get_main_loop() as SceneTree).create_timer(0.45)
+			var held: SceneTreeTimer = _pen_hold
+			held.timeout.connect(func() -> void:
+				if _pen_hold == held and is_instance_valid(b) and b.is_hovered():
+					open_pen_shapes(b))
+		else:
+			_pen_hold = null
+
+
+func open_pen_shapes(anchor: Control) -> Control:
+	_pen_hold = null
+	var mm: GDScript = load("res://modules/core_panels/monitor_mask.gd")
+	var m: Control = PmMenu.open(anchor, mm.call("shape_menu_items"))
+	if m != null:
+		m.connect("picked", func(id: String) -> void:
+			mm.call("pick_shape", id)
+			_sync_toggles())
+	return m
+
+
 func _on_tool(_tool_id: String) -> void:
 	_sync_toggles()
 
@@ -154,7 +191,7 @@ func _on_linked() -> void:
 
 
 func _on_see_inside() -> void:
-	Cmd.run("clip.see_inside")
+	Cmd.run("clip.see_inside_all" if Input.is_key_pressed(KEY_SHIFT) else "clip.see_inside")
 
 
 func _on_mode() -> void:

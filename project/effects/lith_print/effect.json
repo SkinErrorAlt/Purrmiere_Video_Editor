@@ -1,0 +1,20 @@
+{
+ "id": "lith_print",
+ "label": "Lith Print",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "A black and white darkroom print developed in weak lith developer: the highlights stay soft and creamy in peach and salmon tones, then the shadows suddenly race to a hard, cold black that spreads through the mid tones as a coarse pepper of clumped grain.",
+ "params": [
+  {"key": "print_density", "label": "Print density", "type": "float", "min": -1.0, "max": 1.0, "step": 0.01, "default": 0.0},
+  {"key": "development", "label": "Development", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "pepper", "label": "Pepper", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "grain", "label": "Grain size", "type": "float", "min": 0.5, "max": 4.0, "step": 0.05, "default": 1.4, "unit": " px"},
+  {"key": "warmth", "label": "Warmth", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.75},
+  {"key": "highlight", "label": "Highlight colour", "type": "color", "default": [0.94, 0.76, 0.65, 1.0]},
+  {"key": "shadow", "label": "Shadow colour", "type": "color", "default": [0.09, 0.09, 0.085, 1.0]},
+  {"key": "paper", "label": "Paper", "type": "color", "default": [0.97, 0.95, 0.91, 1.0]},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 999, "step": 1, "default": 7}
+ ],
+ "passes": "single"
+}

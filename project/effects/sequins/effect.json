@@ -1,0 +1,20 @@
+{
+ "id": "sequins",
+ "label": "Sequins",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Sews the picture in sequins: rows of little mirrored discs hung like fish scales, each row overlapping the one above, every disc stitched through its centre hole and taking its colour from the picture. Each sequin hangs at its own slight angle, so it catches the light or the picture around it on its own and the bright ones sparkle, and Sway lets them shift on their threads over time so the glints twinkle across the surface. Metallic gold and silver finishes keep the picture as light and dark only.",
+ "params": [
+  {"key": "size", "label": "Sequin size", "type": "float", "min": 5.0, "max": 80.0, "step": 0.5, "default": 24.0, "unit": " px"},
+  {"key": "finish", "label": "Finish", "type": "enum", "choices": ["The picture's colours", "Gold", "Silver"], "default": 0},
+  {"key": "tilt", "label": "Hang angle", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45},
+  {"key": "sparkle", "label": "Sparkle", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "sway", "label": "Sway", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.5},
+  {"key": "light_angle", "label": "Light", "type": "float", "min": -180.0, "max": 180.0, "step": 1.0, "default": -110.0, "unit": " deg"},
+  {"key": "fabric", "label": "Fabric", "type": "color", "default": [0.08, 0.07, 0.08, 1.0]},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "handles": [{"kind": "angle", "key": "light_angle"}],
+ "passes": "single"
+}

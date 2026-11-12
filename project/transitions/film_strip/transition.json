@@ -1,0 +1,17 @@
+{
+ "id": "film_strip",
+ "label": "Film Strip",
+ "group": "Light and Film",
+ "space": "2D",
+ "from": ["Projector pull down", "Motion Film Advance"],
+ "blurb": "The projector loses its loop and the film runs through the gate: the strip races up past the lens with the frame lines and the sprocket holes streaking by on both edges, the picture smeared vertically by the speed, and then the claw catches again and a frame settles into the gate with a small jump. The frames on the way through come from the outgoing shot and then from the incoming one, so the change happens while the strip is in motion. Set how many frames pass, how much the speed smears them and how deep the frame lines are.",
+ "default_duration": 1.1,
+ "params": [
+  {"key": "frames_by", "label": "Frames past", "type": "float", "min": 2.0, "max": 24.0, "step": 1.0, "default": 7.0},
+  {"key": "smear", "label": "Speed smear", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.55},
+  {"key": "frame_line", "label": "Frame line", "type": "float", "min": 0.0, "max": 0.2, "step": 0.005, "default": 0.06},
+  {"key": "sprockets", "label": "Sprocket holes", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "flicker", "label": "Gate flicker", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "jump", "label": "Settle jump", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5}
+ ]
+}

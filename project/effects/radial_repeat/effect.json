@@ -1,0 +1,20 @@
+{
+ "id": "radial_repeat",
+ "label": "Radial Repeat",
+ "category": "Distort",
+ "version": 1,
+ "blurb": "Lays several rotated copies of the picture fanned evenly around a centre, overlapping and blended, so the frame blooms into a rotational mandala or pinwheel. Not a mirror kaleidoscope and not a grid: each copy is the whole picture turned about the centre, with its own place in the fan, so logos, lights and patterns spin out into symmetry. Set how many copies, give each a scale step and an opacity falloff to spiral them inward, add a twist, and let the whole array spin over time. Over keeps the front copy solid with the others ghosting behind; Add and Screen stack them into light.",
+ "params": [
+  {"key": "copies", "label": "Copies", "type": "int", "min": 2, "max": 24, "step": 1, "default": 6},
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "start_angle", "label": "Start angle", "type": "float", "min": -180.0, "max": 180.0, "step": 1.0, "default": 0.0, "unit": " deg"},
+  {"key": "twist", "label": "Twist per copy", "type": "float", "min": -90.0, "max": 90.0, "step": 0.5, "default": 0.0, "unit": " deg"},
+  {"key": "scale_step", "label": "Scale per copy", "type": "float", "min": 0.6, "max": 1.4, "step": 0.005, "default": 1.0},
+  {"key": "opacity", "label": "Opacity falloff", "type": "float", "min": 0.2, "max": 1.0, "step": 0.01, "default": 0.82},
+  {"key": "spin", "label": "Spin", "type": "float", "min": -180.0, "max": 180.0, "step": 1.0, "default": 0.0, "unit": " deg/s"},
+  {"key": "blend", "label": "How copies mix", "type": "enum", "choices": ["Blend", "Over", "Add", "Screen"], "default": 0},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}, {"kind": "angle", "key": "start_angle", "about": "centre", "zero": "up", "turn": "cw"}],
+ "passes": "single"
+}

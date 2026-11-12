@@ -11,5 +11,8 @@
   {"key": "direction", "label": "Turns", "type": "enum", "choices": ["Counterclockwise", "Clockwise"], "default": 0},
   {"key": "softness", "label": "Soft edge", "type": "float", "min": 0, "max": 0.25, "step": 0.005, "default": 0},
   {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 0}
+ ],
+ "handles": [
+  {"kind": "angle", "key": "start_angle", "space": "uv"}
  ]
 }

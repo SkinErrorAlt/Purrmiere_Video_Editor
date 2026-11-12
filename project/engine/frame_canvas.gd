@@ -2,6 +2,7 @@ extends RefCounted
 
 const KEY := "canvas"
 const FRAME := "frame"
+const PLACE_KEY := "canvas_picture"
 const FULL_BOX := Vector4(0.0, 0.0, 1.0, 1.0)
 
 static var ids: Dictionary = {}
@@ -12,6 +13,8 @@ static func note(def: Dictionary, raw: Dictionary) -> void:
 		return
 	def[KEY] = FRAME
 	ids[String(def.get("id", ""))] = true
+	if raw.get(PLACE_KEY, null) is Dictionary:
+		def[PLACE_KEY] = (raw[PLACE_KEY] as Dictionary).duplicate(true)
 
 
 static func is_canvas_def(def: Dictionary) -> bool:

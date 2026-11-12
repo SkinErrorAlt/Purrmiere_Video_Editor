@@ -1,0 +1,28 @@
+{
+ "id": "wet_street",
+ "label": "Wet Street",
+ "category": "Light & Shadow",
+ "tags": ["light"],
+ "version": 1,
+ "blurb": "Turns the ground below the line into wet asphalt at night: the lights above it are reflected as long upright streaks that stretch towards the camera and break into glints on the ripples, strongest near the line and fading closer to the camera, while the ground itself goes darker and richer. Only bright things reflect strongly, so a sign or a street lamp makes a streak and the dark sky leaves the road dark. Drag the line to where the ground meets the lights.",
+ "params": [
+  {"key": "horizon", "label": "Ground line", "type": "float", "min": 0.05, "max": 0.95, "step": 0.001, "default": 0.62},
+  {"key": "threshold", "label": "Light brightness", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.65},
+  {"key": "streak_length", "label": "Streak length", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.45},
+  {"key": "strength", "label": "Reflection strength", "type": "float", "min": 0, "max": 3, "step": 0.01, "default": 1.2},
+  {"key": "ripples", "label": "Ripples", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "ripple_size", "label": "Ripple size", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "wetness", "label": "Wetness", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "scene", "label": "Mirror the scene", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.25},
+  {"key": "speed", "label": "Ripple speed", "type": "float", "min": 0, "max": 3, "step": 0.01, "default": 0.2},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 3}
+ ],
+ "handles": [{"kind": "band", "key": "horizon"}],
+ "passes": [
+  {"shader": "bright.gdshader", "scale": 0.5},
+  {"shader": "down.gdshader", "scale": 0.5},
+  {"shader": "streak.gdshader"},
+  {"shader": "streak.gdshader", "set": {"reach_scale": 0.35}},
+  {"shader": "compose.gdshader", "scale": 4.0}
+ ]
+}

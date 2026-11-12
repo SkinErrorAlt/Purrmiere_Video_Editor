@@ -1,0 +1,18 @@
+{
+ "id": "flo_motion",
+ "label": "Flo Motion",
+ "category": "Distort",
+ "version": 1,
+ "blurb": "Two points in the frame act on the picture like a drain and a spring: one sucks everything towards it, winding the shot into a tight knot, and the other pushes everything away, stretching it out into a wide bulge. Between them the picture shears into long smooth curves, the way iron filings bend round two magnets. Either point can pull or push, each has its own strength and reach, and with both set to pull you get an hourglass pinch down the middle. Nothing is cut and nothing is lost, the whole frame is simply bent.",
+ "params": [
+  {"key": "point_a", "label": "First point", "type": "vec2", "default": [0.33, 0.5]},
+  {"key": "pull_a", "label": "First pull", "type": "float", "min": -1.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "point_b", "label": "Second point", "type": "vec2", "default": [0.67, 0.5]},
+  {"key": "pull_b", "label": "Second pull", "type": "float", "min": -1.0, "max": 1.0, "step": 0.01, "default": -0.4},
+  {"key": "reach", "label": "Reach", "type": "float", "min": 0.02, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "edge", "label": "Outside", "type": "enum", "choices": ["Hold the edge", "Mirror", "Transparent"], "default": 0},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0}
+ ],
+ "handles": [{"kind": "point", "key": "point_a"}, {"kind": "ring", "key": "reach", "about": "point_a", "unit": "h"}, {"kind": "point", "key": "point_b"}, {"kind": "ring", "key": "reach", "about": "point_b", "unit": "h"}],
+ "passes": "single"
+}

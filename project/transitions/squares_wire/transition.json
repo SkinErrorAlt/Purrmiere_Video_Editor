@@ -11,5 +11,8 @@
   {"key": "rows", "label": "Rows", "type": "int", "min": 2, "max": 60, "step": 1, "default": 10},
   {"key": "angle", "label": "Direction", "type": "float", "min": -180, "max": 180, "step": 1, "default": 27, "unit": " deg"},
   {"key": "smoothness", "label": "Spread", "type": "float", "min": 0, "max": 3, "step": 0.05, "default": 1.6}
+ ],
+ "handles": [
+  {"kind": "angle", "key": "angle", "zero": "right", "space": "uv_normal"}
  ]
 }

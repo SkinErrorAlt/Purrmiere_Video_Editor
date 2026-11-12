@@ -11,5 +11,8 @@
   {"key": "timing", "label": "Timing", "type": "enum", "choices": ["Original", "Even", "Smooth"], "default": 0},
   {"key": "softness", "label": "Soft edge", "type": "float", "min": 0, "max": 300, "step": 0.5, "default": 2, "unit": " px"},
   {"key": "background", "label": "Background", "type": "color", "default": [0, 0, 0, 1]}
+ ],
+ "handles": [
+  {"kind": "point", "key": "centre"}
  ]
 }

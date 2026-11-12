@@ -13,5 +13,6 @@
   {"key": "ink", "label": "Ink", "type": "color", "default": [0.0, 0.0, 0.0, 1.0]},
   {"key": "paper", "label": "Paper", "type": "color", "default": [1.0, 1.0, 1.0, 1.0]}
  ],
+ "handles": [{"kind": "angle", "key": "angle", "zero": "right", "turn": "cw"}],
  "passes": "single"
 }

@@ -1,0 +1,26 @@
+{
+ "id": "text_base32",
+ "label": "Base32",
+ "category": "Text",
+ "version": 1,
+ "applies_to": "text",
+ "text_transform": "base32",
+ "tags": [
+  "text",
+  "encoding"
+ ],
+ "blurb": "RFC 4648 base32: the bytes of the text written with A to Z and 2 to 7.",
+ "params": [
+  {
+   "key": "direction",
+   "label": "Direction",
+   "type": "enum",
+   "choices": [
+    "Encode",
+    "Decode"
+   ],
+   "default": 0
+  }
+ ],
+ "passes": []
+}

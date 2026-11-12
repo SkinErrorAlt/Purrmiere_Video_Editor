@@ -179,6 +179,7 @@ static func clip_menu_items(c: Clip) -> Array:
 	items.append_array(ViewCutsMenu.clip_menu_items(c))
 	items.append_array(OffsetEditor.clip_menu_items(c))
 	items.append_array(PairOffsets.clip_menu_items(c))
+	items.append_array(PairPop.clip_menu_items(c))
 	items.append(PmMenu.separator())
 	return items
 
@@ -186,10 +187,11 @@ static func clip_menu_items(c: Clip) -> Array:
 const ViewCutsMenu := preload("res://modules/core_panels/pair_view_cuts.gd")
 const OffsetEditor := preload("res://modules/core_panels/offset_editor.gd")
 const PairOffsets := preload("res://modules/core_panels/pair_offsets.gd")
+const PairPop := preload("res://modules/core_panels/pair_pop.gd")
 
 
 static func on_clip_menu(id: String, clip_id: String) -> bool:
-	if ViewCutsMenu.on_clip_menu(id, clip_id) or OffsetEditor.on_clip_menu(id, clip_id) or PairOffsets.on_clip_menu(id, clip_id):
+	if ViewCutsMenu.on_clip_menu(id, clip_id) or OffsetEditor.on_clip_menu(id, clip_id) or PairOffsets.on_clip_menu(id, clip_id) or PairPop.on_clip_menu(id, clip_id):
 		return true
 	if id != MENU_ID:
 		return false

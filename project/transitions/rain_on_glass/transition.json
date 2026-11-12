@@ -1,0 +1,17 @@
+{
+ "id": "rain_on_glass",
+ "label": "Rain on Glass",
+ "group": "Distort",
+ "space": "2D",
+ "from": ["CapCut rainy window", "moody vlog rain overlays", "Rain FX reveals"],
+ "blurb": "The outgoing shot sits behind a pane of glass that beads with rain. Droplets of every size cling to the glass and refract the picture through their round lenses, larger beads grow heavy and run downward carving clear streaks through a light fog on the glass, and through the wet refraction the incoming shot resolves as the pane clears. Set how many drops and how big, how fast they run, how foggy the glass is and how strongly the drops bend the light.",
+ "default_duration": 1.4,
+ "params": [
+  {"key": "drops", "label": "Drops", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "drop_size", "label": "Drop size", "type": "float", "min": 0.3, "max": 2.0, "step": 0.01, "default": 1.0},
+  {"key": "run_speed", "label": "Run speed", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "fog", "label": "Glass fog", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "refraction", "label": "Refraction", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "clear_point", "label": "Clears at", "type": "float", "min": 0.3, "max": 0.9, "step": 0.01, "default": 0.6}
+ ]
+}

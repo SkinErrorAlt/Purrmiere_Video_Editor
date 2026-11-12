@@ -1,0 +1,15 @@
+{
+ "id": "text_rot47",
+ "label": "ROT47",
+ "category": "Text",
+ "version": 1,
+ "applies_to": "text",
+ "text_transform": "rot47",
+ "tags": [
+  "text",
+  "cipher"
+ ],
+ "blurb": "Rotates every printable ASCII character (letters, digits and symbols) by 47. Running it twice gives the text back.",
+ "params": [],
+ "passes": []
+}

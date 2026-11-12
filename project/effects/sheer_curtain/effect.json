@@ -1,0 +1,32 @@
+{
+ "id": "sheer_curtain",
+ "label": "Sheer Curtain",
+ "category": "Stylize",
+ "tags": ["look", "light"],
+ "version": 1,
+ "blurb": "Looks at the shot through a hanging voile curtain: the open weave veils and softens the scene and lights up white where light falls on it, the bright parts glow through the threads, and the soft folds read as darker, hazier bands where you look through the fabric at a slant, with the weave visible over the highlights.",
+ "params": [
+  {"key": "density", "label": "Density", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45},
+  {"key": "folds", "label": "Folds", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "fold_size", "label": "Fold width", "type": "float", "min": 20.0, "max": 600.0, "step": 0.5, "default": 170.0, "unit": " px"},
+  {"key": "fold_angle", "label": "Hangs towards", "type": "float", "min": -180.0, "max": 180.0, "step": 1.0, "default": 90.0, "unit": " deg"},
+  {"key": "softness", "label": "Softness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "glow", "label": "Glow through", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 0.8},
+  {"key": "room_light", "label": "Room light", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "light_angle", "label": "Light from", "type": "float", "min": -180.0, "max": 180.0, "step": 1.0, "default": -60.0, "unit": " deg"},
+  {"key": "weave", "label": "Weave", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "weave_px", "label": "Weave size", "type": "float", "min": 1.5, "max": 12.0, "step": 0.1, "default": 3.0, "unit": " px"},
+  {"key": "fabric", "label": "Fabric colour", "type": "color", "default": [0.96, 0.95, 0.92, 1.0]},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 999, "step": 1, "default": 8}
+ ],
+ "handles": [{"kind": "angle", "key": "fold_angle", "zero": "right", "turn": "cw"}, {"kind": "angle", "key": "light_angle", "zero": "right", "turn": "cw"}],
+ "passes": [
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/blur_fill/wide9.gdshader", "scale": 1.0, "set": {"direction": [1.0, 0.0]}},
+  {"shader": "res://effects/blur_fill/wide9.gdshader", "scale": 1.0, "set": {"direction": [0.0, 1.0]}},
+  {"shader": "curtain.gdshader", "scale": 16.0, "inputs": {"near_tex": 0, "mid_tex": 1, "glow_tex": 5}}
+ ]
+}

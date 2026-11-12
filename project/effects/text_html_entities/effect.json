@@ -1,0 +1,32 @@
+{
+ "id": "text_html_entities",
+ "label": "HTML Entities",
+ "category": "Text",
+ "version": 1,
+ "applies_to": "text",
+ "text_transform": "html_entities",
+ "tags": [
+  "text",
+  "encoding"
+ ],
+ "blurb": "Escapes & < > and quote marks as HTML entities, or turns entities like &amp; and &#39; back.",
+ "params": [
+  {
+   "key": "direction",
+   "label": "Direction",
+   "type": "enum",
+   "choices": [
+    "Encode",
+    "Decode"
+   ],
+   "default": 0
+  },
+  {
+   "key": "all",
+   "label": "Every non-ASCII character as a number",
+   "type": "bool",
+   "default": false
+  }
+ ],
+ "passes": []
+}

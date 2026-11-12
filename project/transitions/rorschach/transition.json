@@ -1,0 +1,16 @@
+{
+ "id": "rorschach",
+ "label": "Inkblot",
+ "group": "Shape",
+ "space": "2D",
+ "from": ["Rorschach card", "Boris Ink Bloom"],
+ "blurb": "An inkblot opens out from the fold down the middle of the frame, exactly the same on both sides, and the incoming shot is inside it. The edge is all lobes and fingers and little islands thrown clear of the main body, the way ink does when paper is folded on it and pressed, and the wet edge stays darker than the middle while it spreads. Set where the fold is, how fingered the edge is, how many loose islands there are and how dark the wet rim stays.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "fold", "label": "Fold at", "type": "float", "min": 0.1, "max": 0.9, "step": 0.01, "default": 0.5},
+  {"key": "fingers", "label": "Fingered edge", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "islands", "label": "Islands", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45},
+  {"key": "rim", "label": "Wet rim", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "lie", "label": "Fold lies", "type": "enum", "choices": ["Up and down", "Across"], "default": 0}
+ ]
+}

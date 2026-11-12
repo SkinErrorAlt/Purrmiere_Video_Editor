@@ -17,6 +17,8 @@
   {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 0}
  ],
  "handles": [
-  {"kind": "point", "key": "centre"}
+  {"kind": "point", "key": "centre"},
+  {"kind": "angle", "key": "angle", "zero": "right", "when": {"key": "shape", "is": [0]}},
+  {"kind": "angle", "key": "angle", "zero": "right", "about": "centre", "when": {"key": "shape", "is": [2]}}
  ]
 }

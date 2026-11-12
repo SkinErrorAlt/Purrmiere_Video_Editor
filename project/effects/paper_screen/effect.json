@@ -1,0 +1,30 @@
+{
+ "id": "paper_screen",
+ "label": "Paper Screen",
+ "category": "Stylize",
+ "tags": ["look", "light"],
+ "version": 1,
+ "blurb": "Looks at the scene through a backlit sheet of handmade paper, like a shoji screen: the light spreads in the paper so shapes turn to soft glowing light and shadow, the cloudy formation and long fibres of the sheet show up dark against the bright parts and pale where only the room light falls on it.",
+ "params": [
+  {"key": "diffusion", "label": "Diffusion", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "fibres", "label": "Fibres", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "clouds", "label": "Cloudiness", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "fibre_scale", "label": "Fibre size", "type": "float", "min": 0.3, "max": 3.0, "step": 0.01, "default": 1.0},
+  {"key": "room_light", "label": "Room light", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.22},
+  {"key": "backlight", "label": "Backlight", "type": "float", "min": 0.0, "max": 3.0, "step": 0.01, "default": 1.0},
+  {"key": "warmth", "label": "Warmth", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "paper", "label": "Paper colour", "type": "color", "default": [0.95, 0.92, 0.85, 1.0]},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 999, "step": 1, "default": 3}
+ ],
+ "passes": [
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/blur_fill/wide9.gdshader", "scale": 1.0, "set": {"direction": [1.0, 0.0]}},
+  {"shader": "res://effects/blur_fill/wide9.gdshader", "scale": 1.0, "set": {"direction": [0.0, 1.0]}},
+  {"shader": "res://effects/blur_fill/wide9.gdshader", "scale": 1.0, "set": {"direction": [1.4, 0.0]}},
+  {"shader": "res://effects/blur_fill/wide9.gdshader", "scale": 1.0, "set": {"direction": [0.0, 1.4]}},
+  {"shader": "screen.gdshader", "scale": 16.0, "inputs": {"near_tex": 1, "mid_tex": 2, "wide_tex": 5, "far_tex": 7}}
+ ]
+}

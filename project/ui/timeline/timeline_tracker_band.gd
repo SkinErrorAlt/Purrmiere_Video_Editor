@@ -9,6 +9,7 @@ const Tracking := preload("res://doc/tracking.gd")
 const TrackingEval := preload("res://engine/tracking_eval.gd")
 const DRAG_MODE := "tracker_range"
 const TOOL_ID := "track_area"
+const PICTURE_TOOLS: PackedStringArray = ["track_area", "object_select"]
 const OPS_PATH := "res://modules/core_panels/tracker_ops.gd"
 const RUN_PATH := "res://modules/core_panels/tracker_run.gd"
 const BAND_H := 5.0
@@ -22,7 +23,7 @@ static var bands_drawn: int = 0
 
 
 static func timeline_tool(tool: String) -> String:
-	return "select" if tool == TOOL_ID else tool
+	return "select" if PICTURE_TOOLS.has(tool) else tool
 
 
 static func ink() -> Color:

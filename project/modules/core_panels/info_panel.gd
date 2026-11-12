@@ -2,6 +2,7 @@ extends "res://modules/core_panels/panel_base.gd"
 
 const PropertiesSheet := preload("res://modules/core_panels/properties_sheet.gd")
 const StreamRoles := preload("res://doc/stream_roles.gd")
+const MediaNotesBox := preload("res://modules/core_panels/media_notes_box.gd")
 
 var _grid: GridContainer = null
 var _title_label: Label = null
@@ -31,6 +32,8 @@ func rebuild() -> void:
 	if not _alive():
 		return
 	_queued = false
+	if MediaNotesBox.editing(_grid):
+		return
 	PmUI.keep_scroll(_grid)
 	PmUI.clear(_grid)
 	var d: Project = doc()
@@ -116,6 +119,7 @@ func _media_rows(d: Project, m: MediaItem) -> void:
 			if c.media_id == m.id:
 				uses += 1
 	_row("Used by", str(uses) + (" clip" if uses == 1 else " clips"))
+	MediaNotesBox.add(_grid, d, m)
 
 
 func _queue() -> void:

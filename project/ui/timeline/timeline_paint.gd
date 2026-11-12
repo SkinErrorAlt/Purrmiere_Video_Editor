@@ -7,6 +7,9 @@ const AnimProp := preload("res://doc/anim_prop.gd")
 const AnimTime := preload("res://doc/anim_time.gd")
 const Icons := preload("res://ui/kit/icons.gd")
 const Lanes := preload("res://ui/timeline/timeline_lanes.gd")
+const Fold := preload("res://ui/timeline/timeline_fold.gd")
+const PlayheadLook := preload("res://ui/timeline/playhead_look.gd")
+const SEAM_HATCH := 4.0
 const HATCH_STEP := 8.0
 const NAME_ROW := 14.0
 const MIN_NAME_W := 30.0
@@ -192,16 +195,49 @@ static func draw_fades(ci: CanvasItem, r: Rect2, fade_in_px: float, fade_out_px:
 		ci.draw_line(Vector2(r.end.x - w2, r.position.y), Vector2(r.end.x, r.end.y), Tk.c["text_dim"], 1.0)
 
 
-static func draw_transition(ci: CanvasItem, r: Rect2, dur_px: float, hot: bool = false, kind: String = "", font: Font = null, fs: int = 0) -> void:
+static func draw_transition(ci: CanvasItem, r: Rect2, dur_px: float, hot: bool = false, kind: String = "", font: Font = null, fs: int = 0, chosen: bool = false) -> void:
 	if dur_px < 2.0 or r.size.x < 1.0:
 		return
 	var tr := Rect2(r.position, Vector2(r.size.x, r.size.y))
-	ci.draw_rect(tr, Color(Tk.c["bg_app"], 0.55 if hot else 0.4), true)
-	var col: Color = Tk.c["text_bright"] if hot else Tk.c["text_faint"]
+	ci.draw_rect(tr, Color(Tk.c["bg_app"], 0.55 if hot or chosen else 0.4), true)
+	var col: Color = Tk.c["text_bright"] if hot or chosen else Tk.c["text_faint"]
 	ci.draw_line(tr.position, Vector2(tr.end.x, tr.end.y), col, 1.0)
 	ci.draw_line(Vector2(tr.position.x, tr.end.y), Vector2(tr.end.x, tr.position.y), col, 1.0)
-	rounded(ci, tr, Color(0, 0, 0, 0), 3.0, col, 2 if hot else 1)
-	if hot:
+	if chosen:
+		rounded(ci, tr, Color(0, 0, 0, 0), 3.0, Tk.c["sol"], 2)
+		rounded(ci, tr.grow(-2.0), Color(0, 0, 0, 0), 2.0, col, 1)
+	else:
+		rounded(ci, tr, Color(0, 0, 0, 0), 3.0, col, 2 if hot else 1)
+	if hot or chosen:
+		ci.draw_rect(Rect2(tr.position.x, tr.position.y, 3.0, tr.size.y), col, true)
+		ci.draw_rect(Rect2(tr.end.x - 3.0, tr.position.y, 3.0, tr.size.y), col, true)
+	if font != null and fs > 0 and not kind.is_empty() and tr.size.x > 40.0 and tr.size.y > 26.0:
+		PmText.draw(ci, font, tr, kind, fs, col, HORIZONTAL_ALIGNMENT_CENTER, PmText.chip_pad(), tr.end.y - 4.0, PmText.WHOLE)
+
+
+static func draw_free_transition(ci: CanvasItem, r: Rect2, dur_px: float, hot: bool = false, kind: String = "", font: Font = null, fs: int = 0, chosen: bool = false) -> void:
+	if dur_px < 2.0 or r.size.x < 1.0:
+		return
+	var tr := Rect2(r.position, Vector2(r.size.x, r.size.y))
+	rounded(ci, tr, Color(Tk.c["bg_app"], 0.62 if hot or chosen else 0.46), 3.0)
+	var col: Color = Tk.c["text_bright"] if hot or chosen else Tk.c["text_faint"]
+	var step: float = maxf(tr.size.y * 0.5, 6.0)
+	var x: float = tr.position.x
+	while x < tr.end.x:
+		var x1: float = minf(x + step, tr.end.x)
+		ci.draw_line(Vector2(x, tr.end.y), Vector2(x1, tr.position.y), Color(col, 0.75), 1.0)
+		x += step
+	for y: float in [tr.position.y + 1.0, tr.end.y - 1.0]:
+		var dx: float = tr.position.x
+		while dx < tr.end.x:
+			ci.draw_line(Vector2(dx, y), Vector2(minf(dx + 3.0, tr.end.x), y), col, 1.0)
+			dx += 6.0
+	if chosen:
+		rounded(ci, tr, Color(0, 0, 0, 0), 3.0, Tk.c["sol"], 2)
+		rounded(ci, tr.grow(-2.0), Color(0, 0, 0, 0), 2.0, col, 1)
+	else:
+		rounded(ci, tr, Color(0, 0, 0, 0), 3.0, col, 2 if hot else 1)
+	if hot or chosen:
 		ci.draw_rect(Rect2(tr.position.x, tr.position.y, 3.0, tr.size.y), col, true)
 		ci.draw_rect(Rect2(tr.end.x - 3.0, tr.position.y, 3.0, tr.size.y), col, true)
 	if font != null and fs > 0 and not kind.is_empty() and tr.size.x > 40.0 and tr.size.y > 26.0:
@@ -615,12 +651,8 @@ static func diamond_entry(c: Clip, size: Vector2, pps: float, lo_x: float, hi_x:
 	return diamond_batch(centres, cols)
 
 
-static func draw_playhead(ci: CanvasItem, x: float, y0: float, y1: float, with_head: bool) -> void:
-	var col: Color = Tk.c["sol"]
-	var px: float = round(x)
-	ci.draw_rect(Rect2(px, y0, 1.0, y1 - y0), col, true)
-	if with_head:
-		ci.draw_colored_polygon(PackedVector2Array([Vector2(px - 5.0, y0), Vector2(px + 6.0, y0), Vector2(px + 6.0, y0 + 4.0), Vector2(px + 0.5, y0 + 9.0), Vector2(px - 5.0, y0 + 4.0)]), col)
+static func draw_playhead(ci: CanvasItem, x: float, y0: float, y1: float, with_head: bool, frame_px: float = 0.0) -> void:
+	PlayheadLook.draw(ci, x, y0, y1, {"head": with_head, "frame_px": frame_px})
 
 
 static func draw_marker(ci: CanvasItem, x: float, y: float, col: Color, has_comment: bool, selected: bool) -> void:
@@ -633,32 +665,88 @@ static func draw_marker(ci: CanvasItem, x: float, y: float, col: Color, has_comm
 		ci.draw_circle(Vector2(x, y + 4.0), 1.5, Tk.c["bg_app"])
 
 
-static func draw_ruler(ci: CanvasItem, r: Rect2, scroll_x: float, pps: float, fps: float, font_: Font, fs_: int) -> void:
-	ci.draw_rect(r, Tk.c["bg_ruler"], true)
+static func ruler_marks(r: Rect2, scroll_x: float, pps: float, fps: float, fold: Dictionary = {}) -> Dictionary:
 	var font: Font = Tk.font("mono")
 	var fs: int = Tk.fs(Tk.sz("font_meta"))
-	var t0: float = scroll_x / pps
-	var t1: float = (scroll_x + r.size.x) / pps
+	var t_end: float = Fold.real(fold, (scroll_x + r.size.x) / pps)
 	var inset: float = PmText.chip_pad()
-	var step: float = Lanes.nice_tick(pps, maxf(64.0, PmText.width_of(font, Lanes.ruler_label(maxf(t1, 0.0), fps, pps), fs) + inset * 2.0 + 4.0))
+	var step: float = Lanes.nice_tick(pps, maxf(64.0, PmText.width_of(font, Lanes.ruler_label(maxf(t_end, 0.0), fps, pps), fs) + inset * 2.0 + 4.0))
 	var minor: float = step / 4.0
-	var first: float = floor(t0 / step) * step
-	var t: float = first
+	var major := PackedVector2Array()
+	var room := PackedFloat32Array()
+	var minors := PackedFloat32Array()
+	for piece: Dictionary in Fold.pieces(fold):
+		var lo: float = float(piece["lo"])
+		var hi: float = float(piece["hi"])
+		var off: float = scroll_x + float(piece["cut"]) * pps
+		var x_hi: float = r.position.x + hi * pps - off if hi < INF else INF
+		var right: float = minf(r.end.x, x_hi)
+		if x_hi < r.position.x - 1.0 or r.position.x + lo * pps - off > r.end.x + 1.0:
+			continue
+		var t0: float = off / pps
+		var t1: float = minf((off + r.size.x) / pps, hi)
+		var t: float = floor(maxf(t0, lo) / step) * step if lo > 0.0 else floor(t0 / step) * step
+		while t <= t1 + step:
+			var x: float = r.position.x + t * pps - off
+			if t >= lo and t <= hi and x >= r.position.x - 1.0 and x <= r.end.x + 1.0:
+				major.append(Vector2(t, x))
+				room.append(minf(step * pps, right - x))
+			for i: int in range(1, 4):
+				var mt: float = t + minor * float(i)
+				var mx: float = r.position.x + mt * pps - off
+				if mt >= lo and mt <= hi and mx >= r.position.x and mx <= r.end.x:
+					minors.append(mx)
+			t += step
+	var seams: Array[Rect2] = []
+	for sp: Vector2 in Fold.seams(fold):
+		var sx0: float = Fold.x_of(fold, sp.x, r.position.x, pps, scroll_x)
+		var sx1: float = Fold.x_of(fold, sp.y, r.position.x, pps, scroll_x)
+		if sx1 >= r.position.x and sx0 <= r.end.x:
+			seams.append(Rect2(sx0, r.position.y, sx1 - sx0, r.size.y))
+	return {"major": major, "room": room, "minor": minors, "seams": seams, "step": step, "font": font, "fs": fs, "inset": inset}
+
+
+static func draw_ruler(ci: CanvasItem, r: Rect2, scroll_x: float, pps: float, fps: float, _font_: Font, _fs_: int, fold: Dictionary = {}) -> void:
+	ci.draw_rect(r, Tk.c["bg_ruler"], true)
+	var m: Dictionary = ruler_marks(r, scroll_x, pps, fps, fold)
+	var font: Font = m["font"]
+	var fs: int = int(m["fs"])
+	var inset: float = float(m["inset"])
 	var col_tick: Color = Tk.c["text_faint"]
 	var col_text: Color = Tk.c["text_dim"]
 	var base_y: float = r.end.y
-	while t <= t1 + step:
-		var x: float = r.position.x + t * pps - scroll_x
-		if t >= 0.0 and x >= r.position.x - 1.0 and x <= r.end.x + 1.0:
-			ci.draw_rect(Rect2(x, base_y - 9.0, 1.0, 9.0), col_tick, true)
-			PmText.draw(ci, font, Rect2(x, r.position.y, minf(step * pps, r.end.x - x), r.size.y), Lanes.ruler_label(t, fps, pps), fs, col_text, HORIZONTAL_ALIGNMENT_LEFT, inset, r.position.y + 2.0 + font.get_ascent(fs), PmText.WHOLE)
-		for i: int in range(1, 4):
-			var mt: float = t + minor * float(i)
-			var mx: float = r.position.x + mt * pps - scroll_x
-			if mt >= 0.0 and mx >= r.position.x and mx <= r.end.x:
-				ci.draw_rect(Rect2(mx, base_y - 4.0, 1.0, 4.0), col_tick, true)
-		t += step
+	var major: PackedVector2Array = m["major"]
+	var room: PackedFloat32Array = m["room"]
+	for i: int in major.size():
+		var x: float = major[i].y
+		ci.draw_rect(Rect2(x, base_y - 9.0, 1.0, 9.0), col_tick, true)
+		PmText.draw(ci, font, Rect2(x, r.position.y, room[i], r.size.y), Lanes.ruler_label(major[i].x, fps, pps), fs, col_text, HORIZONTAL_ALIGNMENT_LEFT, inset, r.position.y + 2.0 + font.get_ascent(fs), PmText.WHOLE)
+	for mx: float in (m["minor"] as PackedFloat32Array):
+		ci.draw_rect(Rect2(mx, base_y - 4.0, 1.0, 4.0), col_tick, true)
+	for sr: Rect2 in (m["seams"] as Array[Rect2]):
+		draw_seam(ci, sr.intersection(r) if sr.intersects(r) else sr)
 	ci.draw_rect(Rect2(r.position.x, r.end.y - 1.0, r.size.x, 1.0), Tk.c["border"], true)
+
+
+static func draw_seam(ci: CanvasItem, r: Rect2) -> void:
+	if r.size.x <= 0.0 or r.size.y <= 0.0:
+		return
+	ci.draw_rect(r, Color(Tk.c["bg_panel"], 0.85), true)
+	hatch(ci, r, Tk.c["hatch"], SEAM_HATCH)
+	ci.draw_rect(Rect2(r.position.x, r.position.y, 1.0, r.size.y), Tk.c["border"], true)
+	ci.draw_rect(Rect2(r.end.x - 1.0, r.position.y, 1.0, r.size.y), Tk.c["border"], true)
+
+
+static func draw_fold_seams(ci: CanvasItem, fold: Dictionary, header_w: float, pps: float, scroll_x: float, top: float, bottom: float, right: float) -> int:
+	var drawn: int = 0
+	for sp: Vector2 in Fold.seams(fold):
+		var x0: float = maxf(Fold.x_of(fold, sp.x, header_w, pps, scroll_x), header_w)
+		var x1: float = minf(Fold.x_of(fold, sp.y, header_w, pps, scroll_x), right)
+		if x1 <= x0 or bottom <= top:
+			continue
+		draw_seam(ci, Rect2(x0, top, x1 - x0, bottom - top))
+		drawn += 1
+	return drawn
 
 
 static func draw_in_out(ci: CanvasItem, r: Rect2, x_in: float, x_out: float) -> void:

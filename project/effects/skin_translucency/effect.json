@@ -1,0 +1,25 @@
+{
+ "id": "skin_translucency",
+ "label": "Skin Translucency",
+ "category": "Light & Shadow",
+ "tags": ["light"],
+ "version": 1,
+ "blurb": "Gives skin the look of light passing through it: red light travels further under skin than green or blue, so the edge of every shadow on a face turns a warm, soft red while pores, hair and stubble stay sharp, and the lit skin takes on a faint inner glow. It touches only skin coloured parts unless Skin only is turned off, and Scatter distance sets how far the light travels.",
+ "params": [
+  {"key": "translucency", "label": "Translucency", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.7},
+  {"key": "scatter", "label": "Scatter distance", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6},
+  {"key": "scatter_colour", "label": "Light under the skin", "type": "color", "default": [1.0, 0.42, 0.25, 1.0]},
+  {"key": "glow", "label": "Inner glow", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.4},
+  {"key": "skin_hue", "label": "Skin hue", "type": "float", "min": 0, "max": 360, "step": 0.5, "default": 22, "unit": " deg"},
+  {"key": "skin_width", "label": "Skin hue width", "type": "float", "min": 5, "max": 120, "step": 0.5, "default": 40, "unit": " deg"},
+  {"key": "skin_only", "label": "Skin only", "type": "bool", "default": true},
+  {"key": "show_mask", "label": "Show the skin found", "type": "bool", "default": false}
+ ],
+ "passes": [
+  {"shader": "mask.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "res://effects/glow/down13.gdshader", "scale": 0.5},
+  {"shader": "compose.gdshader", "scale": 16.0, "inputs": {"l1": 0, "l2": 1, "l3": 2, "l4": 3}}
+ ]
+}

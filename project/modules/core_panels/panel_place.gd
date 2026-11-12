@@ -645,7 +645,11 @@ static func keys_turn(panel: Object) -> void:
 	var seen: String = String(list.get_meta(META + "_seen", ""))
 	if data.has("path") and String(panel.get("property_path")) == seen:
 		panel.set("property_path", String(data["path"]))
-	var rows: int = (panel.call("properties_of", c) as Array).size()
+		if panel.has_method("rebuild"):
+			panel.call("rebuild")
+		elif panel.has_method("regroup"):
+			panel.call("regroup", c as Clip)
+	var rows: int = int(panel.call("row_count")) if panel.has_method("row_count") else (panel.call("properties_of", c) as Array).size()
 	var row_v: Variant = list.get("ROW")
 	var row_h: float = float(row_v) if row_v != null else 22.0
 	var top: float = maxf(float(rows) * row_h - (list as Control).size.y, 0.0)

@@ -1,0 +1,18 @@
+{
+ "id": "paint_splatter",
+ "label": "Paint Splatter",
+ "group": "Particles",
+ "space": "2D",
+ "from": ["Filmora Paint Splash", "Boris Splatter Wipe"],
+ "blurb": "Blobs of wet paint are thrown at the frame one after another and the incoming shot arrives inside them. Each splat lands with a ragged edge that is never the same twice, swells out past its final size and settles back, and throws a scatter of small droplets ahead of itself. Give it a paint colour and the blobs land as flat colour first and then clear to the picture underneath, like a real paint wipe. Set how many splats there are, how big they get, and how far the droplets fly.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "splats", "label": "Splats", "type": "float", "min": 2.0, "max": 14.0, "step": 0.5, "default": 5.0},
+  {"key": "spread", "label": "Splat size", "type": "float", "min": 0.5, "max": 2.5, "step": 0.01, "default": 1.15},
+  {"key": "ragged", "label": "Ragged edge", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "droplets", "label": "Droplets", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "paint", "label": "Paint colour", "type": "color", "default": [1.0, 1.0, 1.0, 1.0]},
+  {"key": "paint_amount", "label": "Paint first", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.0},
+  {"key": "softness", "label": "Soft edge", "type": "float", "min": 0.0, "max": 0.2, "step": 0.005, "default": 0.012}
+ ]
+}

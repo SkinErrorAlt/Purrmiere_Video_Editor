@@ -36,7 +36,7 @@ const CHIP_GAP := 14.0
 const EASE_FAMILY := "sine"
 const TOOLS: PackedStringArray = ["select", "pen"]
 const LOCKED_TEXT := "This clip is on a locked track or in a locked group, unlock it to change its speed"
-const BACKWARDS_TEXT := "This clip plays backwards or holds a frame, change its speed in Effect Controls"
+const HELD_TEXT := "This clip holds one frame, give it a speed in Effect Controls first"
 const LAYERED_TEXT := "This clip's speed uses noise, waves, expressions or a loop, change it in Effect Controls"
 const HOLD_FRAMES := 2
 const LABEL_LINE := "Speed band"
@@ -64,7 +64,7 @@ static func band_h(lane_h: float) -> float:
 
 
 static func y_of(v: float, top: float, h: float) -> float:
-	var u: float = clampf(log(maxf(v, 0.0001)) / log(2.0) / LOG_RANGE, -1.0, 1.0)
+	var u: float = clampf(log(maxf(absf(v), 0.0001)) / log(2.0) / LOG_RANGE, -1.0, 1.0)
 	return top + h * 0.5 - u * h * 0.5
 
 
@@ -167,8 +167,8 @@ static func press(canvas: Control, pos: Vector2, mods: Dictionary) -> bool:
 		else:
 			add_key(d, s, c, float(hr["t"]), float(canvas.call("fps")))
 		return true
-	if not SpeedCurve.positive(c.speed):
-		Events.toast(BACKWARDS_TEXT)
+	if not AnimProp.is_animated(c.speed) and SpeedCurve.static_value(c.speed) == 0.0:
+		Events.toast(HELD_TEXT)
 		return true
 	if not SpeedCurve.fast(c.speed):
 		Events.toast(LAYERED_TEXT)
@@ -216,7 +216,7 @@ static func _hold_follow(info: Dictionary, s: Sequence, c: Clip) -> void:
 	if bool(info["held"]):
 		return
 	info["held"] = true
-	if not SpeedFollow.pref_on() or Session.playing or Session.seq() != s:
+	if not SpeedFollow.pref_on() or Session.playing or Session.seq() != s or not SpeedCurve.positive(info["prop0"]):
 		return
 	var ph: float = Session.playhead()
 	if ph < c.start or ph >= c.end():
@@ -243,8 +243,14 @@ static func _scaled(prop0: Dictionary, idx: PackedInt32Array, ratio: float) -> D
 		if i < 0 or i >= ks.size():
 			continue
 		var k: Dictionary = ks[i]
-		k["v"] = clampf(snappedf(SpeedCurve.key_value(k) * ratio, 0.0001), MIN_SPEED, MAX_SPEED)
+		k["v"] = scaled_value(SpeedCurve.key_value(k), ratio)
 	return SpeedCurve.with_keys(prop0, ks)
+
+
+static func scaled_value(v: float, ratio: float) -> float:
+	if v == 0.0:
+		return 0.0
+	return signf(v) * clampf(snappedf(absf(v) * ratio, 0.0001), MIN_SPEED, MAX_SPEED)
 
 
 static func _plain(k: Dictionary) -> Dictionary:
@@ -316,18 +322,22 @@ static func drag_motion(host: Control, drag: RefCounted, pos: Vector2, mods: Dic
 	var prop0: Dictionary = info["prop0"]
 	var what: String = String(info["what"])
 	var cmd: Command = null
-	if what == "line":
-		var v0: float = maxf(float(info["v0"]), MIN_SPEED)
+	if what == "line" and float(info["v0"]) == 0.0:
+		info["value"] = 0.0
+	elif what == "line":
+		var v0: float = float(info["v0"])
+		var mag0: float = maxf(absf(v0), MIN_SPEED)
 		var dy: float = press.y - pos.y
 		if bool(mods.get("shift", false)):
 			dy *= FINE
-		var v: float = clampf(snappedf(v0 * pow(2.0, dy / px_per_double(float(info["h"]))), 0.01), MIN_SPEED, MAX_SPEED)
+		var mag: float = clampf(snappedf(mag0 * pow(2.0, dy / px_per_double(float(info["h"]))), 0.01), MIN_SPEED, MAX_SPEED)
+		var v: float = signf(v0) * mag
 		info["value"] = v
 		if bool(info["static"]):
 			if absf(v - v0) > 0.00001:
 				cmd = BandCmds.step_static(s.id, c.id, v)
 		else:
-			var next: Dictionary = _scaled(prop0, info["idx"], v / v0)
+			var next: Dictionary = _scaled(prop0, info["idx"], mag / mag0)
 			if next != prop0:
 				cmd = BandCmds.step(s.id, c.id, next, info.get("hint", {}))
 	else:
@@ -666,7 +676,8 @@ static func band_entry(c: Clip, size: Vector2, shift: float, pps: float) -> Dict
 static func chip_text(info: Dictionary) -> String:
 	var what: String = String(info.get("what", ""))
 	if what == "line":
-		return str(int(round(float(info.get("value", 1.0)) * 100.0))) + " %"
+		var v: float = float(info.get("value", 1.0))
+		return str(int(round(v * 100.0))) + " %" + (" backwards" if v < 0.0 else "")
 	var nt: float = float(info.get("nt", 0.0))
 	var dt: float = nt - float(info.get("kt", 0.0))
 	var head: String = "Ramp " if bool(info.get("split", false)) else ""

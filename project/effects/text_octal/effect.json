@@ -1,0 +1,26 @@
+{
+ "id": "text_octal",
+ "label": "Octal",
+ "category": "Text",
+ "version": 1,
+ "applies_to": "text",
+ "text_transform": "octal",
+ "tags": [
+  "text",
+  "encoding"
+ ],
+ "blurb": "Each byte of the text (UTF-8) as three digits from 0 to 7.",
+ "params": [
+  {
+   "key": "direction",
+   "label": "Direction",
+   "type": "enum",
+   "choices": [
+    "Encode",
+    "Decode"
+   ],
+   "default": 0
+  }
+ ],
+ "passes": []
+}

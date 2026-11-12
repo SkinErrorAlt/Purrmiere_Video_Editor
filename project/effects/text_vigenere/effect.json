@@ -1,0 +1,33 @@
+{
+ "id": "text_vigenere",
+ "label": "Vigenère",
+ "category": "Text",
+ "version": 1,
+ "applies_to": "text",
+ "text_transform": "vigenere",
+ "tags": [
+  "text",
+  "cipher"
+ ],
+ "blurb": "Shifts each letter by the next letter of a key word. The key only moves on letters, as on encrypt-online and dCode.",
+ "params": [
+  {
+   "key": "key",
+   "label": "Key",
+   "type": "string",
+   "default": "MIRROR",
+   "keyable": true
+  },
+  {
+   "key": "direction",
+   "label": "Direction",
+   "type": "enum",
+   "choices": [
+    "Encode",
+    "Decode"
+   ],
+   "default": 0
+  }
+ ],
+ "passes": []
+}

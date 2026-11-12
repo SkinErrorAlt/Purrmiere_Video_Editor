@@ -12,10 +12,13 @@ const LayerChain := preload("res://engine/layer_chain.gd")
 const PairLayout := preload("res://engine/pair_layout.gd")
 const TitleStyle := preload("res://doc/title_style.gd")
 const TitleBounds := preload("res://doc/title_bounds.gd")
+const TextFrame := preload("res://doc/text_frame.gd")
 const TextGlyphs := preload("res://engine/text_glyphs.gd")
 const Parenting := preload("res://doc/parenting.gd")
 const Puppet := preload("res://doc/puppet.gd")
 const ViewHide := preload("res://engine/view_hide.gd")
+const TextFx := preload("res://doc/text_fx/text_fx.gd")
+const EffectSource := preload("res://modules/core_panels/effect_source.gd")
 const ALPHA_MIN := 0.1
 const OPACITY_MIN := 0.01
 const ALPHA_SIDE := 256
@@ -147,13 +150,52 @@ static func quad_of_clip(c: Clip, s: Sequence, d: Project, t: float) -> PackedVe
 
 
 static func quad_from_tf(tf: Dictionary, base: Vector2, s: Sequence) -> PackedVector2Array:
+	return quad_from_tf_rect(tf, base, Rect2(Vector2.ZERO, base), s)
+
+
+static func quad_from_tf_rect(tf: Dictionary, base: Vector2, r: Rect2, s: Sequence) -> PackedVector2Array:
 	var pivot_px: Vector2 = base * 0.5 + (tf["anchor"] as Vector2)
 	var centre: Vector2 = Vector2(float(s.width), float(s.height)) * 0.5 + (tf["pos"] as Vector2)
 	var xf: Transform2D = Transform2D(deg_to_rad(float(tf["rotation"])), tf["scale"], 0.0, centre)
 	var out: PackedVector2Array = PackedVector2Array()
-	for cn: Vector2 in [Vector2.ZERO, Vector2(base.x, 0.0), base, Vector2(0.0, base.y)]:
+	for cn: Vector2 in [r.position, Vector2(r.end.x, r.position.y), r.end, Vector2(r.position.x, r.end.y)]:
 		out.append(xf * (cn - pivot_px))
 	return out
+
+
+static func words_only(c: Clip, m: MediaItem, size: Vector2, t: float, s: Sequence) -> Rect2:
+	var whole: Rect2 = Rect2(Vector2.ZERO, size)
+	if m == null or c == null or c.is_nest() or m.kind != "title":
+		return whole
+	var props: Dictionary = m.props.duplicate(true)
+	var now: Dictionary = c.props_at(t - c.start, s.fps)
+	for k: Variant in now.keys():
+		props[k] = now[k]
+	TextFx.apply_to_props(c, EffectSource.registry(), props, m.label, t - c.start, s.fps)
+	var merged: Dictionary = TitleStyle.merged("title", {}, props, m.label)
+	if TextFrame.is_box(merged):
+		return TextFrame.box_rect(merged, size)
+	if TextFrame.is_point(merged):
+		var tight: Rect2 = TextGlyphs.bounds(merged, size)
+		return tight if tight.has_area() else Rect2(size * 0.5, Vector2(1.0, 1.0))
+	var r: Rect2 = title_rect(merged, size)
+	if not r.has_area():
+		return whole
+	var cut: Rect2 = r.intersection(whole)
+	return cut if cut.has_area() else whole
+
+
+static func snaps_by_words(c: Clip, d: Project) -> bool:
+	if c == null or d == null or c.is_nest():
+		return false
+	var m: MediaItem = d.media_by_id(c.media_id)
+	return m != null and m.kind == "title"
+
+
+static func words_quad_of_clip(c: Clip, s: Sequence, d: Project, t: float) -> PackedVector2Array:
+	var m: MediaItem = d.media_by_id(c.media_id) if d != null else null
+	var base: Vector2 = PairLayout.picture_size(c, layer_size(c, m, s, d), Vector2(float(s.width), float(s.height)))
+	return quad_from_tf_rect(Parenting.world_tf(c, s, t, s.fps, Parenting.token_of(d)), base, words_only(c, m, base, t, s), s)
 
 
 static func _param(params: Dictionary, key: String, t: float, dur: float, fps: float) -> float:
@@ -232,6 +274,8 @@ static func content_alpha(c: Clip, m: MediaItem, uv: Vector2, size: Vector2, t: 
 		props[k] = now[k]
 	if m.kind == "title":
 		var merged: Dictionary = TitleStyle.merged("title", {}, props, m.label)
+		if TextFrame.is_box(merged):
+			return 1.0 if TextFrame.box_rect(merged, size).has_point(uv * size) else 0.0
 		if TextGlyphs.active(merged):
 			var slack: float = maxf(float(merged.get("box_pad", 12.0)), 0.0) * size.y / 1080.0
 			return 1.0 if TextGlyphs.hit(merged, size, uv * size, slack) else 0.0

@@ -1,0 +1,31 @@
+{
+ "id": "light_spill",
+ "label": "Light Spill",
+ "category": "Light & Shadow",
+ "tags": ["light"],
+ "version": 1,
+ "blurb": "The bright coloured lights already in the shot, a neon sign, a screen, a lit window, throw their colour onto the surfaces round them, strongest close by and falling away with distance. It lights surfaces rather than glowing over them, so a pale wall turns the colour of the sign while dark cloth stays dark. Coloured lights only leaves white lamps out; Light in the dark lets the spill reach surfaces that are barely lit.",
+ "params": [
+  {"key": "threshold", "label": "Light brightness", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.7},
+  {"key": "colour_bias", "label": "Coloured lights only", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.5},
+  {"key": "reach", "label": "Reach", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.7},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0, "max": 4, "step": 0.01, "default": 1.0},
+  {"key": "saturation", "label": "Spill colour", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 1.25},
+  {"key": "lift", "label": "Light in the dark", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.2},
+  {"key": "light_only", "label": "Show the spill only", "type": "bool", "default": false}
+ ],
+ "passes": [
+  {"shader": "bright.gdshader", "scale": 0.5},
+  {"shader": "down.gdshader", "scale": 0.5},
+  {"shader": "down.gdshader", "scale": 0.5},
+  {"shader": "down.gdshader", "scale": 0.5},
+  {"shader": "down.gdshader", "scale": 0.5},
+  {"shader": "down.gdshader", "scale": 0.5},
+  {"shader": "up.gdshader", "scale": 2.0, "inputs": {"level_tex": 4}},
+  {"shader": "up.gdshader", "scale": 2.0, "inputs": {"level_tex": 3}},
+  {"shader": "up.gdshader", "scale": 2.0, "inputs": {"level_tex": 2}},
+  {"shader": "up.gdshader", "scale": 2.0, "inputs": {"level_tex": 1}},
+  {"shader": "up.gdshader", "scale": 2.0, "inputs": {"level_tex": 0}},
+  {"shader": "spill.gdshader", "scale": 2.0}
+ ]
+}

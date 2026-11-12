@@ -1,0 +1,18 @@
+{
+ "id": "flipbook",
+ "label": "Flipbook",
+ "group": "3D",
+ "space": "2D",
+ "from": ["Keynote Page Flip", "Boris Riffle"],
+ "blurb": "A real flipbook, thumbed through at the cut. It does not slide smoothly: it runs at its own low frame rate, so a page flicks over, lands, and sits there until the next one goes, which is the judder that makes a flipbook read as motion rather than as a slideshow. Flipbook rate sets how many pages go over per second and the page count follows from the length of the transition, so a long cut at eight a second is a thick book and a short one is a few quick flicks. No two pages carry the same picture: the framing walks on a step with every page, drifting and closing in as the stack goes down, so the drawing moves from page to page the way it does in a book you flick with your thumb, and the shot itself changes over at the middle page. Every page is printed a hair off register as well, shifted and turned a fraction from the one under it, the way a hand made book never lines up. Set the rate, how far the framing walks on, how badly the pages sit off register, how tightly they curl, how bright their backs are and which way the thumb runs.",
+ "default_duration": 1.2,
+ "params": [
+  {"key": "fps", "label": "Flipbook rate", "type": "float", "min": 2.0, "max": 24.0, "step": 0.5, "default": 8.0, "unit": " fps"},
+  {"key": "drift", "label": "Page drift", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.55},
+  {"key": "jitter", "label": "Off register", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45},
+  {"key": "curl", "label": "Curl", "type": "float", "min": 0.02, "max": 0.4, "step": 0.005, "default": 0.12},
+  {"key": "back", "label": "Page back", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "flip_left", "label": "Thumb runs left", "type": "bool", "default": false},
+  {"key": "lean", "label": "Lean", "type": "float", "min": 0.0, "max": 0.5, "step": 0.01, "default": 0.2}
+ ]
+}

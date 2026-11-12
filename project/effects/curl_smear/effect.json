@@ -1,0 +1,17 @@
+{
+ "id": "curl_smear",
+ "label": "Curl Smear",
+ "category": "Stylize",
+ "version": 1,
+ "blurb": "Drags the picture along a field of curling currents, so every part of the frame is smeared in the direction the flow happens to be going there. The currents swirl and fold back on themselves without ever crossing, the way smoke or a slow river does, and because the colour is carried along them the result looks painted with a loaded brush rather than blurred. The flow can be left to its own pattern or made to run along the edges in the shot so it strokes round what is in the frame. Set the length of the stroke, the size of the swirls and how fast they turn over.",
+ "params": [
+  {"key": "length_amount", "label": "Stroke length", "type": "float", "min": 0.0, "max": 0.2, "step": 0.002, "default": 0.035},
+  {"key": "scale", "label": "Swirl size", "type": "float", "min": 0.5, "max": 16.0, "step": 0.1, "default": 4.0},
+  {"key": "follow", "label": "Follows the shape", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "churn", "label": "Churn over time", "type": "float", "min": -2.0, "max": 2.0, "step": 0.01, "default": 0.0, "unit": " /s"},
+  {"key": "taps", "label": "Smoothness", "type": "int", "min": 2, "max": 16, "step": 1, "default": 9},
+  {"key": "keep_edges", "label": "Keeps the detail", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.25},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 1.0}
+ ],
+ "passes": "single"
+}

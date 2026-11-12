@@ -1,0 +1,14 @@
+{
+ "id": "object_select",
+ "label": "Object Select",
+ "category": "Purrmiere",
+ "tags": ["mask", "matte"],
+ "version": 1,
+ "blurb": "Holds one selected object for this clip. Drop it on a clip and click the thing you want on the Program monitor: the clip is cut to that object, and Track the object carries the cut out through the shot. Any other effect can then be pointed at the same object in its Mask row, either kept inside the object or spilling out past its edge so glows and blurs bleed off the cut out instead of being clipped to it. Show: Matte paints the object flat so you can check the edge.",
+ "params": [
+  {"key": "show", "label": "Show", "type": "enum", "choices": ["The picture", "The matte"], "default": 0},
+  {"key": "matte_colour", "label": "Matte colour", "type": "color", "default": [1, 1, 1, 1]},
+  {"key": "dim", "label": "Dim the rest", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0}
+ ],
+ "passes": "single"
+}

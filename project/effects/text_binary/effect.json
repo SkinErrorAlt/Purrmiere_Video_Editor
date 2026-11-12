@@ -1,0 +1,36 @@
+{
+ "id": "text_binary",
+ "label": "Binary",
+ "category": "Text",
+ "version": 1,
+ "applies_to": "text",
+ "text_transform": "binary",
+ "tags": [
+  "text",
+  "encoding"
+ ],
+ "blurb": "Each byte of the text (UTF-8) as eight 0s and 1s.",
+ "params": [
+  {
+   "key": "direction",
+   "label": "Direction",
+   "type": "enum",
+   "choices": [
+    "Encode",
+    "Decode"
+   ],
+   "default": 0
+  },
+  {
+   "key": "spacing",
+   "label": "Spacing",
+   "type": "enum",
+   "choices": [
+    "A space between bytes",
+    "No spaces"
+   ],
+   "default": 0
+  }
+ ],
+ "passes": []
+}

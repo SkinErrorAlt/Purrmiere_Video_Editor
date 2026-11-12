@@ -1,0 +1,22 @@
+{
+ "id": "ikat",
+ "label": "Ikat",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Weaves the picture as ikat, where the threads are tied and dyed before they ever go on the loom: the picture is dyed into a handful of traditional dyes, then each thread lands a little higher or lower than its neighbours when it is strung up, so every edge comes out in the soft, flame like feathering that ikat is known for. Bundles of threads that were tied together drift together, the woven threads show their roundness and twist, and the binding can run in the warp, the weft or both.",
+ "params": [
+  {"key": "dyes", "label": "Dyes", "type": "enum", "choices": ["Traditional dyes", "The picture's colours"], "default": 0},
+  {"key": "bind", "label": "Dyed threads", "type": "enum", "choices": ["Warp, feathered up and down", "Weft, feathered side to side", "Double ikat, both"], "default": 0},
+  {"key": "thread", "label": "Thread width", "type": "float", "min": 1.5, "max": 16.0, "step": 0.1, "default": 4.0, "unit": " px"},
+  {"key": "feather", "label": "Feathering", "type": "float", "min": 0.0, "max": 120.0, "step": 0.5, "default": 30.0, "unit": " px"},
+  {"key": "drift", "label": "Bundle drift", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "weave", "label": "Weave texture", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": [
+  {"shader": "res://effects/batik/soften.gdshader", "scale": 0.25},
+  {"shader": "res://effects/batik/soften.gdshader", "scale": 1.0},
+  {"shader": "weave.gdshader", "scale": 4.0}
+ ]
+}

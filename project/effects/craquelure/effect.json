@@ -12,5 +12,7 @@
   {"key": "light_angle", "label": "Light direction", "type": "float", "min": -180.0, "max": 180.0, "step": 1.0, "default": 135.0, "unit": " deg"},
   {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
  ],
+ "handles": [{"kind": "angle", "key": "light_angle", "zero": "right", "turn": "ccw"}],
+ "panels": [{"kind": "light_ball", "bind": {"angle": "light_angle"}, "options": {"zero": "right", "turn": "ccw"}}],
  "passes": "single"
 }

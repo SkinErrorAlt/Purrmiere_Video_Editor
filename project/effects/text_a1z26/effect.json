@@ -1,0 +1,27 @@
+{
+ "id": "text_a1z26",
+ "label": "A1Z26 Letter Numbers",
+ "category": "Text",
+ "version": 1,
+ "applies_to": "text",
+ "text_transform": "a1z26",
+ "tags": [
+  "text",
+  "cipher",
+  "encoding"
+ ],
+ "blurb": "Writes each letter as its place in the alphabet, 1 to 26, joined with dashes; words are split by spaces.",
+ "params": [
+  {
+   "key": "direction",
+   "label": "Direction",
+   "type": "enum",
+   "choices": [
+    "Encode",
+    "Decode"
+   ],
+   "default": 0
+  }
+ ],
+ "passes": []
+}

@@ -1,0 +1,267 @@
+{
+ "id": "motion_vapour",
+ "label": "Motion Vapour",
+ "category": "Time",
+ "tags": [
+  "look"
+ ],
+ "version": 1,
+ "blurb": "Everything that moves gives off vapour in its own colours, which rises, curls and fades in the air behind it, while still things give off nothing. A dancer trails coloured mist from her arms, a passing car leaves a plume, a waved hand smokes. The air also gets dragged along by the movement, so the vapour swirls in behind whatever pushes through it. Coloured vapour glows in the colours of the moving thing, Smoke is grey and lit from above, Flame burns off the movement, and Hot air is invisible and only shimmers the picture behind it like heat over a road.",
+ "history": {
+  "max": 62,
+  "reach": [
+   "life"
+  ],
+  "seconds": [
+   "life"
+  ]
+ },
+ "params": [
+  {
+   "key": "kind",
+   "label": "Kind",
+   "type": "enum",
+   "choices": [
+    "Coloured vapour",
+    "Smoke",
+    "Flame",
+    "Hot air"
+   ],
+   "default": 0
+  },
+  {
+   "key": "life",
+   "label": "Lasts",
+   "type": "float",
+   "min": 0.2,
+   "max": 2.0,
+   "step": 0.01,
+   "default": 1.2,
+   "unit": " s"
+  },
+  {
+   "key": "strength",
+   "label": "Strength",
+   "type": "float",
+   "min": 0.0,
+   "max": 2.0,
+   "step": 0.01,
+   "default": 1.1
+  },
+  {
+   "key": "sensitivity",
+   "label": "Sensitivity",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.4
+  },
+  {
+   "key": "rise",
+   "label": "Rise",
+   "type": "float",
+   "min": -6.0,
+   "max": 6.0,
+   "step": 0.01,
+   "default": 1.6,
+   "unit": " px"
+  },
+  {
+   "key": "wind",
+   "label": "Wind",
+   "type": "float",
+   "min": 0.0,
+   "max": 10.0,
+   "step": 0.01,
+   "default": 0.0,
+   "unit": " px"
+  },
+  {
+   "key": "wind_angle",
+   "label": "Wind direction",
+   "type": "float",
+   "min": -180.0,
+   "max": 180.0,
+   "step": 1.0,
+   "default": 0.0,
+   "unit": " deg"
+  },
+  {
+   "key": "swirl",
+   "label": "Swirl",
+   "type": "float",
+   "min": 0.0,
+   "max": 4.0,
+   "step": 0.01,
+   "default": 1.0
+  },
+  {
+   "key": "swirl_size",
+   "label": "Swirl size",
+   "type": "float",
+   "min": 8.0,
+   "max": 300.0,
+   "step": 1.0,
+   "default": 60.0,
+   "unit": " px"
+  },
+  {
+   "key": "drag",
+   "label": "Dragged by movement",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.5,
+   "step": 0.01,
+   "default": 0.5
+  },
+  {
+   "key": "spread",
+   "label": "Spread",
+   "type": "float",
+   "min": 0.0,
+   "max": 4.0,
+   "step": 0.01,
+   "default": 1.0
+  },
+  {
+   "key": "shake",
+   "label": "Ignore shake under",
+   "type": "float",
+   "min": 0.0,
+   "max": 6.0,
+   "step": 0.1,
+   "default": 2.0,
+   "unit": " px"
+  },
+  {
+   "key": "smoke_colour",
+   "label": "Smoke colour",
+   "type": "color",
+   "default": [
+    0.82,
+    0.82,
+    0.84,
+    1.0
+   ]
+  },
+  {
+   "key": "camera",
+   "label": "Ignore camera movement",
+   "type": "bool",
+   "default": true
+  }
+ ],
+ "passes": [
+  {
+   "shader": "res://effects/pixel_motion_blur/luma.gdshader",
+   "scale": 0.5,
+   "set": {
+    "stage": 0,
+    "age": 1.0
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/luma.gdshader",
+   "scale": 0.5,
+   "set": {
+    "stage": 1
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/luma.gdshader",
+   "scale": 0.5,
+   "set": {
+    "stage": 1
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/luma.gdshader",
+   "scale": 0.5,
+   "set": {
+    "stage": 1
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/search.gdshader",
+   "scale": 1.0,
+   "set": {
+    "radius": 6,
+    "level_scale": 16.0,
+    "patch": 2,
+    "lambda": 0.004
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/refine.gdshader",
+   "scale": 2.0,
+   "set": {
+    "level_scale": 8.0,
+    "patch": 1,
+    "lambda": 0.004
+   },
+   "inputs": {
+    "luma_tex": 2
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/refine.gdshader",
+   "scale": 2.0,
+   "set": {
+    "level_scale": 4.0,
+    "patch": 1,
+    "lambda": 0.004,
+    "half_step": true
+   },
+   "inputs": {
+    "luma_tex": 1
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/refine.gdshader",
+   "scale": 2.0,
+   "set": {
+    "level_scale": 2.0,
+    "patch": 1,
+    "lambda": 0.004,
+    "half_step": true
+   },
+   "inputs": {
+    "luma_tex": 0
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/smooth.gdshader",
+   "scale": 1.0
+  },
+  {
+   "shader": "res://effects/_motion_kit/global.gdshader",
+   "scale": 0.0625
+  },
+  {
+   "shader": "res://effects/_motion_kit/clean.gdshader",
+   "scale": 16.0,
+   "inputs": {
+    "flow_tex": 8,
+    "luma_tex": 0,
+    "global_tex": 9
+   }
+  },
+  {
+   "shader": "res://effects/pixel_motion_blur/smooth.gdshader",
+   "scale": 1.0
+  },
+  {
+   "shader": "vapour.gdshader",
+   "scale": 1.0,
+   "inputs": {
+    "flow_tex": 11,
+    "global_tex": 9
+   }
+  },
+  {
+   "shader": "composite.gdshader",
+   "scale": 2.0
+  }
+ ]
+}

@@ -1,0 +1,20 @@
+{
+ "id": "snd_speaker_cone",
+ "label": "Speaker Cone",
+ "category": "Audio Reactive",
+ "tags": ["audio", "reactive", "bass", "distort"],
+ "version": 1,
+ "blurb": "The picture becomes the cone of a speaker. Each kick and boom pushes the middle out, and the push rolls outward as a pressure wave you can follow across the frame, because every ring of the picture shows the bass from a moment earlier: the centre is now, the edge is the sound that has just passed. The light catches the slopes of the wave, and silence leaves the picture flat and still.",
+ "params": [
+  {"key": "push", "label": "Push", "type": "float", "min": 0.0, "max": 120.0, "step": 0.5, "default": 36.0, "unit": " px"},
+  {"key": "travel", "label": "Time to the edge", "type": "float", "min": 0.05, "max": 2.0, "step": 0.01, "default": 0.4, "unit": " s"},
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "follow", "label": "Follow", "type": "enum", "choices": ["Bass", "Everything", "Voice"], "default": 0},
+  {"key": "light", "label": "Light on the wave", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "light_angle", "label": "Light from", "type": "float", "min": -180.0, "max": 180.0, "step": 0.5, "default": -50.0, "unit": " deg"},
+  {"key": "damping", "label": "Fade outward", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.45}
+ ],
+ "passes": [{"shader": "effect.gdshader"}],
+ "reactive": {"listen": {"past": "travel"}, "defaults": {"snd_threshold": 5.0}},
+ "handles": [{"kind": "point", "key": "centre"}, {"kind": "angle", "key": "light_angle", "about": "centre"}]
+}

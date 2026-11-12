@@ -1,0 +1,213 @@
+{
+ "id": "slime_mould",
+ "label": "Slime Mould",
+ "category": "Stylize",
+ "tags": [
+  "look"
+ ],
+ "version": 1,
+ "blurb": "Lets a slime mould loose on the picture. It sets out from one point as a bright yellow fan that feels its way across the shot, and the bright spots in the picture, lamps, highlights, a glint on a car, are its food. Every piece of food it reaches gets joined back to where it started by a living tube that takes the shortest way over the picture, so the tubes branch and merge into a network the way the real organism builds one, thick near home and thin at the tips, with the plasm pulsing along them. The exploring veins it no longer needs dry up and leave a faint slime track. A different shot, or the same shot as things move, feeds it differently and grows a different network.",
+ "params": [
+  {
+   "key": "start",
+   "label": "Starts at",
+   "type": "vec2",
+   "default": [
+    0.5,
+    0.5
+   ]
+  },
+  {
+   "key": "speed",
+   "label": "Spread speed",
+   "type": "float",
+   "min": 0.02,
+   "max": 1.0,
+   "step": 0.005,
+   "default": 0.15
+  },
+  {
+   "key": "start_time",
+   "label": "Starts at time",
+   "type": "float",
+   "min": 0.0,
+   "max": 30.0,
+   "step": 0.05,
+   "default": 0.0,
+   "unit": " s"
+  },
+  {
+   "key": "food",
+   "label": "Food",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.5
+  },
+  {
+   "key": "thickness",
+   "label": "Tube thickness",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.5
+  },
+  {
+   "key": "explore",
+   "label": "Exploring veins",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.6
+  },
+  {
+   "key": "retract",
+   "label": "Veins dry up after",
+   "type": "float",
+   "min": 0.2,
+   "max": 20.0,
+   "step": 0.1,
+   "default": 4.0,
+   "unit": " s"
+  },
+  {
+   "key": "colour",
+   "label": "Colour",
+   "type": "color",
+   "default": [
+    0.98,
+    0.8,
+    0.06,
+    1.0
+   ]
+  },
+  {
+   "key": "seed",
+   "label": "Seed",
+   "type": "int",
+   "min": 0,
+   "max": 9999,
+   "step": 1,
+   "default": 0
+  }
+ ],
+ "handles": [
+  {
+   "kind": "point",
+   "key": "start"
+  }
+ ],
+ "passes": [
+  {
+   "shader": "grid.gdshader",
+   "scale": 0.125
+  },
+  {
+   "shader": "food.gdshader"
+  },
+  {
+   "shader": "relax_s.gdshader",
+   "set": {
+    "hop": 16.0
+   }
+  },
+  {
+   "shader": "relax_s.gdshader",
+   "set": {
+    "hop": 8.0
+   }
+  },
+  {
+   "shader": "relax_s.gdshader",
+   "set": {
+    "hop": 4.0
+   }
+  },
+  {
+   "shader": "relax_s.gdshader",
+   "set": {
+    "hop": 2.0
+   }
+  },
+  {
+   "shader": "relax_s.gdshader",
+   "set": {
+    "hop": 1.0
+   }
+  },
+  {
+   "shader": "relax_s.gdshader",
+   "set": {
+    "hop": 12.0
+   }
+  },
+  {
+   "shader": "relax_s.gdshader",
+   "set": {
+    "hop": 6.0
+   }
+  },
+  {
+   "shader": "relax_s.gdshader",
+   "set": {
+    "hop": 3.0
+   }
+  },
+  {
+   "shader": "relax_s.gdshader",
+   "set": {
+    "hop": 1.5
+   }
+  },
+  {
+   "shader": "relax_s.gdshader",
+   "set": {
+    "hop": 8.0
+   }
+  },
+  {
+   "shader": "relax_s.gdshader",
+   "set": {
+    "hop": 4.0
+   }
+  },
+  {
+   "shader": "relax_s.gdshader",
+   "set": {
+    "hop": 2.0
+   }
+  },
+  {
+   "shader": "relax_s.gdshader",
+   "set": {
+    "hop": 1.0
+   }
+  },
+  {
+   "shader": "relax_s.gdshader",
+   "set": {
+    "hop": 1.0
+   }
+  },
+  {
+   "shader": "trace.gdshader"
+  },
+  {
+   "shader": "raster.gdshader",
+   "scale": 4.0,
+   "inputs": {
+    "s_tex": 15
+   }
+  },
+  {
+   "shader": "compose.gdshader",
+   "scale": 2.0,
+   "inputs": {
+    "s_tex": 15
+   }
+  }
+ ]
+}

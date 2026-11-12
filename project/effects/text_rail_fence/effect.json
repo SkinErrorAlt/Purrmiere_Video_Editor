@@ -1,0 +1,44 @@
+{
+ "id": "text_rail_fence",
+ "label": "Rail Fence",
+ "category": "Text",
+ "version": 1,
+ "applies_to": "text",
+ "text_transform": "rail_fence",
+ "tags": [
+  "text",
+  "cipher"
+ ],
+ "blurb": "Writes the text in a zigzag over a number of rails and reads it off rail by rail. Every character moves, spaces too.",
+ "params": [
+  {
+   "key": "rails",
+   "label": "Rails",
+   "type": "int",
+   "min": 2,
+   "max": 12,
+   "step": 1,
+   "default": 3
+  },
+  {
+   "key": "offset",
+   "label": "Start part way down",
+   "type": "int",
+   "min": 0,
+   "max": 22,
+   "step": 1,
+   "default": 0
+  },
+  {
+   "key": "direction",
+   "label": "Direction",
+   "type": "enum",
+   "choices": [
+    "Encode",
+    "Decode"
+   ],
+   "default": 0
+  }
+ ],
+ "passes": []
+}

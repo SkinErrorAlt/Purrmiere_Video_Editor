@@ -82,6 +82,57 @@ uniform vec4 active_colour : source_color = vec4(1.0, 0.85, 0.3, 1.0);
 uniform int region_own = 0;
 uniform int sync_mode = 0;
 uniform int sync_show = 255;
+uniform int border_on = 0;
+uniform int border_solid = 0;
+uniform int border_moving = 0;
+uniform vec4 border_win0 = vec4(0.11, 0.11, 0.78, 0.78);
+uniform vec4 border_win1 = vec4(0.11, 0.11, 0.78, 0.78);
+uniform vec4 border_win2 = vec4(0.11, 0.11, 0.78, 0.78);
+uniform vec4 border_win3 = vec4(0.11, 0.11, 0.78, 0.78);
+uniform vec4 border_win4 = vec4(0.11, 0.11, 0.78, 0.78);
+uniform vec4 border_win5 = vec4(0.11, 0.11, 0.78, 0.78);
+uniform vec4 border_win6 = vec4(0.11, 0.11, 0.78, 0.78);
+uniform vec4 border_win7 = vec4(0.11, 0.11, 0.78, 0.78);
+uniform float border_zoom0 = 1.0;
+uniform float border_zoom1 = 1.0;
+uniform float border_zoom2 = 1.0;
+uniform float border_zoom3 = 1.0;
+uniform float border_zoom4 = 1.0;
+uniform float border_zoom5 = 1.0;
+uniform float border_zoom6 = 1.0;
+uniform float border_zoom7 = 1.0;
+uniform float border_inset0 = 0.0;
+uniform float border_inset1 = 0.0;
+uniform float border_inset2 = 0.0;
+uniform float border_inset3 = 0.0;
+uniform float border_inset4 = 0.0;
+uniform float border_inset5 = 0.0;
+uniform float border_inset6 = 0.0;
+uniform float border_inset7 = 0.0;
+uniform vec4 border_cell0 = vec4(0.0);
+uniform vec4 border_cell1 = vec4(0.0);
+uniform vec4 border_cell2 = vec4(0.0);
+uniform vec4 border_cell3 = vec4(0.0);
+uniform vec4 border_cell4 = vec4(0.0);
+uniform vec4 border_cell5 = vec4(0.0);
+uniform vec4 border_cell6 = vec4(0.0);
+uniform vec4 border_cell7 = vec4(0.0);
+uniform int label_show = 0;
+uniform float label_size = 0.075;
+uniform float label_plate = 0.75;
+uniform vec4 label_colour : source_color = vec4(1.0, 1.0, 1.0, 1.0);
+uniform vec2 label_px = vec2(384.0, 72.0);
+uniform float label_w0 = 0.0;
+uniform float label_w1 = 0.0;
+uniform float label_w2 = 0.0;
+uniform float label_w3 = 0.0;
+uniform float label_w4 = 0.0;
+uniform float label_w5 = 0.0;
+uniform float label_w6 = 0.0;
+uniform float label_w7 = 0.0;
+uniform sampler2D label_tex : filter_linear, repeat_disable, hint_default_transparent;
+uniform sampler2DArray border_atlas : filter_linear_mipmap, repeat_disable;
+uniform sampler2DArray border_reel : filter_linear_mipmap, repeat_disable;
 uniform sampler2D region_tex0 : filter_linear, repeat_disable;
 uniform sampler2D region_tex1 : filter_linear, repeat_disable;
 uniform sampler2D region_tex2 : filter_linear, repeat_disable;
@@ -150,6 +201,81 @@ float turn_at(int i) {
 	return turn7;
 }
 
+vec4 border_cell_at(int i) {
+	if (i == 0) { return border_cell0; }
+	if (i == 1) { return border_cell1; }
+	if (i == 2) { return border_cell2; }
+	if (i == 3) { return border_cell3; }
+	if (i == 4) { return border_cell4; }
+	if (i == 5) { return border_cell5; }
+	if (i == 6) { return border_cell6; }
+	return border_cell7;
+}
+
+vec2 border_size_at(int i) {
+	return border_cell_at(i).xy;
+}
+
+vec4 border_at(int i, vec2 uv) {
+	vec4 cell = border_cell_at(i);
+	if (bit_on(border_moving, i)) {
+		vec2 reel_full = max(vec2(textureSize(border_reel, 0).xy), vec2(1.0));
+		return texture(border_reel, vec3(uv * cell.xy / reel_full, cell.z));
+	}
+	vec2 full = max(vec2(textureSize(border_atlas, 0).xy), vec2(1.0));
+	return texture(border_atlas, vec3(uv * cell.xy / full, cell.z));
+}
+
+vec4 border_win_at(int i) {
+	if (i == 0) { return border_win0; }
+	if (i == 1) { return border_win1; }
+	if (i == 2) { return border_win2; }
+	if (i == 3) { return border_win3; }
+	if (i == 4) { return border_win4; }
+	if (i == 5) { return border_win5; }
+	if (i == 6) { return border_win6; }
+	return border_win7;
+}
+
+float border_zoom_at(int i) {
+	if (i == 0) { return border_zoom0; }
+	if (i == 1) { return border_zoom1; }
+	if (i == 2) { return border_zoom2; }
+	if (i == 3) { return border_zoom3; }
+	if (i == 4) { return border_zoom4; }
+	if (i == 5) { return border_zoom5; }
+	if (i == 6) { return border_zoom6; }
+	return border_zoom7;
+}
+
+float border_inset_at(int i) {
+	if (i == 0) { return border_inset0; }
+	if (i == 1) { return border_inset1; }
+	if (i == 2) { return border_inset2; }
+	if (i == 3) { return border_inset3; }
+	if (i == 4) { return border_inset4; }
+	if (i == 5) { return border_inset5; }
+	if (i == 6) { return border_inset6; }
+	return border_inset7;
+}
+
+float label_w_at(int i) {
+	if (i == 0) { return label_w0; }
+	if (i == 1) { return label_w1; }
+	if (i == 2) { return label_w2; }
+	if (i == 3) { return label_w3; }
+	if (i == 4) { return label_w4; }
+	if (i == 5) { return label_w5; }
+	if (i == 6) { return label_w6; }
+	return label_w7;
+}
+
+vec4 window_at(int i) {
+	vec4 w = border_win_at(i);
+	float k = min(w.z, w.w) * clamp(border_inset_at(i), -0.4, 0.45);
+	return vec4(w.x + k, w.y + k, max(w.z - k * 2.0, 0.01), max(w.w - k * 2.0, 0.01));
+}
+
 bool crosses(vec2 p, vec2 a, vec2 b) {
 	if ((a.y > p.y) != (b.y > p.y)) {
 		return p.x < a.x + (p.y - a.y) / (b.y - a.y) * (b.x - a.x);
@@ -193,7 +319,7 @@ int active_index() {
 	return clamp(int(floor(view + 0.5)), 0, n - 1);
 }
 
-vec4 sample_region(sampler2D tex, int i, vec2 cell_uv, vec2 cell_px, int mode, bool zoomed) {
+vec4 sample_region(sampler2D tex, int i, vec2 cell_uv, vec2 cell_px, int mode, bool zoomed, float vz) {
 	vec4 r = crop_at(i);
 	float ang = crop_rot_at(i);
 	float src_aspect = max(r.z * tex_size.x, 1.0) / max(r.w * tex_size.y, 1.0);
@@ -214,7 +340,9 @@ vec4 sample_region(sampler2D tex, int i, vec2 cell_uv, vec2 cell_px, int mode, b
 	}
 	vec2 local = (cell_uv - 0.5) / scale;
 	if (zoomed) {
-		local = local / max(zoom, 0.01) + vec2(pan_x, -pan_y) * 0.5;
+		local = local / max(zoom * vz, 0.01) + vec2(pan_x, -pan_y) * 0.5;
+	} else if (vz != 1.0) {
+		local = local / max(vz, 0.01);
 	}
 	if (!cut_keeps(i, local + 0.5)) {
 		return vec4(0.0);
@@ -240,6 +368,89 @@ vec4 sample_region(sampler2D tex, int i, vec2 cell_uv, vec2 cell_px, int mode, b
 		}
 	}
 	return fetch(tex, i, uv);
+}
+
+vec4 label_over(vec4 base, int i, vec2 cell_uv, vec2 cell_px, vec4 box, float rail) {
+	float used = label_w_at(i);
+	if (label_show == 0 || used <= 0.0) {
+		return base;
+	}
+	vec2 px = max(cell_px, vec2(1.0));
+	float th = clamp(label_size, 0.004, 0.9) * px.y;
+	float tw = th * (used * label_px.x) / max(label_px.y, 1.0);
+	if (tw < 0.5) {
+		return base;
+	}
+	vec2 pad = vec2(th * 0.52, th * 0.26);
+	vec2 plate = vec2(tw, th) + pad * 2.0;
+	float lip = rail * px.y;
+	float bottom = (box.y + box.w) * px.y;
+	float on_rail = bottom - lip >= plate.y ? (lip + bottom) * 0.5 : lip - plate.y * 0.62;
+	float cy = label_show == 1 ? on_rail : bottom + plate.y * 0.62;
+	float edge = plate.y * 0.62;
+	cy = clamp(cy, min(edge, px.y * 0.5), max(px.y - edge, px.y * 0.5));
+	vec2 mid = vec2(px.x * 0.5, cy);
+	vec2 p = cell_uv * px;
+	float r = min(plate.y * 0.34, plate.x * 0.5);
+	vec2 d = abs(p - mid) - plate * 0.5 + vec2(r);
+	float sd = length(max(d, vec2(0.0))) + min(max(d.x, d.y), 0.0) - r;
+	if (sd > 1.0) {
+		return base;
+	}
+	vec2 tl = mid - vec2(tw, th) * 0.5;
+	vec2 tuv = (p - tl) / vec2(tw, th);
+	vec2 tap = vec2(1.2 / max(tw, 1.0), 1.2 / max(th, 1.0));
+	float cov = 0.0;
+	float ring = 0.0;
+	for (int k = 0; k < 9; k++) {
+		vec2 q = tuv + vec2(float(k % 3) - 1.0, float(k / 3) - 1.0) * tap;
+		float c = 0.0;
+		if (q.x >= 0.0 && q.x <= 1.0 && q.y >= 0.0 && q.y <= 1.0) {
+			c = texture(label_tex, vec2(q.x * used, (float(i) + q.y) * 0.125)).r;
+		}
+		if (k == 4) {
+			cov = c;
+		}
+		ring = max(ring, c);
+	}
+	float pa = clamp(label_plate, 0.0, 1.0) * (1.0 - smoothstep(-0.75, 0.75, sd));
+	float grad = clamp(0.5 + (p.y - cy) / max(plate.y, 1.0), 0.0, 1.0);
+	vec3 plate_col = vec3(0.045, 0.05, 0.065) * mix(1.9, 0.75, grad);
+	base = vec4(mix(base.rgb, plate_col, pa), pa + base.a * (1.0 - pa));
+	base.rgb += vec3(0.22) * (1.0 - smoothstep(0.0, 1.6, abs(sd))) * pa * (1.0 - grad);
+	float shade = clamp(ring - cov, 0.0, 1.0) * 0.8;
+	base = vec4(mix(base.rgb, vec3(0.0), shade), shade + base.a * (1.0 - shade));
+	float ta = cov * clamp(label_colour.a, 0.0, 1.0);
+	return vec4(mix(base.rgb, label_colour.rgb, ta), ta + base.a * (1.0 - ta));
+}
+
+vec4 framed_by(sampler2D tex, int i, vec2 cell_uv, vec2 cell_px, bool zoomed) {
+	vec2 bpx = border_size_at(i);
+	float ba = max(bpx.x, 1.0) / max(bpx.y, 1.0);
+	float da = max(cell_px.x, 1.0) / max(cell_px.y, 1.0);
+	vec2 bs = ba > da ? vec2(1.0, da / ba) : vec2(ba / da, 1.0);
+	vec4 box = vec4((1.0 - bs.x) * 0.5, (1.0 - bs.y) * 0.5, bs.x, bs.y);
+	vec2 b_uv = (cell_uv - box.xy) / box.zw;
+	vec4 win = window_at(i);
+	vec2 f_uv = (b_uv - win.xy) / win.zw;
+	vec4 col = vec4(0.0);
+	bool in_win = f_uv.x >= 0.0 && f_uv.x <= 1.0 && f_uv.y >= 0.0 && f_uv.y <= 1.0;
+	if (in_win) {
+		col = sample_region(tex, i, f_uv, win.zw * box.zw * cell_px, 1, zoomed, border_zoom_at(i));
+	}
+	bool on_frame = b_uv.x >= 0.0 && b_uv.x <= 1.0 && b_uv.y >= 0.0 && b_uv.y <= 1.0;
+	if (on_frame && !(bit_on(border_solid, i) && in_win)) {
+		vec4 bc = border_at(i, b_uv);
+		col = vec4(mix(col.rgb, bc.rgb, bc.a), bc.a + col.a * (1.0 - bc.a));
+	}
+	return label_over(col, i, cell_uv, cell_px, box, box.y + (win.y + win.w) * box.w);
+}
+
+vec4 framed(sampler2D tex, int i, vec2 cell_uv, vec2 cell_px, int mode) {
+	if (!bit_on(border_on, i)) {
+		return label_over(sample_region(tex, i, cell_uv, cell_px, mode, true, 1.0), i, cell_uv, cell_px, vec4(0.0, 0.0, 1.0, 1.0), 1.0);
+	}
+	return framed_by(tex, i, cell_uv, cell_px, true);
 }
 
 int count_in(int bits, int n) {
@@ -283,8 +494,8 @@ vec4 grid_cell(sampler2D tex, int count, int n, int active, vec2 at, int bits, i
 		return vec4(0.0);
 	}
 	vec2 cell_px = cell_size * canvas_px * (1.0 - gap * 2.0);
-	vec4 c = sample_region(tex, idx, inner, cell_px, fit, true);
-	if (border && idx == active) {
+	vec4 c = framed(tex, idx, inner, cell_px, fit);
+	if (border && idx == active && !bit_on(border_on, idx)) {
 		vec2 edge = vec2(3.0) / max(cell_size * seq_size * (1.0 - gap * 2.0), vec2(1.0));
 		if (inner.x < edge.x || inner.x > 1.0 - edge.x || inner.y < edge.y || inner.y > 1.0 - edge.y) {
 			c = active_colour;
@@ -298,7 +509,7 @@ vec4 blended(sampler2D tex, int n, vec2 at) {
 	float count = 0.0;
 	for (int i = 0; i < 8; i++) {
 		if (i < n && bit_on(sync_show, i)) {
-			vec4 c = sample_region(tex, i, at, canvas_px, fit, true);
+			vec4 c = sample_region(tex, i, at, canvas_px, fit, true, 1.0);
 			acc += vec4(c.rgb * c.a, c.a);
 			count += 1.0;
 		}
@@ -342,6 +553,11 @@ int shown_bits(int n) {
 vec4 inset_at(sampler2D tex, int i, vec2 at) {
 	vec4 r = crop_at(i);
 	float ar = max(r.z * tex_size.x, 1.0) / max(r.w * tex_size.y, 1.0);
+	bool with_frame = bit_on(border_on, i);
+	if (with_frame) {
+		vec2 bpx = border_size_at(i);
+		ar = max(bpx.x, 1.0) / max(bpx.y, 1.0);
+	}
 	float ca = max(canvas_px.x, 1.0) / max(canvas_px.y, 1.0);
 	vec2 full = ar > ca ? vec2(1.0, ca / ar) : vec2(ar / ca, 1.0);
 	vec2 sz = full * clamp(size_at(i), 0.0, 1.0);
@@ -360,7 +576,10 @@ vec4 inset_at(sampler2D tex, int i, vec2 at) {
 	if (cell_uv.x < 0.0 || cell_uv.x > 1.0 || cell_uv.y < 0.0 || cell_uv.y > 1.0) {
 		return vec4(0.0);
 	}
-	return sample_region(tex, i, cell_uv, sz * canvas_px, 2, false);
+	if (with_frame) {
+		return framed_by(tex, i, cell_uv, sz * canvas_px, false);
+	}
+	return label_over(sample_region(tex, i, cell_uv, sz * canvas_px, 2, false, 1.0), i, cell_uv, sz * canvas_px, vec4(0.0, 0.0, 1.0, 1.0), 1.0);
 }
 
 vec4 with_insets(sampler2D tex, int n, int active, vec2 at, vec4 base) {
@@ -396,7 +615,7 @@ vec4 split_cell(sampler2D tex, int n, vec2 at, bool across) {
 		cell_uv.y = at.y * float(count) - float(slot);
 		cell_px.y = canvas_px.y / float(count);
 	}
-	return sample_region(tex, idx, cell_uv, cell_px, split_fit, true);
+	return framed(tex, idx, cell_uv, cell_px, split_fit);
 }
 
 vec4 source_view(sampler2D tex, vec2 at) {
@@ -426,7 +645,7 @@ void fragment() {
 	} else if (layout == 1 || layout == 2) {
 		COLOR = split_cell(TEXTURE, n, UV, layout == 1);
 	} else {
-		vec4 base = sample_region(TEXTURE, active, UV, canvas_px, fit, true);
+		vec4 base = framed(TEXTURE, active, UV, canvas_px, fit);
 		if (layout == 3) {
 			base = with_insets(TEXTURE, n, active, UV, base);
 		}

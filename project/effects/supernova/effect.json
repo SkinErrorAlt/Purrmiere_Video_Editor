@@ -13,6 +13,6 @@
   {"key": "random_hue", "label": "Random hue", "type": "float", "min": 0.0, "max": 360.0, "step": 1.0, "default": 0.0, "unit": " deg"},
   {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
  ],
- "handles": [{"kind": "point", "key": "centre"}],
+ "handles": [{"kind": "point", "key": "centre"}, {"kind": "ring", "key": "radius", "about": "centre", "unit": "px"}],
  "passes": "single"
 }

@@ -121,6 +121,9 @@ static func policy_for(path: String) -> String:
 
 
 func watch(doc: Object) -> void:
+	var around: Node = load("res://engine/proxy_around.gd").call("instance")
+	if around != null:
+		around.call("watch", doc)
 	if _doc != null:
 		var old: Object = _doc.get_ref()
 		if old != null and old.is_connected("changed", _on_doc_changed):

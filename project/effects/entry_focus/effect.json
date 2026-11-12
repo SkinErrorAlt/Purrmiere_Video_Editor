@@ -1,0 +1,24 @@
+{
+ "id": "entry_focus",
+ "label": "Focus Finds the Newcomer",
+ "category": "Time",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Watches a shot that is holding still, and the moment something starts moving in it, a bird landing, a door opening, someone stepping into the frame, the lens racks focus onto it. Everything else falls away into a soft lens blur with round highlights, the focus follows the newcomer while it moves, and then the lens relaxes back to the whole scene. Best on a camera that holds still.",
+ "history": {"max": 60, "reach": ["stay", 1.12], "seconds": ["stay"]},
+ "params": [
+  {"key": "blur", "label": "Background blur", "type": "float", "min": 0.0, "max": 40.0, "step": 0.1, "default": 16.0, "unit": " px"},
+  {"key": "focus_size", "label": "Sharp area", "type": "float", "min": 0.05, "max": 0.8, "step": 0.01, "default": 0.22},
+  {"key": "rack_time", "label": "Rack takes", "type": "float", "min": 0.05, "max": 1.0, "step": 0.01, "default": 0.3, "unit": " s"},
+  {"key": "stay", "label": "Stays for", "type": "float", "min": 0.3, "max": 1.8, "step": 0.01, "default": 1.6, "unit": " s"},
+  {"key": "darken", "label": "Darken the rest", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.2},
+  {"key": "sensitivity", "label": "Sensitivity", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5}
+ ],
+ "passes": [
+  {"shader": "res://effects/_events/thumbs.gdshader", "scale": 0.125},
+  {"shader": "res://effects/_events/stats_change.gdshader", "scale": 0.25},
+  {"shader": "res://effects/_events/stats_motion.gdshader", "scale": 1.0, "inputs": {"thumb_tex": 0}},
+  {"shader": "res://effects/_events/track_motion.gdshader", "scale": 1.0, "inputs": {"change_tex": 1, "motion_tex": 2}, "set": {"mode": 2, "refractory": 0.0}, "map": {"look_back": "stay"}},
+  {"shader": "apply.gdshader", "scale": 32.0}
+ ]
+}

@@ -1,5 +1,6 @@
 extends "res://modules/core_panels/panel_base.gd"
 
+const ReworkRequest := preload("res://modules/core_panels/rework_request.gd")
 const TransitionRegistry := preload("res://engine/transition_registry.gd")
 const Tiles := preload("res://modules/core_panels/transition_tiles.gd")
 const Ops := preload("res://modules/core_panels/transition_ops.gd")
@@ -224,6 +225,8 @@ func menu_items(id: String) -> Array:
 	var def: Dictionary = _reg.call("get_def", id)
 	if String(def.get("source", "")) == "user":
 		items.append(PmMenu.item("show", "Show its folder"))
+	items.append(PmMenu.separator())
+	items.append(PmMenu.item(ReworkRequest.MENU_ID, ReworkRequest.LABEL))
 	return items
 
 
@@ -244,6 +247,8 @@ func menu_picked(pick: String, id: String) -> void:
 		answered.connect(_on_renamed.bind(preset_of(id)))
 	elif pick == "delete":
 		delete_preset(preset_of(id))
+	elif pick == ReworkRequest.MENU_ID:
+		ReworkRequest.ask(_root, _reg.call("get_def", id))
 	elif pick == "show":
 		OS.shell_open(ProjectSettings.globalize_path(String((_reg.call("get_def", id) as Dictionary).get("folder", TransitionRegistry.user_root()))))
 

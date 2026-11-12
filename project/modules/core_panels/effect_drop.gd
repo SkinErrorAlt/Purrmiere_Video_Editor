@@ -6,6 +6,7 @@ const Verbs := preload("res://doc/verbs.gd")
 const Clip := preload("res://doc/clip.gd")
 const MediaItem := preload("res://doc/media_item.gd")
 const RegionFx := preload("res://doc/region_fx.gd")
+const TextFx := preload("res://doc/text_fx/text_fx.gd")
 const PAIR_LAYOUT := "res://engine/pair_layout.gd"
 const RegionFxCmds := preload("res://doc/commands/region_fx_cmds.gd")
 const EffectSource := preload("res://modules/core_panels/effect_source.gd")
@@ -105,6 +106,8 @@ static func region_under(c: Clip, s: Sequence, d: Project, local_pos: Vector2, p
 
 
 static func refusal(def: Dictionary) -> String:
+	if TextFx.text_only(def):
+		return TextFx.REFUSAL
 	if bool(def.get("audio", false)):
 		return "Sound effects go on clips that have sound"
 	return "Picture effects go on clips that have a picture"

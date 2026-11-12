@@ -1,0 +1,17 @@
+{
+ "id": "split_flap",
+ "label": "Split Flap Board",
+ "group": "3D",
+ "space": "2D",
+ "from": ["Solari departure board", "Motion Flip Board"],
+ "blurb": "The frame is a mechanical departure board. Every tile is split across the middle and the top half drops forward on its hinge, clatters through a run of flickering intermediate flaps and lands showing the new shot, the whole board rattling through column by column. The dropping flap catches light on its face, throws a shadow onto the half beneath it, and there is a hard dark seam across the middle of every tile. Set the board size, how many flaps clatter past, and how heavy the seam and the shadow are.",
+ "default_duration": 1.5,
+ "params": [
+  {"key": "columns", "label": "Columns", "type": "int", "min": 2, "max": 32, "step": 1, "default": 10},
+  {"key": "rows", "label": "Rows", "type": "int", "min": 1, "max": 16, "step": 1, "default": 5},
+  {"key": "flaps", "label": "Flaps per tile", "type": "int", "min": 1, "max": 12, "step": 1, "default": 5},
+  {"key": "stagger", "label": "Stagger", "type": "float", "min": 0.0, "max": 0.85, "step": 0.01, "default": 0.5},
+  {"key": "seam", "label": "Seam", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "shadow", "label": "Flap shadow", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7}
+ ]
+}

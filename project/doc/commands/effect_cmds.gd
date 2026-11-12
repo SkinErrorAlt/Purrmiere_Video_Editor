@@ -1,6 +1,7 @@
 extends RefCounted
 
 const VERSION := 1
+const ObjectFx := preload("res://doc/object_fx.gd")
 const MIX_KEY := "mix"
 
 
@@ -58,6 +59,7 @@ class AddEffect extends EffectCommand:
 	var def: Dictionary = {}
 	var uid: String = ""
 	var index: int = -1
+	var made_mask: String = ""
 
 	func _init(p_seq_id: String, p_clip_id: String, p_def: Dictionary, p_uid: String = "", p_index: int = -1, p_audio: bool = false) -> void:
 		label = "Add " + str(p_def.get("label", p_def.get("id", "effect")))
@@ -81,13 +83,25 @@ class AddEffect extends EffectCommand:
 		var l: Array = list(doc)
 		if index < 0 or index > l.size():
 			index = l.size()
-		l.insert(index, entry_from_def(def, uid))
+		var entry: Dictionary = entry_from_def(def, uid)
+		made_mask = ""
+		if ObjectFx.is_object_fx(entry) and not audio:
+			var held: Dictionary = ObjectFx.ensure_mask(doc, c)
+			var mask_id: String = String(held.get("id", ""))
+			if not mask_id.is_empty():
+				entry["mask"] = mask_id
+				if bool(held.get("made", false)):
+					made_mask = mask_id
+		l.insert(index, entry)
 		doc.touch("meta")
 
 	func undo(doc: Project) -> void:
 		var i: int = index_of(doc, uid)
 		if i >= 0:
 			list(doc).remove_at(i)
+		if not made_mask.is_empty():
+			ObjectFx.drop_mask(clip(doc, clip_id), made_mask)
+			made_mask = ""
 		doc.touch("meta")
 
 
@@ -117,6 +131,51 @@ class RemoveEffect extends EffectCommand:
 		var l: Array = list(doc)
 		l.insert(mini(old_index, l.size()), old_entry.duplicate(true))
 		doc.touch("meta")
+
+
+class SetPieceOverride extends EffectCommand:
+	var uid: String = ""
+	var index: int = 0
+	var new_piece: Dictionary = {}
+	var had: bool = false
+	var old_piece: Dictionary = {}
+
+	func _init(p_seq_id: String, p_clip_id: String, p_uid: String, p_index: int, p_piece: Variant, p_audio: bool = false) -> void:
+		label = "Set piece physics"
+		seq_id = p_seq_id
+		clip_id = p_clip_id
+		uid = p_uid
+		index = p_index
+		new_piece = (p_piece as Dictionary).duplicate(true) if p_piece is Dictionary else {}
+		audio = p_audio
+
+	func _write(doc: Project, piece: Dictionary, remember: bool) -> void:
+		var e: Dictionary = entry(doc, uid)
+		if e.is_empty():
+			ok = false
+			return
+		if not (e.get("pieces") is Dictionary):
+			e["pieces"] = {}
+		var pieces: Dictionary = e["pieces"]
+		var k: String = str(index)
+		if remember:
+			had = pieces.has(k)
+			old_piece = (pieces[k] as Dictionary).duplicate(true) if had else {}
+		if piece.is_empty():
+			pieces.erase(k)
+		else:
+			pieces[k] = piece.duplicate(true)
+		if pieces.is_empty():
+			e.erase("pieces")
+		doc.touch("meta")
+
+	func do(doc: Project) -> void:
+		_write(doc, new_piece, true)
+
+	func undo(doc: Project) -> void:
+		if not ok:
+			return
+		_write(doc, old_piece if had else {}, false)
 
 
 class ReorderEffect extends EffectCommand:
@@ -434,6 +493,12 @@ class PasteChosen extends EffectCommand:
 				params[pk] = _prop(params[pk], src, target, base + String(pk))
 			if e.has("mix"):
 				e["mix"] = _prop(e["mix"], src, target, base + "mix")
+			var fade_key: String = preload("res://doc/depth_fade.gd").KEY
+			if e.get(fade_key) is Dictionary:
+				var fade: Dictionary = e[fade_key]
+				for fk: Variant in fade.keys():
+					if fade[fk] is Dictionary:
+						fade[fk] = _prop(fade[fk], src, target, base + fade_key + "." + String(fk))
 			_carry_fx_speeds(e, src, target)
 			out.append(e)
 		return out

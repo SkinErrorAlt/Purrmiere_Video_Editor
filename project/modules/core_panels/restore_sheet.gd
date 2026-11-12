@@ -67,6 +67,8 @@ static func restore(doc: Project, path: String) -> Project:
 		Io.unlock(doc)
 	Session.set_project(copy, "")
 	Events.notice("Opened " + copy.name, "This is an unsaved copy. Save it under a new name to keep it; the original project file was not touched.")
+	if not Io.last_warning.is_empty():
+		Events.warn("This snapshot is from a newer Purrmiere", Io.last_warning)
 	return copy
 
 

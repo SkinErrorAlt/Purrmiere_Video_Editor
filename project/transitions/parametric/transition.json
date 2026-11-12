@@ -13,5 +13,8 @@
   {"key": "strength", "label": "Churn", "type": "float", "min": 0, "max": 0.3, "step": 0.005, "default": 0.06},
   {"key": "blend_start", "label": "Blend starts", "type": "float", "min": 0, "max": 0.9, "step": 0.01, "default": 0.2},
   {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]}
+ ],
+ "handles": [
+  {"kind": "point", "key": "centre"}
  ]
 }

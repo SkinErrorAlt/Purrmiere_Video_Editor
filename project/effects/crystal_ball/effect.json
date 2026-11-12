@@ -1,0 +1,28 @@
+{
+ "id": "crystal_ball",
+ "label": "Crystal Ball",
+ "category": "Distort",
+ "tags": ["light", "look"],
+ "version": 1,
+ "blurb": "A solid glass ball, or a glass rod like a tumbler of water, standing in front of the shot, ray traced through real refraction. The ball turns the world behind it upside down and shrinks it into a wide angle view, the rod flips it left to right, and the rim splits into a rainbow because every colour bends by its own amount. The glass picks up a Fresnel reflection that grows towards its edge and a small bright highlight, and the shot around it goes soft the way it does when the camera focuses on the ball. Field sets how far behind the glass the scene sits, which sets how much of it the ball takes in.",
+ "params": [
+  {"key": "shape", "label": "Shape", "type": "enum", "choices": ["Ball", "Rod"], "default": 0},
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]},
+  {"key": "radius", "label": "Radius", "type": "float", "min": 0.02, "max": 1.0, "step": 0.005, "default": 0.32},
+  {"key": "ior", "label": "Refractive index", "type": "float", "min": 1.0, "max": 2.5, "step": 0.01, "default": 1.52},
+  {"key": "dispersion", "label": "Rainbow edge", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "field", "label": "Field", "type": "float", "min": 1.0, "max": 40.0, "step": 0.1, "default": 3.0},
+  {"key": "angle", "label": "Rod angle", "type": "float", "min": -180.0, "max": 180.0, "step": 0.1, "default": 0.0, "unit": " deg"},
+  {"key": "rod_length", "label": "Rod length", "type": "float", "min": 0.05, "max": 3.0, "step": 0.01, "default": 2.0},
+  {"key": "blur", "label": "Background blur", "type": "float", "min": 0.0, "max": 60.0, "step": 0.1, "default": 8.0, "unit": " px"},
+  {"key": "reflection", "label": "Reflection", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "shine", "label": "Highlight", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "tint", "label": "Glass colour", "type": "color", "default": [0.94, 0.98, 0.97, 1.0]}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}, {"kind": "ring", "key": "radius", "about": "centre"}, {"kind": "angle", "key": "angle", "about": "centre"}],
+ "passes": [
+  {"shader": "res://effects/blur_gaussian/gauss.gdshader", "set": {"direction": [1.0, 0.0]}, "map": {"radius": "blur"}},
+  {"shader": "res://effects/blur_gaussian/gauss.gdshader", "set": {"direction": [0.0, 1.0]}, "map": {"radius": "blur"}},
+  {"shader": "ball.gdshader"}
+ ]
+}

@@ -1,0 +1,21 @@
+{
+ "id": "strobe_exposure",
+ "label": "Strobe Exposure",
+ "category": "Time",
+ "tags": ["look", "light"],
+ "version": 1,
+ "blurb": "A stroboscope photograph that builds up as you watch. The scene sinks into darkness and a flash fires on a steady beat; every flash freezes the moving subject where it was at that instant and leaves it on the picture, where it stays put while the subject carries on and new flashes land beside it, until it fades. Where frozen copies cross, the light adds up the way it does on film. Dark studio finds the still background by itself and lights only what moves; Night scene adds whole frames, for fire, lights and dancers on black.",
+ "history": {"max": 62, "reach": ["interval", "flashes"], "seconds": ["interval"]},
+ "params": [
+  {"key": "interval", "label": "Time between flashes", "type": "float", "min": 0.03, "max": 1.0, "step": 0.005, "default": 0.17, "unit": " s"},
+  {"key": "flashes", "label": "Flashes kept", "type": "int", "min": 2, "max": 12, "step": 1, "default": 7},
+  {"key": "scene", "label": "Scene", "type": "enum", "choices": ["Dark studio", "Night scene"], "default": 0},
+  {"key": "ambient", "label": "Light between flashes", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.22},
+  {"key": "decay", "label": "Each older flash keeps", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.86},
+  {"key": "flash_power", "label": "Flash strength", "type": "float", "min": 0.2, "max": 3.0, "step": 0.01, "default": 1.15},
+  {"key": "flash_colour", "label": "Flash colour", "type": "color", "default": [1.0, 0.97, 0.92, 1.0]},
+  {"key": "threshold", "label": "What counts as moving", "type": "float", "min": 0.01, "max": 0.5, "step": 0.005, "default": 0.12},
+  {"key": "softness", "label": "Edge softness", "type": "float", "min": 0.005, "max": 0.4, "step": 0.005, "default": 0.07}
+ ],
+ "passes": [{"shader": "effect.gdshader"}]
+}

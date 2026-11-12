@@ -1,0 +1,35 @@
+{
+ "id": "text_caesar",
+ "label": "Caesar Shift",
+ "category": "Text",
+ "version": 1,
+ "applies_to": "text",
+ "text_transform": "caesar",
+ "tags": [
+  "text",
+  "cipher"
+ ],
+ "blurb": "Moves every letter along the alphabet by a number of places. Digits and symbols pass through.",
+ "params": [
+  {
+   "key": "shift",
+   "label": "Shift",
+   "type": "int",
+   "min": 0,
+   "max": 25,
+   "step": 1,
+   "default": 3
+  },
+  {
+   "key": "direction",
+   "label": "Direction",
+   "type": "enum",
+   "choices": [
+    "Encode",
+    "Decode"
+   ],
+   "default": 0
+  }
+ ],
+ "passes": []
+}

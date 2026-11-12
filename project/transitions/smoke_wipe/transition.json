@@ -18,6 +18,6 @@
  ],
  "handles": [
   {"kind": "point", "key": "centre"},
-  {"kind": "angle", "key": "light_angle", "about": "centre"}
+  {"kind": "angle", "key": "light_angle", "about": "centre", "zero": "right", "turn": "ccw"}
  ]
 }

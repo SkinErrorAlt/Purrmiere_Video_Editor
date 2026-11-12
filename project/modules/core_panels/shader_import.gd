@@ -353,11 +353,13 @@ static func _on_files_chosen(paths: PackedStringArray) -> void:
 
 
 static func menu_items() -> Array:
-	return [PmMenu.item(MENU_FILE, "Import a Godot shader...", "", "import"), PmMenu.item(MENU_PASTE, "Paste Godot shader code...")]
+	var out: Array = [PmMenu.item(MENU_FILE, "Import a Godot shader...", "", "import"), PmMenu.item(MENU_PASTE, "Paste Godot shader code...")]
+	out.append_array(load("res://modules/core_panels/effect_file.gd").call("panel_menu_items"))
+	return out
 
 
 static func add_menu_button(panel: Object, head: Container) -> Button:
-	var b: Button = panel.call("quiet_icon", "more", "Import a Godot shader, or paste its code")
+	var b: Button = panel.call("quiet_icon", "more", "Import a Godot shader or an effect file, or paste shader code")
 	b.pressed.connect(_on_menu_button.bind(b))
 	head.add_child(b)
 	return b
@@ -374,6 +376,8 @@ static func _on_menu_picked(pick: String, anchor: Control) -> void:
 
 
 static func menu_pick(host: Node, pick: String) -> bool:
+	if bool(load("res://modules/core_panels/effect_file.gd").call("panel_menu_picked", host, pick)):
+		return true
 	if pick == MENU_FILE:
 		open_file_dialog(host, selection_targets())
 		return true

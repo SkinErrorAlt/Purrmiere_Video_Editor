@@ -1,0 +1,36 @@
+{
+ "id": "text_base64",
+ "label": "Base64",
+ "category": "Text",
+ "version": 1,
+ "applies_to": "text",
+ "text_transform": "base64",
+ "tags": [
+  "text",
+  "encoding"
+ ],
+ "blurb": "The bytes of the text written with 64 safe characters, as most websites and it-tools do.",
+ "params": [
+  {
+   "key": "direction",
+   "label": "Direction",
+   "type": "enum",
+   "choices": [
+    "Encode",
+    "Decode"
+   ],
+   "default": 0
+  },
+  {
+   "key": "variant",
+   "label": "Alphabet",
+   "type": "enum",
+   "choices": [
+    "Standard (+ / and = padding)",
+    "URL safe (- _ and no padding)"
+   ],
+   "default": 0
+  }
+ ],
+ "passes": []
+}

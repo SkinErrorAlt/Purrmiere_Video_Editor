@@ -1,0 +1,16 @@
+{
+ "id": "cut_through_black",
+ "label": "Cut Through Black",
+ "group": "Dissolve",
+ "space": "2D",
+ "from": ["PowerPoint Cut Through Black", "editorial hard dip to black", "scene break cut"],
+ "blurb": "A hard editorial dip, not a fade: the outgoing shot cuts straight to a solid colour, black unless you pick another, the screen holds on the colour for a beat, then cuts straight to the incoming shot. Hold sets how long the screen stays solid and Colour at where in the span the dip sits. Edge adds a tiny ramp on each cut if you want a hint of softness.",
+ "default_duration": 0.6,
+ "steps": true,
+ "params": [
+  {"key": "colour", "label": "Colour", "type": "color", "default": [0, 0, 0, 1]},
+  {"key": "hold", "label": "Hold", "type": "float", "min": 0.1, "max": 0.9, "step": 0.01, "default": 0.5},
+  {"key": "balance", "label": "Colour at", "type": "float", "min": 0.1, "max": 0.9, "step": 0.01, "default": 0.5},
+  {"key": "edge", "label": "Edge", "type": "float", "min": 0.0, "max": 0.2, "step": 0.005, "default": 0.0}
+ ]
+}

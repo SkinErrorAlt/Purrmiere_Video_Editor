@@ -10,5 +10,8 @@
   {"key": "direction", "label": "Sweeps", "type": "enum", "choices": ["Right to left", "Left to right", "Top to bottom", "Bottom to top"], "default": 0},
   {"key": "width", "label": "Sweep width", "type": "float", "min": 0.05, "max": 2, "step": 0.01, "default": 1},
   {"key": "centre", "label": "Warps towards", "type": "vec2", "default": [0.5, 0.5]}
+ ],
+ "handles": [
+  {"kind": "point", "key": "centre"}
  ]
 }

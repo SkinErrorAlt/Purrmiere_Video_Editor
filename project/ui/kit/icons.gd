@@ -1,6 +1,7 @@
 extends RefCounted
 
 const Filmcraft := preload("res://ui/kit/icons_filmcraft.gd")
+const IconAtlas := preload("res://ui/kit/icon_atlas.gd")
 const GRID := 24.0
 const STROKE := 1.6
 const PREF_STYLE := "ui.icon_style"
@@ -42,6 +43,7 @@ const PATHS: Dictionary = {
 	"extract": [["l", 4, 18, 9, 18], ["l", 15, 18, 20, 18], ["p", [8, 8, 12, 12, 16, 8]], ["l", 12, 4, 12, 12]],
 	"marker": [["o", [6, 4, 18, 4, 18, 15, 12, 20, 6, 15]]],
 	"camera": [["o", [4, 8, 8, 8, 10, 5, 14, 5, 16, 8, 20, 8, 20, 19, 4, 19]], ["c", 12, 13, 3]],
+	"dice": [["r", 4, 4, 16, 16], ["d", 8.5, 8.5, 1.4], ["d", 15.5, 8.5, 1.4], ["d", 12, 12, 1.4], ["d", 8.5, 15.5, 1.4], ["d", 15.5, 15.5, 1.4]],
 	"loop": [["a", 12, 12, 8, 180, 320], ["a", 12, 12, 8, 0, 140], ["p", [18, 3, 18, 7, 14, 7]], ["p", [6, 21, 6, 17, 10, 17]]],
 	"plus": [["l", 12, 5, 12, 19], ["l", 5, 12, 19, 12]],
 	"snap": [["l", 8, 4, 8, 10], ["a", 12, 10, 4, 180, 0], ["l", 16, 10, 16, 4], ["l", 6, 4, 10, 4], ["l", 14, 4, 18, 4], ["l", 12, 14, 12, 20]],
@@ -181,6 +183,18 @@ static func _pts(raw: Array, origin: Vector2, k: float) -> PackedVector2Array:
 
 
 static func draw(ci: CanvasItem, name: String, rect: Rect2, tint: Color, bold: float = 1.0) -> void:
+	var side: float = minf(rect.size.x, rect.size.y)
+	if side <= 0.0:
+		return
+	var origin: Vector2 = rect.position + (rect.size - Vector2(side, side)) * 0.5
+	var w: float = maxf(1.0, stroke_of(name) * side / grid_of(name) * bold)
+	if IconAtlas.try_draw(ci, name, side, origin, w, tint, bold, serial * 2 + (1 if filmcraft else 0)):
+		return
+	IconAtlas.drawn_as_lines += 1
+	draw_lines(ci, name, rect, tint, bold)
+
+
+static func draw_lines(ci: CanvasItem, name: String, rect: Rect2, tint: Color, bold: float = 1.0) -> void:
 	var side: float = minf(rect.size.x, rect.size.y)
 	if side <= 0.0:
 		return

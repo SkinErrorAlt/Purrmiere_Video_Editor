@@ -1,0 +1,21 @@
+{
+ "id": "eink_display",
+ "label": "E Ink Display",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Shows the picture on an e reader screen: grey paper that is never white, sixteen shades of ink built up by dithering, the grainy look of the ink capsules, an uneven front light and the black and white flash of a page refresh.",
+ "params": [
+  {"key": "panel", "label": "Panel", "type": "enum", "choices": ["Sixteen greys", "Fast mode, black and white", "Colour filter"], "default": 0},
+  {"key": "pixel", "label": "Pixel size", "type": "float", "min": 1.0, "max": 12.0, "step": 0.1, "default": 2.0, "unit": " px"},
+  {"key": "dither", "label": "Dither", "type": "enum", "choices": ["Blue noise", "Ordered", "None"], "default": 0},
+  {"key": "contrast", "label": "Ink contrast", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "boost", "label": "Picture contrast", "type": "float", "min": 0.5, "max": 2.0, "step": 0.01, "default": 1.15},
+  {"key": "grain", "label": "Paper grain", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "front_light", "label": "Front light", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.35},
+  {"key": "warmth", "label": "Light warmth", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "refresh", "label": "Page refresh", "type": "float", "min": 0.0, "max": 1.0, "step": 0.001, "default": 0.0},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

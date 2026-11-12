@@ -523,6 +523,7 @@ func _build_groups(groups: VBoxContainer) -> void:
 	_text(meta, "title", "Title", String(settings["metadata"]["title"]), "", _on_title)
 	_text(meta, "comment", "Comment", String(settings["metadata"]["comment"]), "", _on_comment)
 	_check(meta, "chapters", "Chapters from markers", bool(settings["chapters_from_markers"]), _on_chapters)
+	_check(meta, "captions_sidecar", "Write captions beside the file (.srt)", bool(settings.get("captions", {}).get("sidecar", false)), _on_captions_sidecar)
 	var copy_ch: Button = PmButton.make("Copy YouTube chapters")
 	copy_ch.set("quiet", true)
 	copy_ch.name = "CopyYoutubeChapters"
@@ -595,6 +596,8 @@ func _put(key: String, value: Variant) -> void:
 	if parts.size() == 1:
 		settings[key] = value
 	else:
+		if not (settings.get(parts[0]) is Dictionary):
+			settings[parts[0]] = {}
 		var d: Dictionary = settings[parts[0]]
 		d[parts[1]] = value
 	_update_estimate()
@@ -799,6 +802,10 @@ func _on_thumb_time(t: float) -> void:
 
 func _on_thumb_embed(on: bool) -> void:
 	_put("thumbnail.embed", on)
+
+
+func _on_captions_sidecar(on: bool) -> void:
+	_put("captions.sidecar", on)
 
 
 func _on_thumb_sidecar(on: bool) -> void:

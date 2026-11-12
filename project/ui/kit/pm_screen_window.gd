@@ -37,7 +37,7 @@ static func make(title_: String, screen: int) -> Window:
 	w.exclusive = false
 	w.transient = false
 	w.unresizable = false
-	w.unfocusable = false
+	w.unfocusable = bool(ProjectSettings.get_setting("display/window/size/no_focus", false))
 	w.min_size = MIN_PX
 	w.set_meta("pm_screen", clampi(screen, 0, maxi(DisplayServer.get_screen_count() - 1, 0)))
 	return w

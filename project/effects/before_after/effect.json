@@ -15,6 +15,6 @@
   {"key": "labels", "label": "Labels", "type": "bool", "default": true},
   {"key": "label_size", "label": "Label size", "type": "float", "min": 0.5, "max": 3.0, "step": 0.05, "default": 1.0}
  ],
- "handles": [{"kind": "point", "key": "split"}, {"kind": "angle", "key": "angle", "about": "split", "zero": "right"}],
+ "handles": [{"kind": "point", "key": "split", "when": {"key": "mode", "is": [0]}}, {"kind": "angle", "key": "angle", "about": "split", "zero": "right", "when": {"key": "mode", "is": [0]}}],
  "passes": "single"
 }

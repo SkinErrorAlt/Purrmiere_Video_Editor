@@ -36,7 +36,10 @@
   "groups": "res://modules/core_panels/groups_panel.gd",
   "organizer": "res://modules/core_panels/organizer_panel.gd",
   "tracker": "res://modules/core_panels/tracker_panel.gd",
-  "transitions": "res://modules/core_panels/transitions_panel.gd"
+  "scopes": "res://modules/core_panels/scopes_panel.gd",
+  "transitions": "res://modules/core_panels/transitions_panel.gd",
+  "tags": "res://modules/core_panels/tag_manager_panel.gd",
+  "spectrogram": "res://modules/core_panels/spectrogram_panel.gd"
  },
  "titles": {
   "bin": "Bin",
@@ -62,6 +65,9 @@
   "groups": "Groups",
   "organizer": "Organizer",
   "tracker": "Tracker",
-  "transitions": "Transitions"
+  "scopes": "Scopes",
+  "transitions": "Transitions",
+  "tags": "Tags",
+  "spectrogram": "Spectrogram"
  }
 }

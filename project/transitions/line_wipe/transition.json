@@ -13,5 +13,11 @@
   {"key": "line_colour", "label": "Line colour", "type": "color", "default": [1, 1, 1, 1]},
   {"key": "softness", "label": "Soft edge", "type": "float", "min": 0, "max": 200, "step": 1, "default": 0, "unit": " px"},
   {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 1}
+ ],
+ "handles": [
+  {"kind": "angle", "key": "angle", "zero": "right", "turn": "ccw", "when": {"key": "direction", "is": [0]}},
+  {"kind": "angle", "key": "angle", "zero": "left", "turn": "ccw", "when": {"key": "direction", "is": [1]}},
+  {"kind": "angle", "key": "angle", "zero": "down", "turn": "ccw", "when": {"key": "direction", "is": [2]}},
+  {"kind": "angle", "key": "angle", "zero": "up", "turn": "ccw", "when": {"key": "direction", "is": [3]}}
  ]
 }

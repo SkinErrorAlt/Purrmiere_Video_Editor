@@ -1,0 +1,217 @@
+{
+ "id": "lava_flow",
+ "label": "Lava Flow",
+ "category": "Stylize",
+ "tags": [
+  "look"
+ ],
+ "version": 1,
+ "blurb": "Opens a vent in the picture and lets lava pour out over it. The shot is the landscape, sloping down to the bottom of the frame, with its dark parts as hollows: the lava runs downhill, finds the channels and low ground, piles up and spreads in lobes where the ground flattens, and slows down as it cools. The fresh flow glows yellow and orange with a bright rolling front, ahead of it the ground scorches and catches its light, and behind it a black ropy crust forms, cracks into plates and keeps glowing in the cracks long after, while steam and smoke rise off the hot parts. Where it goes is worked out fresh from every frame.",
+ "params": [
+  {
+   "key": "vent",
+   "label": "Vent",
+   "type": "vec2",
+   "default": [
+    0.5,
+    0.08
+   ]
+  },
+  {
+   "key": "speed",
+   "label": "Flow speed",
+   "type": "float",
+   "min": 0.02,
+   "max": 1.0,
+   "step": 0.005,
+   "default": 0.12
+  },
+  {
+   "key": "start_time",
+   "label": "Erupts at",
+   "type": "float",
+   "min": 0.0,
+   "max": 30.0,
+   "step": 0.05,
+   "default": 0.0,
+   "unit": " s"
+  },
+  {
+   "key": "cooling",
+   "label": "Keeps going for",
+   "type": "float",
+   "min": 1.0,
+   "max": 60.0,
+   "step": 0.1,
+   "default": 12.0,
+   "unit": " s"
+  },
+  {
+   "key": "runny",
+   "label": "Runny",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.4
+  },
+  {
+   "key": "lie",
+   "label": "Picture shapes the ground",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.25
+  },
+  {
+   "key": "low_ground",
+   "label": "Low ground",
+   "type": "enum",
+   "choices": [
+    "Dark parts",
+    "Bright parts"
+   ],
+   "default": 0
+  },
+  {
+   "key": "crust",
+   "label": "Crust",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.6
+  },
+  {
+   "key": "glow",
+   "label": "Glow",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.7
+  },
+  {
+   "key": "steam",
+   "label": "Steam",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.5
+  },
+  {
+   "key": "seed",
+   "label": "Seed",
+   "type": "int",
+   "min": 0,
+   "max": 9999,
+   "step": 1,
+   "default": 0
+  }
+ ],
+ "handles": [
+  {
+   "kind": "point",
+   "key": "vent"
+  }
+ ],
+ "passes": [
+  {
+   "shader": "ground.gdshader",
+   "scale": 0.125
+  },
+  {
+   "shader": "flow.gdshader",
+   "set": {
+    "hop": 16.0
+   }
+  },
+  {
+   "shader": "flow.gdshader",
+   "set": {
+    "hop": 8.0
+   }
+  },
+  {
+   "shader": "flow.gdshader",
+   "set": {
+    "hop": 4.0
+   }
+  },
+  {
+   "shader": "flow.gdshader",
+   "set": {
+    "hop": 2.0
+   }
+  },
+  {
+   "shader": "flow.gdshader",
+   "set": {
+    "hop": 1.0
+   }
+  },
+  {
+   "shader": "flow.gdshader",
+   "set": {
+    "hop": 12.0
+   }
+  },
+  {
+   "shader": "flow.gdshader",
+   "set": {
+    "hop": 6.0
+   }
+  },
+  {
+   "shader": "flow.gdshader",
+   "set": {
+    "hop": 3.0
+   }
+  },
+  {
+   "shader": "flow.gdshader",
+   "set": {
+    "hop": 1.5
+   }
+  },
+  {
+   "shader": "flow.gdshader",
+   "set": {
+    "hop": 8.0
+   }
+  },
+  {
+   "shader": "flow.gdshader",
+   "set": {
+    "hop": 4.0
+   }
+  },
+  {
+   "shader": "flow.gdshader",
+   "set": {
+    "hop": 2.0
+   }
+  },
+  {
+   "shader": "flow.gdshader",
+   "set": {
+    "hop": 1.0
+   }
+  },
+  {
+   "shader": "flow.gdshader",
+   "set": {
+    "hop": 1.0
+   }
+  },
+  {
+   "shader": "compose.gdshader",
+   "scale": 8.0,
+   "inputs": {
+    "grid_tex": 14
+   }
+  }
+ ]
+}

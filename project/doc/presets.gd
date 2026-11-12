@@ -14,6 +14,7 @@ const SequenceCmds := preload("res://doc/commands/sequence_cmds.gd")
 const StreamRoles := preload("res://doc/stream_roles.gd")
 const AssetPacks := preload("res://doc/asset_packs.gd")
 const YtPresets := preload("res://doc/yt_presets.gd")
+const VoicePresets := preload("res://doc/voice_presets.gd")
 const KINDS := ["effect", "effect_stack", "transform", "sequence", "export", "export_place", "audio_fx", "sfx_combo", "composition", "text_style", "stream_roles", "asset_pack", "driver", "transition"]
 const SEQUENCE_FIELDS := ["fps", "width", "height", "sample_rate", "drop_frame"]
 const ANCHORS: PackedStringArray = ["start", "end", "percent", "playhead"]
@@ -237,7 +238,9 @@ static func list_user_all() -> Array[Dictionary]:
 
 
 static func list_built_in() -> Array[Dictionary]:
-	return YtPresets.listing()
+	var out: Array[Dictionary] = YtPresets.listing()
+	out.append_array(VoicePresets.listing())
+	return out
 
 
 static func built_in_unshadowed(taken: PackedStringArray) -> Array[Dictionary]:
@@ -249,7 +252,7 @@ static func built_in_unshadowed(taken: PackedStringArray) -> Array[Dictionary]:
 
 
 static func is_built_in_preset(id: String) -> bool:
-	return YtPresets.ships(id)
+	return YtPresets.ships(id) or VoicePresets.ships(id)
 
 
 static func reorder_user(ids: PackedStringArray) -> bool:
@@ -596,11 +599,15 @@ static func apply_effects(doc: Project, seq: Sequence, clip_ids: PackedStringArr
 		if entries.is_empty():
 			continue
 		var new_effects: Array[Dictionary] = c.effects.duplicate(true)
+		var gid: String = doc.mint_id("g") if str(preset.get("kind", "")) == "effect_stack" and entries.size() >= 2 else ""
 		for e: Variant in entries:
 			if not (e is Dictionary):
 				continue
 			var ed: Dictionary = (e as Dictionary).duplicate(true)
 			ed["uid"] = doc.mint_id("e")
+			if not gid.is_empty():
+				ed["group"] = gid
+				ed["group_label"] = str(preset.get("label", "Effect group"))
 			if not ed.has("enabled"):
 				ed["enabled"] = true
 			if not (ed.get("params") is Dictionary):

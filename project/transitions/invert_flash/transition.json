@@ -1,0 +1,9 @@
+{
+ "id": "invert_flash", "label": "Invert Flash", "group": "Glitch", "space": "2D",
+ "from": ["invert flash cut"],
+ "blurb": "A snappy flash cut: the colours slam to their negative and burst to white for an instant at the handover, and the next shot drops in as it clears. Set how hard the flash hits.",
+ "default_duration": 0.4,
+ "params": [
+  {"key": "flash", "label": "Flash", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7}
+ ]
+}

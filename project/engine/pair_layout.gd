@@ -6,6 +6,7 @@ const PairCrop := preload("res://engine/pair_crop.gd")
 const FrameCanvas := preload("res://engine/frame_canvas.gd")
 const PlaybackClock := preload("res://engine/playback_clock.gd")
 const ViewMap := preload("res://doc/view_map.gd")
+const ViewBorder := preload("res://doc/view_border.gd")
 const PAIR_VIEW_ID := "pair_view"
 const REGION_MAX := 8
 const FULL := 0
@@ -31,6 +32,8 @@ const ROLE_VIEW := "view"
 const ROLE_CELL := "cell"
 const ROLE_INSET := "inset"
 const ROLE_SOLO := "solo"
+const FRAME_BOX_KEY := "frame_box"
+const PIVOT_KEY := "pivot"
 const CORNERS: PackedStringArray = ["tl", "tr", "bl", "br"]
 const DEFAULT_PLACES: Array[Vector2] = [Vector2(0.2, 0.2), Vector2(0.8, 0.8), Vector2(0.2, 0.8), Vector2(0.8, 0.2)]
 
@@ -249,7 +252,7 @@ static func group_uniforms(values: Dictionary) -> void:
 	var n: int = int(values.get("crop_count", 0))
 	if n <= 0:
 		n = mini(maxi(parse(String(values.get("crops", ""))).size(), 1), REGION_MAX)
-	if ViewMap.members_of(String(text), n).size() < 2:
+	if not ViewMap.limited(ViewMap.members_of(String(text), n), n):
 		return
 	values[ViewMap.VIEW_KEY] = float(ViewMap.resolve_values(values, n))
 	values[ViewMap.MODE_KEY] = 0
@@ -270,6 +273,7 @@ static func fill_uniforms(values: Dictionary, src: Vector2i, canvas: Vector2i, s
 			values.erase(size_key(i))
 			values.erase(PairCrop.turn_key(i))
 	PairCrop.fill_uniforms(values, String(values.get("crops", "")))
+	ViewBorder.fill(values, crops)
 	if not bool(values.get("grid", false)):
 		return
 	var n: int = mini(crops.size(), REGION_MAX)
@@ -378,8 +382,7 @@ static func region_boxes(c: Clip, e: Dictionary, t: float, frame: Vector2i, src:
 	var solo: int = int(st["solo"])
 	if solo >= 0:
 		var si: int = clampi(solo, 0, n - 1)
-		var sr: Rect2 = (crops[si] as Dictionary)["rect"]
-		out.append(_turned(_box(crops, si, inset_box(region_aspect(sr, srcf), ca, place_at(c, e, si, local, fps), size_at(c, e, si, local, fps)), sr, ROLE_SOLO), c, e, local, fps, ca))
+		out.append(inset_part(c, e, crops, si, ROLE_SOLO, cpx, srcf, local, fps))
 		return out
 	var shown: Array[int] = []
 	for i: int in n:
@@ -393,13 +396,13 @@ static func region_boxes(c: Clip, e: Dictionary, t: float, frame: Vector2i, src:
 			aspects.append(region_aspect((crops[i2] as Dictionary)["rect"], srcf))
 		var cells: Array[Rect2] = grid_cells(shown.size(), grid_columns(aspects, ca, float(st["gap"])), float(st["gap"]))
 		for k: int in shown.size():
-			_add_part(out, crops, shown[k], cells[k], cpx, srcf, int(st["fit"]), zoom, pan, ROLE_CELL)
+			_add_framed(out, c, e, crops, shown[k], cells[k], cpx, srcf, int(st["fit"]), zoom, pan, ROLE_CELL, local, fps)
 		return out
 	var layout: int = int(st["layout"])
 	if layout == SIDE or layout == STACK:
 		var parts: Array[Rect2] = split_cells(shown.size(), layout == SIDE)
 		for k2: int in shown.size():
-			_add_part(out, crops, shown[k2], parts[k2], cpx, srcf, int(st["split_fit"]), zoom, pan, ROLE_CELL)
+			_add_framed(out, c, e, crops, shown[k2], parts[k2], cpx, srcf, int(st["split_fit"]), zoom, pan, ROLE_CELL, local, fps)
 		return out
 	var active: int = int(st["active"])
 	if layout == PIP:
@@ -407,10 +410,64 @@ static func region_boxes(c: Clip, e: Dictionary, t: float, frame: Vector2i, src:
 			var j: int = shown[k3]
 			if j == active:
 				continue
-			var jr: Rect2 = (crops[j] as Dictionary)["rect"]
-			out.append(_turned(_box(crops, j, inset_box(region_aspect(jr, srcf), ca, place_at(c, e, j, local, fps), size_at(c, e, j, local, fps)), jr, ROLE_INSET), c, e, local, fps, ca))
-	_add_part(out, crops, active, Rect2(0.0, 0.0, 1.0, 1.0), cpx, srcf, int(st["fit"]), zoom, pan, ROLE_VIEW)
+			out.append(inset_part(c, e, crops, j, ROLE_INSET, cpx, srcf, local, fps))
+	_add_framed(out, c, e, crops, active, Rect2(0.0, 0.0, 1.0, 1.0), cpx, srcf, int(st["fit"]), zoom, pan, ROLE_VIEW, local, fps)
 	return out
+
+
+static func border_path(c: Clip, e: Dictionary, i: int, local: float, fps: float) -> String:
+	var v: Variant = value_at(c, e, ViewBorder.border_key(i), local, fps, "")
+	return String(v).strip_edges() if v is String else ""
+
+
+static func border_cell(cell: Rect2, cpx: Vector2, win: Rect2, img_size: Vector2, inset: float) -> Rect2:
+	var cell_px: Vector2 = cell.size * cpx
+	var bs: Vector2 = fitted(maxf(img_size.x, 1.0) / maxf(img_size.y, 1.0), maxf(cell_px.x, 1.0) / maxf(cell_px.y, 1.0))
+	var box: Rect2 = Rect2(cell.position + (Vector2.ONE - bs) * 0.5 * cell.size, bs * cell.size)
+	var w: Rect2 = ViewBorder.inset_window(win, inset)
+	return Rect2(box.position + w.position * box.size, w.size * box.size)
+
+
+static func _add_framed(out: Array[Dictionary], c: Clip, e: Dictionary, crops: Array, i: int, cell: Rect2, cpx: Vector2, srcf: Vector2, mode: int, zoom: float, pan: Vector2, role: String, local: float, fps: float) -> void:
+	if i < 0 or i >= crops.size():
+		return
+	var path: String = border_path(c, e, i, local, fps)
+	if path.is_empty():
+		_add_part(out, crops, i, cell, cpx, srcf, mode, zoom, pan, role)
+		return
+	var d: Dictionary = ViewBorder.window_for_path(path)
+	if (d["size"] as Vector2).x < 1.0:
+		_add_part(out, crops, i, cell, cpx, srcf, mode, zoom, pan, role)
+		return
+	var inner: Rect2 = border_cell(cell, cpx, d["win"], d["size"], num_at(c, e, ViewBorder.inset_key(i), local, fps, 0.0))
+	_add_part(out, crops, i, inner, cpx, srcf, FILL, zoom * clampf(num_at(c, e, ViewBorder.zoom_key(i), local, fps, 1.0), ViewBorder.ZOOM_MIN, ViewBorder.ZOOM_MAX), pan, role)
+
+
+static func inset_part(c: Clip, e: Dictionary, crops: Array, i: int, role: String, cpx: Vector2, srcf: Vector2, local: float, fps: float) -> Dictionary:
+	var ca: float = cpx.x / maxf(cpx.y, 1.0)
+	var r: Rect2 = (crops[i] as Dictionary)["rect"]
+	var place: Vector2 = place_at(c, e, i, local, fps)
+	var size: float = size_at(c, e, i, local, fps)
+	var path: String = border_path(c, e, i, local, fps)
+	var d: Dictionary = ViewBorder.window_for_path(path) if not path.is_empty() else {}
+	if d.is_empty() or (d["size"] as Vector2).x < 1.0:
+		return _turned(_box(crops, i, inset_box(region_aspect(r, srcf), ca, place, size), r, role), c, e, local, fps, ca)
+	var img: Vector2 = d["size"]
+	var outer: Rect2 = inset_box(maxf(img.x, 1.0) / maxf(img.y, 1.0), ca, place, size)
+	var w: Rect2 = ViewBorder.inset_window(d["win"], num_at(c, e, ViewBorder.inset_key(i), local, fps, 0.0))
+	var inner: Rect2 = Rect2(outer.position + w.position * outer.size, w.size * outer.size)
+	var vz: float = clampf(num_at(c, e, ViewBorder.zoom_key(i), local, fps, 1.0), ViewBorder.ZOOM_MIN, ViewBorder.ZOOM_MAX)
+	var part: Dictionary = drawn_part(inner, r, region_aspect(r, srcf), inner.size * cpx, FILL, vz, Vector2.ZERO)
+	var b: Dictionary = _box(crops, i, part.get("box", inner), part.get("source", r), role)
+	b[FRAME_BOX_KEY] = outer
+	b[PIVOT_KEY] = place
+	return _turned(b, c, e, local, fps, ca)
+
+
+static func pivot_of(b: Dictionary) -> Vector2:
+	if b.has(PIVOT_KEY):
+		return b[PIVOT_KEY]
+	return (b["box"] as Rect2).get_center()
 
 
 static func _box(crops: Array, i: int, box: Rect2, source: Rect2, role: String) -> Dictionary:
@@ -445,7 +502,7 @@ static func hits(c: Clip, t: float, frame: Vector2i, src: Vector2i, uv: Vector2,
 
 static func region_at(boxes: Array[Dictionary], uv: Vector2) -> int:
 	for b: Dictionary in boxes:
-		var at: Vector2 = PairCrop.turned(b, (b["box"] as Rect2).get_center()).affine_inverse() * uv if b.has("turn") else uv
+		var at: Vector2 = PairCrop.turned(b, pivot_of(b)).affine_inverse() * uv if b.has("turn") else uv
 		if (b["box"] as Rect2).has_point(at) or (b["box"] as Rect2).end.is_equal_approx(at):
 			return int(b["index"])
 	return -1

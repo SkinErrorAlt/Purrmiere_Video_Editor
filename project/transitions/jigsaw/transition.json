@@ -1,0 +1,19 @@
+{
+ "id": "jigsaw",
+ "label": "Jigsaw",
+ "group": "Shape",
+ "space": "2D",
+ "from": ["Boris Puzzle Wipe", "PowerDirector Jigsaw"],
+ "blurb": "The incoming shot is cut into real jigsaw pieces, tabs and blanks and all, and they drop into place one after another until the table is full with no gaps left anywhere. Every join is worked out from the seam itself rather than from either piece, so where one piece has a tab its neighbour has exactly the matching hole, and no two joins come out alike: the tab can be large or small, round or squared off, pinched at the neck or wide open, and it can sit off to one side of the edge instead of dead centre. The Seed number redraws the whole cut, so you can keep trying numbers until you like the shapes, and Variety sets how far the joins are allowed to differ from one another. Each piece arrives from a little way off, slightly large, and snaps down flush with a soft shadow under it and a bevel of light round its edge that fades off the final frame.",
+ "default_duration": 1.6,
+ "params": [
+  {"key": "across", "label": "Pieces across", "type": "int", "min": 2, "max": 14, "step": 1, "default": 6},
+  {"key": "down", "label": "Pieces down", "type": "int", "min": 2, "max": 10, "step": 1, "default": 4},
+  {"key": "tab", "label": "Tab size", "type": "float", "min": 0.05, "max": 0.35, "step": 0.005, "default": 0.19},
+  {"key": "seed_no", "label": "Seed", "type": "int", "min": 0, "max": 999, "step": 1, "default": 7},
+  {"key": "variety", "label": "Variety", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "travel", "label": "Travel in", "type": "float", "min": 0.0, "max": 0.25, "step": 0.01, "default": 0.12},
+  {"key": "overlap", "label": "Overlap", "type": "float", "min": 0.05, "max": 0.9, "step": 0.01, "default": 0.3},
+  {"key": "relief", "label": "Edge relief", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7}
+ ]
+}

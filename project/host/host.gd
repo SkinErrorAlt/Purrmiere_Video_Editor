@@ -4,6 +4,7 @@ signal registry_changed(iface: String)
 signal modules_changed
 
 const ModuleLoader := preload("res://host/module_loader.gd")
+const ModuleExtras := preload("res://host/module_extras.gd")
 const IFACES: PackedStringArray = ["IPanel", "ITool", "IExporter", "ITimelineView", "IBinView", "IMonitor", "IKeymap", "ILayout", "ITheme", "IPresetKind", "ITrackKind", "IEffect", "ITransition", "IAudioEffect", "IInterpolator", "IGenerator", "ICommandSet", "IRenderScheduler"]
 
 var version: String = "0.2.0"
@@ -193,6 +194,8 @@ func load_modules() -> void:
 	var prefs: Node = get_node_or_null("/root/Prefs")
 	if prefs != null:
 		_watch_core_prefs(prefs)
+		if not bool(prefs.call("is_registered", ModuleLoader.DEV_FOLDER_PREF)):
+			prefs.call("register", ModuleLoader.DEV_FOLDER_PREF, "", {"label": "Also load modules from this folder", "type": "string", "note": "For building a module: it runs straight from its own folder or repository, no copying. Several folders can be separated with ;. Use Reload Modules after changing its code."})
 	var records: Array[Dictionary] = _loader.scan(_no_modules_flag())
 	for r: Dictionary in records:
 		if String(r["state"]) == "broken":
@@ -216,14 +219,64 @@ func load_modules() -> void:
 func _activate(r: Dictionary) -> void:
 	var id: String = r["id"]
 	_current_module = id
+	if not bool(r["official"]):
+		_add_folders(r)
 	if String(r["kind"]) == "code":
 		_loader.load_code(r, self)
 	else:
 		r["state"] = "on"
 	_current_module = ""
+	if String(r["state"]) != "on":
+		_drop_module_items(id)
+
+
+## A module's effects and transitions folders load with it, whatever its kind.
+func _add_folders(r: Dictionary) -> void:
+	var path: String = String(r["path"])
+	var extras: RefCounted = ModuleExtras.shared()
+	if DirAccess.dir_exists_absolute(path + "effects"):
+		extras.call("add_effect_root", String(r["id"]), path + "effects")
+		(load("res://engine/effect_registry.gd").call("shared") as Object).call("reload")
+	if DirAccess.dir_exists_absolute(path + "transitions"):
+		extras.call("add_transition_root", String(r["id"]), path + "transitions")
+		(load("res://engine/transition_registry.gd").call("shared") as Object).call("reload")
+
+
+## The loaded record of a module, with its api object, for the module card and suites.
+func module_record(id: String) -> Dictionary:
+	return _loader.record_for(id)
+
+
+## Scans the installed and developer module folders again: new ones appear, ones that are on load fresh from
+## disk. Purrmiere's own modules keep running untouched.
+func reload_modules() -> void:
+	if not _loaded:
+		load_modules()
+		return
+	for r: Dictionary in _loader.records:
+		if not bool(r["official"]):
+			_loader.unload(r)
+			_drop_module_items(String(r["id"]))
+	var prefs: Node = get_node_or_null("/root/Prefs")
+	for r2: Dictionary in _loader.rescan_others():
+		if bool(r2["official"]) or String(r2["state"]) == "broken":
+			continue
+		var key: String = _enabled_key(String(r2["id"]))
+		if prefs != null and not prefs.is_registered(key):
+			prefs.register(key, false, {"label": "Module on: " + String(r2["label"]), "type": "bool"})
+		if prefs != null and bool(prefs.get_value(key)):
+			_activate(r2)
+		else:
+			r2["state"] = "off"
+	modules_changed.emit()
 
 
 func _drop_module_items(id: String) -> void:
+	var dropped: PackedStringArray = ModuleExtras.shared().call("drop_owner", id)
+	if dropped.has("effects"):
+		(load("res://engine/effect_registry.gd").call("shared") as Object).call("reload")
+	if dropped.has("transitions"):
+		(load("res://engine/transition_registry.gd").call("shared") as Object).call("reload")
 	if not _module_items.has(id):
 		return
 	for item: Dictionary in _module_items[id]:

@@ -1,0 +1,20 @@
+{
+ "id": "time_displacement",
+ "label": "Time Displacement",
+ "category": "Time",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Pushes each part of the picture back in time by its own amount, read from a map: the clip's own brightness, a sweep across the frame, a ring from a point, or a picture you choose. Bright parts of the map show earlier moments, so movement melts and ripples through the frame.",
+ "history": {"max": 62, "reach": ["max_time"], "seconds": ["max_time"]},
+ "params": [
+  {"key": "max_time", "label": "Furthest back", "type": "float", "min": 0.03, "max": 2.0, "step": 0.01, "default": 0.6, "unit": " s"},
+  {"key": "map", "label": "Map", "type": "enum", "choices": ["Brightness of the clip", "Left to right", "Top to bottom", "Ring from the centre", "A picture"], "default": 0},
+  {"key": "picture", "label": "Map picture", "type": "texture", "default": ""},
+  {"key": "invert", "label": "Invert the map", "type": "bool", "default": false},
+  {"key": "contrast", "label": "Map contrast", "type": "float", "min": 0.2, "max": 4.0, "step": 0.05, "default": 1.0},
+  {"key": "map_smooth", "label": "Smooth the map", "type": "float", "min": 0.0, "max": 40.0, "step": 0.5, "default": 6.0, "unit": " px"},
+  {"key": "steps", "label": "Steps", "type": "int", "min": 0, "max": 32, "step": 1, "default": 0},
+  {"key": "centre", "label": "Centre", "type": "vec2", "default": [0.5, 0.5]}
+ ],
+ "passes": [{"shader": "effect.gdshader"}]
+}

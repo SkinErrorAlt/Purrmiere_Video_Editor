@@ -34,6 +34,7 @@ const DEFS: Array[Dictionary] = [
 		"label": "Parametric EQ",
 		"group": GROUP_EQ,
 		"blurb": "Four bands you can place anywhere, each with its own frequency, amount and sharpness, plus a low cut and a high cut. Low cut at 0 and high cut at 20000 are off.",
+		"panels": [{"kind": "eq_curve", "bind": {"f1": "b1_freq", "g1": "b1_gain", "q1": "b1_q", "f2": "b2_freq", "g2": "b2_gain", "q2": "b2_q", "f3": "b3_freq", "g3": "b3_gain", "q3": "b3_q", "f4": "b4_freq", "g4": "b4_gain", "q4": "b4_q", "low_cut": "low_cut", "high_cut": "high_cut"}}],
 		"params": [
 			{"key": "low_cut", "label": "Low cut", "default": 0.0, "min": 0.0, "max": 1000.0, "step": 1.0, "unit": " Hz"},
 			{"key": "b1_freq", "label": "Band 1 frequency", "default": 100.0, "min": 20.0, "max": 500.0, "step": 1.0, "unit": " Hz"},
@@ -56,6 +57,7 @@ const DEFS: Array[Dictionary] = [
 		"label": "Low shelf",
 		"group": GROUP_EQ,
 		"blurb": "Lifts or lowers everything below a frequency, for more or less body.",
+		"panels": [{"kind": "eq_curve", "bind": {"lo_f": "freq", "lo_g": "gain", "lo_q": "q"}}],
 		"params": [
 			{"key": "freq", "label": "Frequency", "default": 200.0, "min": 20.0, "max": 2000.0, "step": 1.0, "unit": " Hz"},
 			{"key": "gain", "label": "Amount", "default": 3.0, "min": -24.0, "max": 24.0, "step": 0.1, "unit": " dB"},
@@ -67,6 +69,7 @@ const DEFS: Array[Dictionary] = [
 		"label": "High shelf",
 		"group": GROUP_EQ,
 		"blurb": "Lifts or lowers everything above a frequency, for more or less brightness.",
+		"panels": [{"kind": "eq_curve", "bind": {"hi_f": "freq", "hi_g": "gain", "hi_q": "q"}}],
 		"params": [
 			{"key": "freq", "label": "Frequency", "default": 6000.0, "min": 1000.0, "max": 20000.0, "step": 10.0, "unit": " Hz"},
 			{"key": "gain", "label": "Amount", "default": 3.0, "min": -24.0, "max": 24.0, "step": 0.1, "unit": " dB"},
@@ -78,6 +81,7 @@ const DEFS: Array[Dictionary] = [
 		"label": "Tilt EQ",
 		"group": GROUP_EQ,
 		"blurb": "Tips the whole sound darker or brighter around one pivot: the lows go down as the highs go up.",
+		"panels": [{"kind": "eq_curve", "bind": {"pivot": "pivot", "tilt": "tilt"}}],
 		"params": [
 			{"key": "pivot", "label": "Pivot", "default": 1000.0, "min": 100.0, "max": 8000.0, "step": 5.0, "unit": " Hz"},
 			{"key": "tilt", "label": "Tilt", "default": 3.0, "min": -12.0, "max": 12.0, "step": 0.1, "unit": " dB"},

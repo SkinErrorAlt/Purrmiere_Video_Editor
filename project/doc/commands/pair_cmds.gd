@@ -168,7 +168,36 @@ class SwitchView extends "res://doc/commands/command.gd":
 			var md: Dictionary = m
 			more_old.append(c.get_param(String(md["path"])).duplicate(true))
 			c.set_param(String(md["path"]), md["anim"])
+		if ok and not _auto_done:
+			_auto_done = true
+			_auto_match(c)
 		doc.touch("meta")
+
+	var _auto_done: bool = false
+	var matched: Array = []
+
+	func _auto_match(c: Clip) -> void:
+		var e: Dictionary = c.effect_by_uid(uid)
+		var named: GDScript = load("res://doc/named_offsets.gd")
+		if e.is_empty() or not bool(named.call("auto_on", e)):
+			return
+		var cuts: Array = load("res://doc/view_offsets.gd").call("cuts_of", e, c)
+		var local: float = clampf(at - c.start, 0.0, maxf(c.duration, 0.0))
+		var k: int = int(load("res://doc/view_offsets.gd").call("cut_index_at", cuts, local))
+		if k < 1:
+			return
+		var made: Dictionary = named.call("plan", e, c, k)
+		matched = made.get("matched", [])
+		var props: Dictionary = made.get("props", {})
+		var vm: GDScript = load("res://doc/view_map.gd")
+		for idx: Variant in props.keys():
+			var next: Dictionary = props[idx]
+			if next.is_empty():
+				continue
+			var mp: String = String(vm.call("param_path", e, String(vm.call("offset_key", int(idx)))))
+			more.append({"path": mp, "anim": next})
+			more_old.append(c.get_param(mp).duplicate(true))
+			c.set_param(mp, next)
 
 	func undo(doc: Project) -> void:
 		var c: Clip = clip(doc, clip_id)

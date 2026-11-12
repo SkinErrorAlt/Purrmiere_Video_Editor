@@ -1,0 +1,20 @@
+{
+ "id": "lichen_growth",
+ "label": "Lichen and Mould",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "Grows lichen or mould over the shot as if the picture were a damp old surface. Colonies start one after another and spread outwards: crustose lichen with a pale lobed margin that cracks into little plates and raises dark fruiting discs as it ages, bright orange wall lichen, white fluffy mould that turns powdery green-blue from the middle in growth rings, or black damp mould with a stain spreading ahead of it. Darker parts of the picture count as damper and grow faster. Key Growth, or set Grows in over to watch it spread.",
+ "params": [
+  {"key": "growth", "label": "Growth", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.55},
+  {"key": "grow_time", "label": "Grows in over", "type": "float", "min": 0.0, "max": 30.0, "step": 0.1, "default": 0.0, "unit": " s"},
+  {"key": "kind", "label": "Kind", "type": "enum", "choices": ["Grey-green lichen", "Orange lichen", "Mould", "Black mould"], "default": 0},
+  {"key": "colony_size", "label": "Colony size", "type": "float", "min": 20.0, "max": 600.0, "step": 1.0, "default": 150.0, "unit": " px"},
+  {"key": "density", "label": "Colonies", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "prefer_dark", "label": "Grows in the dark parts", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "relief", "label": "Relief", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "stain", "label": "Damp stain", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.5},
+  {"key": "seed", "label": "Seed", "type": "int", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "passes": "single"
+}

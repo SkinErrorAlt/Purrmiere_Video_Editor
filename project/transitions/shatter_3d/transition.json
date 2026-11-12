@@ -1,0 +1,27 @@
+{
+ "id": "shatter_3d",
+ "label": "Shatter 3D",
+ "group": "3D",
+ "space": "3D",
+ "engine": "shatter",
+ "from": ["A real baked physics break"],
+ "blurb": "The outgoing picture is a wall of real 3D shards with thickness and weight. They tear away from the point you choose and tumble through space under gravity, baked once by the native engine so it plays back instantly, revealing the next clip behind. Drag the impact point on the Program monitor, pick how they leave, and turn on motion blur for a smoother tumble.",
+ "default_duration": 1.4,
+ "params": [
+  {"key": "action", "label": "How it leaves", "type": "enum", "choices": ["Burst toward you", "Pull toward you", "Fall over", "Explode outward", "Swirl away"], "default": 0},
+  {"key": "pattern", "label": "Shard pattern", "type": "enum", "choices": ["Even wall", "Radial from impact"], "default": 0},
+  {"key": "impact", "label": "Impact point", "type": "vec2", "default": [0.5, 0.45]},
+  {"key": "chunks", "label": "Detail", "type": "float", "min": 4, "max": 44, "step": 1, "default": 14},
+  {"key": "force", "label": "Force", "type": "float", "min": 0.1, "max": 2.5, "step": 0.01, "default": 0.9},
+  {"key": "spread", "label": "Spread", "type": "float", "min": 0, "max": 1.5, "step": 0.01, "default": 0.5},
+  {"key": "spin", "label": "Spin", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 0.6},
+  {"key": "gravity", "label": "Gravity", "type": "float", "min": 0, "max": 30, "step": 0.1, "default": 9.8},
+  {"key": "restitution", "label": "Bounce", "type": "float", "min": 0, "max": 0.9, "step": 0.01, "default": 0.2},
+  {"key": "drag", "label": "Air drag", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.12},
+  {"key": "motion_blur", "label": "Motion blur", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.0},
+  {"key": "variant", "label": "Variation", "type": "float", "min": 0, "max": 9999, "step": 1, "default": 0}
+ ],
+ "handles": [
+  {"kind": "point", "key": "impact"}
+ ]
+}

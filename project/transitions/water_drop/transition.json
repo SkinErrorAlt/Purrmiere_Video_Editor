@@ -14,5 +14,8 @@
   {"key": "mode", "label": "Style", "type": "enum", "choices": ["Spreads in", "Dissolves"], "default": 0},
   {"key": "softness", "label": "Edge softness", "type": "float", "min": 0, "max": 0.3, "step": 0.005, "default": 0.03},
   {"key": "shine", "label": "Shine", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.3}
+ ],
+ "handles": [
+  {"kind": "point", "key": "centre"}
  ]
 }

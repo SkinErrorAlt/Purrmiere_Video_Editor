@@ -116,6 +116,9 @@ func load_all() -> void:
 	_defs = {}
 	_broken = []
 	_scan(BUILT_IN_ROOT, "built_in")
+	var extras: GDScript = load("res://host/module_extras.gd")
+	for extra_root: String in (extras.call("shared") as Object).call("transition_paths"):
+		_scan(extra_root, "module")
 	_scan(user_root(), "user")
 	_sort()
 	_stamp = EffectRegistry.folder_stamp(user_root())
@@ -270,9 +273,8 @@ func _add(def: Dictionary) -> void:
 	if def.is_empty():
 		return
 	var id: String = String(def["id"])
-	if _defs.has(id) or is_classic(id):
-		var by: String = String((_defs[id] as Dictionary)["folder"]) if _defs.has(id) else "a built in transition"
-		_broken.append({"path": String(def["folder"]), "id": id, "reason": "the id \"" + id + "\" is already used by " + by})
+	if _defs.has(id):
+		_broken.append({"path": String(def["folder"]), "id": id, "reason": "the id \"" + id + "\" is already used by " + String((_defs[id] as Dictionary)["folder"])})
 		return
 	_defs[id] = def
 
@@ -282,10 +284,13 @@ func _normalise(raw: Dictionary, folder: String, fallback_id: String, source: St
 	if not valid_id(id):
 		_broken.append({"path": folder, "id": id, "reason": "the id \"" + id + "\" has characters outside a-z, 0-9 and _"})
 		return {}
+	var engine: String = String(raw.get("engine", "")).strip_edges().to_lower()
 	var shader_path: String = folder + String(raw.get("shader", SHADER_FILE))
-	if not FileAccess.file_exists(shader_path):
+	if engine.is_empty() and not FileAccess.file_exists(shader_path):
 		_broken.append({"path": shader_path, "id": id, "reason": "the shader file is missing"})
 		return {}
+	if not engine.is_empty():
+		shader_path = ""
 	var params: Array = []
 	var seen: Dictionary = {}
 	var raw_params: Variant = raw.get("params", [])
@@ -319,6 +324,7 @@ func _normalise(raw: Dictionary, folder: String, fallback_id: String, source: St
 		"steps": bool(raw.get("steps", false)),
 		"handles": (raw["handles"] as Array).duplicate(true) if raw.get("handles") is Array else [],
 		"pyramid": bool(raw.get("pyramid", false)),
+		"engine": engine,
 		"params": params,
 		"shader": shader_path,
 		"folder": folder,
@@ -355,13 +361,31 @@ static func _before(a: Dictionary, b: Dictionary) -> bool:
 	return String(a["label"]).naturalnocasecmp_to(String(b["label"])) < 0
 
 
+static func canvas_reads(text: String) -> String:
+	var re: RegEx = RegEx.new()
+	re.compile("\\btexture\\s*\\(\\s*(from_tex|to_tex)\\s*,")
+	var out: String = text
+	var m: RegExMatch = re.search(out)
+	while m != null:
+		var call: String = "tr_tex_from(" if m.get_string(1) == "from_tex" else "tr_tex_to("
+		out = out.substr(0, m.get_start()) + call + out.substr(m.get_end())
+		m = re.search(out, m.get_start() + call.length())
+	var params: RegEx = RegEx.new()
+	params.compile("\\bsampler2D\\s+(\\w+)\\s*[,)]")
+	for pm: RegExMatch in params.search_all(out):
+		var inner: RegEx = RegEx.new()
+		inner.compile("\\btexture\\s*\\(\\s*" + pm.get_string(1) + "\\s*,")
+		out = inner.sub(out, "tr_tex_of(" + pm.get_string(1) + ",", true)
+	return out
+
+
 static func compile(text: String) -> Dictionary:
 	if text.strip_edges().is_empty():
 		return {"ok": false, "reason": "the shader file is empty or missing", "shader": null, "uniforms": {}}
 	if not text.contains("canvas_item"):
 		return {"ok": false, "reason": "the shader must be a canvas_item shader", "shader": null, "uniforms": {}}
 	var sh: Shader = Shader.new()
-	var code: String = text + "\nuniform float " + PROBE + " = 0.0;\n"
+	var code: String = canvas_reads(text) + "\nuniform float " + PROBE + " = 0.0;\n"
 	var caught: Dictionary = ShaderConvert.caught_uniforms(sh, code)
 	var uniforms: Dictionary = {}
 	for u: Dictionary in caught["uniforms"]:
@@ -378,6 +402,9 @@ func shader_info(id: String) -> Dictionary:
 	var def: Dictionary = get_def(id)
 	if def.is_empty():
 		return {"ok": false, "reason": "there is no transition called \"" + id + "\"", "shader": null, "uniforms": {}}
+	var engine: String = String(def.get("engine", ""))
+	if not engine.is_empty():
+		return {"ok": true, "reason": "", "shader": null, "uniforms": {}, "engine": engine}
 	var path: String = String(def["shader"])
 	if _shaders.has(path):
 		return _shaders[path]
@@ -490,6 +517,12 @@ func values_at(id: String, tr: Dictionary, span_t: float, span_dur: float, fps: 
 
 
 static func shader_value(v: Variant, type: int) -> Variant:
+	if type == TYPE_OBJECT:
+		if v is Texture2D:
+			return v
+		if v is String and not (v as String).strip_edges().is_empty():
+			return LayerChain.texture_from_path(String(v))
+		return null
 	if type == TYPE_COLOR:
 		if v is Array and (v as Array).size() >= 3:
 			var a: Array = v

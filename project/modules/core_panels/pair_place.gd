@@ -69,8 +69,8 @@ func targets(panel: Object) -> Array[Dictionary]:
 		var role: String = String(b["role"])
 		if role != PairLayout.ROLE_INSET and role != PairLayout.ROLE_SOLO:
 			continue
-		var box: Rect2 = b["box"]
-		var spin: Transform2D = PairCrop.turned(b, box.get_center())
+		var box: Rect2 = b.get(PairLayout.FRAME_BOX_KEY, b["box"])
+		var spin: Transform2D = PairCrop.turned(b, PairLayout.pivot_of(b))
 		var corners: PackedVector2Array = PackedVector2Array()
 		for uv: Vector2 in [box.position, Vector2(box.end.x, box.position.y), box.end, Vector2(box.position.x, box.end.y)]:
 			corners.append(uv_to_seq(q, spin * uv))

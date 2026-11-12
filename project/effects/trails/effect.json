@@ -1,0 +1,21 @@
+{
+ "id": "trails",
+ "label": "Trails",
+ "category": "Time",
+ "tags": ["look", "light"],
+ "version": 1,
+ "blurb": "Whatever moves leaves a fading trail made of its own earlier frames, while still parts of the picture stay clean. Light trails keeps the brightest of each moment, like a long exposure of lights at night; Smear blends the trail into the picture; Behind the clip puts the trail under a cut out clip or a title.",
+ "history": {"max": 62, "reach": ["trail_length"], "seconds": ["trail_length"]},
+ "params": [
+  {"key": "trail_length", "label": "Trail length", "type": "float", "min": 0.03, "max": 2.0, "step": 0.01, "default": 0.5, "unit": " s"},
+  {"key": "samples", "label": "Steps along the trail", "type": "int", "min": 2, "max": 32, "step": 1, "default": 20},
+  {"key": "mode", "label": "Kind", "type": "enum", "choices": ["Light trails", "Smear", "Glow", "Behind the clip"], "default": 0},
+  {"key": "strength", "label": "Strength", "type": "float", "min": 0.0, "max": 2.0, "step": 0.01, "default": 1.0},
+  {"key": "fade", "label": "Fade along the trail", "type": "float", "min": 0.2, "max": 4.0, "step": 0.05, "default": 1.4},
+  {"key": "threshold", "label": "Only what moves", "type": "float", "min": 0.0, "max": 0.5, "step": 0.005, "default": 0.06},
+  {"key": "softness", "label": "Edge softness", "type": "float", "min": 0.005, "max": 0.5, "step": 0.005, "default": 0.12},
+  {"key": "colour", "label": "Trail colour", "type": "color", "default": [1.0, 0.55, 0.2, 1.0]},
+  {"key": "colour_amount", "label": "Colour the trail", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.0}
+ ],
+ "passes": [{"shader": "effect.gdshader"}]
+}

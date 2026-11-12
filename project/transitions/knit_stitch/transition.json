@@ -1,0 +1,17 @@
+{
+ "id": "knit_stitch",
+ "label": "Knit Stitch",
+ "group": "Wipe",
+ "space": "2D",
+ "from": ["Motion Knit", "Boris Fabric Wipe"],
+ "blurb": "The incoming shot is knitted over the outgoing one row by row. Every stitch is a proper V shaped loop of yarn taking its colour from the picture underneath it, lit along the top of the strand and shaded in the groove between strands so the wool sits round, and each row is knitted in from one end with the loose end of the yarn running ahead of the needle. Alternate rows lean the other way, the way a knitted fabric really does. Set the gauge, the thickness of the yarn, and how much the rows overlap.",
+ "default_duration": 1.5,
+ "params": [
+  {"key": "gauge", "label": "Stitches across", "type": "float", "min": 6.0, "max": 80.0, "step": 1.0, "default": 34.0},
+  {"key": "courses", "label": "Rows", "type": "float", "min": 4.0, "max": 60.0, "step": 1.0, "default": 22.0},
+  {"key": "yarn", "label": "Yarn thickness", "type": "float", "min": 0.1, "max": 0.5, "step": 0.005, "default": 0.28},
+  {"key": "relief", "label": "Relief", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7},
+  {"key": "overlap", "label": "Row overlap", "type": "float", "min": 0.02, "max": 0.6, "step": 0.01, "default": 0.12},
+  {"key": "from_left", "label": "Knit from the left", "type": "bool", "default": true}
+ ]
+}

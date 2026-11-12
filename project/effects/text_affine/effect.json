@@ -1,0 +1,44 @@
+{
+ "id": "text_affine",
+ "label": "Affine",
+ "category": "Text",
+ "version": 1,
+ "applies_to": "text",
+ "text_transform": "affine",
+ "tags": [
+  "text",
+  "cipher"
+ ],
+ "blurb": "Each letter x becomes a times x plus b, wrapped round the alphabet. a must share no factor with 26.",
+ "params": [
+  {
+   "key": "a",
+   "label": "a (multiply)",
+   "type": "int",
+   "min": 1,
+   "max": 25,
+   "step": 1,
+   "default": 5
+  },
+  {
+   "key": "b",
+   "label": "b (add)",
+   "type": "int",
+   "min": 0,
+   "max": 25,
+   "step": 1,
+   "default": 8
+  },
+  {
+   "key": "direction",
+   "label": "Direction",
+   "type": "enum",
+   "choices": [
+    "Encode",
+    "Decode"
+   ],
+   "default": 0
+  }
+ ],
+ "passes": []
+}

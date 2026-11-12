@@ -1,0 +1,62 @@
+{
+ "id": "text_redact",
+ "label": "Redaction Bars",
+ "category": "Text",
+ "version": 1,
+ "applies_to": "text",
+ "text_transform": "redact",
+ "tags": [
+  "text",
+  "horror"
+ ],
+ "blurb": "Hides chosen words under solid bars, block characters or [REDACTED], like a declassified file. Words are split by commas; a pattern can hide every number.",
+ "params": [
+  {
+   "key": "words",
+   "label": "Words to hide",
+   "type": "string",
+   "default": "",
+   "keyable": true
+  },
+  {
+   "key": "match",
+   "label": "Match",
+   "type": "enum",
+   "choices": [
+    "Whole words",
+    "Anywhere in the text",
+    "Pattern (regular expression)"
+   ],
+   "default": 0
+  },
+  {
+   "key": "case",
+   "label": "Match capitals exactly",
+   "type": "bool",
+   "default": false
+  },
+  {
+   "key": "look",
+   "label": "Look",
+   "type": "enum",
+   "choices": [
+    "Bars over the words",
+    "Block characters",
+    "The word [REDACTED]"
+   ],
+   "default": 0
+  },
+  {
+   "key": "colour",
+   "label": "Bar colour",
+   "type": "color",
+   "default": [
+    0,
+    0,
+    0,
+    1
+   ]
+  }
+ ],
+ "passes": []
+}

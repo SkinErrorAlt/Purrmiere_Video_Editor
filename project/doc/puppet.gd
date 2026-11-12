@@ -2,6 +2,8 @@ extends RefCounted
 
 const Clip := preload("res://doc/clip.gd")
 const AnimProp := preload("res://doc/anim_prop.gd")
+const PuppetSolve := preload("res://doc/puppet_solve.gd")
+const PuppetLocks := preload("res://doc/puppet_locks.gd")
 const EFFECT_ID := "puppet"
 const KEY_PINS := "pins"
 const KEY_REST := "rest"
@@ -9,6 +11,20 @@ const KEY_DENSITY := "density"
 const KEY_HOLDS := "holds"
 const KEY_LINKS := "links"
 const KEY_OVERLAPS := "overlaps"
+const KEY_KINDS := "kinds"
+const KEY_TURNS := "turns"
+const KEY_EXPANSION := "expansion"
+const KIND_POSITION := 0
+const KIND_BEND := 1
+const KIND_ADVANCED := 2
+const KIND_NAMES: PackedStringArray = ["Position", "Bend", "Advanced"]
+const TURN_REST := Vector2(0.0, 100.0)
+const SCALE_MIN := 1.0
+const SCALE_MAX := 1000.0
+const BEND_REACH_CELLS := 2.5
+const EXPANSION_MAX := 400.0
+const DRAFT_FROM := 900
+const DRAFT_CELLS := 16
 const OVER_FRONT_DEFAULT := 50.0
 const OVER_FRONT_MAX := 100.0
 const OVER_EXTENT_DEFAULT := 40.0
@@ -21,6 +37,7 @@ const HOLD_STIFF := 10000.0
 const HOLD_CORE := 0.6
 const LINK_PASSES := 8
 const MESH_FIELD := "mesh"
+const FRAMES_FIELD := "frames"
 const DENSITY_DEFAULT := 16.0
 const DENSITY_MIN := 4
 const DENSITY_MAX := 64
@@ -38,8 +55,11 @@ static var _solver_cache: Dictionary = {}
 static var _result_cache: Dictionary = {}
 static var _shape_cache: Dictionary = {}
 static var _order_cache: Dictionary = {}
-static var factor_count: int = 0
-static var solve_count: int = 0
+static var _weights_cache: Dictionary = {}
+static var _pending: Dictionary = {}
+static var _draft_cache: Dictionary = {}
+static var draft_ok: bool = false
+static var draft_count: int = 0
 
 
 static func is_puppet(e: Dictionary) -> bool:
@@ -118,11 +138,64 @@ static func keyed_pins_at(c: Clip, e: Dictionary, t: float, fps: float) -> Packe
 	return out
 
 
-static func pins_at(c: Clip, e: Dictionary, t: float, fps: float) -> PackedVector2Array:
+static func linked_pins_at(c: Clip, e: Dictionary, t: float, fps: float) -> PackedVector2Array:
 	var keyed: PackedVector2Array = keyed_pins_at(c, e, t, fps)
 	if link_count(e) == 0:
 		return keyed
 	return apply_links(rest_of(e), keyed, gains_at(c, e, t, fps))
+
+
+static func pins_at(c: Clip, e: Dictionary, t: float, fps: float) -> PackedVector2Array:
+	if not any_bend(e):
+		return linked_pins_at(c, e, t, fps)
+	return deformed_at(c, e, t, fps, size_of(e, Vector2(1920.0, 1080.0)))["pins"]
+
+
+static func kinds_of(e: Dictionary) -> PackedInt32Array:
+	var n: int = rest_of(e).size()
+	var p: Variant = _param(e, KEY_KINDS)
+	var v: Variant = AnimProp.static_value(p) if p is Dictionary else p
+	var out: PackedInt32Array = PackedInt32Array()
+	out.resize(n)
+	if v is Array:
+		var a: Array = v
+		for i: int in mini(a.size(), n):
+			var x: Variant = a[i]
+			out[i] = clampi(int(x), KIND_POSITION, KIND_ADVANCED) if (x is float or x is int) else KIND_POSITION
+	return out
+
+
+static func kind_of(e: Dictionary, i: int) -> int:
+	var k: PackedInt32Array = kinds_of(e)
+	return k[i] if i >= 0 and i < k.size() else KIND_POSITION
+
+
+static func any_bend(e: Dictionary) -> bool:
+	for k: int in kinds_of(e):
+		if k != KIND_POSITION:
+			return true
+	return false
+
+
+static func turns_at(c: Clip, e: Dictionary, t: float, fps: float) -> PackedVector2Array:
+	var n: int = rest_of(e).size()
+	var p: Variant = _param(e, KEY_TURNS)
+	var out: PackedVector2Array = PackedVector2Array()
+	if p is Dictionary:
+		out = flat_of(AnimProp.evaluate(p, key_time(c, e, KEY_TURNS, t), c.duration, fps))
+	while out.size() < n:
+		out.append(TURN_REST)
+	if out.size() > n:
+		out.resize(n)
+	for i: int in n:
+		out[i] = Vector2(out[i].x, clampf(out[i].y, SCALE_MIN, SCALE_MAX))
+	return out
+
+
+static func expansion_of(e: Dictionary) -> float:
+	var p: Variant = _param(e, KEY_EXPANSION)
+	var v: Variant = AnimProp.static_value(p) if p is Dictionary else p
+	return clampf(float(v), 0.0, EXPANSION_MAX) if (v is float or v is int) else 0.0
 
 
 static func value_at(c: Clip, e: Dictionary, key: String, t: float, fps: float, fallback: float) -> float:
@@ -443,15 +516,17 @@ static func shape_cover(info: Dictionary) -> float:
 	return float(on) / float(maxi(img.get_width() * img.get_height(), 1))
 
 
-static func mesh_for(size: Vector2, cells: int, alpha_path: String, shape_info: Dictionary = {}) -> Dictionary:
+static func mesh_for(size: Vector2, cells: int, alpha_path: String, shape_info: Dictionary = {}, expand: float = 0.0) -> Dictionary:
 	var code: String = shape_code(shape_info)
 	var key: String = "%.3f|%.3f|%d|%s" % [size.x, size.y, cells, alpha_path]
 	if not code.is_empty():
 		key += "|shape" + str(int(shape_info.get("sw", 0))) + "x" + str(int(shape_info.get("sh", 0))) + ":" + str(hash(code))
+	if expand > 0.0:
+		key += "|grow%.2f" % expand
 	var hit: Variant = _mesh_cache.get(key, null)
 	if hit is Dictionary:
 		return hit
-	var made: Dictionary = build_mesh(size, cells, shape_image(shape_info) if not code.is_empty() else alpha_image(alpha_path))
+	var made: Dictionary = build_mesh(size, cells, shape_image(shape_info) if not code.is_empty() else alpha_image(alpha_path), expand)
 	made["key"] = key
 	if _mesh_cache.size() > CACHE_MAX:
 		_mesh_cache = {}
@@ -475,7 +550,7 @@ static func _cell_has_alpha(alpha: Image, size: Vector2, r: Rect2) -> bool:
 	return false
 
 
-static func build_mesh(size: Vector2, cells: int, alpha: Image) -> Dictionary:
+static func build_mesh(size: Vector2, cells: int, alpha: Image, expand: float = 0.0) -> Dictionary:
 	var w: float = maxf(size.x, 1.0)
 	var h: float = maxf(size.y, 1.0)
 	var step: float = maxf(w, h) / float(clampi(cells, 1, DENSITY_MAX))
@@ -487,7 +562,7 @@ static func build_mesh(size: Vector2, cells: int, alpha: Image) -> Dictionary:
 	keep.resize(nx * ny)
 	for cy: int in ny:
 		for cx: int in nx:
-			keep[cy * nx + cx] = 1 if _cell_has_alpha(alpha, Vector2(w, h), Rect2(float(cx) * sx, float(cy) * sy, sx, sy)) else 0
+			keep[cy * nx + cx] = 1 if _cell_has_alpha(alpha, Vector2(w, h), Rect2(float(cx) * sx, float(cy) * sy, sx, sy).grow(maxf(expand, 0.0))) else 0
 	var ids: PackedInt32Array = PackedInt32Array()
 	ids.resize((nx + 1) * (ny + 1))
 	ids.fill(-1)
@@ -562,42 +637,38 @@ static func locate(verts: PackedVector2Array, tris: PackedInt32Array, p: Vector2
 	return {"tri": best, "w": best_w, "inside": best_out <= 0.000001}
 
 
-static func _components(n: int, tris: PackedInt32Array) -> PackedInt32Array:
-	var parent: PackedInt32Array = PackedInt32Array()
-	parent.resize(n)
-	for i: int in n:
-		parent[i] = i
-	for t: int in tris.size() / 3:
-		for k: int in 2:
-			var a: int = _root(parent, tris[t * 3])
-			var b: int = _root(parent, tris[t * 3 + k + 1])
-			if a != b:
-				parent[maxi(a, b)] = mini(a, b)
-	var comp: PackedInt32Array = PackedInt32Array()
-	comp.resize(n)
-	for i2: int in n:
-		comp[i2] = _root(parent, i2)
-	return comp
+static func reach_of(mesh: Dictionary) -> float:
+	var msize: Vector2 = mesh.get("size", Vector2.ONE)
+	var cell: float = maxf(msize.x / float(maxi(int(mesh.get("nx", 1)), 1)), msize.y / float(maxi(int(mesh.get("ny", 1)), 1)))
+	return cell * BEND_REACH_CELLS
 
 
-static func _root(parent: PackedInt32Array, i: int) -> int:
-	var r: int = i
-	while parent[r] != r:
-		r = parent[r]
-	var at: int = i
-	while parent[at] != r:
-		var nxt: int = parent[at]
-		parent[at] = r
-		at = nxt
-	return r
-
-
-static func solver_for(mesh: Dictionary, rest_pins: PackedVector2Array, hold_w: PackedFloat64Array = PackedFloat64Array()) -> Dictionary:
+static func solver_key(mesh: Dictionary, rest_pins: PackedVector2Array, hold_w: PackedFloat64Array, kinds: PackedInt32Array, rigid: PackedFloat64Array) -> String:
 	var key: String = String(mesh.get("key", "")) + "|" + str(rest_pins) + "|" + str(hash(hold_w))
+	var bent: bool = false
+	for k: int in kinds:
+		if k != KIND_POSITION:
+			bent = true
+	if bent:
+		key += "|k" + str(kinds)
+	if not rigid.is_empty():
+		key += "|r" + str(hash(rigid))
+	return key
+
+
+static func solver_for(mesh: Dictionary, rest_pins: PackedVector2Array, hold_w: PackedFloat64Array = PackedFloat64Array(), kinds: PackedInt32Array = PackedInt32Array(), rigid: PackedFloat64Array = PackedFloat64Array()) -> Dictionary:
+	var key: String = solver_key(mesh, rest_pins, hold_w, kinds, rigid)
 	var hit: Variant = _solver_cache.get(key, null)
 	if hit is Dictionary:
 		return hit
-	var made: Dictionary = build_solver(mesh, rest_pins, hold_w)
+	if _pending.has(key):
+		_finish_job(key)
+		var done: Variant = _solver_cache.get(key, null)
+		if done is Dictionary:
+			return done
+	var made: Dictionary = build_solver(mesh, rest_pins, hold_w, kinds, rigid)
+	PuppetSolve.factor_count += 1
+	PuppetSolve.last_factor_ms = float(made.get("ms", 0.0))
 	made["key"] = key
 	if _solver_cache.size() > CACHE_MAX:
 		_solver_cache = {}
@@ -616,326 +687,55 @@ static func _bind(mesh: Dictionary, p: Vector2) -> Dictionary:
 	return {"v": PackedInt32Array([tris[t * 3], tris[t * 3 + 1], tris[t * 3 + 2]]), "w": PackedFloat64Array([w.x, w.y, w.z]), "tri": t}
 
 
-static func build_solver(mesh: Dictionary, rest_pins: PackedVector2Array, hold_w: PackedFloat64Array = PackedFloat64Array()) -> Dictionary:
-	factor_count += 1
-	var verts: PackedVector2Array = mesh["verts"]
-	var tris: PackedInt32Array = mesh["tris"]
-	var n: int = verts.size()
-	var edge_map: Dictionary = {}
-	for t: int in tris.size() / 3:
-		for k: int in 3:
-			var a: int = tris[t * 3 + k]
-			var b: int = tris[t * 3 + (k + 1) % 3]
-			var o: int = tris[t * 3 + (k + 2) % 3]
-			var ek: int = mini(a, b) * n + maxi(a, b)
-			if not edge_map.has(ek):
-				edge_map[ek] = [mini(a, b), maxi(a, b), PackedInt32Array()]
-			var entry: Array = edge_map[ek]
-			var opp: PackedInt32Array = entry[2]
-			opp.append(o)
-			entry[2] = opp
+static func build_solver(mesh: Dictionary, rest_pins: PackedVector2Array, hold_w: PackedFloat64Array = PackedFloat64Array(), kinds: PackedInt32Array = PackedInt32Array(), rigid: PackedFloat64Array = PackedFloat64Array()) -> Dictionary:
 	var binds: Array[Dictionary] = []
 	for p: Vector2 in rest_pins:
 		binds.append(_bind(mesh, p))
-	var comp: PackedInt32Array = _components(n, tris)
-	var comp_pins: Dictionary = {}
-	for i: int in binds.size():
-		var bv: PackedInt32Array = binds[i]["v"]
-		if bv.is_empty():
-			continue
-		var cid: int = comp[bv[0]]
-		var list: PackedInt32Array = comp_pins.get(cid, PackedInt32Array())
-		list.append(i)
-		comp_pins[cid] = list
-	var stiff: PackedFloat64Array = hold_w if hold_w.size() == n else PackedFloat64Array()
-	var comp_holds: Dictionary = {}
-	for sv: int in stiff.size():
-		if stiff[sv] > 0.0:
-			comp_holds[comp[sv]] = true
-	var held: PackedInt32Array = PackedInt32Array()
-	held.resize(n)
-	for v: int in n:
-		var pins_here: PackedInt32Array = comp_pins.get(comp[v], PackedInt32Array())
-		held[v] = 1 if pins_here.size() + (1 if comp_holds.has(comp[v]) else 0) < 2 else 0
-	var edges: Array = []
-	var bw1: int = 1
-	var bw2: int = 1
-	for ev: Variant in edge_map.values():
-		var ea: Array = ev
-		var i0: int = ea[0]
-		var j0: int = ea[1]
-		var nb: PackedInt32Array = PackedInt32Array([i0, j0])
-		nb.append_array(ea[2] as PackedInt32Array)
-		var lo: int = nb[0]
-		var hi: int = nb[0]
-		for x: int in nb:
-			lo = mini(lo, x)
-			hi = maxi(hi, x)
-		bw1 = maxi(bw1, (hi - lo) * 2 + 1)
-		bw2 = maxi(bw2, j0 - i0)
-		edges.append(_edge_rows(verts, nb))
-	for b: Dictionary in binds:
-		var bv2: PackedInt32Array = b["v"]
-		for x2: int in bv2:
-			for y2: int in bv2:
-				bw1 = maxi(bw1, absi(x2 - y2) * 2 + 1)
-				bw2 = maxi(bw2, absi(x2 - y2))
-	var a1: PackedFloat64Array = PackedFloat64Array()
-	a1.resize(2 * n * (bw1 + 1))
-	var a2: PackedFloat64Array = PackedFloat64Array()
-	a2.resize(n * (bw2 + 1))
-	for ed: Dictionary in edges:
-		var nb2: PackedInt32Array = ed["nb"]
-		var h0: PackedFloat64Array = ed["h0"]
-		var h1: PackedFloat64Array = ed["h1"]
-		var m2: int = nb2.size() * 2
-		for r: int in m2:
-			var gr: int = 2 * nb2[r / 2] + r % 2
-			for q: int in m2:
-				var gq: int = 2 * nb2[q / 2] + q % 2
-				if gq > gr:
-					continue
-				_band_add(a1, bw1, gr, gq, h0[r] * h0[q] + h1[r] * h1[q])
-		var ei: int = nb2[0]
-		var ej: int = nb2[1]
-		_band_add(a2, bw2, ei, ei, 1.0)
-		_band_add(a2, bw2, ej, ej, 1.0)
-		_band_add(a2, bw2, ej, ei, -1.0)
-	for b2: Dictionary in binds:
-		var bv3: PackedInt32Array = b2["v"]
-		var bw: PackedFloat64Array = b2["w"]
-		var comp_ok: bool = not bv3.is_empty() and held[bv3[0]] == 0
-		if not comp_ok:
-			continue
-		for x3: int in bv3.size():
-			for y3: int in bv3.size():
-				if bv3[y3] > bv3[x3]:
-					continue
-				var wv: float = PIN_WEIGHT * bw[x3] * bw[y3]
-				_band_add(a1, bw1, 2 * bv3[x3], 2 * bv3[y3], wv)
-				_band_add(a1, bw1, 2 * bv3[x3] + 1, 2 * bv3[y3] + 1, wv)
-				_band_add(a2, bw2, bv3[x3], bv3[y3], wv)
-	for v2: int in n:
-		var hold: float = HOLD_WEIGHT if held[v2] == 1 else (stiff[v2] if not stiff.is_empty() else 0.0)
-		_band_add(a1, bw1, 2 * v2, 2 * v2, hold + TINY)
-		_band_add(a1, bw1, 2 * v2 + 1, 2 * v2 + 1, hold + TINY)
-		_band_add(a2, bw2, v2, v2, hold + TINY)
-	_band_factor(a1, 2 * n, bw1)
-	_band_factor(a2, n, bw2)
-	return {"n": n, "edges": edges, "binds": binds, "held": held, "stiff": stiff, "comp": comp, "comp_pins": comp_pins, "l1": a1, "bw1": bw1, "l2": a2, "bw2": bw2}
+	return PuppetSolve.build(mesh, rest_pins, binds, kinds, hold_w, rigid, reach_of(mesh))
 
 
-static func _edge_rows(verts: PackedVector2Array, nb: PackedInt32Array) -> Dictionary:
-	var m: int = nb.size()
-	var base: Vector2 = verts[nb[0]]
-	var g: Array[PackedFloat64Array] = []
-	for k: int in m:
-		var v: Vector2 = verts[nb[k]] - base
-		g.append(PackedFloat64Array([v.x, v.y, 1.0, 0.0]))
-		g.append(PackedFloat64Array([v.y, -v.x, 0.0, 1.0]))
-	var gtg: Array[PackedFloat64Array] = []
-	for r: int in 4:
-		var row: PackedFloat64Array = PackedFloat64Array([0.0, 0.0, 0.0, 0.0])
-		for q: int in 4:
-			var sum: float = 0.0
-			for k2: int in g.size():
-				sum += g[k2][r] * g[k2][q]
-			row[q] = sum
-		gtg.append(row)
-	var inv: Array[PackedFloat64Array] = _inverse4(gtg)
-	var p0: PackedFloat64Array = PackedFloat64Array()
-	var p1: PackedFloat64Array = PackedFloat64Array()
-	p0.resize(2 * m)
-	p1.resize(2 * m)
-	for col: int in 2 * m:
-		var s0: float = 0.0
-		var s1: float = 0.0
-		for q2: int in 4:
-			s0 += inv[0][q2] * g[col][q2]
-			s1 += inv[1][q2] * g[col][q2]
-		p0[col] = s0
-		p1[col] = s1
-	var e: Vector2 = verts[nb[1]] - verts[nb[0]]
-	var h0: PackedFloat64Array = PackedFloat64Array()
-	var h1: PackedFloat64Array = PackedFloat64Array()
-	h0.resize(2 * m)
-	h1.resize(2 * m)
-	for col2: int in 2 * m:
-		h0[col2] = -(e.x * p0[col2] + e.y * p1[col2])
-		h1[col2] = -(e.y * p0[col2] - e.x * p1[col2])
-	h0[0] -= 1.0
-	h0[2] += 1.0
-	h1[1] -= 1.0
-	h1[3] += 1.0
-	return {"nb": nb, "p0": p0, "p1": p1, "h0": h0, "h1": h1, "e": e}
+static func factor_count() -> int:
+	return PuppetSolve.factor_count
 
 
-static func _inverse4(a: Array[PackedFloat64Array]) -> Array[PackedFloat64Array]:
-	var m: Array[PackedFloat64Array] = []
-	for r: int in 4:
-		var row: PackedFloat64Array = PackedFloat64Array()
-		row.resize(8)
-		for q: int in 4:
-			row[q] = a[r][q]
-		row[4 + r] = 1.0
-		m.append(row)
-	for c: int in 4:
-		var piv: int = c
-		for r2: int in range(c + 1, 4):
-			if absf(m[r2][c]) > absf(m[piv][c]):
-				piv = r2
-		if piv != c:
-			var tmp: PackedFloat64Array = m[c]
-			m[c] = m[piv]
-			m[piv] = tmp
-		var d: float = m[c][c]
-		if absf(d) < 1.0e-12:
-			d = 1.0e-12
-		var lead: PackedFloat64Array = m[c]
-		for q2: int in 8:
-			lead[q2] /= d
-		m[c] = lead
-		for r3: int in 4:
-			if r3 == c:
-				continue
-			var f: float = m[r3][c]
-			if f == 0.0:
-				continue
-			var row3: PackedFloat64Array = m[r3]
-			for q3: int in 8:
-				row3[q3] -= f * lead[q3]
-			m[r3] = row3
-	var out: Array[PackedFloat64Array] = []
-	for r4: int in 4:
-		out.append(m[r4].slice(4, 8))
-	return out
+static func solve_count() -> int:
+	return PuppetSolve.solve_count
 
 
-static func _band_add(a: PackedFloat64Array, bw: int, i: int, j: int, v: float) -> void:
-	if j > i:
-		var t: int = i
-		i = j
-		j = t
-	a[i * (bw + 1) + (j - i + bw)] += v
-
-
-static func _band_factor(a: PackedFloat64Array, n: int, bw: int) -> void:
-	var w: int = bw + 1
-	for i: int in n:
-		var j0: int = maxi(0, i - bw)
-		for j: int in range(j0, i + 1):
-			var sum: float = a[i * w + (j - i + bw)]
-			var k0: int = maxi(j0, j - bw)
-			var ri: int = i * w - i + bw
-			var rj: int = j * w - j + bw
-			for k: int in range(k0, j):
-				sum -= a[ri + k] * a[rj + k]
-			if i == j:
-				a[ri + i] = sqrt(maxf(sum, TINY))
-			else:
-				a[ri + j] = sum / a[rj + j]
-
-
-static func _band_solve(a: PackedFloat64Array, n: int, bw: int, b: PackedFloat64Array) -> PackedFloat64Array:
-	var w: int = bw + 1
-	var y: PackedFloat64Array = b.duplicate()
-	for i: int in n:
-		var ri: int = i * w - i + bw
-		var sum: float = y[i]
-		for k: int in range(maxi(0, i - bw), i):
-			sum -= a[ri + k] * y[k]
-		y[i] = sum / a[ri + i]
-	for i2: int in range(n - 1, -1, -1):
-		var sum2: float = y[i2]
-		for k2: int in range(i2 + 1, mini(n, i2 + bw + 1)):
-			sum2 -= a[k2 * w - k2 + bw + i2] * y[k2]
-		y[i2] = sum2 / a[i2 * w - i2 + bw + i2]
-	return y
-
-
-static func _hold_target(solver: Dictionary, verts: PackedVector2Array, rest_pins: PackedVector2Array, pins: PackedVector2Array, v: int) -> Vector2:
-	var cp: Dictionary = solver["comp_pins"]
-	var comp: PackedInt32Array = solver["comp"]
-	var mine: PackedInt32Array = cp.get(comp[v], PackedInt32Array())
-	if mine.size() == 1:
-		return verts[v] + pins[mine[0]] - rest_pins[mine[0]]
-	return verts[v]
-
-
-static func deform(mesh: Dictionary, rest_pins: PackedVector2Array, pins: PackedVector2Array, hold_w: PackedFloat64Array = PackedFloat64Array()) -> PackedVector2Array:
+static func deform(mesh: Dictionary, rest_pins: PackedVector2Array, pins: PackedVector2Array, hold_w: PackedFloat64Array = PackedFloat64Array(), kinds: PackedInt32Array = PackedInt32Array(), turns: PackedVector2Array = PackedVector2Array(), rigid: PackedFloat64Array = PackedFloat64Array()) -> PackedVector2Array:
 	var verts: PackedVector2Array = mesh["verts"]
 	if rest_pins.is_empty() or pins.size() != rest_pins.size() or verts.is_empty():
 		return verts
-	var rkey: String = String(mesh.get("key", "")) + "|" + str(rest_pins) + "|" + str(pins) + "|" + str(hash(hold_w))
+	var skey: String = solver_key(mesh, rest_pins, hold_w, kinds, rigid)
+	var rkey: String = skey + "|" + str(pins) + ("|t" + str(turns) if not turns.is_empty() else "")
 	var hit: Variant = _result_cache.get(rkey, null)
 	if hit is PackedVector2Array:
 		return hit
-	var solver: Dictionary = solver_for(mesh, rest_pins, hold_w)
-	solve_count += 1
-	var n: int = int(solver["n"])
-	var held: PackedInt32Array = solver["held"]
-	var stiff: PackedFloat64Array = solver["stiff"]
-	var binds: Array[Dictionary] = solver["binds"]
-	var b1: PackedFloat64Array = PackedFloat64Array()
-	b1.resize(2 * n)
-	var bx: PackedFloat64Array = PackedFloat64Array()
-	var by: PackedFloat64Array = PackedFloat64Array()
-	bx.resize(n)
-	by.resize(n)
-	for v: int in n:
-		if held[v] == 1:
-			var tg: Vector2 = _hold_target(solver, verts, rest_pins, pins, v)
-			b1[2 * v] += HOLD_WEIGHT * tg.x
-			b1[2 * v + 1] += HOLD_WEIGHT * tg.y
-			bx[v] += HOLD_WEIGHT * tg.x
-			by[v] += HOLD_WEIGHT * tg.y
-		elif not stiff.is_empty() and stiff[v] > 0.0:
-			b1[2 * v] += stiff[v] * verts[v].x
-			b1[2 * v + 1] += stiff[v] * verts[v].y
-			bx[v] += stiff[v] * verts[v].x
-			by[v] += stiff[v] * verts[v].y
-	for i: int in binds.size():
-		var bv: PackedInt32Array = binds[i]["v"]
-		if bv.is_empty() or held[bv[0]] == 1:
-			continue
-		var bw: PackedFloat64Array = binds[i]["w"]
-		for k: int in bv.size():
-			b1[2 * bv[k]] += PIN_WEIGHT * bw[k] * pins[i].x
-			b1[2 * bv[k] + 1] += PIN_WEIGHT * bw[k] * pins[i].y
-			bx[bv[k]] += PIN_WEIGHT * bw[k] * pins[i].x
-			by[bv[k]] += PIN_WEIGHT * bw[k] * pins[i].y
-	var v1: PackedFloat64Array = _band_solve(solver["l1"], 2 * n, int(solver["bw1"]), b1)
-	for ed: Dictionary in solver["edges"]:
-		var nb: PackedInt32Array = ed["nb"]
-		var p0: PackedFloat64Array = ed["p0"]
-		var p1: PackedFloat64Array = ed["p1"]
-		var c: float = 0.0
-		var s: float = 0.0
-		for q: int in nb.size():
-			var x: float = v1[2 * nb[q]]
-			var y: float = v1[2 * nb[q] + 1]
-			c += p0[2 * q] * x + p0[2 * q + 1] * y
-			s += p1[2 * q] * x + p1[2 * q + 1] * y
-		var mag: float = sqrt(c * c + s * s)
-		if mag > TINY:
-			c /= mag
-			s /= mag
-		else:
-			c = 1.0
-			s = 0.0
-		var e: Vector2 = ed["e"]
-		var tx: float = c * e.x + s * e.y
-		var ty: float = -s * e.x + c * e.y
-		bx[nb[1]] += tx
-		bx[nb[0]] -= tx
-		by[nb[1]] += ty
-		by[nb[0]] -= ty
-	var xs: PackedFloat64Array = _band_solve(solver["l2"], n, int(solver["bw2"]), bx)
-	var ys: PackedFloat64Array = _band_solve(solver["l2"], n, int(solver["bw2"]), by)
 	var out: PackedVector2Array = PackedVector2Array()
-	out.resize(n)
-	for v2: int in n:
-		out[v2] = Vector2(xs[v2], ys[v2])
+	if PuppetSolve.any_bends(kinds):
+		var full_turns: PackedVector2Array = turns.duplicate()
+		var still: PackedVector2Array = PackedVector2Array()
+		while full_turns.size() < rest_pins.size():
+			full_turns.append(TURN_REST)
+		var turned: bool = false
+		for i: int in rest_pins.size():
+			still.append(TURN_REST)
+			if full_turns[i] != TURN_REST and i < kinds.size() and PuppetSolve.bends(kinds[i]):
+				turned = true
+		var base: PackedVector2Array = deform(mesh, rest_pins, pins, hold_w, PuppetSolve.plain_kinds(kinds), PackedVector2Array(), rigid)
+		out = base.duplicate()
+		var only_bends: bool = true
+		for k: int in kinds:
+			if PuppetSolve.moves(k):
+				only_bends = false
+		if turned or only_bends:
+			var solver: Dictionary = solver_for(mesh, rest_pins, hold_w, kinds, rigid)
+			var moved: PackedVector2Array = PuppetSolve.run(solver, verts, rest_pins, pins, PuppetSolve.relative_mats(solver, base, full_turns))
+			var held: PackedVector2Array = PuppetSolve.run(solver, verts, rest_pins, pins, PuppetSolve.relative_mats(solver, base, still))
+			for v: int in mini(out.size(), mini(moved.size(), held.size())):
+				out[v] = base[v] + moved[v] - held[v]
+	else:
+		out = PuppetSolve.run(solver_for(mesh, rest_pins, hold_w, kinds, rigid), verts, rest_pins, pins, PackedVector2Array())
 	if _result_cache.size() > RESULT_MAX:
 		_result_cache = {}
 	_result_cache[rkey] = out
@@ -944,22 +744,96 @@ static func deform(mesh: Dictionary, rest_pins: PackedVector2Array, pins: Packed
 
 static func mesh_of_effect(e: Dictionary, fallback_size: Vector2) -> Dictionary:
 	var info: Dictionary = mesh_info(e)
-	return mesh_for(size_of(e, fallback_size), density_of(e), String(info.get("alpha", "")), info)
+	return mesh_for(size_of(e, fallback_size), density_of(e), String(info.get("alpha", "")), info, expansion_of(e))
+
+
+static func follows_frames(info: Dictionary) -> bool:
+	var frames: Variant = info.get(FRAMES_FIELD, null)
+	return frames is Array and not (frames as Array).is_empty()
+
+
+static func info_at(info: Dictionary, local_t: float) -> Dictionary:
+	if not follows_frames(info):
+		return info
+	var frames: Array = info[FRAMES_FIELD]
+	var pick: Dictionary = frames[0]
+	for fr: Variant in frames:
+		if fr is Dictionary and float((fr as Dictionary).get("at", 0.0)) <= local_t + 0.0001:
+			pick = fr
+	var out: Dictionary = info.duplicate()
+	out.erase(FRAMES_FIELD)
+	if not shape_code(pick).is_empty():
+		out[SHAPE_FIELD] = pick[SHAPE_FIELD]
+		out["sw"] = int(pick.get("sw", 0))
+		out["sh"] = int(pick.get("sh", 0))
+	return out
+
+
+static func mesh_at(c: Clip, e: Dictionary, t: float, fallback_size: Vector2) -> Dictionary:
+	var info: Dictionary = info_at(mesh_info(e), t - c.start)
+	return mesh_for(size_of(e, fallback_size), density_of(e), String(info.get("alpha", "")), info, expansion_of(e))
+
+
+static func setup_at(c: Clip, e: Dictionary, t: float, fps: float, mesh: Dictionary) -> Dictionary:
+	var out: Dictionary = {}
+	if any_bend(e):
+		out["kinds"] = kinds_of(e)
+		out["turns"] = turns_at(c, e, t, fps)
+	if PuppetLocks.has_locks(e):
+		out["locks"] = PuppetLocks.vertex_weights(e, mesh)
+		out["amount"] = clampf(value_at(c, e, PuppetLocks.KEY_AMOUNT, t, fps, PuppetLocks.AMOUNT_DEFAULT) / 100.0, 0.0, 1.0)
+	return out
+
+
+static func spot_of(mesh: Dictionary, deformed: PackedVector2Array, rest_p: Vector2) -> Vector2:
+	var rv: PackedVector2Array = mesh["verts"]
+	var tris: PackedInt32Array = mesh["tris"]
+	if deformed.size() != rv.size():
+		return rest_p
+	var got: Dictionary = locate(rv, tris, rest_p)
+	if got.is_empty():
+		return rest_p
+	var t: int = int(got["tri"])
+	var w: Vector3 = got["w"]
+	var shift: Vector2 = (deformed[tris[t * 3]] - rv[tris[t * 3]]) * w.x + (deformed[tris[t * 3 + 1]] - rv[tris[t * 3 + 1]]) * w.y + (deformed[tris[t * 3 + 2]] - rv[tris[t * 3 + 2]]) * w.z
+	return rest_p + shift
 
 
 static func deformed_at(c: Clip, e: Dictionary, t: float, fps: float, fallback_size: Vector2) -> Dictionary:
-	var mesh: Dictionary = mesh_of_effect(e, fallback_size)
+	var mesh: Dictionary = mesh_at(c, e, t, fallback_size)
 	var rest: PackedVector2Array = rest_of(e)
-	var pins: PackedVector2Array = pins_at(c, e, t, fps)
+	var pins: PackedVector2Array = linked_pins_at(c, e, t, fps)
 	var holds: Dictionary = holds_at(c, e, t, fps)
 	var overlaps: Dictionary = overlaps_at(c, e, t, fps)
-	return {"mesh": mesh, "verts": solve(mesh, rest, pins, holds), "pins": pins, "rest": rest, "holds": holds, "overlaps": overlaps, "drawn": draw_order(mesh, overlaps)}
+	var setup: Dictionary = setup_at(c, e, t, fps, mesh)
+	var verts: PackedVector2Array = PackedVector2Array()
+	var drafted: bool = false
+	if draft_ok and (mesh["verts"] as PackedVector2Array).size() >= DRAFT_FROM and density_of(e) > DRAFT_CELLS and not ready_for(mesh, rest, holds, setup):
+		var info: Dictionary = info_at(mesh_info(e), t - c.start)
+		var coarse: Dictionary = mesh_for(size_of(e, fallback_size), DRAFT_CELLS, String(info.get("alpha", "")), info, expansion_of(e))
+		verts = draft_map(mesh, coarse, solve(coarse, rest, pins, holds, setup_at(c, e, t, fps, coarse)))
+		draft_count += 1
+		drafted = true
+	else:
+		verts = solve(mesh, rest, pins, holds, setup)
+	var shown: PackedVector2Array = pins
+	var kinds: PackedInt32Array = setup.get("kinds", PackedInt32Array())
+	if not kinds.is_empty():
+		shown = pins.duplicate()
+		for i: int in mini(kinds.size(), shown.size()):
+			if kinds[i] == KIND_BEND:
+				shown[i] = spot_of(mesh, verts, rest[i])
+	return {"mesh": mesh, "verts": verts, "pins": shown, "rest": rest, "holds": holds, "overlaps": overlaps, "drawn": draw_order(mesh, overlaps), "setup": setup, "draft": drafted}
 
 
 static func hold_weights(mesh: Dictionary, holds: Dictionary) -> PackedFloat64Array:
 	var verts: PackedVector2Array = mesh["verts"]
 	var at: PackedVector2Array = holds.get("at", PackedVector2Array())
 	var r: PackedFloat64Array = holds.get("r", PackedFloat64Array())
+	var key: String = "w|" + String(mesh.get("key", "")) + "|" + str(at) + "|" + str(r)
+	var hit: Variant = _weights_cache.get(key, null)
+	if hit is PackedFloat64Array:
+		return hit
 	var out: PackedFloat64Array = PackedFloat64Array()
 	out.resize(verts.size())
 	for v: int in verts.size():
@@ -972,7 +846,14 @@ static func hold_weights(mesh: Dictionary, holds: Dictionary) -> PackedFloat64Ar
 				continue
 			best = maxf(best, 1.0 if x <= HOLD_CORE else 1.0 - smoothstep(HOLD_CORE, 1.0, x))
 		out[v] = HOLD_STIFF * best
+	_keep_weights(key, out)
 	return out
+
+
+static func _keep_weights(key: String, v: PackedFloat64Array) -> void:
+	if _weights_cache.size() > RESULT_MAX:
+		_weights_cache = {}
+	_weights_cache[key] = v
 
 
 static func hold_blend(mesh: Dictionary, holds: Dictionary) -> PackedFloat64Array:
@@ -980,6 +861,10 @@ static func hold_blend(mesh: Dictionary, holds: Dictionary) -> PackedFloat64Arra
 	var at: PackedVector2Array = holds.get("at", PackedVector2Array())
 	var r: PackedFloat64Array = holds.get("r", PackedFloat64Array())
 	var a: PackedFloat64Array = holds.get("a", PackedFloat64Array())
+	var key: String = "b|" + String(mesh.get("key", "")) + "|" + str(at) + "|" + str(r) + "|" + str(a)
+	var hit: Variant = _weights_cache.get(key, null)
+	if hit is PackedFloat64Array:
+		return hit
 	var out: PackedFloat64Array = PackedFloat64Array()
 	out.resize(verts.size())
 	var n: int = mini(at.size(), mini(r.size(), a.size()))
@@ -992,26 +877,221 @@ static func hold_blend(mesh: Dictionary, holds: Dictionary) -> PackedFloat64Arra
 			num += a[i] * g
 			den += g
 		out[v] = num / den if den > TINY else 0.0
+	_keep_weights(key, out)
 	return out
 
 
-static func solve(mesh: Dictionary, rest: PackedVector2Array, pins: PackedVector2Array, holds: Dictionary = {}) -> PackedVector2Array:
-	var loose: PackedVector2Array = deform(mesh, rest, pins)
+static func solve_plan(mesh: Dictionary, rest: PackedVector2Array, holds: Dictionary, setup: Dictionary) -> Dictionary:
+	var kinds: PackedInt32Array = setup.get("kinds", PackedInt32Array())
+	var turns: PackedVector2Array = setup.get("turns", PackedVector2Array())
+	var lockw: PackedFloat64Array = setup.get("locks", PackedFloat64Array())
+	var amount: float = clampf(float(setup.get("amount", 1.0)), 0.0, 1.0)
+	var plain: Dictionary = {"kinds": kinds, "turns": turns, "kept": false, "loose": true}
 	var amounts: PackedFloat64Array = holds.get("a", PackedFloat64Array())
-	var any: bool = false
+	var any_hold: bool = false
 	for k: float in amounts:
 		if k > 0.0001:
-			any = true
-	if not any or rest.is_empty():
-		return loose
-	var w: PackedFloat64Array = hold_weights(mesh, holds)
-	var kept: PackedVector2Array = deform(mesh, rest, pins, w)
-	var mix: PackedFloat64Array = hold_blend(mesh, holds)
+			any_hold = true
+	var any_lock: bool = false
+	if amount > 0.0001:
+		for lw: float in lockw:
+			if lw > 0.0:
+				any_lock = true
+				break
+	if rest.is_empty() or (not any_hold and not any_lock):
+		return plain
+	var anchor: PackedFloat64Array = hold_weights(mesh, holds) if any_hold else PackedFloat64Array()
+	var rigid: PackedFloat64Array = PackedFloat64Array()
+	if any_lock:
+		var la: PackedFloat64Array = PuppetLocks.anchors(lockw)
+		if anchor.is_empty():
+			anchor = la
+		else:
+			anchor = anchor.duplicate()
+			for i: int in mini(anchor.size(), la.size()):
+				anchor[i] = maxf(anchor[i], la[i])
+		rigid = lockw
+	var mix: PackedFloat64Array = hold_blend(mesh, holds) if any_hold else PackedFloat64Array()
+	if any_lock:
+		if mix.is_empty():
+			mix = PackedFloat64Array()
+			mix.resize((mesh["verts"] as PackedVector2Array).size())
+			mix.fill(amount)
+		else:
+			mix = mix.duplicate()
+			for j: int in mix.size():
+				mix[j] = maxf(mix[j], amount)
+	var whole: bool = true
+	for mv: float in mix:
+		if mv < 1.0:
+			whole = false
+			break
+	return {"kinds": kinds, "turns": turns, "kept": true, "loose": not whole, "anchor": anchor, "rigid": rigid, "mix": mix}
+
+
+static func solve(mesh: Dictionary, rest: PackedVector2Array, pins: PackedVector2Array, holds: Dictionary = {}, setup: Dictionary = {}) -> PackedVector2Array:
+	var pl: Dictionary = solve_plan(mesh, rest, holds, setup)
+	var kinds: PackedInt32Array = pl["kinds"]
+	var turns: PackedVector2Array = pl["turns"]
+	if not bool(pl["kept"]):
+		return deform(mesh, rest, pins, PackedFloat64Array(), kinds, turns)
+	var kept: PackedVector2Array = deform(mesh, rest, pins, pl["anchor"], kinds, turns, pl["rigid"])
+	if not bool(pl["loose"]):
+		return kept
+	var mix: PackedFloat64Array = pl["mix"]
+	var loose: PackedVector2Array = deform(mesh, rest, pins, PackedFloat64Array(), kinds, turns)
 	var out: PackedVector2Array = PackedVector2Array()
 	out.resize(loose.size())
 	for v: int in loose.size():
 		out[v] = loose[v].lerp(kept[v], mix[v]) if v < kept.size() else loose[v]
 	return out
+
+
+static func harvest() -> void:
+	for key: Variant in _pending.keys():
+		var job: Dictionary = _pending[key]
+		if not WorkerThreadPool.is_task_completed(int(job["task"])):
+			continue
+		_finish_job(String(key))
+
+
+static func _finish_job(key: String) -> void:
+	var job: Dictionary = _pending.get(key, {})
+	if job.is_empty():
+		return
+	WorkerThreadPool.wait_for_task_completion(int(job["task"]))
+	_pending.erase(key)
+	var holder: Dictionary = job["out"]
+	var made: Variant = holder.get("solver", null)
+	if made is Dictionary:
+		PuppetSolve.factor_count += 1
+		(made as Dictionary)["key"] = key
+		if _solver_cache.size() > CACHE_MAX:
+			_solver_cache = {}
+		_solver_cache[key] = made
+
+
+static func _build_into(holder: Dictionary, mesh: Dictionary, rest_pins: PackedVector2Array, binds: Array[Dictionary], kinds: PackedInt32Array, hold_w: PackedFloat64Array, rigid: PackedFloat64Array, reach: float) -> void:
+	holder["solver"] = PuppetSolve.build(mesh, rest_pins, binds, kinds, hold_w, rigid, reach)
+
+
+static func prepare(mesh: Dictionary, rest_pins: PackedVector2Array, hold_w: PackedFloat64Array, kinds: PackedInt32Array, rigid: PackedFloat64Array) -> bool:
+	var key: String = solver_key(mesh, rest_pins, hold_w, kinds, rigid)
+	if _solver_cache.has(key):
+		return true
+	if _pending.has(key):
+		if WorkerThreadPool.is_task_completed(int((_pending[key] as Dictionary)["task"])):
+			_finish_job(key)
+			return _solver_cache.has(key)
+		return false
+	var binds: Array[Dictionary] = []
+	for p: Vector2 in rest_pins:
+		binds.append(_bind(mesh, p))
+	var holder: Dictionary = {}
+	var task: int = WorkerThreadPool.add_task(_build_into.bind(holder, mesh, rest_pins, binds, kinds, hold_w, rigid, reach_of(mesh)), false, "Puppet factor")
+	_pending[key] = {"task": task, "out": holder}
+	return false
+
+
+static func ready_for(mesh: Dictionary, rest: PackedVector2Array, holds: Dictionary, setup: Dictionary) -> bool:
+	if rest.is_empty():
+		return true
+	var pl: Dictionary = solve_plan(mesh, rest, holds, setup)
+	var kinds: PackedInt32Array = pl["kinds"]
+	var ok: bool = true
+	var kind_sets: Array[PackedInt32Array] = [kinds]
+	if PuppetSolve.any_bends(kinds):
+		kind_sets.append(PuppetSolve.plain_kinds(kinds))
+	for ks: PackedInt32Array in kind_sets:
+		if bool(pl["kept"]):
+			ok = prepare(mesh, rest, pl["anchor"], ks, pl["rigid"]) and ok
+		if bool(pl["loose"]):
+			ok = prepare(mesh, rest, PackedFloat64Array(), ks, PackedFloat64Array()) and ok
+	return ok
+
+
+static func busy() -> bool:
+	harvest()
+	return not _pending.is_empty()
+
+
+static func wait_all() -> void:
+	for key: Variant in _pending.keys():
+		_finish_job(String(key))
+
+
+static func draft_map(mesh: Dictionary, coarse: Dictionary, coarse_verts: PackedVector2Array) -> PackedVector2Array:
+	var key: String = String(mesh.get("key", "")) + "|" + String(coarse.get("key", ""))
+	var hit: Variant = _draft_cache.get(key, null)
+	var map: Dictionary = hit if hit is Dictionary else {}
+	if map.is_empty():
+		map = _draft_weights(mesh, coarse)
+		if _draft_cache.size() > CACHE_MAX:
+			_draft_cache = {}
+		_draft_cache[key] = map
+	var tri_of: PackedInt32Array = map["tri"]
+	var wts: PackedVector3Array = map["w"]
+	var ctris: PackedInt32Array = coarse["tris"]
+	var rv: PackedVector2Array = mesh["verts"]
+	var crv: PackedVector2Array = coarse["verts"]
+	var out: PackedVector2Array = PackedVector2Array()
+	out.resize(rv.size())
+	for v: int in rv.size():
+		var t: int = tri_of[v]
+		if t < 0 or coarse_verts.size() != crv.size():
+			out[v] = rv[v]
+			continue
+		var w: Vector3 = wts[v]
+		var a: int = ctris[t * 3]
+		var b: int = ctris[t * 3 + 1]
+		var c: int = ctris[t * 3 + 2]
+		out[v] = rv[v] + (coarse_verts[a] - crv[a]) * w.x + (coarse_verts[b] - crv[b]) * w.y + (coarse_verts[c] - crv[c]) * w.z
+	return out
+
+
+static func _draft_weights(mesh: Dictionary, coarse: Dictionary) -> Dictionary:
+	var rv: PackedVector2Array = mesh["verts"]
+	var crv: PackedVector2Array = coarse["verts"]
+	var ctris: PackedInt32Array = coarse["tris"]
+	var size: Vector2 = coarse["size"]
+	var nx: int = maxi(int(coarse.get("nx", 1)), 1)
+	var ny: int = maxi(int(coarse.get("ny", 1)), 1)
+	var cell_tri: PackedInt32Array = PackedInt32Array()
+	cell_tri.resize(nx * ny)
+	cell_tri.fill(-1)
+	var cell: Vector2 = Vector2(size.x / float(nx), size.y / float(ny))
+	for t: int in ctris.size() / 6:
+		var mid: Vector2 = (crv[ctris[t * 6]] + crv[ctris[t * 6 + 1]] + crv[ctris[t * 6 + 2]]) / 3.0 + size * 0.5
+		var cx: int = clampi(int(floor(mid.x / cell.x)), 0, nx - 1)
+		var cy: int = clampi(int(floor(mid.y / cell.y)), 0, ny - 1)
+		cell_tri[cy * nx + cx] = t * 2
+	var tri_of: PackedInt32Array = PackedInt32Array()
+	tri_of.resize(rv.size())
+	var wts: PackedVector3Array = PackedVector3Array()
+	wts.resize(rv.size())
+	for v: int in rv.size():
+		var p: Vector2 = rv[v]
+		var q: Vector2 = p + size * 0.5
+		var cx2: int = clampi(int(floor(q.x / cell.x)), 0, nx - 1)
+		var cy2: int = clampi(int(floor(q.y / cell.y)), 0, ny - 1)
+		var first: int = cell_tri[cy2 * nx + cx2]
+		var found: int = -1
+		var fw: Vector3 = Vector3.ZERO
+		if first >= 0:
+			for t2: int in [first, first + 1]:
+				var w: Vector3 = bary(p, crv[ctris[t2 * 3]], crv[ctris[t2 * 3 + 1]], crv[ctris[t2 * 3 + 2]])
+				if w.x > -0.0001 and w.y > -0.0001 and w.z > -0.0001:
+					found = t2
+					fw = w
+					break
+		if found < 0:
+			var got: Dictionary = locate(crv, ctris, p)
+			if not got.is_empty():
+				found = int(got["tri"])
+				fw = got["w"]
+		tri_of[v] = found
+		wts[v] = fw
+	return {"tri": tri_of, "w": wts}
 
 
 static func locate_top(verts: PackedVector2Array, tris: PackedInt32Array, p: Vector2) -> Dictionary:
@@ -1061,9 +1141,9 @@ static func pin_frame(c: Clip, pin: int, t: float, fps: float, with_rotation: bo
 	var rest: PackedVector2Array = rest_of(e)
 	if pin < 0 or pin >= rest.size():
 		return null
-	var pins: PackedVector2Array = pins_at(c, e, t, fps)
-	var angle: float = 0.0
-	if with_rotation:
-		var mesh: Dictionary = mesh_of_effect(e, size_of(e, Vector2(1920.0, 1080.0)))
-		angle = rotation_at(mesh, solve(mesh, rest, pins, holds_at(c, e, t, fps)), rest[pin])
+	if not with_rotation and not any_bend(e):
+		return Transform2D(0.0, linked_pins_at(c, e, t, fps)[pin])
+	var made: Dictionary = deformed_at(c, e, t, fps, size_of(e, Vector2(1920.0, 1080.0)))
+	var pins: PackedVector2Array = made["pins"]
+	var angle: float = rotation_at(made["mesh"], made["verts"], rest[pin]) if with_rotation else 0.0
 	return Transform2D(angle, pins[pin])

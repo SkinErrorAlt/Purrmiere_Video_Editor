@@ -1,8 +1,10 @@
 extends "res://host/interfaces/i_track_kind.gd"
 
+const Fold := preload("res://ui/timeline/timeline_fold.gd")
 const Marker := preload("res://doc/marker.gd")
 const Follow := preload("res://doc/marker_follow.gd")
 const PmText := preload("res://ui/kit/pm_text.gd")
+const Shapes := preload("res://ui/timeline/marker_shapes.gd")
 const ID := "marker_lane"
 const LANE_H := 20.0
 const PENNANT_Y := 2.0
@@ -98,13 +100,21 @@ static func paint(canvas: CanvasItem, rect: Rect2, ctx: Dictionary) -> void:
 	if hidden:
 		return
 	var list: Array = ctx.get("markers", [])
-	if list.is_empty():
-		return
 	var seq: RefCounted = ctx.get("seq", null)
 	var header_w: float = float(ctx.get("header_w", 0.0))
 	var pps: float = float(ctx.get("pps", 1.0))
 	var scroll_x: float = float(ctx.get("scroll_x", 0.0))
+	var fold: Dictionary = ctx.get("fold", {})
 	var x_max: float = rect.end.x
+	var runs: Array = ctx.get("runs", [])
+	if not runs.is_empty():
+		var x_of: Callable = func(t: float) -> float: return Fold.x_of(fold, t, header_w, pps, scroll_x)
+		for run: Dictionary in runs:
+			var first: Marker = run["first"]
+			var rcol: Color = lane_col if first.colour < 0 and first.rgb.is_empty() else colour_of(first, layer)
+			Shapes.draw_run(canvas, rect.position.y, rect.size.y, x_of, run, rcol, header_w, x_max, ctx.get("font", null), int(ctx.get("fs", 10)))
+	if list.is_empty():
+		return
 	var picked: PackedStringArray = ctx.get("picked", PackedStringArray())
 	var font: Font = ctx.get("font", null)
 	var fs: int = int(ctx.get("fs", 10))
@@ -115,8 +125,9 @@ static func paint(canvas: CanvasItem, rect: Rect2, ctx: Dictionary) -> void:
 	var crowd: float = DENSE_CROWD_PX if dense else CROWD_PX
 	for i: int in list.size():
 		var m: Marker = list[i]
-		var mx: float = header_w + (Follow.resolved_time(seq, m) if m.follows() else m.time) * pps - scroll_x
-		var mw: float = maxf(m.duration, 0.0) * pps
+		var mt: float = Follow.resolved_time(seq, m) if m.follows() else m.time
+		var mx: float = Fold.x_of(fold, mt, header_w, pps, scroll_x)
+		var mw: float = maxf(m.duration, 0.0) * pps if fold.is_empty() else Fold.px_between(fold, mt, mt + maxf(m.duration, 0.0), pps)
 		if cull and (mx + mw < header_w - 6.0 or mx > x_max + 6.0):
 			continue
 		var on: bool = not picked.is_empty() and picked.has(m.id)
@@ -145,12 +156,12 @@ static func paint(canvas: CanvasItem, rect: Rect2, ctx: Dictionary) -> void:
 				canvas.draw_rect(Rect2(mx + mw - 1.0, y + 2.0, 2.0, h - 4.0), col, true)
 		if m.follows():
 			canvas.draw_circle(Vector2(mx, y + h - 6.0), 1.5, col)
-		pennant(canvas, mx, y + PENNANT_Y, col, not m.comment.is_empty(), on)
+		Shapes.draw(canvas, m, mx, y + PENNANT_Y, col, not m.comment.is_empty(), on)
 		drawn += 1
 		if font != null and not m.label.is_empty():
 			var room_end: float = x_max
 			if i + 1 < list.size():
-				room_end = header_w + Follow.resolved_time(seq, list[i + 1]) * pps - scroll_x - LABEL_GAP
+				room_end = Fold.x_of(fold, Follow.resolved_time(seq, list[i + 1]), header_w, pps, scroll_x) - LABEL_GAP
 			room_end = minf(maxf(room_end, mx + mw), x_max)
 			var lx: float = maxf(mx + LABEL_GAP, header_w + 2.0)
 			if room_end - lx >= LABEL_MIN_W:

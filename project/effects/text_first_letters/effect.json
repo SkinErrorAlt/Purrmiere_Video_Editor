@@ -1,0 +1,46 @@
+{
+ "id": "text_first_letters",
+ "label": "First Letters (Acrostic)",
+ "category": "Text",
+ "version": 1,
+ "applies_to": "text",
+ "text_transform": "first_letters",
+ "tags": [
+  "text",
+  "horror",
+  "puzzle"
+ ],
+ "blurb": "Picks out the first letter of each word or line, the classic hidden message. Colour them in the text, or keep only them to read what they spell.",
+ "params": [
+  {
+   "key": "mode",
+   "label": "Do",
+   "type": "enum",
+   "choices": [
+    "Colour the first letter of each word",
+    "Colour the first letter of each line",
+    "Keep only the first letter of each word",
+    "Keep only the first letter of each line"
+   ],
+   "default": 0
+  },
+  {
+   "key": "colour",
+   "label": "Colour",
+   "type": "color",
+   "default": [
+    0.85,
+    0.05,
+    0.05,
+    1
+   ]
+  },
+  {
+   "key": "bold",
+   "label": "Bold",
+   "type": "bool",
+   "default": true
+  }
+ ],
+ "passes": []
+}

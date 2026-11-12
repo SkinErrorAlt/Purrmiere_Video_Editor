@@ -1,0 +1,27 @@
+{
+ "id": "phone_camera",
+ "label": "Phone Camera",
+ "category": "Stylize",
+ "tags": ["look"],
+ "version": 1,
+ "blurb": "The look of a picture that went through a phone's processing: noise reduction wipes fine texture such as fur, grass and skin into smooth painted patches, strong sharpening draws thin bright and dark outlines along every edge, and HDR tone mapping lifts the shadows and pulls the sky down with a glowing halo round dark shapes against bright ones. Digital zoom crops in the way a phone does past its lens, so the mush and the outlines grow.",
+ "params": [
+  {"key": "hdr", "label": "HDR tone mapping", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "halo", "label": "Halo size", "type": "float", "min": 8.0, "max": 160.0, "step": 0.5, "default": 56.0, "unit": " px"},
+  {"key": "smear", "label": "Noise reduction smear", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.55},
+  {"key": "sharpen", "label": "Oversharpening", "type": "float", "min": 0.0, "max": 3.0, "step": 0.01, "default": 1.0},
+  {"key": "sharpen_radius", "label": "Sharpening radius", "type": "float", "min": 0.5, "max": 4.0, "step": 0.05, "default": 1.3, "unit": " px"},
+  {"key": "colour", "label": "Colour boost", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.3},
+  {"key": "zoom", "label": "Digital zoom", "type": "float", "min": 1.0, "max": 10.0, "step": 0.01, "default": 1.0},
+  {"key": "zoom_centre", "label": "Zoom centre", "type": "vec2", "default": [0.5, 0.5]}
+ ],
+ "handles": [{"kind": "point", "key": "zoom_centre"}],
+ "passes": [
+  {"shader": "nr.gdshader", "set": {"spread": 1.0}},
+  {"shader": "nr.gdshader", "set": {"spread": 2.2}},
+  {"shader": "base_down.gdshader", "scale": 0.25},
+  {"shader": "base_blur.gdshader", "scale": 0.5, "set": {"direction": [1.0, 0.0]}},
+  {"shader": "base_blur.gdshader", "scale": 1.0, "set": {"direction": [0.0, 1.0]}},
+  {"shader": "final.gdshader", "scale": 8.0, "inputs": {"nr_tex": 1}}
+ ]
+}

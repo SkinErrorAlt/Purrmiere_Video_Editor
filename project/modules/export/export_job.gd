@@ -644,6 +644,9 @@ func start() -> void:
 				paths["thumbnail"] = tpath
 			if bool(thumb.get("sidecar", false)):
 				timg.save_png(output_path.get_basename().replace("_%05d", "") + "_thumbnail.png")
+	var caps: Dictionary = settings.get("captions", {})
+	if bool(caps.get("sidecar", false)) and not probing:
+		write_captions(output_path.get_basename().replace("_%05d", "") + "." + String(caps.get("format", "srt")), range_v)
 	paths["alpha"] = transparent
 	paths["png_verify"] = png_verify()
 	job = ExportPresets.build_job(settings, seq, encoders, containers, paths)
@@ -842,6 +845,24 @@ func _view_setup() -> void:
 	view_run = ViewExport.for_job(settings, seq)
 	if view_run != null:
 		seq = view_run.get("forced")
+
+
+## Writes the sequence's text boxes inside the exported range as a caption file next to the video.
+func write_captions(path: String, range_v: Vector2) -> int:
+	var captions: GDScript = load("res://doc/captions.gd")
+	var all: Array = captions.call("cues_from", doc, seq, false)
+	var cues: Array[Dictionary] = []
+	for c: Dictionary in all:
+		var a: float = maxf(float(c["start"]), range_v.x)
+		var b: float = minf(float(c["start"]) + float(c["duration"]), range_v.y)
+		if b > a:
+			cues.append({"start": a - range_v.x, "duration": b - a, "text": c["text"]})
+	var f: FileAccess = FileAccess.open(path, FileAccess.WRITE)
+	if f == null:
+		return -1
+	f.store_string(String(captions.call("write", cues, path.get_extension())))
+	f.close()
+	return cues.size()
 
 
 func _view_seq() -> Sequence:

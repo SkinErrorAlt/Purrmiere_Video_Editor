@@ -1,0 +1,106 @@
+{
+ "id": "snd_water_dish",
+ "label": "Water Dish",
+ "category": "Audio Reactive",
+ "tags": [
+  "audio",
+  "reactive",
+  "water",
+  "distort"
+ ],
+ "version": 1,
+ "blurb": "The shot seen through a shallow dish of water sitting on a speaker. The sound shakes the water into standing waves, the way water and sand form figures on a speaker, and the picture ripples beneath them while bright caustic lines web across it where the surface focuses the light. Loud bass drives the waves, and the character of the sound picks the figure: deep sound draws broad patterns, bright sound snaps them into finer ones. In silence the water lies flat and clear.",
+ "params": [
+  {
+   "key": "depth",
+   "label": "Bend",
+   "type": "float",
+   "min": 0.0,
+   "max": 60.0,
+   "step": 0.1,
+   "default": 20.0,
+   "unit": " px"
+  },
+  {
+   "key": "coarse",
+   "label": "Deep sound pattern",
+   "type": "float",
+   "min": 2.0,
+   "max": 60.0,
+   "step": 0.1,
+   "default": 13.0
+  },
+  {
+   "key": "fine",
+   "label": "Bright sound pattern",
+   "type": "float",
+   "min": 2.0,
+   "max": 120.0,
+   "step": 0.1,
+   "default": 44.0
+  },
+  {
+   "key": "symmetry",
+   "label": "Wave directions",
+   "type": "int",
+   "min": 2,
+   "max": 12,
+   "step": 1,
+   "default": 7
+  },
+  {
+   "key": "caustics",
+   "label": "Caustic light",
+   "type": "float",
+   "min": 0.0,
+   "max": 1.0,
+   "step": 0.01,
+   "default": 0.5
+  },
+  {
+   "key": "shimmer",
+   "label": "Shimmer",
+   "type": "float",
+   "min": 0.0,
+   "max": 20.0,
+   "step": 0.1,
+   "default": 7.0,
+   "unit": " Hz"
+  },
+  {
+   "key": "modes",
+   "label": "Figures",
+   "type": "float",
+   "min": 1.0,
+   "max": 12.0,
+   "step": 1.0,
+   "default": 5.0
+  },
+  {
+   "key": "centre",
+   "label": "Centre",
+   "type": "vec2",
+   "default": [
+    0.5,
+    0.5
+   ]
+  }
+ ],
+ "passes": [
+  {
+   "shader": "effect.gdshader"
+  }
+ ],
+ "reactive": {
+  "listen": true,
+  "defaults": {
+   "snd_threshold": 0.0
+  }
+ },
+ "handles": [
+  {
+   "kind": "point",
+   "key": "centre"
+  }
+ ]
+}

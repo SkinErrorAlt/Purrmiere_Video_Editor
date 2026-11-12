@@ -1,0 +1,39 @@
+{
+ "id": "shape_morph",
+ "label": "Shape Morph",
+ "category": "Distort",
+ "version": 1,
+ "blurb": "The picture becomes a real lit surface that morphs smoothly from flat into a ball, a tube, a cone and a ring, one Morph value blending each shape into the next, or rolls it straight from flat into a tube, a cone or a ring. It casts shadows on itself, darkens where it folds in on itself, shows its reverse side as the mirrored picture, a colour or paper, and turns, tilts and blurs with depth through the same camera as the other 3D effects. Search words: 3D, morph, sphere, ball, globe, cylinder, tube, cone, torus, ring, doughnut, wrap.",
+ "params": [
+  {"key": "morph", "label": "Morph (0 flat, 1 ball, 2 tube, 3 cone, 4 ring; 0 to 1 on a straight path)", "type": "float", "min": 0, "max": 4, "step": 0.001, "default": 1, "group": "Shape"},
+  {"key": "path", "label": "Path", "type": "enum", "choices": ["Through every shape in turn", "Straight from flat to a ball", "Rolled straight into a tube", "Rolled straight into a cone", "Bent straight into a ring"], "default": 0, "group": "Shape"},
+  {"key": "scale", "label": "Size", "type": "float", "min": 0.05, "max": 4, "step": 0.01, "default": 1, "group": "Shape"},
+  {"key": "turn", "label": "Turn", "type": "float", "min": -1080, "max": 1080, "step": 0.5, "default": 0, "unit": " °", "group": "Turn"},
+  {"key": "spin", "label": "Turn each second", "type": "float", "min": -720, "max": 720, "step": 1, "default": 0, "unit": " °/s", "group": "Turn"},
+  {"key": "tilt", "label": "Tilt (top away)", "type": "float", "min": -90, "max": 90, "step": 0.5, "default": 0, "unit": " °", "group": "Turn"},
+  {"key": "roll", "label": "Roll", "type": "float", "min": -180, "max": 180, "step": 0.5, "default": 0, "unit": " °", "group": "Turn"},
+  {"key": "centre", "label": "Centre", "type": "vec2", "min": -1, "max": 2, "step": 0.001, "default": [0.5, 0.5], "group": "Turn"},
+  {"key": "distance", "label": "Camera distance", "type": "float", "min": 0.3, "max": 20, "step": 0.01, "default": 1.3737, "group": "Camera"},
+  {"key": "fov", "label": "Field of view", "type": "float", "min": 5, "max": 120, "step": 0.5, "default": 40, "unit": " °", "group": "Camera"},
+  {"key": "focus", "label": "Focus distance", "type": "float", "min": 0.05, "max": 40, "step": 0.01, "default": 1.3737, "group": "Camera"},
+  {"key": "lens_blur", "label": "Lens blur (at twice the focus distance)", "type": "float", "min": 0, "max": 60, "step": 0.1, "default": 0, "unit": " px", "group": "Camera"},
+  {"key": "light_angle", "label": "Light from", "type": "float", "min": -180, "max": 180, "step": 0.5, "default": -40, "unit": " °", "group": "Light"},
+  {"key": "light_height", "label": "Light height", "type": "float", "min": -90, "max": 90, "step": 0.5, "default": 40, "unit": " °", "group": "Light"},
+  {"key": "ambient", "label": "Ambient light", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 0.32, "group": "Light"},
+  {"key": "diffuse", "label": "Direct light", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 0.85, "group": "Light"},
+  {"key": "specular", "label": "Shine", "type": "float", "min": 0, "max": 2, "step": 0.01, "default": 0.35, "group": "Light"},
+  {"key": "gloss", "label": "Shine sharpness", "type": "float", "min": 1, "max": 256, "step": 0.5, "default": 40, "group": "Light"},
+  {"key": "shadows", "label": "Shadows on itself", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.85, "group": "Light"},
+  {"key": "occlusion", "label": "Darken where it closes in", "type": "float", "min": 0, "max": 1, "step": 0.01, "default": 0.6, "group": "Light"},
+  {"key": "back_mode", "label": "Reverse side shows", "type": "enum", "choices": ["The mirrored picture", "A colour", "Paper with the picture showing through"], "default": 0, "group": "Reverse side"},
+  {"key": "back_colour", "label": "Reverse side colour", "type": "color", "default": [0.93, 0.91, 0.87, 1.0], "group": "Reverse side"}
+ ],
+ "handles": [{"kind": "point", "key": "centre"}, {"kind": "angle", "key": "light_angle", "about": "centre"}],
+ "hidden_uniforms": ["out_depth", "colour_tex", "depth_tex"],
+ "passes": [
+  {"shader": "effect.gdshader"},
+  {"shader": "effect.gdshader", "scale": 0.5, "set": {"out_depth": true}, "when": {"param": "lens_blur", "gt": 0}},
+  {"shader": "res://effects/shape_morph/dof.gdshader", "inputs": {"colour_tex": 0}, "when": {"param": "lens_blur", "gt": 0}},
+  {"shader": "res://effects/shape_morph/dof_mix.gdshader", "scale": 2.0, "inputs": {"colour_tex": 0, "depth_tex": 1}, "when": {"param": "lens_blur", "gt": 0}}
+ ]
+}

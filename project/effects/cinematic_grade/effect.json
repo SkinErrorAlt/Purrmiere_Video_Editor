@@ -1,0 +1,14 @@
+{
+ "id": "cinematic_grade", "label": "Cinematic Grade", "category": "Colour Correction",
+ "tags": ["colour","grade","film","look","teal orange","cinematic"],
+ "passes": "single",
+ "blurb": "A whole cinematic grade in one effect, so you get a film look without touching wheels and curves: pick a look and dial one Strength. Teal and Orange splits cool shadows against warm skin like a blockbuster; Bleach Bypass is high-contrast and desaturated; Warm Film and Cold Thriller set the mood; Vintage fades the blacks like old stock. Each look sets a filmic contrast S-curve, split-toning of the shadows and highlights, and saturation for you; Contrast, Saturation, Vignette and Grain fine-tune on top.",
+ "params": [
+  {"key":"look","label":"Look","type":"enum","choices":["Teal and Orange","Bleach Bypass","Warm Film","Cold Thriller","Vintage","Neutral"],"default":0},
+  {"key":"strength","label":"Strength","type":"float","min":0.0,"max":1.0,"step":0.01,"default":0.85},
+  {"key":"contrast","label":"Contrast","type":"float","min":-0.5,"max":0.5,"step":0.01,"default":0.0},
+  {"key":"saturation","label":"Saturation","type":"float","min":0.0,"max":2.0,"step":0.01,"default":1.0},
+  {"key":"vignette","label":"Vignette","type":"float","min":0.0,"max":1.0,"step":0.01,"default":0.25},
+  {"key":"grain","label":"Grain","type":"float","min":0.0,"max":1.0,"step":0.01,"default":0.08}
+ ]
+}

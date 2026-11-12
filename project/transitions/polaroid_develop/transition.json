@@ -1,0 +1,16 @@
+{
+ "id": "polaroid_develop",
+ "label": "Polaroid Develop",
+ "group": "Light and Film",
+ "space": "2D",
+ "from": ["Instant film", "Motion Develop"],
+ "blurb": "The incoming shot comes up the way an instant photograph does. It starts as a flat milky green nothing, then the darks arrive first in soft uneven patches that creep in from the edges of the frame, the midtones follow, and last of all the colour saturates and the contrast snaps into place. The chemistry is never even: there are slow corners and a faint blotching that clears as it finishes. Set how long the milky stage lasts, how blotchy the development is and how cold the undeveloped stage looks.",
+ "default_duration": 1.8,
+ "params": [
+  {"key": "milky", "label": "Milky stage", "type": "float", "min": 0.0, "max": 0.6, "step": 0.01, "default": 0.2},
+  {"key": "blotch", "label": "Blotchy", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.55},
+  {"key": "chem", "label": "Undeveloped colour", "type": "color", "default": [0.68, 0.74, 0.66, 1.0]},
+  {"key": "corners", "label": "Slow corners", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.6},
+  {"key": "snap", "label": "Contrast snap", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.7}
+ ]
+}

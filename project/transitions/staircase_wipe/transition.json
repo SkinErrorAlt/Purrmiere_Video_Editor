@@ -1,0 +1,17 @@
+{
+ "id": "staircase_wipe",
+ "label": "Staircase",
+ "group": "Wipe",
+ "space": "2D",
+ "from": ["Boris Stairs Wipe", "PowerDirector Stairs"],
+ "blurb": "A single wipe edge crosses the frame as a flight of stairs: the boundary holds level across each band and then steps up to the next one, so the incoming shot arrives behind a hard stepped diagonal. Set how many steps there are and how deep the tread is, from a shallow lean to a steep staircase, and which corner the flight climbs from. A sawtooth edge it is not: every step goes the same way, so the edge marches across in one direction.",
+ "default_duration": 1.0,
+ "params": [
+  {"key": "direction", "label": "Direction", "type": "enum", "choices": ["From Left", "From Right", "From Top", "From Bottom"], "default": 0},
+  {"key": "steps", "label": "Steps", "type": "int", "min": 2, "max": 40, "step": 1, "default": 10},
+  {"key": "tread", "label": "Tread depth", "type": "float", "min": 0.0, "max": 1.0, "step": 0.01, "default": 0.4},
+  {"key": "flip", "label": "Climb the other way", "type": "bool", "default": false},
+  {"key": "softness", "label": "Soft edge", "type": "float", "min": 0.0, "max": 0.2, "step": 0.005, "default": 0.0},
+  {"key": "curve", "label": "Timing", "type": "enum", "choices": ["Even", "Smooth"], "default": 1}
+ ]
+}
